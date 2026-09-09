@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Cuota } from './Cuota';
 import { formatMoney } from '@/utils/FormatMoney';
 
-export default function CuotasSection({ gasto, onRefund }) {
+export default function CuotasSection({ gasto, onRefund, reconcileActive = false }) {
     const [refundUnlocked, setRefundUnlocked] = useState(false);
 
     const paymentDates = (gasto.movements ?? [])
@@ -17,10 +17,11 @@ export default function CuotasSection({ gasto, onRefund }) {
                 <button
                     onClick={() => setRefundUnlocked((v) => !v)}
                     title={refundUnlocked ? 'Bloquear reembolsos' : 'Desbloquear reembolsos'}
-                    className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${refundUnlocked
+                    className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+                        refundUnlocked
                             ? 'border-red-500/60 bg-red-500/10 text-red-400 hover:bg-red-500/20'
                             : 'border-[#29382f] bg-[#111714] text-[#9eb7a8] hover:bg-[#29382f]'
-                        }`}
+                    }`}
                 >
                     <span className="material-symbols-outlined text-base">
                         {refundUnlocked ? 'lock_open' : 'lock'}
@@ -36,8 +37,8 @@ export default function CuotasSection({ gasto, onRefund }) {
                         index + 1 <= gasto.payed_quotas
                             ? 'check_circle'
                             : index + 1 === gasto.payed_quotas + 1
-                                ? 'arrow_circle_right'
-                                : 'schedule'
+                              ? 'arrow_circle_right'
+                              : 'schedule'
                     }
                     title={`Cuota #${index + 1}`}
                     monto={formatMoney(gasto.amount_per_quota, gasto.currency_type)}
@@ -47,6 +48,7 @@ export default function CuotasSection({ gasto, onRefund }) {
                     next={index + 1 === gasto.payed_quotas + 1}
                     isLastPaid={index + 1 === gasto.payed_quotas}
                     refundUnlocked={refundUnlocked}
+                    reconcileActive={reconcileActive}
                     onRefund={onRefund}
                 />
             ))}

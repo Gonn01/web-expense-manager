@@ -8,7 +8,7 @@ import {
     updateGasto,
     deleteGasto,
 } from '@/services/api';
-import { ensureReconcileActive } from '@/hooks/use-payments';
+import { isReconcileActive } from '@/hooks/use-payments';
 import { useReconcileStore } from '@/store/use-reconcile-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
@@ -42,19 +42,24 @@ export function useGastoData() {
         await load(true);
     }
 
+    // En el detalle de gasto se puede pagar/revertir SIN sesión de "hacer
+    // cuentas": con sesión abierta el pago queda diferido (se registra al
+    // cerrarla); sin sesión se registra ahora, solo en el historial del gasto.
     async function pagarCuota() {
         if (!gasto) return;
-        if (!ensureReconcileActive()) return;
+        const deferred = isReconcileActive();
         try {
             await pagarCuota2(gasto.id, token);
-            useReconcileStore.getState().refreshAfterPayment();
+            if (deferred) useReconcileStore.getState().refreshAfterPayment();
             await load(true);
             useSnackbarStore
                 .getState()
                 .show(
-                    'Gasto marcado. Se registra al terminar las cuentas.',
+                    deferred
+                        ? 'Gasto marcado. Se registra al terminar las cuentas.'
+                        : 'Pago registrado en el historial del gasto.',
                     'success',
-                    'playlist_add_check',
+                    deferred ? 'playlist_add_check' : 'check_circle',
                 );
         } catch (err) {
             // El interceptor de axios ya mostró el mensaje según el código.
@@ -64,8 +69,16 @@ export function useGastoData() {
 
     async function refundCuota() {
         if (!gasto) return;
-        await refundCuota2(gasto.id, token);
-        await load(true);
+        try {
+            await refundCuota2(gasto.id, token);
+            await load(true);
+            useSnackbarStore
+                .getState()
+                .show('Pago revertido en el historial del gasto.', 'success', 'undo');
+        } catch (err) {
+            // El interceptor de axios ya mostró el mensaje según el código.
+            console.error('Error revirtiendo cuota', err);
+        }
     }
 
     async function eliminar(deleteLinked = false) {
