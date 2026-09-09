@@ -224,7 +224,9 @@ export default function ExpenseCard({
                                 Procesando…
                             </>
                         ) : gasto.type === 'INGRESO' ? (
-                            'Registrar cobro'
+                            reconcileActive ? 'Marcar cobro' : 'Registrar cobro'
+                        ) : reconcileActive ? (
+                            'Marcar pago'
                         ) : (
                             'Pagar cuota'
                         )}

@@ -16,7 +16,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
         try {
             await onSave(name.trim());
         } catch (err) {
-            setNameError(err?.response?.data?.error || 'No se pudo actualizar la entidad.');
+            setNameError(err?.message || 'No se pudo actualizar la entidad.');
         }
     };
 

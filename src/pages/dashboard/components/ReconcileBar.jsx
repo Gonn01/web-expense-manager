@@ -43,7 +43,11 @@ export function ReconcileBar({ totalItems = 0 }) {
     const pct = totalItems > 0 ? Math.min(100, Math.round((checkedCount / totalItems) * 100)) : 0;
 
     const handleFinish = async () => {
-        if (!confirm('¿Terminar las cuentas de este mes? Se va a guardar un resumen de lo pagado.'))
+        if (
+            !confirm(
+                '¿Terminar las cuentas de este mes? Se van a registrar los pagos de los gastos marcados y se guardará un resumen.',
+            )
+        )
             return;
         setWorking(true);
         const snapshot = await finishSession();
@@ -84,7 +88,7 @@ export function ReconcileBar({ totalItems = 0 }) {
                     </div>
                     <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
                         {checkedCount}
-                        {totalItems > 0 ? ` / ${totalItems}` : ''} pagados
+                        {totalItems > 0 ? ` / ${totalItems}` : ''} marcados
                     </span>
                 </div>
 

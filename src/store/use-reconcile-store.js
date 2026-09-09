@@ -62,7 +62,6 @@ export const useReconcileStore = create((set, get) => ({
             toast('Modo hacer cuentas activado.', 'success');
         } catch (err) {
             console.error('Error iniciando sesión de cuentas:', err);
-            toast('No se pudo activar el modo hacer cuentas.');
         }
     },
 
@@ -74,7 +73,6 @@ export const useReconcileStore = create((set, get) => ({
             return snapshot;
         } catch (err) {
             console.error('Error cerrando sesión de cuentas:', err);
-            toast('No se pudieron cerrar las cuentas.');
             return null;
         }
     },
@@ -112,8 +110,7 @@ export const useReconcileStore = create((set, get) => ({
             set({ checkedExpenses: itemsToMap(data.items) });
         } catch (err) {
             console.error('Error marcando gasto:', err);
-            toast('No se pudo guardar la marca.');
-            // Revertir
+            // Revertir (el interceptor ya mostró el error)
             set((s) => {
                 const next = { ...s.checkedExpenses };
                 if (wasChecked) next[id] = checkedExpenses[id];
@@ -146,7 +143,6 @@ export const useReconcileStore = create((set, get) => ({
             set({ checkedExpenses: itemsToMap(data.items) });
         } catch (err) {
             console.error('Error marcando entidad:', err);
-            toast('No se pudo guardar la marca.');
             set({ checkedExpenses: prev });
         }
     },

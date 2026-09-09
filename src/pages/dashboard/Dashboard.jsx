@@ -27,8 +27,8 @@ export default function Dashboard() {
             await data.crearGasto(payload);
             ui.setOpenNewExpense(false);
         } catch (err) {
+            // El interceptor de axios ya mostró el error.
             console.error('Error creando gasto:', err);
-            alert('No se pudo crear el gasto.');
         } finally {
             ui.setLoadingCreatingExpense(false);
         }

@@ -116,8 +116,9 @@ export function useCompartidos() {
                 await confirmarPagoApi(movementId, token);
                 useSnackbarStore.getState().show('Pago confirmado', 'success');
                 await load();
-            } catch {
-                useSnackbarStore.getState().show('No se pudo confirmar el pago.', 'error');
+            } catch (err) {
+                // El interceptor de axios ya mostró el error.
+                console.error('Error confirmando pago', err);
             } finally {
                 setLoadingAction(null);
             }
@@ -132,8 +133,9 @@ export function useCompartidos() {
                 await rechazarPagoApi(movementId, token);
                 useSnackbarStore.getState().show('Pago rechazado', 'success');
                 await load();
-            } catch {
-                useSnackbarStore.getState().show('No se pudo rechazar el pago.', 'error');
+            } catch (err) {
+                // El interceptor de axios ya mostró el error.
+                console.error('Error rechazando pago', err);
             } finally {
                 setLoadingAction(null);
             }

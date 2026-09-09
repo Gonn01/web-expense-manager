@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
-import GlobalSnackbar from '@/components/GlobalSnackbar';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useCategoriesStore } from '@/store/use-categories-store';
@@ -32,7 +31,6 @@ export default function AppLayout() {
                     </div>
                 </main>
             </div>
-            <GlobalSnackbar />
         </div>
     );
 }

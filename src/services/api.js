@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { normalizeApiError, notifyError } from '@/services/error-handler';
+import { useDialogStore } from '@/store/use-dialog-store';
+import useAuth from '@/store/use-auth-store';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -6,6 +9,48 @@ const api = axios.create({
     baseURL: API_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
 });
+
+// Endpoints cuya UI muestra el error inline (formularios de login/registro):
+// no dispares el snackbar/dialog global para ellos, pero igual normalizá el
+// error para que el formulario lo pueda mostrar.
+const SILENT_PATHS = ['/auth/login', '/auth/register'];
+
+let sessionExpiredHandled = false;
+
+/**
+ * Manejo central de errores: TODA request que falle pasa por acá.
+ *  - normaliza el error (code / status / message amigable)
+ *  - lo muestra como snackbar o dialog según el catálogo (salvo endpoints silent)
+ *  - en 401 cierra la sesión y manda al login
+ * y re-lanza el error normalizado para que los `catch` locales sigan andando.
+ */
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const normalized = normalizeApiError(error);
+        const url = error.config?.url ?? '';
+        const silent = error.config?.meta?.silent || SILENT_PATHS.some((p) => url.startsWith(p));
+
+        if (normalized.status === 401 && !silent) {
+            if (!sessionExpiredHandled) {
+                sessionExpiredHandled = true;
+                useAuth.getState().logout();
+                useDialogStore.getState().alert({
+                    title: normalized.title,
+                    message: normalized.message,
+                    tone: normalized.tone,
+                });
+                if (!window.location.pathname.startsWith('/login')) {
+                    window.location.assign('/login');
+                }
+            }
+            return Promise.reject(normalized);
+        }
+
+        if (!silent) notifyError(normalized);
+        return Promise.reject(normalized);
+    },
+);
 
 /* ===============================
    AUTH

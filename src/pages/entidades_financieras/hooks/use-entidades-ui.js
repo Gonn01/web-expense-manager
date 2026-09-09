@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEntidadesData } from './use-entidades-data';
 import { useUIStore } from '@/store/use-ui-store';
+import { useDialogStore } from '@/store/use-dialog-store';
 
 export function useEntidadesUI() {
     const navigate = useNavigate();
@@ -31,16 +32,19 @@ export function useEntidadesUI() {
             navigate('/app/entidades');
 
             if (linkError) {
+                // Éxito parcial: la entidad quedó creada pero el vínculo falló.
                 console.error('Error vinculando usuario:', linkError);
-                alert(
-                    linkError?.response?.data?.error
-                        ? `La entidad se creó, pero no se pudo vincular el usuario: ${linkError.response.data.error}`
-                        : 'La entidad se creó, pero no se pudo vincular el usuario. Revisá el email.',
-                );
+                useDialogStore.getState().alert({
+                    title: 'Entidad creada',
+                    tone: 'warning',
+                    message: `Se creó la entidad, pero no se pudo vincular el usuario: ${
+                        linkError.message ?? 'revisá el email.'
+                    }`,
+                });
             }
         } catch (err) {
+            // El interceptor de axios ya mostró el error.
             console.error('Error creating entity:', err);
-            alert(err?.response?.data?.error || 'No se pudo crear la entidad.');
         }
     }
 
@@ -48,8 +52,8 @@ export function useEntidadesUI() {
         try {
             await eliminarEntidad(entity.id);
         } catch (err) {
+            // El interceptor de axios ya mostró el error.
             console.error('Error deleting entity:', err);
-            alert('No se pudo eliminar la entidad.');
         }
     }
 
