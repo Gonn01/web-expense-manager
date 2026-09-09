@@ -76,3 +76,4 @@
 - [ ] posibilidad de marcar entidades como privadas y que al querer ver datos de la misma haya que poner una contraseña
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
 - [ ] dEFINIR TEMA MARKETING
+- [ ] Notificaciones de cuando tenes que pagar cosas
