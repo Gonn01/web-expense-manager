@@ -93,7 +93,7 @@ export const ERROR_PRESENTATION = Object.freeze({
 
     // ─── Modo "hacer cuentas" (reconcile) ───────────────────────────────────
     RECONCILE_REQUIRED: {
-        message: 'Activá el modo "Hacer cuentas" para registrar pagos.',
+        message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',
         variant: 'snackbar',
         icon: 'playlist_add_check',
     },

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Icon from '@/components/Icon';
 import ModalOverlay from './components/ModalOverlay';
 import ModalContainer from './components/ModalContainer';
 import ModalHeader from './components/ModalHeader';
@@ -14,6 +15,7 @@ export default function ConfirmInstallmentPaymentModal({
     entityName,
     items = [],
     loading = false,
+    reconcileActive = true,
 }) {
     const [removedIds, setRemovedIds] = useState(() => new Set());
 
@@ -71,6 +73,10 @@ export default function ConfirmInstallmentPaymentModal({
         onConfirm?.(activeItems);
     };
 
+    const registraMsg = reconcileActive
+        ? 'Se registra al terminar las cuentas.'
+        : 'Se registra ahora en el historial de este gasto.';
+
     return createPortal(
         <ModalOverlay onClose={onCancel}>
             <ModalContainer>
@@ -79,12 +85,23 @@ export default function ConfirmInstallmentPaymentModal({
                     title={isSingle ? 'Marcar Pago de Cuota' : 'Marcar Pago de Cuotas'}
                     description={
                         isSingle
-                            ? `Vas a marcar el pago de ${single.name} en ${entityName}. Se registra al terminar las cuentas.`
+                            ? `Vas a marcar el pago de ${single.name} en ${entityName}. ${registraMsg}`
                             : `Vas a marcar el pago de ${activeItems.length} gasto${
                                   activeItems.length === 1 ? '' : 's'
-                              } activo${activeItems.length === 1 ? '' : 's'} de ${entityName}. Se registran al terminar las cuentas.`
+                              } activo${activeItems.length === 1 ? '' : 's'} de ${entityName}. ${registraMsg}`
                     }
                 />
+
+                {!reconcileActive && (
+                    <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-left text-xs text-amber-300">
+                        <Icon name="warning" className="text-base shrink-0 mt-px" />
+                        <span>
+                            No hay una sesión de «Hacer cuentas» abierta. Este pago va a quedar en
+                            el <strong>historial del gasto</strong>, pero{' '}
+                            <strong>no en el historial de cuentas</strong>.
+                        </span>
+                    </div>
+                )}
 
                 {isSingle ? (
                     <SinglePaymentSection item={single} entityName={entityName} />

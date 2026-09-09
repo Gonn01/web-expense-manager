@@ -15,6 +15,7 @@ import { formatMoney } from '@/utils/FormatMoney';
 import UpdateExpenseModal from '@/components/modals/Expenses/UpdateExpense/UpdateExpenseModal';
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
+import { useReconcileStore } from '@/store/use-reconcile-store';
 
 export default function DetalleGasto() {
     const {
@@ -30,6 +31,9 @@ export default function DetalleGasto() {
         // onSeleccionAdjuntos,
     } = useGastoUI();
     const { getEntityById } = useEntitiesStore();
+    // Verificador: sin sesión de "hacer cuentas" abierta no se puede pagar
+    // ni revertir cuotas. Se refleja en los botones de esta pantalla.
+    const reconcileActive = useReconcileStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -88,7 +92,12 @@ export default function DetalleGasto() {
                         />
                     </div>
                     {!gasto.fixed_expense && (
-                        <CuotasSection gasto={gasto} loading={loading} onRefund={refundCuota} />
+                        <CuotasSection
+                            gasto={gasto}
+                            loading={loading}
+                            onRefund={refundCuota}
+                            reconcileActive={reconcileActive}
+                        />
                     )}
                     {gasto.fixed_expense && (
                         <PagosFijosSection gasto={gasto} onRefund={refundCuota} />
@@ -127,6 +136,7 @@ export default function DetalleGasto() {
                 loading={confirmLoading}
                 items={gasto ? [gasto] : []}
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
+                reconcileActive={reconcileActive}
             />
 
             {/* MODAL EDITAR */}

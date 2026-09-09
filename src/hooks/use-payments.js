@@ -3,10 +3,20 @@ import { pagarCuota, pagarCuotasLote } from '@/services/api';
 import { useReconcileStore } from '@/store/use-reconcile-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
-const RECONCILE_MSG = 'Activá el modo "Hacer cuentas" para registrar pagos.';
+const RECONCILE_MSG = 'Activá el modo "Hacer cuentas" para marcar pagos desde acá.';
 
+/** ¿Hay una sesión de "hacer cuentas" abierta? (sin efectos secundarios) */
+export function isReconcileActive() {
+    return useReconcileStore.getState().active;
+}
+
+/**
+ * Verificador para el flujo de "marcar" del dashboard (pago en lote), que sí
+ * necesita una sesión abierta. En el detalle de gasto NO se usa: ahí se puede
+ * pagar/revertir sin sesión (queda solo en el historial del gasto).
+ */
 export function ensureReconcileActive() {
-    if (useReconcileStore.getState().active) return true;
+    if (isReconcileActive()) return true;
     useSnackbarStore.getState().show(RECONCILE_MSG, 'error', 'playlist_add_check');
     return false;
 }
