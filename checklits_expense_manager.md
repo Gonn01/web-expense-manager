@@ -19,7 +19,6 @@
 - [x] boton exportar que tome toda la informacion del modo hacer cuentas (botón "Exportar" en cada snapshot → resumen del mes al portapapeles + botón "Copiar" por entidad, estilo WhatsApp)
 - [x] grafico de gastos por categoria
 - [x] metricas por categoria en relacion al sueldo, por ej, cuanto gasto de suscripciones en relacion al sueldo (11%)
-- [ ] como hacemos para explicarle al usuario como usar el sistema
 - [x] sacar balance general del dashboard
 - [x] al activar boton hacer cuentas que aparezca un boton terminar, que guarde los datos resumen para posteriores metricas (botón "Terminar" en el banner → snapshot)
 
@@ -28,9 +27,9 @@
 - [x] Se elimina balance general
 - [ ] el grafico del dashboard debe tener en cuenta si el usuario ya hizo las cuentas este mes, para saber en que mes empieza el grafico
 - [x] pago con entidad
-- [ ] checkbox de entra el mes siguiente
+- [x] checkbox de entra el mes siguiente (se reemplazo por el boton postergar)
 - [x] Flechita para ocultar los balances y también que el sidebar se oculte (flechitas individuales: una colapsa el sidebar, otra oculta la columna de balances; preferencia persistida)
-- [ ] agregar favoritos
+- [x] agregar favoritos
 
 ## ENTIDADES FINANCIERAS
 
@@ -77,3 +76,4 @@
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
 - [ ] dEFINIR TEMA MARKETING
 - [ ] Notificaciones de cuando tenes que pagar cosas
+- [ ] como hacemos para explicarle al usuario como usar el sistema
