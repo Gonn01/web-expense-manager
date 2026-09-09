@@ -39,11 +39,11 @@
 - [xx] pantalla de entidades eliminadas y boton para restaurar
 - [x] visibilizar a quien esta vinculada
 
-## Detalle entidad financiera
+## Detalle entidad financiera C
 
-- [ ] sacar del dialog de editar la vinculacion
-- [ ] crear boton para vincular, que se alterne con un desvincular, con dialog de alerta.
-- [ ] boton ver graficos
+- [x] sacar del dialog de editar la vinculacion
+- [x] crear boton para vincular, que se alterne con un desvincular, con dialog de alerta.
+- [x] boton ver graficos
 - [ ] que las cards de gastos sean iguales a las del dashboard
 - [ ] boton copiar
 - [ ] boton pagar/registrar cobro
