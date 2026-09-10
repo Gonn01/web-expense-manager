@@ -1,8 +1,10 @@
 import { createPortal } from 'react-dom';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
+import DateRangeFilter, { inDateRange } from '@/components/DateRangeFilter';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
+import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
 import ExpenseCard from '@/components/ExpenseCard';
 
 import { TabHeader } from './components/TabHeader';
@@ -18,6 +20,11 @@ import MontoChart from '@/components/MontoChart';
 import CategoriaChart from '@/components/CategoriaChart';
 import Loader from '@/components/Loader';
 import PeligroEliminar from '@/components/PeligroEliminar';
+import { ChipTipoGasto } from '@/components/ChipTipoGasto';
+import { formatMoney } from '@/utils/FormatMoney';
+import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
+import { useExchangeRates } from '@/hooks/use-exchange-rates';
+import useAuth from '@/store/use-auth-store';
 
 export default function EntidadDetalle() {
     const {
@@ -44,9 +51,38 @@ export default function EntidadDetalle() {
         onConfirmPay,
         setPayModalOpen,
         loadingPayIds,
+        gastosEliminados,
+        loadingEliminados,
+        onRestaurarGasto,
+        restoringIds,
     } = useEntidadUI();
 
     const [showCharts, setShowCharts] = useState(false);
+    const [logRange, setLogRange] = useState({ from: '', to: '' });
+
+    const { user } = useAuth();
+    const { rates } = useExchangeRates();
+    const preferredCurrency = ['ARS', 'USD', 'EUR'].includes(user?.preferred_currency)
+        ? user.preferred_currency
+        : 'ARS';
+
+    // Resumen para WhatsApp: mismo formato que en el dashboard, sobre los gastos activos.
+    const whatsappGroup = useMemo(
+        () => ({
+            id: entity?.id,
+            name: entity?.name ?? '',
+            items: entity?.gastos_activos ?? [],
+        }),
+        [entity],
+    );
+
+    const filteredMovements = useMemo(
+        () =>
+            (entity?.movements ?? []).filter((m) =>
+                inDateRange(m.created_at, logRange.from, logRange.to),
+            ),
+        [entity, logRange],
+    );
 
     if (loading) return <Loader />;
 
@@ -77,6 +113,13 @@ export default function EntidadDetalle() {
                         onVincular={onVincular}
                         onDesvincular={onDesvincular}
                         loading={loadingVincular}
+                    />
+                    <WhatsAppCopyButton
+                        group={whatsappGroup}
+                        selectedCurrency={null}
+                        preferredCurrency={preferredCurrency}
+                        rates={rates}
+                        label="Copiar resumen"
                     />
                 </div>
             </div>
@@ -194,17 +237,42 @@ export default function EntidadDetalle() {
                 </ListContainer>
             )}
 
-            {tab === 'log' && (
-                <ListContainer empty={entity.movements.length === 0} emptyLabel="Sin registros.">
-                    {entity.movements.map((l, i) => (
-                        <div key={i} className="flex justify-between py-3">
-                            <p className="text-sm text-zinc-600">{l.movement_type}</p>
-                            <span className="text-xs text-zinc-500">
-                                {new Date(l.created_at).toLocaleString()}
-                            </span>
-                        </div>
+            {tab === 'eliminados' && (
+                <ListContainer
+                    empty={!loadingEliminados && (gastosEliminados ?? []).length === 0}
+                    emptyLabel={
+                        loadingEliminados
+                            ? 'Cargando…'
+                            : 'No hay gastos eliminados en esta entidad.'
+                    }
+                >
+                    {(gastosEliminados ?? []).map((g) => (
+                        <DeletedGastoRow
+                            key={g.id}
+                            gasto={g}
+                            restoring={restoringIds.has(g.id)}
+                            onRestore={() => onRestaurarGasto(g.id)}
+                        />
                     ))}
                 </ListContainer>
+            )}
+
+            {tab === 'log' && (
+                <div className="flex flex-col gap-3">
+                    <DateRangeFilter from={logRange.from} to={logRange.to} onChange={setLogRange} />
+                    <ListContainer
+                        empty={filteredMovements.length === 0}
+                        emptyLabel={
+                            entity.movements.length === 0
+                                ? 'Sin registros.'
+                                : 'Sin registros en ese rango de fechas.'
+                        }
+                    >
+                        {filteredMovements.map((l, i) => (
+                            <MovementRow key={l.id ?? i} mov={l} />
+                        ))}
+                    </ListContainer>
+                </div>
             )}
             <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} />
 
@@ -214,6 +282,8 @@ export default function EntidadDetalle() {
                 items={payModalItem ? [payModalItem] : []}
                 onCancel={() => setPayModalOpen(false)}
                 onConfirm={onConfirmPay}
+                reconcileActive={false}
+                showReconcileWarning={false}
             />
             {/* MODAL EDITAR */}
             {openEditEntity && (
@@ -241,12 +311,102 @@ export default function EntidadDetalle() {
 
             {/* MODAL: Gráficos */}
             {showCharts && (
-                <ChartsModal
-                    gastos={entity.gastos_activos}
-                    onClose={() => setShowCharts(false)}
-                />
+                <ChartsModal gastos={entity.gastos_activos} onClose={() => setShowCharts(false)} />
             )}
         </>
+    );
+}
+
+const MOVEMENT_META = {
+    CREATION: { icon: 'add_circle', label: 'Entidad creada' },
+    PURCHASE_CREATED: { icon: 'shopping_cart', label: 'Gasto creado' },
+    EDITED: { icon: 'edit', label: 'Editado' },
+    DELETE: { icon: 'delete', label: 'Gasto eliminado' },
+    RESTORE: { icon: 'restore_from_trash', label: 'Gasto restaurado' },
+    LINK: { icon: 'link', label: 'Usuario vinculado' },
+    UNLINK: { icon: 'link_off', label: 'Usuario desvinculado' },
+    POSTPONED: { icon: 'schedule', label: 'Postergación agregada' },
+    UNPOSTPONED: { icon: 'event_available', label: 'Postergación quitada' },
+    PAYMENT: { icon: 'payments', label: 'Pago' },
+    REFUND: { icon: 'undo', label: 'Reembolso' },
+    PENDING_PAYMENT: { icon: 'hourglass_empty', label: 'Pago pendiente' },
+};
+
+function MovementRow({ mov }) {
+    const meta = MOVEMENT_META[mov.movement_type] ?? { icon: 'history', label: mov.movement_type };
+
+    return (
+        <div className="flex items-start justify-between gap-3 py-3">
+            <div className="flex items-start gap-2.5 min-w-0">
+                <Icon
+                    name={meta.icon}
+                    className="text-base text-zinc-400 dark:text-zinc-500 mt-0.5 shrink-0"
+                />
+                <div className="min-w-0">
+                    <p className="text-sm text-zinc-700 dark:text-zinc-200">{meta.label}</p>
+                    {mov.detail && (
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 break-words">
+                            {mov.detail}
+                        </p>
+                    )}
+                </div>
+            </div>
+            <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">
+                {new Date(mov.created_at).toLocaleString()}
+            </span>
+        </div>
+    );
+}
+
+function DeletedGastoRow({ gasto, restoring, onRestore }) {
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+    return (
+        <div className="flex items-center justify-between gap-3 py-4 px-2">
+            <div className="flex items-center gap-3 min-w-0">
+                <ChipTipoGasto fijo={gasto.fixed_expense} tipo={gasto.type} column={true} />
+                <div className="min-w-0">
+                    <p className="font-medium text-zinc-900 dark:text-white truncate">
+                        {gasto.name}
+                    </p>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                        {formatMoney(gasto.amount, gasto.currency_type)} · {gasto.currency_type}
+                        {gasto.status !== 'ACTIVE' ? ` · ${gasto.status}` : ''}
+                    </p>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                onClick={() => setConfirmOpen(true)}
+                disabled={restoring}
+                className="shrink-0 flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+                <Icon
+                    name={restoring ? 'progress_activity' : 'restore_from_trash'}
+                    className={`text-base ${restoring ? 'animate-spin' : ''}`}
+                />
+                Restaurar
+            </button>
+
+            <ConfirmDeleteModal
+                open={confirmOpen}
+                title="¿Restaurar gasto?"
+                message={`"${gasto.name}" vuelve a la entidad y aparece de nuevo en activos / finalizados / pendientes.`}
+                confirmLabel="Restaurar"
+                cancelLabel="Cancelar"
+                tone="primary"
+                loading={restoring}
+                onConfirm={async () => {
+                    try {
+                        await onRestore();
+                    } finally {
+                        setConfirmOpen(false);
+                    }
+                }}
+                onCancel={() => setConfirmOpen(false)}
+            />
+        </div>
     );
 }
 

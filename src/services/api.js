@@ -161,6 +161,13 @@ export const desvincularUsuarioEntidad = async (entityId, token) => {
     return data.data;
 };
 
+export const fetchGastosEliminados = async (entityId, token) => {
+    const { data } = await api.get(`/entidades-financieras/${entityId}/gastos-eliminados`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
 /* ===============================
    GASTOS
 =============================== */
@@ -194,6 +201,15 @@ export const deleteGasto = async (gastoId, token, { deleteLinked = false } = {})
     return true;
 };
 
+export const restaurarGasto = async (gastoId, token) => {
+    const { data } = await api.post(
+        `/gastos/${gastoId}/restaurar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const refundCuota = async (gastoId, token) => {
     const { data } = await api.post(
         `/gastos/${gastoId}/refund-cuota`,
@@ -203,10 +219,10 @@ export const refundCuota = async (gastoId, token) => {
     return data.data;
 };
 
-export const pagarCuota = async (gastoId, token) => {
+export const pagarCuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
         `/gastos/${gastoId}/pagar-cuota`,
-        {},
+        direct ? { direct: true } : {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEntidadData } from './use-entidad-data';
 
@@ -15,9 +15,41 @@ export function useEntidadUI() {
         vincularUsuario,
         desvincularUsuario,
         pagarCuota,
+        gastosEliminados,
+        loadingEliminados,
+        cargarGastosEliminados,
+        restaurarGasto,
     } = useEntidadData();
 
-    const [tab, setTab] = useState('activos');
+    const [tab, setTabState] = useState('activos');
+    const [restoringIds, setRestoringIds] = useState(new Set());
+
+    // Al abrir "Eliminados" por primera vez, disparamos la carga on-demand.
+    const setTab = useCallback(
+        (next) => {
+            setTabState(next);
+            if (next === 'eliminados' && gastosEliminados === null) {
+                cargarGastosEliminados();
+            }
+        },
+        [gastosEliminados, cargarGastosEliminados],
+    );
+
+    const onRestaurarGasto = useCallback(
+        async (gastoId) => {
+            setRestoringIds((prev) => new Set([...prev, gastoId]));
+            try {
+                await restaurarGasto(gastoId);
+            } finally {
+                setRestoringIds((prev) => {
+                    const nextSet = new Set(prev);
+                    nextSet.delete(gastoId);
+                    return nextSet;
+                });
+            }
+        },
+        [restaurarGasto],
+    );
     const [openNewExpense, setOpenNewExpense] = useState(false);
     const [openEditEntity, setOpenEditEntity] = useState(false);
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
@@ -120,6 +152,11 @@ export function useEntidadUI() {
         onConfirmPay,
         setPayModalOpen,
         loadingPayIds,
+
+        gastosEliminados,
+        loadingEliminados,
+        onRestaurarGasto,
+        restoringIds,
 
         navigate,
     };

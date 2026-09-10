@@ -1,6 +1,8 @@
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
+import DateRangeFilter, { inDateRange } from '@/components/DateRangeFilter';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
 import { useCuentasList, monthLabel } from './hooks/use-cuentas';
@@ -8,6 +10,12 @@ import { useCuentasList, monthLabel } from './hooks/use-cuentas';
 export default function Cuentas() {
     const { snapshots, loading } = useCuentasList();
     const navigate = useNavigate();
+    const [range, setRange] = useState({ from: '', to: '' });
+
+    const visibles = useMemo(
+        () => snapshots.filter((s) => inDateRange(s.finished_at, range.from, range.to)),
+        [snapshots, range],
+    );
 
     if (loading) return <Loader />;
 
@@ -23,6 +31,15 @@ export default function Cuentas() {
                 </p>
             </div>
 
+            {snapshots.length > 0 && (
+                <DateRangeFilter
+                    from={range.from}
+                    to={range.to}
+                    onChange={setRange}
+                    className="shrink-0 mb-4"
+                />
+            )}
+
             {snapshots.length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 text-center text-slate-500 dark:text-slate-400 gap-2">
                     <Icon name="history" className="text-5xl opacity-40" />
@@ -32,9 +49,14 @@ export default function Cuentas() {
                         y tocá <span className="font-semibold">Terminar</span> cuando termines.
                     </p>
                 </div>
+            ) : visibles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center flex-1 text-center text-slate-500 dark:text-slate-400 gap-2">
+                    <Icon name="event_busy" className="text-5xl opacity-40" />
+                    <p>No hay cuentas cerradas en ese rango de fechas.</p>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-1 flex-1 min-h-0 pb-4 content-start">
-                    {snapshots.map((snap) => (
+                    {visibles.map((snap) => (
                         <SnapshotCard
                             key={snap.id}
                             snap={snap}

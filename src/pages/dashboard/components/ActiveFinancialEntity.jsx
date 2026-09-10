@@ -197,6 +197,7 @@ export default function ActiveFinancialEntity({
                                 <ExpenseCard
                                     gasto={it}
                                     entityName={group.name}
+                                    reconcileEnabled
                                     loading={loadingIds?.has(it.id)}
                                     onClick={() => onItemClick?.(it)}
                                     onPayClick={() => onPayClick?.(group, it)}

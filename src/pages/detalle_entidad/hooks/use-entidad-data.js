@@ -6,18 +6,25 @@ import {
     deleteFinancialEntity,
     vincularUsuarioEntidad,
     desvincularUsuarioEntidad,
+    fetchGastosEliminados,
+    restaurarGasto as restaurarGastoApi,
+    pagarCuota as pagarCuotaApi,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
-import { usePayments } from '@/hooks/use-payments';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useParams } from 'react-router-dom';
 
 export function useEntidadData() {
     const { id } = useParams();
     const { token } = useAuth();
-    const { handleConfirm } = usePayments(token);
 
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    // Gastos eliminados de la entidad (soft-delete). Se cargan on-demand
+    // cuando el usuario abre la pestaña "Eliminados".
+    const [gastosEliminados, setGastosEliminados] = useState(null); // null = nunca cargado
+    const [loadingEliminados, setLoadingEliminados] = useState(false);
 
     useEffect(() => {
         if (!token) return;
@@ -126,6 +133,31 @@ export function useEntidadData() {
         await deleteFinancialEntity(id, token);
     }, [id, token]);
 
+    const cargarGastosEliminados = useCallback(async () => {
+        setLoadingEliminados(true);
+        try {
+            const data = await fetchGastosEliminados(id, token);
+            setGastosEliminados(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error cargando gastos eliminados', err);
+            setGastosEliminados((prev) => prev ?? []);
+        } finally {
+            setLoadingEliminados(false);
+        }
+    }, [id, token]);
+
+    const restaurarGasto = useCallback(
+        async (gastoId) => {
+            await restaurarGastoApi(gastoId, token);
+            // Sale de la lista de eliminados y recargamos la entidad para que
+            // vuelva a aparecer en activos / finalizados / pendientes.
+            setGastosEliminados((prev) => (prev ?? []).filter((g) => g.id !== gastoId));
+            const data = await fetchFinancialEntityById(id, token);
+            setEntity(data);
+        },
+        [id, token],
+    );
+
     const vincularUsuario = useCallback(
         async (email) => {
             const updated = await vincularUsuarioEntidad(id, email, token);
@@ -149,24 +181,24 @@ export function useEntidadData() {
         }));
     }, [id, token]);
 
+    // El "modo hacer cuentas" vive solo en el dashboard: desde el detalle de
+    // entidad el pago es SIEMPRE directo (aunque haya una sesión abierta). Si el
+    // gasto estaba postergado, el backend le quita la postergación al pagar.
     const pagarCuota = useCallback(
         async (gasto) => {
-            const [updated] = await handleConfirm([gasto]);
-
-            if (updated) {
-                setEntity((prev) => {
-                    if (!prev) return prev;
-                    const update = (list) =>
-                        list.map((g) =>
-                            String(g.id) === String(updated.id) ? { ...g, ...updated } : g,
-                        );
-                    return { ...prev, gastos_activos: update(prev.gastos_activos) };
-                });
+            try {
+                await pagarCuotaApi(gasto.id, token, { direct: true });
+                const data = await fetchFinancialEntityById(id, token);
+                setEntity(data);
+                useSnackbarStore
+                    .getState()
+                    .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
+            } catch (err) {
+                // El interceptor de axios ya mostró el mensaje según el código.
+                console.error('Error registrando pago', err);
             }
-
-            return updated;
         },
-        [handleConfirm],
+        [id, token],
     );
 
     return {
@@ -180,5 +212,9 @@ export function useEntidadData() {
         desvincularUsuario,
         pagarCuota,
         setEntity,
+        gastosEliminados,
+        loadingEliminados,
+        cargarGastosEliminados,
+        restaurarGasto,
     };
 }

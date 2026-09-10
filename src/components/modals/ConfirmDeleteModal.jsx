@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+const TONE = {
+    danger: 'bg-red-600 hover:bg-red-700',
+    primary: 'bg-primary text-background-dark hover:bg-primary/90',
+};
+
 export default function ConfirmDeleteModal({
     open,
     title = '¿Eliminar?',
     message = 'Esta acción no se puede deshacer.',
     confirmLabel = 'Eliminar',
     cancelLabel = 'Cancelar',
+    tone = 'danger',
+    loading = false,
     onConfirm,
     onCancel,
 }) {
@@ -46,14 +53,18 @@ export default function ConfirmDeleteModal({
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onCancel}
-                        className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] transition-colors"
+                        disabled={loading}
+                        className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {cancelLabel}
                     </button>
 
                     <button
                         onClick={onConfirm}
-                        className="cursor-pointer h-10 px-4 rounded-lg bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors"
+                        disabled={loading}
+                        className={`cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                            TONE[tone] ?? TONE.danger
+                        }`}
                     >
                         {confirmLabel}
                     </button>
