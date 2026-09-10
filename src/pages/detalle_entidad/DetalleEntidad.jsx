@@ -206,7 +206,7 @@ export default function EntidadDetalle() {
                     ))}
                 </ListContainer>
             )}
-            <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} />
+            <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} restorable={true} />
 
             <ConfirmInstallmentPaymentModal
                 open={payModalOpen}

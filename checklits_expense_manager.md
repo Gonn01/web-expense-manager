@@ -83,5 +83,5 @@
 
 ## Cositas para arreglar:
 
-- [ ]Restaurar entidad: el mensaje de "Eliminar entidad" dice que es permanente, pero ya se puede restaurar. Actualizar el texto.
+- [x]Restaurar entidad: el mensaje de "Eliminar entidad" dice que es permanente, pero ya se puede restaurar. Actualizar el texto.
 
