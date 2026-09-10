@@ -84,7 +84,7 @@ export default function HistorialSection({ gasto }) {
                                         className="text-primary"
                                     />
                                     <div className="flex flex-col">
-                                        <p className="font-medium text-white">
+                                        <p className="font-medium text-white whitespace-pre-line">
                                             {getEventTitle(movimiento, gasto)}
                                         </p>
                                         <p className="text-sm text-[#9eb7a8]">{formattedDate}</p>
