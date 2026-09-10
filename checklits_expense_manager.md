@@ -36,7 +36,7 @@
 - [x] sacar la flechita en el listado, porque se oculta
 - [x] al crear entidad se pueda vincular a un usuario
 - [x] modo grid
-- [] pantalla de entidades eliminadas y boton para restaurar
+- [xx] pantalla de entidades eliminadas y boton para restaurar
 - [x] visibilizar a quien esta vinculada
 
 ## Detalle entidad financiera C
@@ -54,9 +54,9 @@
 
 ## Detalle gasto
 
-- [ ] si es egreso que diga pagar cuota, si es ingreso que diga cobrar
-- [ ] historial, debe tener cambio de nombre, cualquier edicion, y que se edito en lo posible, eliminado y restaurado, creado pagos de cuota o reembolsos, y para la ultima cuota pagada debe decir finalizado.
-- [ ] en gastos fijos debe aparecer cuando hiciste cada pago, con la posibilidad de reembolsarlo
+- [x] si es egreso que diga pagar cuota, si es ingreso que diga cobrar
+- [x] historial, debe tener cambio de nombre, cualquier edicion, y que se edito en lo posible, eliminado y restaurado, creado pagos de cuota o reembolsos, y para la ultima cuota pagada debe decir finalizado.
+- [x] en gastos fijos debe aparecer cuando hiciste cada pago, con la posibilidad de reembolsarlo
 
 ## Perfil
 
@@ -73,7 +73,15 @@
 - [ ] modo daltonismo
 - [ ] posibilidad de marcar entidades como privadas y que al querer ver datos de la misma haya que poner una contraseña
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
-- [ ] dEFINIR TEMA MARKETING
+- [x] dEFINIR TEMA MARKETING
 - [ ] Notificaciones de cuando tenes que pagar cosas
 - [ ] como hacemos para explicarle al usuario como usar el sistema
 - [ ] [REVISAR]el grafico del dashboard debe tener en cuenta si el usuario ya hizo las cuentas este mes, para saber en que mes empieza el grafico
+
+
+
+
+## Cositas para arreglar:
+
+- [x]Restaurar entidad: el mensaje de "Eliminar entidad" dice que es permanente, pero ya se puede restaurar. Actualizar el texto.
+

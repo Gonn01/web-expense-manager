@@ -145,6 +145,22 @@ export const deleteFinancialEntity = async (id, token) => {
     return true;
 };
 
+export const fetchDeletedEntities = async (token) => {
+    const { data } = await api.get('/entidades-financieras/eliminadas', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const restoreEntity = async (id, token) => {
+    const { data } = await api.put(
+        `/entidades-financieras/${id}/restaurar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const vincularUsuarioEntidad = async (entityId, email, token) => {
     const { data } = await api.put(
         `/entidades-financieras/${entityId}/vincular-usuario`,

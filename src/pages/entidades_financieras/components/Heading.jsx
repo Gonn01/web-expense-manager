@@ -1,4 +1,4 @@
-export default function Heading({ onCreate, viewMode, setViewMode }) {
+export default function Heading({ onCreate, viewMode, setViewMode, setShowDeletedModal }) {
     return (
         <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
@@ -32,6 +32,14 @@ export default function Heading({ onCreate, viewMode, setViewMode }) {
                         <span className="material-symbols-outlined text-lg">grid_view</span>
                     </button>
                 </div>
+
+                <button
+                    onClick={() => setShowDeletedModal?.(true)}
+                    className="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 border border-black/10 dark:border-white/10 text-slate-700 dark:text-white text-sm font-bold tracking-wide hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                >
+                    <span className="material-symbols-outlined text-lg">restore</span>
+                    <span className="truncate">Ver eliminadas</span>
+                </button>
 
                 <button
                     onClick={onCreate}

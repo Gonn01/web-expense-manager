@@ -14,6 +14,7 @@ export default function ConfirmDeleteModal({
     cancelLabel = 'Cancelar',
     tone = 'danger',
     loading = false,
+    loadingLabel = 'Procesando...',
     onConfirm,
     onCancel,
 }) {
@@ -66,7 +67,7 @@ export default function ConfirmDeleteModal({
                             TONE[tone] ?? TONE.danger
                         }`}
                     >
-                        {confirmLabel}
+                        {loading ? loadingLabel : confirmLabel}
                     </button>
                 </div>
             </div>
