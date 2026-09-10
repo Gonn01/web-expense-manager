@@ -1,6 +1,7 @@
 export function TabHeader({ tab, setTab, pendingCount = 0 }) {
     const tabs = ['activos', 'finalizados'];
     if (pendingCount > 0) tabs.push('pendientes');
+    tabs.push('eliminados');
     tabs.push('log');
 
     const labelFor = (t) =>
@@ -12,7 +13,9 @@ export function TabHeader({ tab, setTab, pendingCount = 0 }) {
                 ? 'Gastos Fijos'
                 : t === 'pendientes'
                   ? 'Pendientes'
-                  : 'Historial';
+                  : t === 'eliminados'
+                    ? 'Eliminados'
+                    : 'Historial';
 
     return (
         <div className="border-b border-zinc-200 dark:border-zinc-800 mb-4">

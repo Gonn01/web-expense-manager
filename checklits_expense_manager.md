@@ -44,13 +44,13 @@
 - [x] sacar del dialog de editar la vinculacion
 - [x] crear boton para vincular, que se alterne con un desvincular, con dialog de alerta.
 - [x] boton ver graficos
-- [ ] que las cards de gastos sean iguales a las del dashboard
-- [ ] boton copiar
-- [ ] boton pagar/registrar cobro
-- [ ] en el historial debe ir, cuando se creo, cuando se vinculo y con quien, cuando se desvinculo de quien, cuando se elimino, cuando se restauro, cuando se creo una compra como sellama esa compra, cuando se edito el nombre de una compra, y cuando se elimino/ restauro esa compra
-- [ ] boton para ver gastos eliminados y poder restaurarlos
-- [ ] filtro de rango de fechas en el historial
-- [ ] visibilizar a quien esta vinculada
+- [x] que las cards de gastos sean iguales a las del dashboard
+- [x] boton copiar
+- [x] boton pagar/registrar cobro
+- [x] en el historial debe ir, cuando se creo, cuando se vinculo y con quien, cuando se desvinculo de quien, cuando se elimino, cuando se restauro, cuando se creo una compra como sellama esa compra, cuando se edito el nombre de una compra, y cuando se elimino/ restauro esa compra
+- [x] boton para ver gastos eliminados y poder restaurarlos
+- [x] filtro de rango de fechas en el historial
+- [x] visibilizar a quien esta vinculada
 
 ## Detalle gasto
 

@@ -16,6 +16,9 @@ export default function ConfirmInstallmentPaymentModal({
     items = [],
     loading = false,
     reconcileActive = true,
+    // Aviso "esto no queda en el historial de cuentas". Tiene sentido en la
+    // pantalla de detalle de gasto; en el resto no hablamos de "hacer cuentas".
+    showReconcileWarning = true,
 }) {
     const [removedIds, setRemovedIds] = useState(() => new Set());
 
@@ -73,6 +76,7 @@ export default function ConfirmInstallmentPaymentModal({
         onConfirm?.(activeItems);
     };
 
+    const verbo = reconcileActive ? 'marcar' : 'registrar';
     const registraMsg = reconcileActive
         ? 'Se registra al terminar las cuentas.'
         : 'Se registra ahora en el historial de este gasto.';
@@ -82,23 +86,40 @@ export default function ConfirmInstallmentPaymentModal({
             <ModalContainer>
                 <ModalHeader
                     icon="payments"
-                    title={isSingle ? 'Marcar Pago de Cuota' : 'Marcar Pago de Cuotas'}
+                    title={
+                        reconcileActive
+                            ? isSingle
+                                ? 'Marcar Pago de Cuota'
+                                : 'Marcar Pago de Cuotas'
+                            : isSingle
+                              ? 'Registrar Pago de Cuota'
+                              : 'Registrar Pago de Cuotas'
+                    }
                     description={
                         isSingle
-                            ? `Vas a marcar el pago de ${single.name} en ${entityName}. ${registraMsg}`
-                            : `Vas a marcar el pago de ${activeItems.length} gasto${
+                            ? `Vas a ${verbo} el pago de ${single.name} en ${entityName}. ${registraMsg}`
+                            : `Vas a ${verbo} el pago de ${activeItems.length} gasto${
                                   activeItems.length === 1 ? '' : 's'
                               } activo${activeItems.length === 1 ? '' : 's'} de ${entityName}. ${registraMsg}`
                     }
                 />
 
-                {!reconcileActive && (
+                {!reconcileActive && showReconcileWarning && (
                     <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-left text-xs text-amber-300">
                         <Icon name="warning" className="text-base shrink-0 mt-px" />
                         <span>
                             No hay una sesión de «Hacer cuentas» abierta. Este pago va a quedar en
                             el <strong>historial del gasto</strong>, pero{' '}
                             <strong>no en el historial de cuentas</strong>.
+                        </span>
+                    </div>
+                )}
+
+                {isSingle && single?.is_postponed && (
+                    <div className="mb-3 flex items-start gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-left text-xs text-sky-300">
+                        <Icon name="schedule" className="text-base shrink-0 mt-px" />
+                        <span>
+                            Este gasto está postergado. Al pagarlo se le quita la postergación.
                         </span>
                     </div>
                 )}

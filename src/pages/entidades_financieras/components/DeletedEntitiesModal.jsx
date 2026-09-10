@@ -151,7 +151,7 @@ export default function DeletedEntitiesModal({ isOpen, onClose, onRestore }) {
                 title="Restaurar entidad"
                 message={`¿Seguro que querés restaurar "${selected?.name}"?`}
                 confirmLabel="Confirmar"
-                variant="primary"
+                tone="primary"
                 loading={restoringId !== null}
                 loadingLabel="Restaurando..."
                 onCancel={() => setSelected(null)}

@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+const TONE = {
+    danger: 'bg-red-600 hover:bg-red-700',
+    primary: 'bg-primary text-background-dark hover:bg-primary/90',
+};
+
 export default function ConfirmDeleteModal({
     open,
     title = '¿Eliminar?',
     message = 'Esta acción no se puede deshacer.',
     confirmLabel = 'Eliminar',
     cancelLabel = 'Cancelar',
-    variant = 'danger',
+    tone = 'danger',
     loading = false,
     loadingLabel = 'Procesando...',
     onConfirm,
     onCancel,
 }) {
     const [visible, setVisible] = useState(open);
-    const confirmButtonClass = variant === 'primary'
-        ? 'bg-primary text-[#111714] hover:opacity-80'
-        : 'bg-red-600 text-white hover:bg-red-700';
 
     useEffect(() => {
         if (open) {
@@ -61,7 +63,9 @@ export default function ConfirmDeleteModal({
                     <button
                         onClick={onConfirm}
                         disabled={loading}
-                        className={`cursor-pointer h-10 px-4 rounded-lg text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${confirmButtonClass}`}
+                        className={`cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                            TONE[tone] ?? TONE.danger
+                        }`}
                     >
                         {loading ? loadingLabel : confirmLabel}
                     </button>

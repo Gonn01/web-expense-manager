@@ -14,10 +14,14 @@ export default function ExpenseCard({
     onToggleFavorite,
     loading = false,
     entityName,
+    // El "modo hacer cuentas" (checkbox + pago diferido) solo existe en el
+    // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
+    reconcileEnabled = false,
 }) {
-    const reconcileActive = useReconcileStore((s) => s.active);
+    const sessionActive = useReconcileStore((s) => s.active);
     const reconcileChecked = useReconcileStore((s) => Boolean(s.checkedExpenses[String(gasto.id)]));
     const toggleReconcile = useReconcileStore((s) => s.toggleExpense);
+    const reconcileActive = reconcileEnabled && sessionActive;
     const progress = gasto.fixed_expense
         ? 100
         : gasto.number_of_quotas > 0
@@ -202,16 +206,16 @@ export default function ExpenseCard({
                     </button>
                 )}
 
-                {onPayClick && !gasto.is_postponed && (
+                {onPayClick && (!gasto.is_postponed || !reconcileEnabled) && (
                     <button
                         className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${
-                            reconcileActive ? '' : 'opacity-50'
+                            reconcileEnabled && !sessionActive ? 'opacity-50' : ''
                         }`}
                         disabled={loading}
                         title={
-                            reconcileActive
-                                ? undefined
-                                : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                            reconcileEnabled && !sessionActive
+                                ? 'Activá el modo "Hacer cuentas" para registrar pagos'
+                                : undefined
                         }
                         onClick={(e) => {
                             e.stopPropagation();
@@ -224,7 +228,11 @@ export default function ExpenseCard({
                                 Procesando…
                             </>
                         ) : gasto.type === 'INGRESO' ? (
-                            reconcileActive ? 'Marcar cobro' : 'Registrar cobro'
+                            reconcileActive ? (
+                                'Marcar cobro'
+                            ) : (
+                                'Registrar cobro'
+                            )
                         ) : reconcileActive ? (
                             'Marcar pago'
                         ) : (
