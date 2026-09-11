@@ -1,0 +1,1080 @@
+DOCUMENTACION: ARQUITECTURA Y FLUJO DE UNA FEATURE COMPLETA
+==========================================================
+
+Proposito
+---------
+Este documento describe, de punta a punta, como esta organizada la
+aplicacion y como se construye una feature nueva atravesando todas las
+capas. Esta pensado para entregarselo a una IA (o a alguien que recien
+entra al proyecto) de modo que entienda el flujo completo: donde vive cada
+cosa, que responsabilidad tiene cada capa, como se conectan entre si y que
+convenciones seguir al agregar codigo.
+
+Los ejemplos concretos usan la vertical de Hoteles (rama de trabajo actual),
+pero el patron es identico para Vuelos, Reservas, Login, Mi Cuenta, etc.
+
+Para flujos funcionales especificos (paso a paso de cada pantalla,
+endpoints, payloads) ver los demas archivos de esta carpeta docs/.
+
+
+Indice
+------
+1. Vista general del proyecto (monorepo)
+2. Arquitectura en capas y regla de dependencias
+3. Responsabilidad de cada paquete
+4. Stack tecnico y librerias clave
+5. Inyeccion de dependencias (DI)
+6. Anatomia de una feature completa (Hoteles end-to-end)
+   6.1 Capa models
+   6.2 Capa http_providers
+   6.3 Capa repositories
+   6.4 Registro en DI
+   6.5 Capa services (Cubit + State)
+   6.6 Capa app (Page + View)
+   6.7 Navegacion / routing
+7. Plantillas por tipo de archivo
+8. Manejo de errores y observabilidad
+9. Patron de estado (Cubit)
+10. Navegacion con go_router
+11. Localizacion (l10n)
+12. Design system (moebius) y UI compartida
+13. Checklist para crear una feature nueva desde cero
+14. Reglas y trampas para tener en cuenta
+15. Decisiones de este port (app_expense_manager)
+16. Convenciones de UI: un archivo = una clase, carpetas widgets/, l10n
+
+
+1. VISTA GENERAL DEL PROYECTO (MONOREPO)
+========================================
+
+Es un monorepo Flutter gestionado con Melos. La raiz no tiene lib/: el
+codigo vive en 8 paquetes locales referenciados por path.
+
+  Paquete                      Rol
+  ---------------------------- -----------------------------------------------
+  almundo_app                  Capa de presentacion (UI): pantallas,
+                               navegacion, widgets, l10n, bootstrap. Es la
+                               unica app Flutter ejecutable.
+  almundo_services             Estado y logica de negocio (Cubits + States).
+  almundo_repositories         Orquestacion de acceso a datos. Contratos
+                               (interfaces) + implementaciones. Mapea
+                               parametros de dominio a llamadas de provider.
+  almundo_http_providers       Llamadas HTTP reales (Dio). Una clase por
+                               dominio de API. Devuelve modelos ya parseados.
+  almundo_firebase_providers   Acceso a Firebase (auth, analytics, remote
+                               config) de bajo nivel.
+  almundo_models               Modelos de datos puros (fromJson/toJson,
+                               copyWith, Equatable). Sin logica de negocio.
+  almundo_core                 Configuracion e inicializacion transversal:
+                               .env, ApiConfig, DioFactory, interceptores,
+                               AlmundoException, AuthenticationState, DI core.
+  almundo_moebius              Design system (componentes MB*, tema: colores,
+                               tamanos, tipografia). NO esta en melos.yaml;
+                               lo consume solo almundo_app por path.
+
+Config Melos: pubspec.yaml en la raiz (seccion "melos:"). Scripts:
+"melos run build" (pub get de todos + gen-l10n + build_runner en app),
+"melos run clean".
+
+
+2. ARQUITECTURA EN CAPAS Y REGLA DE DEPENDENCIAS
+================================================
+
+El flujo de datos es unidireccional. Cada capa solo conoce a la de abajo:
+
+  UI  (almundo_app)
+   |    - Renderiza. Provee el Cubit a la pagina. Escucha estados.
+   |    - Solo habla con Cubits. NUNCA importa http_providers ni usa Dio.
+   v
+  Services  (almundo_services)   [Cubit + State]
+   |    - Estado, validaciones, decisiones, retry, logging de errores.
+   |    - Solo consume repositories (interfaces). Nunca HTTP directo.
+   v
+  Repositories  (almundo_repositories)   [interface + *_impl]
+   |    - Traduce parametros de dominio -> parametros del provider.
+   |    - Puede combinar varias fuentes. Devuelve modelos.
+   v
+  HTTP / Firebase Providers  (almundo_http_providers, almundo_firebase_providers)
+   |    - Ejecuta la llamada. Parsea la respuesta a modelo.
+   |    - Normaliza errores a AlmundoException.
+   v
+  Core  (almundo_core)   [config, env, Dio factory, interceptores, excepciones]
+
+  almundo_models lo atraviesa todo (lo importan todas las capas).
+  almundo_core no depende de ninguna capa; todas dependen de core.
+
+Reglas duras:
+  - La UI no conoce repositories ni providers (excepcion practica: la Page
+    hace Modular.get<XRepository>() SOLO para pasarselo al constructor del
+    Cubit; ver 6.6).
+  - Los Cubits no conocen Dio, http_providers ni Firebase directo.
+  - Los repositories no conocen .env, flavors, ni estado de UI.
+  - Los modelos no tienen dependencias externas ni logica de negocio
+    (solo fromJson/toJson/copyWith y getters derivados simples).
+
+
+3. RESPONSABILIDAD DE CADA PAQUETE
+==================================
+
+almundo_core
+  lib/src/configuration/  ApiConfig, AppConfig, AppEnv, app_configurer.
+  lib/src/exceptions/     AlmundoException (tipo de error unico de la app),
+                          error_type.dart.
+  lib/src/interceptors/   AuthInterceptor (agrega token a cada request).
+  lib/src/firebase/       opciones de Firebase por ambiente.
+  lib/src/authentication_state.dart  AuthenticationState: ChangeNotifier con
+                          el estado de sesion; se usa como refreshListenable
+                          del router y se inyecta como instancia.
+  lib/src/extensions/core_injector_extension.dart  injectCoreDependencies():
+                          registra ApiConfig (x3), Dio (x3, por API),
+                          Firebase instances.
+  AlmundoApplication.initialize(envFile:)  se llama en bootstrap.
+
+almundo_models
+  Un archivo por modelo, agrupado por dominio en lib/src/<dominio>/.
+  Modelos de request/form: <feature>_form.dart (ej. HotelFormData).
+  Modelos de response: lib/src/response/<feature>_response.dart
+    (ej. HotelDetailResponse, HotelSearchAvailabilitiesResponse).
+  Barrel unico: package:almundo_models/almundo_models.dart -> reexporta
+    src/almundo_models.dart que exporta todo.
+  NO se usa freezed ni json_serializable ni build_runner para modelos:
+    todo es fromJson/copyWith/props escritos a mano, con Equatable en los
+    modelos de form/estado.
+
+almundo_http_providers
+  lib/src/configuration/dio_factory.dart  DioFactory.create(ApiConfig,
+    interceptors): arma el Dio con baseUrl, headers, timeouts (30s) y los
+    interceptores por defecto (ApiErrorInterceptor, LogInterceptor,
+    _RetryInterceptor que reintenta 3 veces ante cierre de conexion).
+  lib/src/providers/dio_http_provider.dart  DioHttpProvider (clase base
+    abstracta): expone client (Dio), isSuccessStatusCode (200/201),
+    parseDioError(DioException) -> AlmundoException, wrapUnknownError.
+  lib/src/providers/<dominio>/<dominio>_http_provider.dart  un provider por
+    dominio de API, extiende DioHttpProvider.
+  lib/src/interceptors/api_error_interceptor.dart  convierte errores HTTP
+    con el shape estandar de la API en AlmundoException.
+  lib/src/extensions/http_providers_injector_extension.dart
+    injectHttpProviders(): registra cada provider como singleton, pasandole
+    el Dio correcto (get<Dio>() o get<Dio>(key: ApiKeys.stDio | dmzDio)).
+
+almundo_repositories
+  lib/src/repositories/<dominio>/<dominio>_repository.dart       interface.
+  lib/src/repositories/<dominio>/<dominio>_repository_impl.dart  implementacion.
+  Barrels: repositories/almundo_repositories.dart (interfaces),
+           repositories/almundo_repositories_impl.dart (impls).
+  lib/src/extensions/repositories_injector_extension.dart
+    injectRepositories(): PRIMERO llama injectFirebaseProviders() y
+    injectHttpProviders(), luego registra cada Repository como singleton
+    mapeando la interface a "<Impl>.new".
+
+almundo_services
+  lib/src/services/<feature>/<feature>_cubit.dart   Cubit.
+  lib/src/services/<feature>/<feature>_state.dart   State (con "part of").
+  lib/src/services/analytics/analytics_error_logger.dart
+    AnalyticsErrorLoggerMixin: logError(AlmundoException) -> manda evento
+    "error" a Firebase Analytics. Lo usan casi todos los cubits.
+  lib/src/almundo_services.dart  barrel: exporta cada cubit.
+  lib/src/extensions/services_injector_extension.dart
+    injectServices(): PRIMERO injectRepositories(), luego registra algunos
+    cubits como singleton (ver nota en 6.4).
+
+almundo_app  (ver detalle en 6.6 y 6.7)
+  lib/main.dart, lib/bootstrap.dart
+  lib/app-core/       app_module.dart (Module de flutter_modular),
+                      view/routes.dart (GoRouter), view/app.dart,
+                      onboarding/, force_update/.
+  lib/layout/<feature>/  pages/ (Page = inyecta Cubit) y views/ o
+                      *_view.dart (View = renderiza) + widgets/.
+  lib/ui/             UI compartida (errores, skeletons, tipografia).
+  lib/widgets/        widgets reutilizables cross-feature.
+  lib/l10n/           arb/ (fuentes), gen/ (generado), l10n.dart (extension
+                      context.l10n).
+  lib/extensions/, lib/delegates/, lib/gen/ (assets), lib/dev/.
+
+
+4. STACK TECNICO Y LIBRERIAS CLAVE
+==================================
+
+  Area                Libreria                 Notas
+  ------------------- ------------------------ --------------------------------
+  Estado              bloc / flutter_bloc      Solo Cubit (no Bloc con events).
+  DI                  flutter_modular          Module + Injector; auto_injector
+                                               por debajo. Se accede con
+                                               Modular.get<T>().
+  Navegacion          go_router                StatefulShellRoute.indexedStack
+                                               para los tabs (bottom nav).
+  HTTP                dio                      3 instancias segun API.
+  Auth / Analytics    firebase_auth,           via almundo_firebase_providers.
+                      firebase_analytics,
+                      firebase_remote_config
+  Storage             flutter_secure_storage   token de sesion.
+                      shared_preferences       flags (onboarding visto, etc).
+  i18n               flutter gen-l10n          arb -> AppLocalizations.
+  Mapas               flutter_map, latlong2    resultados de hoteles en mapa.
+  Fechas UI           syncfusion_flutter_datepicker
+  Animaciones         lottie
+  IDs                 uuid                     ids de tramos, etc.
+
+  Dart SDK >= 3.5.3. very_good_analysis como lint base.
+
+
+5. INYECCION DE DEPENDENCIAS (DI)
+=================================
+
+Se usa flutter_modular. Hay un unico Module: AppModule
+(almundo_app/lib/app-core/app_module.dart).
+
+  class AppModule extends Module {
+    AppModule({required this.authState});
+    final AuthenticationState authState;
+
+    @override
+    void binds(Injector i) {
+      i
+        ..addInstance<AuthenticationState>(authState)
+        ..injectCoreDependencies()   // extension de almundo_core
+        ..injectServices();          // extension de almundo_services
+    }
+  }
+
+injectServices() encadena hacia abajo todo el grafo:
+
+  injectServices()            (almundo_services)
+    -> injectRepositories()   (almundo_repositories)
+         -> injectFirebaseProviders()   (almundo_firebase_providers)
+         -> injectHttpProviders()       (almundo_http_providers)
+
+O sea: registrar el Module ya deja disponible TODO (providers, repos,
+cubits singleton). Cada capa expone su propia extension "inject*" sobre
+Injector y solo esa extension conoce los constructores concretos.
+
+Formas de registro:
+  addInstance<T>(value)              instancia ya creada (AuthenticationState,
+                                     ApiConfig, Firebase.instance).
+  addSingleton<T>(Factory, {key})    una sola instancia, lazy. key sirve para
+                                     tener varias del mismo tipo (3 Dio:
+                                     default, ApiKeys.stDio, ApiKeys.dmzDio).
+  addSingleton<Interface>(Impl.new)  mapea interface -> impl (repos).
+
+Como se consume:
+  - En codigo de app fuera de un Cubit: Modular.get<T>().
+    Ej. en routes.dart: Modular.get<AuthenticationState>().
+  - En una Page: Modular.get<XRepository>() SOLO para pasarlo al Cubit.
+  - En un Cubit: NUNCA se llama a Modular. Las dependencias entran por
+    constructor (el Cubit no sabe que existe un contenedor de DI).
+
+
+6. ANATOMIA DE UNA FEATURE COMPLETA (HOTELES END-TO-END)
+========================================================
+
+Trazamos "ver el detalle de un hotel". El usuario esta en resultados de
+hoteles, toca una tarjeta -> se verifica disponibilidad -> navega a la
+pagina de detalle -> esa pagina pide contenido enriquecido.
+
+Archivos que intervienen (de abajo hacia arriba):
+
+  Capa           Archivo
+  -------------- --------------------------------------------------------------
+  models         almundo_models/lib/src/hotel/hotel_form.dart
+                 almundo_models/lib/src/response/hotel_detail_response.dart
+                 almundo_models/lib/src/response/hotel_results_response.dart
+  http provider  almundo_http_providers/lib/src/providers/hotels/
+                   hotels_http_provider.dart
+  repository     almundo_repositories/lib/src/repositories/hotels/
+                   hotels_repository.dart        (interface)
+                   hotels_repository_impl.dart   (impl)
+  DI             almundo_http_providers/.../http_providers_injector_extension.dart
+                 almundo_repositories/.../repositories_injector_extension.dart
+  service        almundo_services/lib/src/services/hotel_detail/
+                   hotel_detail_cubit.dart
+                   hotel_detail_state.dart
+                 (+ export en almundo_services/lib/src/almundo_services.dart)
+  UI             almundo_app/lib/layout/hotel_detail/hotel_detail_page.dart
+  routing        almundo_app/lib/app-core/view/routes.dart
+
+
+6.1 CAPA MODELS
+---------------
+
+Modelo de formulario (input de dominio). Inmutable, Equatable, con getters
+de validacion y copyWith con flags de reset:
+
+  class HotelFormData extends Equatable {
+    const HotelFormData({
+      this.destinationCity,
+      this.checkInDate,
+      this.checkOutDate,
+      this.rooms = const HotelRoomsSelection(),
+      this.currency = CurrencyType.ars,
+    });
+
+    final SuggestionEntity? destinationCity;
+    final DateTime? checkInDate;
+    final DateTime? checkOutDate;
+    final HotelRoomsSelection rooms;
+    final CurrencyType currency;
+
+    bool get isValid =>
+        checkInDate != null && checkOutDate != null && rooms.isValid;
+
+    String? get validationError { ... }   // primer error legible o null
+
+    HotelFormData copyWith({ ...,
+      bool resetDestinationCity = false,   // patron: para poder volver a null
+      bool resetCheckInDate = false,
+      bool resetCheckOutDate = false,
+    }) { ... }
+
+    @override
+    List<Object?> get props => [destinationCity, checkInDate, checkOutDate,
+      rooms, currency];
+  }
+
+Modelo de response. Todos los campos final, factory fromJson defensivo
+(cada campo con "as T? ?? default", listas con "?.map(...).toList() ?? const
+[]"), sin Equatable normalmente:
+
+  class HotelDetailResponse {
+    const HotelDetailResponse({ required this.id, required this.description,
+      ... });
+    final String id;
+    final String description;
+    final List<HotelRoomCluster> prepaidRoomClusters;
+    ...
+
+    factory HotelDetailResponse.fromJson(Map<String, dynamic> json) {
+      return HotelDetailResponse(
+        id: json['id'] as String? ?? '',
+        description: json['description'] as String? ?? '',
+        prepaidRoomClusters: (json['prepaid_room_clusters'] as List<dynamic>?)
+            ?.map((e) => HotelRoomCluster.fromJson(e as Map<String, dynamic>))
+            .toList() ?? const [],
+        ...
+      );
+    }
+  }
+
+Reglas:
+  - Las keys del JSON son las del backend (snake_case). El modelo las
+    traduce a camelCase.
+  - fromJson NUNCA debe tirar por un campo faltante: siempre default.
+  - Agregar el archivo y, si el dominio es nuevo, agregar el export en
+    src/almundo_models.dart (o en el sub-barrel del dominio).
+
+
+6.2 CAPA HTTP_PROVIDERS
+-----------------------
+
+Un metodo por endpoint. Firma con parametros nombrados primitivos (String,
+int, List<String>, bool) -- NO recibe modelos de dominio ni objetos de
+filtros; esa traduccion la hace el repository. Estructura fija del metodo:
+
+  class HotelsHttpProvider extends DioHttpProvider {
+    HotelsHttpProvider(super._client);
+
+    static const hotelsUrlBase = '/hotels';
+
+    Future<HotelDetailResponse> searchDetail({
+      required String hotelId,
+      required String checkin,
+      required String checkout,
+      required int rooms,
+      required String currencyCode,
+      required String origin,
+      bool includeDetails = false,
+      bool withFullPrice = true,
+    }) async {
+      try {
+        const url = '$hotelsUrlBase/search/detail';
+        final response = await client.get<Map<String, dynamic>>(
+          url,
+          queryParameters: {
+            'hotelId': hotelId,
+            'checkin': checkin,
+            'checkout': checkout,
+            'room': rooms,
+            'language': ALMApiDefaults.language,   // constantes de core/utils
+            'site': ALMApiDefaults.site,
+            ...
+            'currencyCode': currencyCode,
+            'origin': origin,
+          },
+        );
+
+        if (!isSuccessStatusCode(response.statusCode) || response.data == null) {
+          throw AlmundoException(
+            detail: 'Error al buscar el detalle del hotel. '
+                'Codigo: ${response.statusCode}',
+            code: response.statusCode ?? 0,
+            stackTrace: StackTrace.current,
+          );
+        }
+
+        return HotelDetailResponse.fromJson(response.data!);
+      } on DioException catch (e) {
+        throw parseDioError(e);          // -> AlmundoException (de la base)
+      } catch (e, st) {
+        throw wrapUnknownError(e, st);   // -> AlmundoException (de la base)
+      }
+    }
+  }
+
+Reglas:
+  - Siempre el mismo esqueleto: try { get/post; chequear
+    isSuccessStatusCode; fromJson } on DioException { parseDioError } catch
+    { wrapUnknownError }.
+  - El provider SIEMPRE lanza AlmundoException, nunca un DioException,
+    TypeError o FormatException crudo.
+  - Devuelve un modelo de almundo_models ya parseado, nunca Map/Response.
+  - Listas en query params: por convencion con backend, repetir la key
+    (STAR=4&STAR=5) pasando una List<String>; algunas van CSV en una sola
+    key -- se documenta caso por caso en el propio provider.
+  - Elegir el Dio correcto se hace en el injector (ver 6.4), no aca.
+
+
+6.3 CAPA REPOSITORIES
+---------------------
+
+Interface (contrato que ve el Cubit). Recibe modelos de dominio:
+
+  abstract class HotelsRepository {
+    Future<HotelSearchAvailabilitiesResponse> searchAvailabilities(
+      HotelFormData hotelFormData, [
+      FiltroHoteles? filters, String? sortBy, int? offset, int? limit,
+    ]);
+
+    Future<HotelDetailResponse> searchDetail({
+      required String hotelId, required String checkin,
+      required String checkout, required int rooms,
+      required String currencyCode, required String origin,
+    });
+  }
+
+Implementacion. Recibe el/los provider(s) por constructor y traduce
+dominio -> primitivos del provider:
+
+  class HotelsRepositoryImpl extends HotelsRepository {
+    HotelsRepositoryImpl(this._httpProvider);
+    final HotelsHttpProvider _httpProvider;
+
+    @override
+    Future<HotelSearchAvailabilitiesResponse> searchAvailabilities(
+      HotelFormData hotelFormData, [ FiltroHoteles? filters, String? sortBy,
+      int? offset, int? limit ]) {
+      // Aca vive la logica de "que filtro se manda y como":
+      //  - facets: solo se mandan codigos si el usuario excluyo alguno
+      //  - toggles (OUTSTANDING): solo si esta prendido
+      //  - rangos: solo si el usuario recorto el rango completo
+      //  - formateo de fechas: extension .formatDateFlightRepository
+      return _httpProvider.searchAvailabilities(
+        entityId: hotelFormData.destinationCity?.id ?? '',
+        checkin: hotelFormData.checkInDate?.formatDateFlightRepository ?? '',
+        ...
+        sortBy: sortBy, offset: offset ?? 0, limit: limit ?? 20,
+      );
+    }
+
+    @override
+    Future<HotelDetailResponse> searchDetail({ ... }) {
+      return _httpProvider.searchDetail( ... );  // passthrough casi directo
+    }
+  }
+
+Reglas:
+  - El Cubit depende SOLO de la interface (HotelsRepository), nunca del Impl.
+  - Toda transformacion "modelo/objeto de UI -> parametros de API" ocurre
+    aca (no en el provider, no en el Cubit).
+  - Un repo puede combinar varios providers y/o fuentes locales.
+  - El Impl no importa nada de UI ni de config/env.
+
+
+6.4 REGISTRO EN DI
+------------------
+
+Provider (almundo_http_providers, http_providers_injector_extension.dart):
+
+  addSingleton<HotelsHttpProvider>(
+    () => HotelsHttpProvider(get<Dio>(key: ApiKeys.stDio)),
+  );
+  // otros usan get<Dio>() (default) o get<Dio>(key: ApiKeys.dmzDio)
+
+Repository (almundo_repositories, repositories_injector_extension.dart):
+
+  addSingleton<HotelsRepository>(HotelsRepositoryImpl.new);
+  // auto_injector resuelve HotelsHttpProvider por tipo en el constructor
+
+Cubit (almundo_services, services_injector_extension.dart):
+  Algunos cubits "de larga vida" (home, resultados de vuelos, checkout,
+  login, mi cuenta, reservas...) SI se registran como singleton aca:
+    addSingleton<FlightHomeCubit>(FlightHomeCubit.new);
+  Otros (HotelDetailCubit, HotelResultsCubit) NO se registran: se crean por
+  pagina con BlocProvider (ver 6.6). Ambos patrones conviven; el canonico
+  segun almundo_app/README.md es crear el Cubit en la Page.
+
+Ademas, si el Cubit es nuevo hay que exportarlo en
+almundo_services/lib/src/almundo_services.dart para que la app lo vea.
+
+
+6.5 CAPA SERVICES (CUBIT + STATE)
+---------------------------------
+
+State: clase inmutable (a mano, sin freezed). Un enum <Feature>Status con
+los estados de la pantalla. copyWith donde "error" NO usa "?? this.error"
+(se limpia en cada emit salvo que se pase explicito = error de un solo uso).
+
+  part of 'hotel_detail_cubit.dart';
+
+  enum HotelDetailStatus {
+    initial, loading, success, failure;
+    bool get isLoading => this == HotelDetailStatus.loading;
+  }
+
+  class HotelDetailState {
+    const HotelDetailState({
+      this.status = HotelDetailStatus.initial,
+      this.detail,
+      this.error,
+    });
+    final HotelDetailStatus status;
+    final HotelDetailResponse? detail;
+    final AlmundoException? error;
+
+    HotelDetailState copyWith({
+      HotelDetailStatus? status,
+      HotelDetailResponse? detail,
+      AlmundoException? error,
+    }) => HotelDetailState(
+      status: status ?? this.status,
+      detail: detail ?? this.detail,
+      error: error,                    // <- NO "?? this.error" (one-shot)
+    );
+  }
+
+Cubit: extiende Cubit<State> y (casi siempre) usa
+AnalyticsErrorLoggerMixin. Dependencias por constructor. Guarda la ultima
+accion fallida para poder reintentar.
+
+  class HotelDetailCubit extends Cubit<HotelDetailState>
+      with AnalyticsErrorLoggerMixin {
+    HotelDetailCubit(this._repository, this.analyticsRepository)
+      : super(const HotelDetailState());
+
+    final HotelsRepository _repository;
+
+    @override
+    final FirebaseAnalyticsRepository analyticsRepository;   // requerido por
+    @override                                                // el mixin
+    String get errorPlace => 'hotel_detail';
+    @override
+    String get analyticsProduct => Products.hotel.value;
+
+    Future<void> Function()? _lastFailedAction;
+    Future<void> retry() async {
+      final action = _lastFailedAction;
+      if (action != null) await action();
+    }
+
+    Future<void> fetchDetail({ required String hotelId, ... }) async {
+      _lastFailedAction = () => fetchDetail(hotelId: hotelId, ...);
+      emit(state.copyWith(status: HotelDetailStatus.loading));
+      try {
+        final detail = await _repository.searchDetail(
+          hotelId: hotelId, ..., origin: 'HOTEL_LIST',
+        );
+        emit(state.copyWith(
+          status: HotelDetailStatus.success, detail: detail,
+        ));
+      } on AlmundoException catch (e) {
+        logError(e);                               // -> Firebase Analytics
+        emit(state.copyWith(status: HotelDetailStatus.failure, error: e));
+      } on Exception catch (e) {
+        final exception = AlmundoException.generic(detail: e.toString());
+        logError(exception);
+        emit(state.copyWith(
+          status: HotelDetailStatus.failure, error: exception,
+        ));
+      }
+    }
+  }
+
+Reglas:
+  - Una operacion asincrona = emit(loading) -> try -> emit(success) /
+    catch -> logError + emit(failure, error).
+  - Se capturan DOS ramas: on AlmundoException (ya viene tipado del
+    provider/repo) y on Exception (se envuelve con
+    AlmundoException.generic).
+  - _lastFailedAction + retry(): la UI llama cubit.retry() desde el dialog
+    de error o un boton "Reintentar".
+  - El Cubit NO navega, NO muestra dialogs, NO conoce BuildContext.
+  - Nada de Modular.get dentro del Cubit.
+
+
+6.6 CAPA APP (PAGE + VIEW)
+--------------------------
+
+Regla de oro (almundo_app/README.md):
+  Page  = inyecta el Cubit (unico lugar donde se crea/provee).
+  View  = renderiza y escucha estado. No crea Cubits ni toca repositories.
+
+  class HotelDetailPage extends StatelessWidget {
+    const HotelDetailPage({
+      required this.hotel, required this.hotelFormData, super.key,
+    });
+    final HotelAvailability hotel;
+    final HotelFormData hotelFormData;
+
+    static const String routeName = 'hotel_detail';   // convencion: ambos
+    static const String path = '/hotel-detail';       // static const en la Page
+
+    @override
+    Widget build(BuildContext context) {
+      return BlocProvider(
+        create: (_) => HotelDetailCubit(
+          Modular.get<HotelsRepository>(),
+          Modular.get<FirebaseAnalyticsRepository>(),
+        ),
+        child: _HotelDetailView(hotel: hotel, hotelFormData: hotelFormData),
+      );
+    }
+  }
+
+Notas de import en las Pages:
+  import 'package:flutter_modular/flutter_modular.dart'
+      hide ModularWatchExtension;   // se oculta para no chocar con context.watch
+                                    // de flutter_bloc
+
+La View dispara la carga inicial en initState (con unwatched/unawaited) y
+consume el estado con BlocBuilder / BlocConsumer:
+
+  class _HotelDetailViewState extends State<_HotelDetailView> {
+    @override
+    void initState() {
+      super.initState();
+      unawaited(context.read<HotelDetailCubit>().fetchDetail(
+        hotelId: widget.hotel.id,
+        checkin: _formatDate(widget.hotelFormData.checkInDate),
+        ...
+      ));
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      final l10n = context.l10n;
+      return Scaffold(
+        ...
+        body: BlocConsumer<HotelDetailCubit, HotelDetailState>(
+          listenWhen: (p, c) => p.status != c.status,
+          listener: (context, state) async {
+            if (state.status == HotelDetailStatus.failure &&
+                state.error != null) {
+              await ApiErrorDialog.show(context, state.error!);
+            }
+          },
+          builder: (context, state) {
+            if (state.status == HotelDetailStatus.loading ||
+                state.status == HotelDetailStatus.initial) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            // ... usa state.detail
+          },
+        ),
+      );
+    }
+  }
+
+Convenciones de UI:
+  - Colores/tamanos/tipografia: ALMColors, ALMSizes, ALMTextStyle (capa ui/
+    de almundo_app; el design system nuevo es moebius, ver 12).
+  - Textos: SIEMPRE context.l10n.<clave> (nunca hardcode).
+  - Errores al usuario: ApiErrorDialog.show(context, AlmundoException) /
+    ALMErrorAlert. Respetar exception.silent (no mostrar dialog si es true).
+  - Carpeta de la feature en lib/layout/<feature>/: pages/, views/ (o
+    <feature>_view.dart), widgets/ con partes privadas (_Foo) y un barrel
+    widgets.dart.
+
+Cubits singleton vs por-pagina:
+  - Home (Flights/Hotels), Resultados de Vuelos, Checkout, Login, etc.
+    tambien se instancian en su Page con BlocProvider(create: ...) aunque
+    esten registrados como singleton -- la Page sigue siendo el punto de
+    inyeccion.
+
+
+6.7 NAVEGACION / ROUTING
+------------------------
+
+Todo el arbol de rutas esta en
+almundo_app/lib/app-core/view/routes.dart (un unico GoRouter global).
+
+  - refreshListenable: authState  -> el router reacciona al login/logout.
+  - redirect en "/" decide Onboarding vs Home segun
+    OnboardingPreferences.shouldShowOnboarding().
+  - Rutas fullscreen (login, registro, thank you, onboarding) van sueltas.
+  - Los 4 tabs (Vuelos, Hoteles, Reservas, Mi Cuenta) viven en un
+    StatefulShellRoute.indexedStack; cada tab es un StatefulShellBranch con
+    su ruta raiz y sub-rutas anidadas.
+  - Hoteles: home-hotels -> hotel-search-results -> hotel-detail (anidadas).
+
+  GoRoute(
+    name: HotelDetailPage.routeName,
+    path: HotelDetailPage.path.substring(1),   // sub-ruta: sin la "/" inicial
+    builder: (context, state) {
+      final extra = state.extra! as Map<String, dynamic>;
+      return HotelDetailPage(
+        hotel: extra['hotel']! as HotelAvailability,
+        hotelFormData: extra['hotelFormData']! as HotelFormData,
+      );
+    },
+  )
+
+Paso de parametros:
+  - Objeto unico -> state.extra (ej. FlightResultsPage recibe FlightFormData
+    directo).
+  - Varios objetos -> state.extra as Map<String, dynamic> con claves string.
+  - Navegar: context.pushNamed(Page.routeName, extra: ...).
+  - Devolver resultado: Navigator.pop(context, valor); el caller hace
+    "final result = await context.pushNamed(...)" y actua segun el tipo del
+    valor devuelto (ver flight_search_form_flow.txt para un ejemplo).
+
+
+7. PLANTILLAS POR TIPO DE ARCHIVO
+=================================
+
+Al crear la feature "X" (dominio nuevo), estos son los archivos y el orden
+sugerido:
+
+  1. almundo_models/lib/src/x/x_form.dart            (si hay formulario)
+     almundo_models/lib/src/response/x_response.dart (uno por endpoint)
+     -> agregar export en src/almundo_models.dart
+
+  2. almundo_http_providers/lib/src/providers/x/x_http_provider.dart
+     class XHttpProvider extends DioHttpProvider { XHttpProvider(super._c); ... }
+     -> agregar export en el barrel de providers si aplica
+     -> registrar en http_providers_injector_extension.dart:
+        addSingleton<XHttpProvider>(() => XHttpProvider(get<Dio>()));
+
+  3. almundo_repositories/lib/src/repositories/x/x_repository.dart      (abstract)
+     almundo_repositories/lib/src/repositories/x/x_repository_impl.dart
+     -> exports en almundo_repositories.dart y almundo_repositories_impl.dart
+     -> registrar en repositories_injector_extension.dart:
+        addSingleton<XRepository>(XRepositoryImpl.new);
+
+  4. almundo_services/lib/src/services/x/x_cubit.dart
+     almundo_services/lib/src/services/x/x_state.dart   (part of x_cubit.dart)
+     -> export en almundo_services/lib/src/almundo_services.dart
+     -> (opcional) registrar en services_injector_extension.dart si es
+        singleton de larga vida
+
+  5. almundo_app/lib/layout/x/pages/x_page.dart   (BlocProvider + Modular.get)
+     almundo_app/lib/layout/x/views/x_view.dart   (BlocBuilder/Consumer)
+     almundo_app/lib/layout/x/widgets/...          (+ widgets.dart barrel)
+     -> claves de texto en lib/l10n/arb/app_es.arb y app_en.arb
+     -> ruta en lib/app-core/view/routes.dart
+     -> si expone barrel de layout, exportar la Page en layout.dart
+
+  6. Tests (mocktail): unit para repo impl y cubit; ver test/ de cada paquete.
+
+
+8. MANEJO DE ERRORES Y OBSERVABILIDAD
+=====================================
+
+Tipo unico de error: AlmundoException (almundo_core). Campos: code,
+behaviorCode, title, detail, technicalError, redirectUrl, stackTrace,
+endpoint, silent. Factory AlmundoException.generic(...).
+  - silent == true: se registra en el state pero NO debe abrir dialog.
+
+Cadena de normalizacion:
+  Dio                       -> ApiErrorInterceptor convierte el shape
+                               estandar de error de la API en
+                               AlmundoException (queda en DioException.error).
+  http_provider (try/catch) -> parseDioError(DioException) devuelve ese
+                               AlmundoException, o arma uno generico.
+                               wrapUnknownError() envuelve TypeError/
+                               FormatException de un fromJson.
+  repository                -> normalmente passthrough (deja propagar).
+  cubit                     -> on AlmundoException / on Exception:
+                               logError(e) (mixin -> evento "error" a
+                               Firebase Analytics con errorPlace,
+                               analyticsProduct, code, endpoint) y
+                               emit(status: failure, error: e).
+  UI                        -> BlocListener/Consumer detecta status ==
+                               failure && error != null y hace
+                               ApiErrorDialog.show / ALMErrorAlert.show
+                               (salteando si error.silent). El boton
+                               "Reintentar" llama cubit.retry().
+
+_RetryInterceptor (dio_factory): reintenta hasta 3 veces con backoff cuando
+el error es cierre de conexion (staging inestable). Transparente para el
+resto.
+
+BlocObserver global (bootstrap.dart / AppBlocObserver): loguea onChange y
+onError de todos los Cubits (solo dev/log, no crash reporting -- hoy no hay
+Crashlytics/Sentry).
+
+Detalle transversal completo: ver docs/error_handling_observability.txt.
+
+
+9. PATRON DE ESTADO (CUBIT)
+===========================
+
+  - Un enum <Feature>Status por pantalla. Valores tipicos: initial,
+    loading, success, failure. Si hay sub-flujos, se agregan
+    (HotelResultsStatus tiene ademas loadingHotelAvailability,
+    successHotelAvailability, failureHotelAvailability).
+  - El State es una clase inmutable escrita a mano con copyWith. NO
+    Equatable obligatorio en states de pantalla (varios no lo usan); si se
+    quiere rebuild fino, usar buildWhen/listenWhen en la UI.
+  - "error" en copyWith es one-shot: se pasa sin "?? this.error" para que se
+    limpie en el siguiente emit.
+  - Campos "delete<X>" en copyWith (ej. deleteLoadingHotelId) para forzar a
+    null (mismo problema que los "reset<X>" de los modelos form).
+  - Paginacion: el state guarda currentPage (1-based), total y pageSize; el
+    pageSize lo dicta el backend en cada response (no un fijo local). El
+    offset se calcula (page - 1) * pageSize.
+  - Metodo publico por accion de usuario (fetchDetail, fetchResults,
+    changeSort, verifyHotelAvailability...). Cada uno setea _lastFailedAction
+    antes del await.
+  - Getters derivados en el state para no meter logica en la UI.
+
+
+10. NAVEGACION CON GO_ROUTER
+============================
+
+  - Un solo GoRouter en routes.dart. No hay routers por feature.
+  - Cada Page define static const path y static const routeName.
+  - Tabs = StatefulShellRoute.indexedStack + StatefulShellBranch (mantiene
+    el stack de cada tab vivo al cambiar de tab).
+  - Sub-rutas anidadas: path sin "/" inicial (Page.path.substring(1)).
+  - Parametros por state.extra (objeto o Map<String,dynamic>); NO se usan
+    path params tipados salvo casos puntuales.
+  - Rutas que deben ocupar toda la pantalla (sin bottom nav): se listan en
+    fullscreen_routes.dart e isFullscreenRoute(...) hace bypass del scaffold
+    con bottom nav.
+  - BackHandler envuelve el shell para manejar el boton atras de Android
+    entre tabs.
+  - Volver con datos: Navigator.pop(context, valor) y el caller hace await
+    del pushNamed.
+
+
+11. LOCALIZACION (l10n)
+=======================
+
+  - Fuentes: almundo_app/lib/l10n/arb/app_es.arb (base) y app_en.arb.
+  - Generado con "flutter gen-l10n" (config l10n.yaml) -> lib/l10n/gen/.
+  - Uso en widgets: context.l10n.<clave> (extension en lib/l10n/l10n.dart).
+  - Toda cadena visible va al arb; no hay strings hardcodeadas en la UI.
+  - Al agregar texto: agregar la clave en AMBOS arb y regenerar.
+
+
+12. DESIGN SYSTEM (MOEBIUS) Y UI COMPARTIDA
+==========================================
+
+  - almundo_moebius: design system nuevo. Componentes: MBAlert,
+    MBAutocomplete, MBButton, MBCheckbox, MBFormField, MBPaginator,
+    MBProgressSpinner, MBRadio, MBSlider, MBTabs. Tema: MoebiusColors,
+    MoebiusSizes, MoebiusTypography.
+  - Se importa con package:almundo_moebius/almundo_moebius.dart.
+  - Coexiste con la UI legacy en almundo_app/lib/ui/ (ALMColors, ALMSizes,
+    ALMTextStyle) y lib/widgets/. Hay migracion en curso (ver
+    lib/dev/moebius_playground_page.dart, ruta solo no-prod).
+  - Para pantallas nuevas: preferir componentes moebius; si falta algo,
+    seguir el estilo existente de la feature vecina.
+
+
+13. CHECKLIST PARA CREAR UNA FEATURE NUEVA DESDE CERO
+====================================================
+
+  [ ] models: <feature>_form.dart (si hay form) + response/<feature>_response.dart
+      por cada endpoint. fromJson defensivo. Export en src/almundo_models.dart.
+  [ ] http_provider: <feature>_http_provider.dart extiende DioHttpProvider.
+      Un metodo por endpoint, params primitivos, try/DioException/catch,
+      devuelve modelo. Registrar en http_providers_injector_extension.dart
+      con el Dio correcto (default / stDio / dmzDio).
+  [ ] repository: interface + impl. Impl recibe provider(s) por constructor y
+      traduce dominio -> primitivos. Exports en los 2 barrels. Registrar en
+      repositories_injector_extension.dart (addSingleton<I>(Impl.new)).
+  [ ] service: <feature>_cubit.dart + <feature>_state.dart (part of). Enum
+      Status. copyWith con error one-shot. AnalyticsErrorLoggerMixin
+      (errorPlace, analyticsProduct). _lastFailedAction + retry(). Export en
+      almundo_services/lib/src/almundo_services.dart. (Opcional: registrar si
+      es singleton de larga vida.)
+  [ ] app: layout/<feature>/pages/<feature>_page.dart (BlocProvider +
+      Modular.get<Repo>()), views/<feature>_view.dart (BlocBuilder/Consumer,
+      carga en initState con unawaited), widgets/. static const path y
+      routeName en la Page.
+  [ ] l10n: claves en app_es.arb y app_en.arb. Regenerar. Usar context.l10n.
+  [ ] routing: GoRoute en routes.dart (fullscreen suelto, o anidado dentro
+      del branch del tab). Parametros por state.extra.
+  [ ] errores: BlocListener -> ApiErrorDialog.show(context, state.error!)
+      respetando .silent. Boton reintentar -> cubit.retry().
+  [ ] tests: repo impl + cubit con mocktail (ver test/ de cada paquete).
+  [ ] doc: si es un flujo de usuario nuevo, agregar docs/<feature>_flow.txt
+      con el formato estandar (ver docs/README.txt) y sumarlo al indice.
+
+
+14. REGLAS Y TRAMPAS PARA TENER EN CUENTA
+=========================================
+
+  - Direccion de dependencias: app -> services -> repositories -> providers
+    -> core. Nunca al reves ni saltando capas (la UI no importa
+    http_providers; el Cubit no importa Dio).
+  - El Cubit no usa Modular, no navega, no muestra dialogs, no toca
+    BuildContext. Todo entra por constructor; todo sale por el State.
+  - La inyeccion de Cubits se hace SOLO en la Page. La View nunca crea
+    Cubits ni llama a Modular.get.
+  - En las Pages: import de flutter_modular con "hide ModularWatchExtension"
+    para no chocar con context.watch de flutter_bloc.
+  - Los http_providers SIEMPRE lanzan AlmundoException (nunca DioException /
+    TypeError crudos). Mantener el esqueleto try / on DioException
+    parseDioError / catch wrapUnknownError.
+  - fromJson de modelos: cada campo con default, nunca asumir que la key
+    existe. Keys del JSON en snake_case; el modelo expone camelCase.
+  - copyWith de forms y states: "error" y campos que deben poder volver a
+    null usan flags reset<X>/delete<X> o se asignan sin "?? this.x".
+  - NO se usa freezed/json_serializable para modelos; no correr build_runner
+    esperando generar modelos. build_runner solo aplica a cosas de la app
+    (assets/gen, l10n).
+  - Textos SIEMPRE por l10n (app_es.arb + app_en.arb). Nada hardcode en UI.
+  - pageSize / limit de paginacion lo define el backend en la respuesta; no
+    hardcodear.
+  - Rutas: sub-rutas anidadas usan Page.path.substring(1). Parametros por
+    state.extra (objeto o Map<String,dynamic>).
+  - AuthenticationState es el refreshListenable del router: cambios de
+    sesion re-evaluan redirects.
+  - 3 instancias de Dio (default con AuthInterceptor, stDio con
+    AuthInterceptor, dmzDio sin auth). Elegir la correcta al registrar el
+    provider, no en el provider.
+  - Formato de este documento y los de docs/: texto plano .txt, sin
+    Markdown, indice numerado (ver docs/README.txt). Si cambia un endpoint o
+    se agrega un Cubit/ruta, actualizar el doc afectado en el mismo PR.
+
+
+15. DECISIONES DE ESTE PORT (app_expense_manager)
+================================================
+
+Este documento describe el patron generico (los ejemplos son de la app
+almundo). "app_expense_manager" es un port de ese patron a otra app: espeja
+1:1 las features de la web React "web-plataformas-de-desarrollo" y consume
+la MISMA API Node ("api-plataformas-desarrollo"). Decisiones tomadas al
+arrancar el port:
+
+  Tema                Decision
+  ------------------- --------------------------------------------------------
+  Arquitectura        Monorepo Melos completo. Paquetes locales con prefijo
+                      "em_" (en vez de "almundo_"):
+                        em_core, em_models, em_http_providers,
+                        em_repositories, em_services, em_design,
+                        em_firebase_providers.
+                      La app runnable es "app_expense_manager" (raiz del
+                      repo Flutter), con android/ e ios/.
+  Stack               Tal cual este doc: flutter_bloc (solo Cubit) +
+                      flutter_modular (un unico AppModule) + go_router
+                      (StatefulShellRoute.indexedStack, 5 tabs) + dio +
+                      flutter_secure_storage.
+  Alcance             Todas las pantallas de la web de una sola vez. Sin
+                      tests unitarios en esta pasada (se agregan despues
+                      siguiendo el checklist de la seccion 13).
+  Realtime            Pusher (pusher_channels_flutter). Canal
+                      "compartidos-<userId>", cluster sa1 (igual que la web).
+                      Sin PUSHER_KEY la app funciona con pull-to-refresh.
+  Analytics           Firebase Analytics via em_firebase_providers +
+                      AnalyticsErrorLoggerMixin. Si Firebase no esta
+                      configurado todo es no-op (la app arranca igual).
+  Auth con Google     firebase_auth + google_sign_in; se canjea con
+                      POST /auth/firebase-login (mismo flujo que la web).
+                      Requiere google-services.json.
+  API base URL        --dart-define=API_BASE_URL=... . Default dev:
+                      http://10.0.2.2:3000/api (emulador Android contra
+                      localhost). Prod (--dart-define=PROD=true):
+                      https://api-plataformas-de-desarrollo.vercel.app/api.
+                      Aca hay UNA API con auth + una externa (dolarapi.com)
+                      para cotizaciones -> 2 instancias de Dio por key
+                      (ApiKeys.mainDio / ApiKeys.ratesDio), no 3.
+  Plataformas         Android + iOS.
+
+Mapeo de nombres respecto de los ejemplos del doc:
+  almundo_*            -> em_*
+  AlmundoException     -> AppException
+  AlmundoApplication   -> bootstrap() en lib/bootstrap.dart
+  moebius / MB* / ALM* -> em_design / Em* (EmColors, EmSizes, EmTheme,
+                          EmCard, EmTipoChip, EmProgressBar, ...)
+  ApiKeys.stDio/dmzDio -> ApiKeys.mainDio / ApiKeys.ratesDio
+
+Desviaciones puntuales del patron canonico (documentadas para no sorprender):
+  - repositories: interface + impl conviven en UN archivo por dominio (no 2
+    archivos + 2 barrels). El Cubit sigue dependiendo solo de la interface.
+  - Cubits por-pagina (dashboard, detalles, cuentas, configuracion): se
+    crean en la Page con BlocProvider(create:) + di<Repo>(); no se
+    registran como singleton. Los de larga vida (entidades, categorias,
+    compartidos, reconcile, exchange_rates) si son singleton (seccion 6.4).
+
+
+16. CONVENCIONES DE UI: UN ARCHIVO = UNA CLASE, CARPETAS widgets/, L10N
+=====================================================================
+
+16.1 L10N OBLIGATORIO
+---------------------
+  - Cero strings hardcodeados en la UI. Todo texto visible sale de
+    context.l10n.<clave> (extension en lib/l10n/l10n.dart).
+  - Fuentes: lib/l10n/app_es.arb (template) y lib/l10n/app_en.arb. Config en
+    l10n.yaml (output-dir: lib/l10n/gen, output-class: AppLocalizations,
+    nullable-getter: false). Se regenera con "flutter gen-l10n" (o con el
+    build, por "generate: true" en pubspec).
+  - Al agregar texto: agregar la clave en AMBOS arb (con su bloque
+    "@clave" si lleva placeholders) y regenerar. Placeholders tipados
+    (int / String) para plurales y valores interpolados.
+  - El design system (em_design) NO conoce l10n: los componentes Em* que
+    muestran texto de dominio reciben el string por parametro (ej.
+    EmTipoChip(label: ...)). El caller pasa context.l10n.
+
+16.2 UN ARCHIVO = UNA CLASE (un widget por archivo)
+--------------------------------------------------
+  - Cada archivo .dart de UI define UN widget (publico o privado).
+  - Excepcion pragmatica: la clase State de un StatefulWidget y los enum /
+    typedef privados que solo usa ese widget viven en el mismo archivo que
+    su widget (son su implementacion, no componentes aparte).
+  - La Page (el widget que inyecta el Cubit) queda sola en
+    <feature>_page.dart. Todo lo demas (la View, el body, tarjetas, filas,
+    barras, tabs, dialogs) se saca a archivos aparte.
+
+16.3 WIDGETS HIJOS QUE NO SE REPITEN -> layout/<feature>/widgets/ COMO part
+-------------------------------------------------------------------------
+  - Si un widget hijo pertenece a una sola feature y no se reusa en otra, va
+    en lib/layout/<feature>/widgets/<nombre>.dart y es "part of" la Page.
+  - La Page se declara como libreria y lista sus partes:
+
+      // lib/layout/dashboard/dashboard_page.dart
+      import '...';                       // TODOS los imports van aca
+      import '../../l10n/l10n.dart';
+      part 'widgets/dashboard_view.dart';
+      part 'widgets/dashboard_content.dart';
+      part 'widgets/dashboard_summary_card.dart';
+      // ...
+      class DashboardPage extends StatelessWidget { ... }   // unica clase
+
+      // lib/layout/dashboard/widgets/dashboard_view.dart
+      part of '../dashboard_page.dart';
+      class _DashboardView extends StatelessWidget { ... }   // unica clase
+
+  - Por usar "part": los archivos parte NO tienen sus propios imports (todo
+    se importa en la Page) y comparten el scope de la libreria, asi que las
+    clases privadas "_Foo" son visibles entre todas las partes.
+  - context.l10n funciona en las partes porque la Page importa
+    lib/l10n/l10n.dart.
+
+16.4 WIDGETS QUE SE REPITEN -> lib/widgets/ (cross-feature)
+--------------------------------------------------------
+  - Si un widget se usa en mas de una feature, va en
+    lib/widgets/<nombre>.dart como clase PUBLICA con SUS PROPIOS imports
+    (NO es "part of" nada).
+  - Ejemplos actuales: ExpenseTile, showNewExpenseSheet, AuthView (login +
+    registro), showConfirmDialog / showTextPromptDialog (dialogs.dart).
+  - lib/widgets/ reemplaza a la vieja carpeta lib/layout/shared/.
+
+16.5 CHECKLIST AL AGREGAR UNA PANTALLA
+-------------------------------------
+  [ ] <feature>_page.dart: SOLO la Page (inyecta el Cubit). "library" + parts.
+  [ ] widgets/<feature>_view.dart (part of): Scaffold + BlocConsumer.
+  [ ] widgets/*.dart (part of): un archivo por widget hijo no reutilizable.
+  [ ] Nada de texto hardcodeado: claves en app_es.arb + app_en.arb.
+  [ ] Widgets reutilizables -> lib/widgets/ (publicos, imports propios).
+  [ ] Ruta en lib/app_core/router.dart.

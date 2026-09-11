@@ -52,6 +52,19 @@
 - [ ] Optimizar imágenes y fallbacks.
 - [ ] Los horarios los toma 3h mas.
 
+## OPTIMIZACIONES DE RECARGA (evitar reload completo tras una mutación chica)
+
+Casos donde una mutación puntual dispara una recarga completa de una lista/pantalla
+en vez de aplicar la respuesta del endpoint sobre el estado local. Se resolvieron ya
+favorito/postergar de gasto, favorito de entidad, pagarCuotas del dashboard, y las
+acciones del detalle de entidad (nombre, vincular, desvincular, pagar cuota directa,
+restaurar). Quedan pendientes de evaluar (afectan datos agregados de otras pantallas,
+un reload puede ser intencional):
+
+- [ ] `CompartidosCubit` (Flutter, `packages/em_services/lib/src/services/compartidos/compartidos_cubit.dart`) y las acciones de compartidos en la web: aprobar/rechazar/reintentar/confirmar pago/rechazar pago recargan todo `/compartidos` después de cada una. Puede afectar el badge de pendientes en otras pantallas (dashboard, shell) — evaluar si conviene parchear local + revalidar ese badge aparte.
+- [ ] `crearGasto` del dashboard (Flutter `DashboardCubit.crearGasto` y web `use-dashboard-data.js`): crea un gasto y recarga todo el dashboard. El gasto nuevo puede afectar orden de grupos/favoritos — evaluar insertarlo directamente en el grupo de su entidad sin recargar.
+- [ ] `onCompartidoAprobado` (web, `use-dashboard-data.js`, evento de Pusher): recarga todo el dashboard cuando el otro usuario aprueba un gasto compartido. Es la única fuente que trae ese gasto nuevo al estado local, así que un reload es más justificable acá — revisar si alcanza con traer solo esa entidad/gasto en vez del dashboard entero.
+
 ## EXTRAS
 
 - [ ] Entidad como tarjeta para saber cuando vencen

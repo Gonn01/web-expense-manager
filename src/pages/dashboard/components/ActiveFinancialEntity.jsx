@@ -45,11 +45,9 @@ export default function ActiveFinancialEntity({
 
     const reconcileActive = useReconcileStore((s) => s.active);
     const checkedExpenses = useReconcileStore((s) => s.checkedExpenses);
-    const setExpensesChecked = useReconcileStore((s) => s.setExpensesChecked);
 
     const checkedInGroup = group.items.filter((it) => checkedExpenses[String(it.id)]).length;
     const allChecked = group.items.length > 0 && checkedInGroup === group.items.length;
-    const someChecked = checkedInGroup > 0 && !allChecked;
     const entityDone = reconcileActive && allChecked;
 
     const count = group.items.length;
@@ -71,25 +69,6 @@ export default function ActiveFinancialEntity({
                 }`}
             >
                 <div className="flex items-center gap-2.5 min-w-0">
-                    {reconcileActive && (
-                        <button
-                            type="button"
-                            aria-label={
-                                allChecked ? 'Desmarcar entidad' : 'Marcar entidad como pagada'
-                            }
-                            onClick={() => setExpensesChecked(group.items, group.name, !allChecked)}
-                            className={`shrink-0 flex h-5 w-5 items-center justify-center rounded-md border transition-colors cursor-pointer ${
-                                allChecked
-                                    ? 'border-emerald-500 bg-emerald-500 text-white'
-                                    : someChecked
-                                      ? 'border-primary text-primary'
-                                      : 'border-slate-300 dark:border-slate-600 text-transparent hover:border-primary'
-                            }`}
-                        >
-                            <Icon name={someChecked ? 'remove' : 'check'} className="text-base" />
-                        </button>
-                    )}
-
                     <button
                         type="button"
                         onClick={() => setCollapsed((prev) => !prev)}
@@ -196,7 +175,6 @@ export default function ActiveFinancialEntity({
                             <li key={it.id}>
                                 <ExpenseCard
                                     gasto={it}
-                                    entityName={group.name}
                                     reconcileEnabled
                                     loading={loadingIds?.has(it.id)}
                                     onClick={() => onItemClick?.(it)}

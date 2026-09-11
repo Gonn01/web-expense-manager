@@ -13,8 +13,7 @@ export default function ExpenseCard({
     onTogglePostpone,
     onToggleFavorite,
     loading = false,
-    entityName,
-    // El "modo hacer cuentas" (checkbox + pago diferido) solo existe en el
+    // El "modo hacer cuentas" (indicador + pago diferido) solo existe en el
     // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
     reconcileEnabled = false,
 }) {
@@ -25,8 +24,8 @@ export default function ExpenseCard({
     const progress = gasto.fixed_expense
         ? 100
         : gasto.number_of_quotas > 0
-          ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
-          : (gasto.progress ?? 0);
+            ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
+            : (gasto.progress ?? 0);
 
     const pendingQuotas = gasto.pending_quotas ?? 0;
     const previewProgress =
@@ -48,27 +47,6 @@ export default function ExpenseCard({
 
             {/* Top row */}
             <div className="flex items-start justify-between gap-4">
-                {reconcileActive && (
-                    <button
-                        type="button"
-                        aria-label={
-                            reconcileChecked
-                                ? 'Desmarcar pago de esta sesión'
-                                : 'Marcar como pagado en esta sesión'
-                        }
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleReconcile(gasto, entityName);
-                        }}
-                        className={`shrink-0 mt-0.5 flex h-5 w-5 items-center justify-center rounded-md border transition-colors cursor-pointer ${
-                            reconcileChecked
-                                ? 'border-primary bg-primary text-background-dark'
-                                : 'border-slate-300 dark:border-slate-600 text-transparent hover:border-primary'
-                        }`}
-                    >
-                        <Icon name="check" className="text-base" />
-                    </button>
-                )}
                 <div
                     className={`flex flex-col gap-1.5 flex-1 ${reconcileActive && reconcileChecked ? 'opacity-60' : ''}`}
                 >
@@ -90,11 +68,10 @@ export default function ExpenseCard({
                                     e.stopPropagation();
                                     onToggleFavorite(gasto);
                                 }}
-                                className={`shrink-0 cursor-pointer transition-colors ${
-                                    gasto.is_favorite
+                                className={`shrink-0 cursor-pointer transition-colors ${gasto.is_favorite
                                         ? 'text-amber-400 hover:text-amber-500'
                                         : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
-                                }`}
+                                    }`}
                             >
                                 <Icon
                                     name="star"
@@ -206,39 +183,52 @@ export default function ExpenseCard({
                     </button>
                 )}
 
-                {onPayClick && (!gasto.is_postponed || !reconcileEnabled) && (
+                {reconcileActive && reconcileChecked ? (
                     <button
-                        className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${
-                            reconcileEnabled && !sessionActive ? 'opacity-50' : ''
-                        }`}
-                        disabled={loading}
-                        title={
-                            reconcileEnabled && !sessionActive
-                                ? 'Activá el modo "Hacer cuentas" para registrar pagos'
-                                : undefined
-                        }
+                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-1.5 shrink-0"
                         onClick={(e) => {
                             e.stopPropagation();
-                            onPayClick(gasto);
+                            toggleReconcile(gasto);
                         }}
                     >
-                        {loading ? (
-                            <>
-                                <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                Procesando…
-                            </>
-                        ) : gasto.type === 'INGRESO' ? (
-                            reconcileActive ? (
-                                'Marcar cobro'
-                            ) : (
-                                'Registrar cobro'
-                            )
-                        ) : reconcileActive ? (
-                            'Marcar pago'
-                        ) : (
-                            'Pagar cuota'
-                        )}
+                        <Icon name="undo" className="text-sm" />
+                        Revertir
                     </button>
+                ) : (
+                    onPayClick &&
+                    (!gasto.is_postponed || !reconcileEnabled) && (
+                        <button
+                            className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${reconcileEnabled && !sessionActive ? 'opacity-50' : ''
+                                }`}
+                            disabled={loading}
+                            title={
+                                reconcileEnabled && !sessionActive
+                                    ? 'Activá el modo "Hacer cuentas" para registrar pagos'
+                                    : undefined
+                            }
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onPayClick(gasto);
+                            }}
+                        >
+                            {loading ? (
+                                <>
+                                    <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                    Procesando…
+                                </>
+                            ) : gasto.type === 'INGRESO' ? (
+                                reconcileActive ? (
+                                    'Marcar cobro'
+                                ) : (
+                                    'Registrar cobro'
+                                )
+                            ) : reconcileActive ? (
+                                'Marcar pago'
+                            ) : (
+                                'Pagar cuota'
+                            )}
+                        </button>
+                    )
                 )}
             </div>
         </div>

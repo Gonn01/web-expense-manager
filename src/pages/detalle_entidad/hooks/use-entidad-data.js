@@ -122,9 +122,12 @@ export function useEntidadData() {
 
     const actualizarEntidad = useCallback(
         async (newName) => {
-            await updateFinancialEntity(id, newName, token);
-            const data = await fetchFinancialEntityById(id, token);
-            setEntity(data);
+            const data = await updateFinancialEntity(id, newName, token);
+            setEntity((prev) =>
+                prev
+                    ? { ...prev, name: data.name, movements: data.movements ?? prev.movements }
+                    : prev,
+            );
         },
         [id, token],
     );
@@ -148,14 +151,15 @@ export function useEntidadData() {
 
     const restaurarGasto = useCallback(
         async (gastoId) => {
-            await restaurarGastoApi(gastoId, token);
-            // Sale de la lista de eliminados y recargamos la entidad para que
-            // vuelva a aparecer en activos / finalizados / pendientes.
+            const restored = await restaurarGastoApi(gastoId, token);
+            // Sale de la lista de eliminados y vuelve a activos, sin recargar
+            // toda la entidad.
             setGastosEliminados((prev) => (prev ?? []).filter((g) => g.id !== gastoId));
-            const data = await fetchFinancialEntityById(id, token);
-            setEntity(data);
+            setEntity((prev) =>
+                prev ? { ...prev, gastos_activos: [restored, ...prev.gastos_activos] } : prev,
+            );
         },
-        [id, token],
+        [token],
     );
 
     const vincularUsuario = useCallback(
@@ -187,9 +191,33 @@ export function useEntidadData() {
     const pagarCuota = useCallback(
         async (gasto) => {
             try {
-                await pagarCuotaApi(gasto.id, token, { direct: true });
-                const data = await fetchFinancialEntityById(id, token);
-                setEntity(data);
+                const updated = await pagarCuotaApi(gasto.id, token, { direct: true });
+                const isFinished =
+                    !updated.fixed_expense &&
+                    Number(updated.payed_quotas) >= Number(updated.number_of_quotas);
+
+                setEntity((prev) => {
+                    if (!prev) return prev;
+                    let movedToInactive = false;
+                    const activos = prev.gastos_activos.reduce((acc, g) => {
+                        if (g.id !== updated.id) {
+                            acc.push(g);
+                        } else if (!isFinished) {
+                            acc.push(updated);
+                        } else {
+                            movedToInactive = true;
+                        }
+                        return acc;
+                    }, []);
+                    return {
+                        ...prev,
+                        gastos_activos: activos,
+                        gastos_inactivos: movedToInactive
+                            ? [updated, ...prev.gastos_inactivos]
+                            : prev.gastos_inactivos,
+                    };
+                });
+
                 useSnackbarStore
                     .getState()
                     .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
@@ -198,7 +226,7 @@ export function useEntidadData() {
                 console.error('Error registrando pago', err);
             }
         },
-        [id, token],
+        [token],
     );
 
     return {

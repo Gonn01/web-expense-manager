@@ -174,57 +174,69 @@ export function useDashboardData() {
 
     const postergarGasto = useCallback(
         async (gastoId, postponed) => {
-            // Optimista: reflejamos el flag y dejamos que loadDashboard reconcilie.
-            setGroups((prev) =>
-                prev.map((g) => ({
+            // Optimista, confirmado por la respuesta del endpoint: no hace falta
+            // recargar todo el dashboard para un solo campo.
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) => ({
                     ...g,
                     items: g.items.map((it) =>
                         String(it.id) === String(gastoId) ? { ...it, is_postponed: postponed } : it,
                     ),
-                })),
-            );
+                }));
+            });
             try {
                 await postergarGastoApi(gastoId, postponed, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error postergando gasto:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     const favoritoGasto = useCallback(
         async (gastoId, favorite) => {
-            setGroups((prev) =>
-                prev.map((g) => ({
+            // Optimista, confirmado por la respuesta del endpoint: no hace falta
+            // recargar todo el dashboard para un solo campo.
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) => ({
                     ...g,
                     items: g.items.map((it) =>
                         String(it.id) === String(gastoId) ? { ...it, is_favorite: favorite } : it,
                     ),
-                })),
-            );
+                }));
+            });
             try {
                 await favoritoGastoApi(gastoId, favorite, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error marcando favorito:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     const favoritoEntidad = useCallback(
         async (entidadId, favorite) => {
-            setGroups((prev) =>
-                prev.map((g) =>
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) =>
                     String(g.id) === String(entidadId) ? { ...g, is_favorite: favorite } : g,
-                ),
-            );
+                );
+            });
             try {
                 await favoritoEntidadApi(entidadId, favorite, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error marcando favorito de entidad:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     useEffect(() => {
