@@ -52,7 +52,6 @@ export default function EntidadDetalle() {
         setPayModalOpen,
         loadingPayIds,
         gastosEliminados,
-        loadingEliminados,
         onRestaurarGasto,
         restoringIds,
     } = useEntidadUI();
@@ -239,14 +238,10 @@ export default function EntidadDetalle() {
 
             {tab === 'eliminados' && (
                 <ListContainer
-                    empty={!loadingEliminados && (gastosEliminados ?? []).length === 0}
-                    emptyLabel={
-                        loadingEliminados
-                            ? 'Cargando…'
-                            : 'No hay gastos eliminados en esta entidad.'
-                    }
+                    empty={gastosEliminados.length === 0}
+                    emptyLabel="No hay gastos eliminados en esta entidad."
                 >
-                    {(gastosEliminados ?? []).map((g) => (
+                    {gastosEliminados.map((g) => (
                         <DeletedGastoRow
                             key={g.id}
                             gasto={g}

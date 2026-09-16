@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import ProgressBar from '@/components/ProgressBar';
 import CategoryBadges from '@/components/CategoryBadges';
 import Icon from '@/components/Icon';
+import AlertModal from '@/components/modals/AlertModal';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
 import { useReconcileStore } from '@/store/use-reconcile-store';
@@ -32,9 +34,16 @@ export default function ExpenseCard({
         pendingQuotas > 0 && !gasto.fixed_expense && gasto.number_of_quotas > 0
             ? Math.min(100, ((gasto.payed_quotas + pendingQuotas) / gasto.number_of_quotas) * 100)
             : null;
+    // Ya esta todo cubierto entre pagos confirmados y pendientes de
+    // confirmacion (gasto compartido): no queda nada mas para registrar.
+    const quotasExhausted =
+        !gasto.fixed_expense &&
+        gasto.number_of_quotas > 0 &&
+        gasto.payed_quotas + pendingQuotas >= gasto.number_of_quotas;
 
     const cur = gasto.currency_type;
     const paidTotal = (gasto.payed_quotas ?? 0) * (gasto.amount_per_quota ?? 0);
+    const [showExhaustedWarning, setShowExhaustedWarning] = useState(false);
 
     return (
         <div
@@ -86,7 +95,7 @@ export default function ExpenseCard({
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5">
                         <ChipTipoGasto tipo={gasto.type} fijo={gasto.fixed_expense} />
-                        {gasto.is_postponed && (
+                        {gasto.is_postponed && onTogglePostpone && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 text-xs font-bold px-2 py-0.5"
                                 title="Postergada: no entra en la sesión de cuentas actual"
@@ -208,6 +217,10 @@ export default function ExpenseCard({
                             }
                             onClick={(e) => {
                                 e.stopPropagation();
+                                if (quotasExhausted) {
+                                    setShowExhaustedWarning(true);
+                                    return;
+                                }
                                 onPayClick(gasto);
                             }}
                         >
@@ -231,6 +244,13 @@ export default function ExpenseCard({
                     )
                 )}
             </div>
+
+            <AlertModal
+                open={showExhaustedWarning}
+                title="Nada para registrar"
+                message={`Ya no hay cuotas para registrar: ${gasto.payed_quotas} pagadas + ${pendingQuotas} pendientes de confirmación de la otra persona cubren las ${gasto.number_of_quotas} cuotas del gasto.`}
+                onClose={() => setShowExhaustedWarning(false)}
+            />
         </div>
     );
 }

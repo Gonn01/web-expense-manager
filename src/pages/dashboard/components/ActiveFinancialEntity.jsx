@@ -45,19 +45,23 @@ export default function ActiveFinancialEntity({
 
     const reconcileActive = useReconcileStore((s) => s.active);
     const checkedExpenses = useReconcileStore((s) => s.checkedExpenses);
+    const setExpensesChecked = useReconcileStore((s) => s.setExpensesChecked);
 
-    const checkedInGroup = group.items.filter((it) => checkedExpenses[String(it.id)]).length;
-    const allChecked = group.items.length > 0 && checkedInGroup === group.items.length;
+    // Los postergados nunca se pueden marcar en la sesión: no deben impedir
+    // que la entidad se vea "completa" si el resto ya está marcado.
+    const checkableItems = group.items.filter((it) => !it.is_postponed);
+    const checkedInGroup = checkableItems.filter((it) => checkedExpenses[String(it.id)]).length;
+    const allChecked = checkableItems.length > 0 && checkedInGroup === checkableItems.length;
     const entityDone = reconcileActive && allChecked;
 
     const count = group.items.length;
 
     return (
         <div
-            className={`shrink-0 rounded-xl border shadow-sm overflow-hidden transition-colors ${
+            className={`shrink-0 rounded-xl shadow-sm overflow-hidden transition-colors ${
                 entityDone
-                    ? 'border-emerald-500/40 bg-emerald-500/4'
-                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-white/3'
+                    ? 'border-2 border-emerald-500/90 bg-emerald-500/4'
+                    : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-white/3'
             }`}
         >
             {/* Entity header */}
@@ -153,13 +157,24 @@ export default function ActiveFinancialEntity({
                         preferredCurrency={preferredCurrency}
                         rates={rates}
                     />
-                    <button
-                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors"
-                        onClick={() => onOpenGroup?.(group)}
-                        type="button"
-                    >
-                        Pagar / Cobrar
-                    </button>
+                    {entityDone ? (
+                        <button
+                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center gap-1.5"
+                            onClick={() => setExpensesChecked(group.items, group.name, false)}
+                            type="button"
+                        >
+                            <Icon name="undo" className="text-sm" />
+                            Revertir
+                        </button>
+                    ) : (
+                        <button
+                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors"
+                            onClick={() => onOpenGroup?.(group)}
+                            type="button"
+                        >
+                            Pagar / Cobrar
+                        </button>
+                    )}
                 </div>
             </div>
 

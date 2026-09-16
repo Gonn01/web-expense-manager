@@ -38,10 +38,11 @@ export function useDashboardUI(groups = [], pagarCuotas) {
                     const matchCurrency = currency === null || it.currency_type === currency;
                     const matchType = typeFilter === null || it.type === typeFilter;
                     const matchFixed = fixedFilter === null || it.fixed_expense === fixedFilter;
-                    // En modo "hacer cuentas" los gastos postergados quedan fuera de la sesión.
-                    const matchPostponed = !reconcileActive || !it.is_postponed;
 
-                    return matchTitle && matchCurrency && matchType && matchFixed && matchPostponed;
+                    // Los postergados se siguen mostrando aunque haya una sesión de
+                    // cuentas activa: si desaparecieran de la lista no habría forma
+                    // de revertir la postergación sin esperar a que termine la sesión.
+                    return matchTitle && matchCurrency && matchType && matchFixed;
                 });
 
                 return { ...g, items };

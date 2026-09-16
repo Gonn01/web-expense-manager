@@ -21,10 +21,10 @@ export function useEntidadData() {
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Gastos eliminados de la entidad (soft-delete). Se cargan on-demand
-    // cuando el usuario abre la pestaña "Eliminados".
-    const [gastosEliminados, setGastosEliminados] = useState(null); // null = nunca cargado
-    const [loadingEliminados, setLoadingEliminados] = useState(false);
+    // Gastos eliminados de la entidad (soft-delete): se traen junto con el
+    // resto al abrir la pantalla, para no disparar un pedido extra recien
+    // cuando se abre la pestaña "Eliminados".
+    const [gastosEliminados, setGastosEliminados] = useState([]);
 
     useEffect(() => {
         if (!token) return;
@@ -32,8 +32,12 @@ export function useEntidadData() {
         const load = async () => {
             try {
                 setLoading(true);
-                const data = await fetchFinancialEntityById(id, token);
+                const [data, eliminados] = await Promise.all([
+                    fetchFinancialEntityById(id, token),
+                    fetchGastosEliminados(id, token),
+                ]);
                 setEntity(data);
+                setGastosEliminados(Array.isArray(eliminados) ? eliminados : []);
             } catch (err) {
                 console.error('Error cargando entidad', err);
             } finally {
@@ -136,25 +140,12 @@ export function useEntidadData() {
         await deleteFinancialEntity(id, token);
     }, [id, token]);
 
-    const cargarGastosEliminados = useCallback(async () => {
-        setLoadingEliminados(true);
-        try {
-            const data = await fetchGastosEliminados(id, token);
-            setGastosEliminados(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error cargando gastos eliminados', err);
-            setGastosEliminados((prev) => prev ?? []);
-        } finally {
-            setLoadingEliminados(false);
-        }
-    }, [id, token]);
-
     const restaurarGasto = useCallback(
         async (gastoId) => {
             const restored = await restaurarGastoApi(gastoId, token);
             // Sale de la lista de eliminados y vuelve a activos, sin recargar
             // toda la entidad.
-            setGastosEliminados((prev) => (prev ?? []).filter((g) => g.id !== gastoId));
+            setGastosEliminados((prev) => prev.filter((g) => g.id !== gastoId));
             setEntity((prev) =>
                 prev ? { ...prev, gastos_activos: [restored, ...prev.gastos_activos] } : prev,
             );
@@ -241,8 +232,6 @@ export function useEntidadData() {
         pagarCuota,
         setEntity,
         gastosEliminados,
-        loadingEliminados,
-        cargarGastosEliminados,
         restaurarGasto,
     };
 }

@@ -15,6 +15,7 @@ const byFavThenDate = (aFav, bFav, aDate, bDate) => {
 import useAuth from '@/store/use-auth-store';
 import { usePayments } from '@/hooks/use-payments';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useReconcileStore } from '@/store/use-reconcile-store';
 
 export function useDashboardData() {
     const { token, user } = useAuth();
@@ -186,6 +187,15 @@ export function useDashboardData() {
                     ),
                 }));
             });
+
+            // Si se posterga un gasto ya marcado en la sesión de "hacer cuentas",
+            // hay que revertir esa marca: un gasto postergado no debe quedar
+            // contado como pago pendiente de cerrar.
+            const reconcile = useReconcileStore.getState();
+            if (postponed && reconcile.session && reconcile.isChecked(gastoId)) {
+                await reconcile.toggleExpense({ id: gastoId });
+            }
+
             try {
                 await postergarGastoApi(gastoId, postponed, token);
             } catch (err) {

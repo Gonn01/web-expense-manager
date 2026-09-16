@@ -16,24 +16,11 @@ export function useEntidadUI() {
         desvincularUsuario,
         pagarCuota,
         gastosEliminados,
-        loadingEliminados,
-        cargarGastosEliminados,
         restaurarGasto,
     } = useEntidadData();
 
-    const [tab, setTabState] = useState('activos');
+    const [tab, setTab] = useState('activos');
     const [restoringIds, setRestoringIds] = useState(new Set());
-
-    // Al abrir "Eliminados" por primera vez, disparamos la carga on-demand.
-    const setTab = useCallback(
-        (next) => {
-            setTabState(next);
-            if (next === 'eliminados' && gastosEliminados === null) {
-                cargarGastosEliminados();
-            }
-        },
-        [gastosEliminados, cargarGastosEliminados],
-    );
 
     const onRestaurarGasto = useCallback(
         async (gastoId) => {
@@ -154,7 +141,6 @@ export function useEntidadUI() {
         loadingPayIds,
 
         gastosEliminados,
-        loadingEliminados,
         onRestaurarGasto,
         restoringIds,
 
