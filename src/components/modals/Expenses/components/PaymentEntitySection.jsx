@@ -39,7 +39,7 @@ export default function PaymentEntitySection({
                             <option value="">Seleccionar entidad de pago...</option>
                             {options.map((e) => (
                                 <option key={`pay-entity-${e.id}`} value={e.id}>
-                                    {e.name}
+                                    {e.is_favorite ? `★ ${e.name}` : e.name}
                                 </option>
                             ))}
                         </select>

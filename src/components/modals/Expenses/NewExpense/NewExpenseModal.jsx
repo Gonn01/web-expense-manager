@@ -5,6 +5,8 @@ import useAuth from '@/store/use-auth-store';
 import Icon from '@/components/Icon';
 import TextInput from '@/components/TextInput';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { useDialogStore } from '@/store/use-dialog-store';
+import { vincularUsuarioEntidad } from '@/services/api';
 import { ExpenseType } from '@/utils/enums';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import ExpenseTypeSelector from '../components/ExpenseTypeSelector';
@@ -34,6 +36,7 @@ export default function NewExpenseModal({
 
     const [showNewEntity, setShowNewEntity] = useState(false);
     const [newEntityName, setNewEntityName] = useState('');
+    const [newEntityEmail, setNewEntityEmail] = useState('');
     const [isFixed, setIsFixed] = useState(false);
     const [isInstallment, setIsInstallment] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
@@ -41,7 +44,7 @@ export default function NewExpenseModal({
     const [paidInstallments, setPaidInstallments] = useState('0');
     const [payWithEntity, setPayWithEntity] = useState(false);
     const [paymentEntity, setPaymentEntity] = useState('');
-    const { entities, loading, createEntity } = useEntitiesStore();
+    const { entities, loading, createEntity, updateEntity } = useEntitiesStore();
     const [loadingNewEntity, setLoadingNewEntity] = useState(false);
 
     const { categories, loading: loadingCategories, createCategory } = useCategoriesStore();
@@ -87,6 +90,24 @@ export default function NewExpenseModal({
             setEntity(created.id);
             setShowNewEntity(false);
             setNewEntityName('');
+
+            const email = newEntityEmail.trim();
+            setNewEntityEmail('');
+            if (email) {
+                try {
+                    const linked = await vincularUsuarioEntidad(created.id, email, token);
+                    updateEntity(created.id, linked);
+                } catch (linkErr) {
+                    console.error('Error vinculando usuario:', linkErr);
+                    useDialogStore.getState().alert({
+                        title: 'Entidad creada',
+                        tone: 'warning',
+                        message: `Se creó la entidad, pero no se pudo vincular el usuario: ${
+                            linkErr.message ?? 'revisá el email.'
+                        }`,
+                    });
+                }
+            }
         } catch (err) {
             console.error('Error creando entidad', err);
         } finally {
@@ -214,6 +235,8 @@ export default function NewExpenseModal({
                         setShowNewEntity={setShowNewEntity}
                         newEntityName={newEntityName}
                         setNewEntityName={setNewEntityName}
+                        newEntityEmail={newEntityEmail}
+                        setNewEntityEmail={setNewEntityEmail}
                         handleCreateEntity={handleCreateEntity}
                     />
 

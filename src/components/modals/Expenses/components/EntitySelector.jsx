@@ -8,6 +8,8 @@ export default function EntitySelector({
     setShowNewEntity,
     newEntityName,
     setNewEntityName,
+    newEntityEmail,
+    setNewEntityEmail,
     handleCreateEntity,
     loading,
     loadingNewEntity,
@@ -37,7 +39,7 @@ export default function EntitySelector({
                             <option value="">Seleccionar...</option>
                             {entities.map((e) => (
                                 <option key={`entity-${e.id}`} value={e.id}>
-                                    {e.name}
+                                    {e.is_favorite ? `★ ${e.name}` : e.name}
                                 </option>
                             ))}
                         </select>
@@ -67,16 +69,31 @@ export default function EntitySelector({
                 <div className="mt-3 p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
                     <input
                         disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245] 
+                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
                text-white px-3 disabled:opacity-60"
                         placeholder="Nombre de la nueva entidad"
                         value={newEntityName}
                         onChange={(e) => setNewEntityName(e.target.value)}
+                        autoFocus
+                    />
+
+                    <input
+                        type="email"
+                        disabled={loadingNewEntity}
+                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
+               text-white px-3 disabled:opacity-60"
+                        placeholder="Vincular a un usuario (opcional)"
+                        value={newEntityEmail}
+                        onChange={(e) => setNewEntityEmail(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleCreateEntity()}
                     />
 
                     <div className="flex justify-end gap-2">
                         <button
-                            onClick={() => setShowNewEntity(false)}
+                            onClick={() => {
+                                setShowNewEntity(false);
+                                setNewEntityEmail('');
+                            }}
                             disabled={loadingNewEntity}
                             className={`text-sm px-3 py-1.5 rounded-lg cursor-pointer
                             ${loadingNewEntity ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white'}`}
