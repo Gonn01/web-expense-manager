@@ -302,8 +302,8 @@ export const startReconcileSession = async (token) => {
     return data.data; // { session, items, alreadyOpen }
 };
 
-export const setReconcileItem = async ({ purchase_id, purchase_ids, checked, auto }, token) => {
-    const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked, auto };
+export const setReconcileItem = async ({ purchase_id, purchase_ids, checked }, token) => {
+    const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked };
     const { data } = await api.put('/reconcile/session/items', body, {
         headers: { Authorization: `Bearer ${token}` },
     });

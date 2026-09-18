@@ -155,12 +155,6 @@ export default function CuentaDetalle() {
                                                     {it.type === 'INGRESO' ? 'Ingreso' : 'Egreso'}
                                                 </span>
                                                 {it.fixed_expense && <span>· Fijo</span>}
-                                                <span>
-                                                    ·{' '}
-                                                    {it.auto
-                                                        ? 'pagado en la sesión'
-                                                        : 'marcado a mano'}
-                                                </span>
                                             </p>
                                         </div>
 

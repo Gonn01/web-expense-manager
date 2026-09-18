@@ -12,11 +12,11 @@ import {
 const token = () => useAuth.getState().token;
 const toast = (msg, type = 'error') => useSnackbarStore.getState().show(msg, type);
 
-/** items: [{ purchase_id, auto, checked_at }] -> { [id]: { auto, checked_at } } */
+/** items: [{ purchase_id, checked_at }] -> { [id]: { checked_at } } */
 function itemsToMap(items = []) {
     const map = {};
     for (const it of items) {
-        map[String(it.purchase_id)] = { auto: it.auto, checked_at: it.checked_at };
+        map[String(it.purchase_id)] = { checked_at: it.checked_at };
     }
     return map;
 }
@@ -29,7 +29,7 @@ function itemsToMap(items = []) {
 export const useReconcileStore = create((set, get) => ({
     active: false,
     session: null, // { id, started_at } | null
-    checkedExpenses: {}, // { [purchaseId]: { auto, checked_at } }
+    checkedExpenses: {}, // { [purchaseId]: { checked_at } }
     loading: false,
     loaded: false,
 
@@ -100,7 +100,7 @@ export const useReconcileStore = create((set, get) => ({
         // Optimista
         set((s) => {
             const next = { ...s.checkedExpenses };
-            if (checked) next[id] = { auto: false, checked_at: new Date().toISOString() };
+            if (checked) next[id] = { checked_at: new Date().toISOString() };
             else delete next[id];
             return { checkedExpenses: next };
         });
@@ -132,7 +132,7 @@ export const useReconcileStore = create((set, get) => ({
             for (const e of expenses) {
                 const id = String(e.id);
                 if (checked)
-                    next[id] = next[id] ?? { auto: false, checked_at: new Date().toISOString() };
+                    next[id] = next[id] ?? { checked_at: new Date().toISOString() };
                 else delete next[id];
             }
             return { checkedExpenses: next };
