@@ -115,7 +115,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando |
 | Pusher Channels | Notificaciones en tiempo real | RNF-DIS-04 |
-| dolarapi.com | Cotización de USD y EUR | RNF-DIS-05 |
+| dolarapi.com | Cotización de USD, EUR, BRL, CLP y UYU | RNF-DIS-05 |
 | Firebase Analytics | Registro de errores de la app móvil | RNF-DIS-06 |
 
 ## LOC — Localización
@@ -124,6 +124,6 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | RNF-LOC-01 | La interfaz, los mensajes de error y los términos del dominio están en español rioplatense. | Todos |
 | RNF-LOC-02 | La app móvil no contiene textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | App |
-| RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR). | Web, App |
+| RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR, BRL, CLP, UYU). | Web, App |
 
 *Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español.

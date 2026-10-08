@@ -144,11 +144,11 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Actor**: Usuario
 - **Requerimientos**: RF-CFG-02
 - **Flujo principal**
-    1. En Configuración, el usuario elige ARS, USD o EUR.
+    1. En Configuración, el usuario elige ARS, USD, EUR, BRL, CLP o UYU.
     2. El sistema guarda la preferencia.
     3. El cliente actualiza los datos del usuario guardados en el dispositivo.
 - **Flujos alternativos**
-    - 2a. La moneda no es una de las tres admitidas: el sistema la rechaza.
+    - 2a. La moneda no es una de las admitidas: el sistema la rechaza.
 - **Postcondición**: las equivalencias del dashboard se expresan en la nueva moneda.
 
 ### CU-07 — Registrar sueldo
@@ -170,7 +170,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El usuario abre el dashboard.
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
     3. El sistema calcula por moneda los totales "debo", "me deben" y balance.
-    4. El sistema obtiene la cotización de USD y EUR.
+    4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
     5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, la cantidad de gastos compartidos pendientes.
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.

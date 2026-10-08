@@ -27,7 +27,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | ID | Requerimiento | CU |
 | --- | --- | --- |
 | RF-CFG-01 | El usuario puede ver su perfil: nombre, email y foto. | CU-05 |
-| RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD y EUR. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
+| RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD, EUR, BRL, CLP y UYU. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
 | RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos. | CU-07 |
 
 ## DSH — Dashboard
@@ -39,7 +39,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-DSH-03 | Una entidad sin gastos activos no se muestra, salvo que sea favorita, no haya filtros aplicados y no haya una sesión de cuentas abierta. | CU-08 |
 | RF-DSH-04 | El dashboard muestra, por moneda, los totales "debo", "me deben" y el balance, tanto del saldo restante como de la cuota del período. | CU-08 |
 | RF-DSH-05 | El usuario puede filtrar los gastos por texto (coincide con el nombre del gasto o de la entidad), por moneda, por tipo (egreso/ingreso) y por gasto fijo / no fijo. Por defecto no hay filtro de moneda. | CU-08 |
-| RF-DSH-06 | El sistema muestra los montos convertidos a la moneda preferida usando la cotización vigente de USD y EUR frente a ARS, obtenida de un servicio externo. | CU-08 |
+| RF-DSH-06 | El sistema muestra los montos convertidos a la moneda preferida usando la cotización vigente de USD, EUR, BRL, CLP y UYU frente a ARS, obtenida de un servicio externo. | CU-08 |
 | RF-DSH-07 | El usuario puede ver gráficos de sus gastos activos: evolución de cuotas, evolución de montos y distribución por categoría, incluyendo qué porcentaje del sueldo representa cada categoría. | CU-08 |
 | RF-DSH-08 | El dashboard indica cuántos gastos compartidos están pendientes de aprobación por cada entidad. | CU-08, CU-32 |
 | RF-DSH-09 | El usuario puede copiar al portapapeles un resumen en texto de los gastos de una entidad, con formato apto para WhatsApp. | CU-31 |
@@ -66,7 +66,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 
 | ID | Requerimiento | CU |
 | --- | --- | --- |
-| RF-GAS-01 | El usuario puede crear un gasto indicando: entidad, nombre, monto, moneda (ARS/USD/EUR), tipo (egreso/ingreso) y modalidad: pago único, en cuotas (cantidad de cuotas) o gasto fijo. | CU-17 |
+| RF-GAS-01 | El usuario puede crear un gasto indicando: entidad, nombre, monto, moneda (ARS/USD/EUR/BRL/CLP/UYU), tipo (egreso/ingreso) y modalidad: pago único, en cuotas (cantidad de cuotas) o gasto fijo. | CU-17 |
 | RF-GAS-02 | Al crear un gasto se puede indicar cuántas cuotas ya están pagas; el sistema registra un pago por cada una. | CU-17 |
 | RF-GAS-03 | Al crear un gasto se puede crear en el mismo paso la entidad a la que pertenece. | CU-10, CU-17 |
 | RF-GAS-04 | Al crear un gasto se puede elegir "pagar con otra entidad" propia. El sistema crea un **gasto espejo** en esa entidad: mismos datos, cuotas y categorías, con el tipo opuesto, y deja ambos gastos enlazados. | CU-17 |

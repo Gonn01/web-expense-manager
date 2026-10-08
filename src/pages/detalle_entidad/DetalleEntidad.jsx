@@ -22,6 +22,7 @@ import Loader from '@/components/Loader';
 import PeligroEliminar from '@/components/PeligroEliminar';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
+import { Currency } from '@/utils/enums';
 import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
@@ -61,9 +62,9 @@ export default function EntidadDetalle() {
 
     const { user } = useAuth();
     const { rates } = useExchangeRates();
-    const preferredCurrency = ['ARS', 'USD', 'EUR'].includes(user?.preferred_currency)
+    const preferredCurrency = Object.values(Currency).includes(user?.preferred_currency)
         ? user.preferred_currency
-        : 'ARS';
+        : Currency.ARS;
 
     // Resumen para WhatsApp: mismo formato que en el dashboard, sobre los gastos activos.
     const whatsappGroup = useMemo(

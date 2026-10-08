@@ -16,6 +16,9 @@ import useAuth from '@/store/use-auth-store';
 import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { Currency } from '@/utils/enums';
+
+const CURRENCY_VALUES = Object.values(Currency);
 
 export function useDashboardData() {
     const { token, user } = useAuth();
@@ -27,11 +30,12 @@ export function useDashboardData() {
     const [loading, setLoading] = useState(false);
 
     const recalcSummary = useCallback((groupsToUse) => {
-        const totals = {
-            ARS: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            USD: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            EUR: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-        };
+        const totals = Object.fromEntries(
+            CURRENCY_VALUES.map((cur) => [
+                cur,
+                { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
+            ]),
+        );
 
         groupsToUse.forEach((group) => {
             group.items.forEach((g) => {
@@ -49,7 +53,7 @@ export function useDashboardData() {
             });
         });
 
-        const summary = ['ARS', 'USD', 'EUR'].reduce((acc, cur) => {
+        const summary = CURRENCY_VALUES.reduce((acc, cur) => {
             acc[cur] = {
                 total_debo: totals[cur].debo,
                 total_me_deben: totals[cur].meDeben,

@@ -152,7 +152,7 @@ injectServices() → injectRepositories() → injectFirebaseProviders() + inject
 - Cubits **por página** (dashboard, detalles, cuentas, configuración): no se registran; los crea la Page con `BlocProvider(create:)`.
 - Cubits **de larga vida** (entidades, categorías, compartidos, settlement, exchange_rates): se registran como singleton.
 
-Hay dos instancias de Dio: `ApiKeys.mainDio` (API propia: interceptor de auth + `ApiErrorInterceptor` + `RetryInterceptor`) y `ApiKeys.ratesDio` (`dolarapi.com`, sin auth).
+Hay dos instancias de Dio: `ApiKeys.mainDio` (API propia: interceptor de auth + `ApiErrorInterceptor` + `RetryInterceptor`) y `ApiKeys.ratesDio` (`dolarapi.com`, cotizaciones de USD/EUR/BRL/CLP/UYU, sin auth).
 
 ## 5. Navegación
 

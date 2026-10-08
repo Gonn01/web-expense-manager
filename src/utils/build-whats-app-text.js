@@ -1,5 +1,14 @@
 import { convertCurrency } from '@/utils/convert-currency';
 import { formatAmount } from '@/utils/FormatMoney';
+import { Currency } from '@/utils/enums';
+
+const RATE_NAMES = {
+    [Currency.USD]: 'dólar',
+    [Currency.EUR]: 'euro',
+    [Currency.BRL]: 'real brasileño',
+    [Currency.CLP]: 'peso chileno',
+    [Currency.UYU]: 'peso uruguayo',
+};
 
 function purchaseText(it, displayCur, rates) {
     const original = Number(it.amount_per_quota ?? 0);
@@ -82,10 +91,12 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
         buf.push(`*En total me debés:* ${formatAmount(totalCreditor)} ${cur}\n\n\n`);
     }
 
-    const hasUSD = group.items.some((i) => i.currency_type === 'USD');
-    const hasEUR = group.items.some((i) => i.currency_type === 'EUR');
-    if (hasUSD && rates?.USD) buf.push(`Valor del dólar tomado: 1 USD = ${rates.USD} ARS\n\n\n`);
-    if (hasEUR && rates?.EUR) buf.push(`Valor del euro tomado: 1 EUR = ${rates.EUR} ARS\n\n\n`);
+    for (const [code, name] of Object.entries(RATE_NAMES)) {
+        const used = group.items.some((i) => i.currency_type === code);
+        if (used && rates?.[code]) {
+            buf.push(`Valor del ${name} tomado: 1 ${code} = ${rates[code]} ARS\n\n\n`);
+        }
+    }
 
     const balance = totalDebtor - totalCreditor;
     const label = balance < 0 ? '*Resumen*: Me debés en total:' : 'Te debo en total:';
