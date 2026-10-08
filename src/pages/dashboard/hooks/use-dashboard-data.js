@@ -13,13 +13,13 @@ const byFavThenDate = (aFav, bFav, aDate, bDate) => {
     return new Date(bDate) - new Date(aDate);
 };
 import useAuth from '@/store/use-auth-store';
-import { usePayments } from '@/hooks/use-payments';
+import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 export function useDashboardData() {
     const { token, user } = useAuth();
-    const { handleConfirm } = usePayments(token);
+    const { handleConfirm } = useSettlements(token);
 
     const [summaryByCurrency, setSummaryByCurrency] = useState(null);
     const [groups, setGroups] = useState([]);
@@ -156,7 +156,7 @@ export function useDashboardData() {
         [groups, recalcSummary],
     );
 
-    const pagarCuotas = useCallback(
+    const settleQuotas = useCallback(
         async (items) => {
             const updatedItems = await handleConfirm(items);
             updateAfterPayment(updatedItems);
@@ -191,9 +191,9 @@ export function useDashboardData() {
             // Si se posterga un gasto ya marcado en la sesión de "hacer cuentas",
             // hay que revertir esa marca: un gasto postergado no debe quedar
             // contado como pago pendiente de cerrar.
-            const reconcile = useReconcileStore.getState();
-            if (postponed && reconcile.session && reconcile.isChecked(gastoId)) {
-                await reconcile.toggleExpense({ id: gastoId });
+            const settlement = useSettlementStore.getState();
+            if (postponed && settlement.session && settlement.isChecked(gastoId)) {
+                await settlement.toggleExpense({ id: gastoId });
             }
 
             try {
@@ -295,7 +295,7 @@ export function useDashboardData() {
         summaryByCurrency,
         loadDashboard,
         getSummaryForCurrency: (currency) => summaryByCurrency?.[currency] ?? null,
-        pagarCuotas,
+        settleQuotas,
         crearGasto,
         postergarGasto,
         favoritoGasto,

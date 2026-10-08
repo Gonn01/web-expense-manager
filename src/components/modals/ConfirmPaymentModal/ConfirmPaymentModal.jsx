@@ -15,10 +15,10 @@ export default function ConfirmInstallmentPaymentModal({
     entityName,
     items = [],
     loading = false,
-    reconcileActive = true,
+    settlementActive = true,
     // Aviso "esto no queda en el historial de cuentas". Tiene sentido en la
     // pantalla de detalle de gasto; en el resto no hablamos de "hacer cuentas".
-    showReconcileWarning = true,
+    showSettlementWarning = true,
 }) {
     const [removedIds, setRemovedIds] = useState(() => new Set());
 
@@ -76,8 +76,8 @@ export default function ConfirmInstallmentPaymentModal({
         onConfirm?.(activeItems);
     };
 
-    const verbo = reconcileActive ? 'marcar' : 'registrar';
-    const registraMsg = reconcileActive
+    const verbo = settlementActive ? 'marcar' : 'registrar';
+    const registraMsg = settlementActive
         ? 'Se registra al terminar las cuentas.'
         : 'Se registra ahora en el historial de este gasto.';
 
@@ -87,7 +87,7 @@ export default function ConfirmInstallmentPaymentModal({
                 <ModalHeader
                     icon="payments"
                     title={
-                        reconcileActive
+                        settlementActive
                             ? isSingle
                                 ? 'Marcar Pago de Cuota'
                                 : 'Marcar Pago de Cuotas'
@@ -104,7 +104,7 @@ export default function ConfirmInstallmentPaymentModal({
                     }
                 />
 
-                {!reconcileActive && showReconcileWarning && (
+                {!settlementActive && showSettlementWarning && (
                     <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-left text-xs text-amber-300">
                         <Icon name="warning" className="text-base shrink-0 mt-px" />
                         <span>

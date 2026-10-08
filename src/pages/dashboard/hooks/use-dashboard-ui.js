@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { Currency } from '@/utils/enums';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
-export function useDashboardUI(groups = [], pagarCuotas) {
+export function useDashboardUI(groups = [], settleQuotas) {
     const { user } = useAuth();
 
     const [currency, setCurrency] = useState(null);
@@ -14,9 +14,9 @@ export function useDashboardUI(groups = [], pagarCuotas) {
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
     const [typeFilter, setTypeFilter] = useState(null);
     const [fixedFilter, setFixedFilter] = useState(null);
-    const [loadingPayIds, setLoadingPayIds] = useState(new Set());
+    const [loadingSettleIds, setLoadingPayIds] = useState(new Set());
 
-    const reconcileActive = useReconcileStore((s) => s.active);
+    const settlementActive = useSettlementStore((s) => s.active);
 
     const preferredCurrency = (() => {
         const pref = user?.preferred_currency;
@@ -47,8 +47,8 @@ export function useDashboardUI(groups = [], pagarCuotas) {
 
                 return { ...g, items };
             })
-            .filter((g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !reconcileActive));
-    }, [groups, currency, query, typeFilter, fixedFilter, reconcileActive]);
+            .filter((g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive));
+    }, [groups, currency, query, typeFilter, fixedFilter, settlementActive]);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalEntity, setModalEntity] = useState('');
@@ -66,7 +66,7 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         setModalOpen(true);
     }, []);
 
-    const payModal = {
+    const settleModal = {
         modalOpen,
         modalItems,
         modalEntity,
@@ -75,17 +75,17 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         openItem,
     };
 
-    async function onConfirmPay(itemsOverride) {
-        payModal.setModalOpen(false);
+    async function onConfirmSettle(itemsOverride) {
+        settleModal.setModalOpen(false);
 
         const itemsToPay =
             Array.isArray(itemsOverride) && itemsOverride.length
                 ? itemsOverride
-                : payModal.modalItems;
+                : settleModal.modalItems;
         const ids = itemsToPay.map((i) => i.id);
         setLoadingPayIds((prev) => new Set([...prev, ...ids]));
 
-        await pagarCuotas(itemsToPay);
+        await settleQuotas(itemsToPay);
 
         setLoadingPayIds(new Set());
     }
@@ -107,8 +107,8 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         setFixedFilter,
         filteredGroups,
 
-        payModal,
-        loadingPayIds,
-        onConfirmPay,
+        settleModal,
+        loadingSettleIds,
+        onConfirmSettle,
     };
 }

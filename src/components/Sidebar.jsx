@@ -102,7 +102,7 @@ export default function Sidebar() {
             iconClass: 'text-primary',
             extraIdle: 'hover:text-primary',
         },
-        { to: '/app/cuentas', icon: 'history', label: 'Historial de cuentas' },
+        { to: '/app/settlement', icon: 'history', label: 'Historial de cuentas' },
         {
             to: '/app/compartidos',
             icon: 'group',

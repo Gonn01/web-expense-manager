@@ -6,23 +6,23 @@ import Icon from '@/components/Icon';
 import AlertModal from '@/components/modals/AlertModal';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 export default function ExpenseCard({
     gasto,
     onClick,
-    onPayClick,
+    onSettleClick,
     onTogglePostpone,
     onToggleFavorite,
     loading = false,
     // El "modo hacer cuentas" (indicador + pago diferido) solo existe en el
     // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
-    reconcileEnabled = false,
+    settlementEnabled = false,
 }) {
-    const sessionActive = useReconcileStore((s) => s.active);
-    const reconcileChecked = useReconcileStore((s) => Boolean(s.checkedExpenses[String(gasto.id)]));
-    const toggleReconcile = useReconcileStore((s) => s.toggleExpense);
-    const reconcileActive = reconcileEnabled && sessionActive;
+    const sessionActive = useSettlementStore((s) => s.active);
+    const settlementChecked = useSettlementStore((s) => Boolean(s.checkedExpenses[String(gasto.id)]));
+    const toggleSettlement = useSettlementStore((s) => s.toggleExpense);
+    const settlementActive = settlementEnabled && sessionActive;
     const progress = gasto.fixed_expense
         ? 100
         : gasto.number_of_quotas > 0
@@ -47,7 +47,7 @@ export default function ExpenseCard({
 
     return (
         <div
-            className={`flex flex-col gap-2 rounded-lg p-3 transition-all cursor-pointer relative hover:bg-black/5 dark:hover:bg-white/5 ${loading ? 'pointer-events-none' : ''} ${reconcileActive && reconcileChecked ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
+            className={`flex flex-col gap-2 rounded-lg p-3 transition-all cursor-pointer relative hover:bg-black/5 dark:hover:bg-white/5 ${loading ? 'pointer-events-none' : ''} ${settlementActive && settlementChecked ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
             onClick={onClick}
         >
             {loading && (
@@ -57,7 +57,7 @@ export default function ExpenseCard({
             {/* Top row */}
             <div className="flex items-start justify-between gap-4">
                 <div
-                    className={`flex flex-col gap-1.5 flex-1 ${reconcileActive && reconcileChecked ? 'opacity-60' : ''}`}
+                    className={`flex flex-col gap-1.5 flex-1 ${settlementActive && settlementChecked ? 'opacity-60' : ''}`}
                 >
                     <div className="flex items-center gap-1.5">
                         {onToggleFavorite && (
@@ -192,26 +192,26 @@ export default function ExpenseCard({
                     </button>
                 )}
 
-                {reconcileActive && reconcileChecked ? (
+                {settlementActive && settlementChecked ? (
                     <button
                         className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-1.5 shrink-0"
                         onClick={(e) => {
                             e.stopPropagation();
-                            toggleReconcile(gasto);
+                            toggleSettlement(gasto);
                         }}
                     >
                         <Icon name="undo" className="text-sm" />
                         Revertir
                     </button>
                 ) : (
-                    onPayClick &&
-                    (!gasto.is_postponed || !reconcileEnabled) && (
+                    onSettleClick &&
+                    (!gasto.is_postponed || !settlementEnabled) && (
                         <button
-                            className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${reconcileEnabled && !sessionActive ? 'opacity-50' : ''
+                            className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${settlementEnabled && !sessionActive ? 'opacity-50' : ''
                                 }`}
                             disabled={loading}
                             title={
-                                reconcileEnabled && !sessionActive
+                                settlementEnabled && !sessionActive
                                     ? 'Activá el modo "Hacer cuentas" para registrar pagos'
                                     : undefined
                             }
@@ -221,7 +221,7 @@ export default function ExpenseCard({
                                     setShowExhaustedWarning(true);
                                     return;
                                 }
-                                onPayClick(gasto);
+                                onSettleClick(gasto);
                             }}
                         >
                             {loading ? (
@@ -230,12 +230,12 @@ export default function ExpenseCard({
                                     Procesando…
                                 </>
                             ) : gasto.type === 'INGRESO' ? (
-                                reconcileActive ? (
+                                settlementActive ? (
                                     'Marcar cobro'
                                 ) : (
                                     'Registrar cobro'
                                 )
-                            ) : reconcileActive ? (
+                            ) : settlementActive ? (
                                 'Marcar pago'
                             ) : (
                                 'Pagar cuota'

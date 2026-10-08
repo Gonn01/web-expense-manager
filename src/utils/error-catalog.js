@@ -91,8 +91,8 @@ export const ERROR_PRESENTATION = Object.freeze({
     // ─── Categorías ─────────────────────────────────────────────────────────
     CATEGORIA_NOT_FOUND: { message: 'No encontramos esa categoría.', variant: 'snackbar' },
 
-    // ─── Modo "hacer cuentas" (reconcile) ───────────────────────────────────
-    RECONCILE_REQUIRED: {
+    // ─── Modo "hacer cuentas" (settlement) ───────────────────────────────────
+    SETTLEMENT_REQUIRED: {
         message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',
         variant: 'snackbar',
         icon: 'playlist_add_check',

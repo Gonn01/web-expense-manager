@@ -14,7 +14,7 @@ export function useEntidadUI() {
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
-        pagarCuota,
+        settleQuota,
         gastosEliminados,
         restaurarGasto,
     } = useEntidadData();
@@ -44,25 +44,25 @@ export function useEntidadUI() {
     const [loadingVincular, setLoadingVincular] = useState(false);
 
     // Payment modal
-    const [payModalOpen, setPayModalOpen] = useState(false);
-    const [payModalItem, setPayModalItem] = useState(null);
-    const [loadingPayIds, setLoadingPayIds] = useState(new Set());
+    const [settleModalOpen, setSettleModalOpen] = useState(false);
+    const [settleModalItem, setPayModalItem] = useState(null);
+    const [loadingSettleIds, setLoadingPayIds] = useState(new Set());
 
-    function openPayModal(gasto) {
+    function openSettleModal(gasto) {
         setPayModalItem(gasto);
-        setPayModalOpen(true);
+        setSettleModalOpen(true);
     }
 
-    async function onConfirmPay() {
-        if (!payModalItem) return;
-        setPayModalOpen(false);
-        setLoadingPayIds((prev) => new Set([...prev, payModalItem.id]));
+    async function onConfirmSettle() {
+        if (!settleModalItem) return;
+        setSettleModalOpen(false);
+        setLoadingPayIds((prev) => new Set([...prev, settleModalItem.id]));
 
-        await pagarCuota(payModalItem);
+        await settleQuota(settleModalItem);
 
         setLoadingPayIds((prev) => {
             const next = new Set(prev);
-            next.delete(payModalItem.id);
+            next.delete(settleModalItem.id);
             return next;
         });
         setPayModalItem(null);
@@ -133,12 +133,12 @@ export function useEntidadUI() {
 
         onDeleteEntity,
 
-        payModalOpen,
-        payModalItem,
-        openPayModal,
-        onConfirmPay,
-        setPayModalOpen,
-        loadingPayIds,
+        settleModalOpen,
+        settleModalItem,
+        openSettleModal,
+        onConfirmSettle,
+        setSettleModalOpen,
+        loadingSettleIds,
 
         gastosEliminados,
         onRestaurarGasto,

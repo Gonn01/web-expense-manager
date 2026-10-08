@@ -45,12 +45,12 @@ export default function EntidadDetalle() {
         loadingVincular,
         navigate,
         onDeleteEntity,
-        payModalOpen,
-        payModalItem,
-        openPayModal,
-        onConfirmPay,
-        setPayModalOpen,
-        loadingPayIds,
+        settleModalOpen,
+        settleModalItem,
+        openSettleModal,
+        onConfirmSettle,
+        setSettleModalOpen,
+        loadingSettleIds,
         gastosEliminados,
         onRestaurarGasto,
         restoringIds,
@@ -186,9 +186,9 @@ export default function EntidadDetalle() {
                             <ExpenseCard
                                 key={g.id}
                                 gasto={g}
-                                loading={loadingPayIds.has(g.id)}
+                                loading={loadingSettleIds.has(g.id)}
                                 onClick={() => navigate(`/app/gastos/${g.id}`)}
-                                onPayClick={() => openPayModal(g)}
+                                onSettleClick={() => openSettleModal(g)}
                             />
                         ))}
                 </ListContainer>
@@ -272,13 +272,13 @@ export default function EntidadDetalle() {
             <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} />
 
             <ConfirmInstallmentPaymentModal
-                open={payModalOpen}
+                open={settleModalOpen}
                 entityName={entity?.name ?? ''}
-                items={payModalItem ? [payModalItem] : []}
-                onCancel={() => setPayModalOpen(false)}
-                onConfirm={onConfirmPay}
-                reconcileActive={false}
-                showReconcileWarning={false}
+                items={settleModalItem ? [settleModalItem] : []}
+                onCancel={() => setSettleModalOpen(false)}
+                onConfirm={onConfirmSettle}
+                settlementActive={false}
+                showSettlementWarning={false}
             />
             {/* MODAL EDITAR */}
             {openEditEntity && (

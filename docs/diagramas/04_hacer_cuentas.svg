@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="874" viewBox="0 0 1200 874" font-family="Helvetica">
+<rect width="1200" height="874" fill="white"/>
+<text x="600.0" y="42" font-size="21" font-weight="bold" text-anchor="middle" fill="#1F4E79">Hacer cuentas (conciliación)</text>
+<rect x="270" y="76" width="660" height="768" rx="8" fill="#FBFCFE" stroke="#1F4E79" stroke-width="1.6"/>
+<text x="600.0" y="100" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F4E79">Plataforma de Gestión de Deudas</text>
+<line x1="142.0" y1="420.0" x2="312.0" y2="164.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="420.0" x2="312.0" y2="252.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="420.0" x2="312.0" y2="428.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="420.0" x2="312.0" y2="604.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="420.0" x2="312.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="632.0" y1="252.0" x2="568.0" y2="252.0" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="577.7,246.8 568.0,252.0 577.7,257.2" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="600.0" y="242.0" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«extend»</text>
+<line x1="528.9" y1="403.5" x2="671.1" y2="364.5" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="663.1,372.0 671.1,364.5 660.3,362.1" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="596.5529657207264" y="374.46532989355075" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«include»</text>
+<line x1="568.0" y1="428.0" x2="632.0" y2="428.0" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="622.3,433.2 632.0,428.0 622.3,422.8" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="600.0" y="418.0" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«include»</text>
+<line x1="528.9" y1="452.5" x2="671.1" y2="491.5" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="660.3,493.9 671.1,491.5 663.1,484.0" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="603.4470342792736" y="462.46532989355075" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«include»</text>
+<line x1="632.0" y1="692.0" x2="568.0" y2="692.0" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="577.7,686.8 568.0,692.0 577.7,697.2" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="600.0" y="682.0" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«extend»</text>
+<line x1="671.1" y1="755.5" x2="528.9" y2="716.5" stroke="#1F2937" stroke-width="1.3" stroke-dasharray="6,4"/>
+<polyline points="539.7,714.1 528.9,716.5 536.9,724.0" fill="none" stroke="#1F2937" stroke-width="1.4"/>
+<text x="603.4470342792736" y="726.4653298935507" font-size="12" font-style="italic" text-anchor="middle" fill="#4B5563">«extend»</text>
+<ellipse cx="440" cy="164.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="440" y="152.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-26</text>
+<text x="440" y="168.0" text-anchor="middle" fill="#1F2937" font-size="13">Iniciar sesión de</text>
+<text x="440" y="184.0" text-anchor="middle" fill="#1F2937" font-size="13">cuentas</text>
+<ellipse cx="440" cy="252.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="440" y="240.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-27</text>
+<text x="440" y="256.0" text-anchor="middle" fill="#1F2937" font-size="13">Marcar o desmarcar</text>
+<text x="440" y="272.0" text-anchor="middle" fill="#1F2937" font-size="13">gastos</text>
+<ellipse cx="760" cy="252.0" rx="128" ry="34" fill="#F6F6F6" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="256.0" text-anchor="middle" fill="#1F2937" font-size="13">Marcar gastos en lote</text>
+<ellipse cx="760" cy="340.0" rx="128" ry="34" fill="#F6F6F6" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="344.0" text-anchor="middle" fill="#1F2937" font-size="13">Registrar pagos marcados</text>
+<ellipse cx="440" cy="428.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="440" y="416.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-28</text>
+<text x="440" y="432.0" text-anchor="middle" fill="#1F2937" font-size="13">Finalizar sesión de</text>
+<text x="440" y="448.0" text-anchor="middle" fill="#1F2937" font-size="13">cuentas</text>
+<ellipse cx="760" cy="428.0" rx="128" ry="34" fill="#F6F6F6" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="432.0" text-anchor="middle" fill="#1F2937" font-size="13">Generar snapshot</text>
+<ellipse cx="760" cy="516.0" rx="128" ry="34" fill="#F6F6F6" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="512.0" text-anchor="middle" fill="#1F2937" font-size="13">Liberar gastos</text>
+<text x="760" y="528.0" text-anchor="middle" fill="#1F2937" font-size="13">postergados</text>
+<ellipse cx="440" cy="604.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="440" y="600.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-29</text>
+<text x="440" y="616.0" text-anchor="middle" fill="#1F2937" font-size="13">Descartar sesión</text>
+<ellipse cx="440" cy="692.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="440" y="680.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-30</text>
+<text x="440" y="696.0" text-anchor="middle" fill="#1F2937" font-size="13">Consultar historial de</text>
+<text x="440" y="712.0" text-anchor="middle" fill="#1F2937" font-size="13">cuentas</text>
+<ellipse cx="760" cy="692.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="680.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-31</text>
+<text x="760" y="696.0" text-anchor="middle" fill="#1F2937" font-size="13">Compartir resumen por</text>
+<text x="760" y="712.0" text-anchor="middle" fill="#1F2937" font-size="13">WhatsApp</text>
+<ellipse cx="760" cy="780.0" rx="128" ry="34" fill="#F6F6F6" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="760" y="776.0" text-anchor="middle" fill="#1F2937" font-size="13">Filtrar por rango de</text>
+<text x="760" y="792.0" text-anchor="middle" fill="#1F2937" font-size="13">fechas</text>
+<circle cx="120" cy="398.0" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="120" y1="409.0" x2="120" y2="440.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="100" y1="420.0" x2="140" y2="420.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="440.0" x2="105" y2="464.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="440.0" x2="135" y2="464.0" stroke="#1F2937" stroke-width="2" fill="none"/><text x="120" y="484.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Usuario</text>
+</svg>

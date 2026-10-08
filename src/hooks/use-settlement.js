@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 /** Estado derivado del "modo hacer cuentas". */
-export function useReconcile() {
-    const active = useReconcileStore((s) => s.active);
-    const session = useReconcileStore((s) => s.session);
-    const checkedExpenses = useReconcileStore((s) => s.checkedExpenses);
-    const loading = useReconcileStore((s) => s.loading);
+export function useSettlement() {
+    const active = useSettlementStore((s) => s.active);
+    const session = useSettlementStore((s) => s.session);
+    const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);
+    const loading = useSettlementStore((s) => s.loading);
 
     const checkedCount = useMemo(() => Object.keys(checkedExpenses).length, [checkedExpenses]);
 

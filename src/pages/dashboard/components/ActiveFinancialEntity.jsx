@@ -4,7 +4,7 @@ import Icon from '@/components/Icon';
 import ExpenseCard from '@/components/ExpenseCard';
 import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
 import GroupBalance from '@/pages/dashboard/components/GroupBalance';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -35,7 +35,7 @@ export default function ActiveFinancialEntity({
     loadingIds,
     onOpenGroup,
     onItemClick,
-    onPayClick,
+    onSettleClick,
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
@@ -43,16 +43,16 @@ export default function ActiveFinancialEntity({
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
 
-    const reconcileActive = useReconcileStore((s) => s.active);
-    const checkedExpenses = useReconcileStore((s) => s.checkedExpenses);
-    const setExpensesChecked = useReconcileStore((s) => s.setExpensesChecked);
+    const settlementActive = useSettlementStore((s) => s.active);
+    const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);
+    const setExpensesChecked = useSettlementStore((s) => s.setExpensesChecked);
 
     // Los postergados nunca se pueden marcar en la sesión: no deben impedir
     // que la entidad se vea "completa" si el resto ya está marcado.
     const checkableItems = group.items.filter((it) => !it.is_postponed);
     const checkedInGroup = checkableItems.filter((it) => checkedExpenses[String(it.id)]).length;
     const allChecked = checkableItems.length > 0 && checkedInGroup === checkableItems.length;
-    const entityDone = reconcileActive && allChecked;
+    const entityDone = settlementActive && allChecked;
 
     const count = group.items.length;
 
@@ -190,10 +190,10 @@ export default function ActiveFinancialEntity({
                             <li key={it.id}>
                                 <ExpenseCard
                                     gasto={it}
-                                    reconcileEnabled
+                                    settlementEnabled
                                     loading={loadingIds?.has(it.id)}
                                     onClick={() => onItemClick?.(it)}
-                                    onPayClick={() => onPayClick?.(group, it)}
+                                    onSettleClick={() => onSettleClick?.(group, it)}
                                     onTogglePostpone={
                                         onTogglePostpone
                                             ? () => onTogglePostpone(it.id, !it.is_postponed)

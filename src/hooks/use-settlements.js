@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-import { pagarCuota, pagarCuotasLote } from '@/services/api';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { settleQuota, settleQuotasLote } from '@/services/api';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
-const RECONCILE_MSG = 'Activá el modo "Hacer cuentas" para marcar pagos desde acá.';
+const SETTLEMENT_MSG = 'Activá el modo "Hacer cuentas" para marcar pagos desde acá.';
 
 /** ¿Hay una sesión de "hacer cuentas" abierta? (sin efectos secundarios) */
-export function isReconcileActive() {
-    return useReconcileStore.getState().active;
+export function isSettlementActive() {
+    return useSettlementStore.getState().active;
 }
 
 /**
@@ -15,32 +15,32 @@ export function isReconcileActive() {
  * necesita una sesión abierta. En el detalle de gasto NO se usa: ahí se puede
  * pagar/revertir sin sesión (queda solo en el historial del gasto).
  */
-export function ensureReconcileActive() {
-    if (isReconcileActive()) return true;
-    useSnackbarStore.getState().show(RECONCILE_MSG, 'error', 'playlist_add_check');
+export function ensureSettlementActive() {
+    if (isSettlementActive()) return true;
+    useSnackbarStore.getState().show(SETTLEMENT_MSG, 'error', 'playlist_add_check');
     return false;
 }
 
-export function usePayments(token, onPaid) {
+export function useSettlements(token, onPaid) {
     const handleConfirm = useCallback(
         async (items) => {
             try {
                 if (!items.length) return [];
-                if (!ensureReconcileActive()) return [];
+                if (!ensureSettlementActive()) return [];
 
                 let updatedItems;
                 if (items.length === 1) {
-                    updatedItems = [await pagarCuota(items[0].id, token)];
+                    updatedItems = [await settleQuota(items[0].id, token)];
                 } else {
                     const ids = items.map((it) => it.id);
 
-                    const { updated } = await pagarCuotasLote(ids, token);
+                    const { updated } = await settleQuotasLote(ids, token);
                     updatedItems = updated;
                 }
 
                 // El backend marcó los items en la sesión; resincronizamos.
                 // El pago real se registra al terminar las cuentas.
-                useReconcileStore.getState().refreshAfterPayment();
+                useSettlementStore.getState().refreshAfterPayment();
 
                 useSnackbarStore
                     .getState()

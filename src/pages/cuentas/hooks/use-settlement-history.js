@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
-import { fetchReconcileSnapshots, fetchReconcileSnapshotById } from '@/services/api';
+import { fetchSettlementSnapshots, fetchSettlementSnapshotById } from '@/services/api';
 
-export function useCuentasList() {
+export function useSettlementHistoryList() {
     const { token } = useAuth();
     const [snapshots, setSnapshots] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ export function useCuentasList() {
         if (!token) return;
         setLoading(true);
         try {
-            const data = await fetchReconcileSnapshots(token);
+            const data = await fetchSettlementSnapshots(token);
             setSnapshots(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Error cargando snapshots de cuentas:', err);
@@ -27,7 +27,7 @@ export function useCuentasList() {
     return { snapshots, loading, reload: load };
 }
 
-export function useCuentaDetalle(id) {
+export function useSettlementDetail(id) {
     const { token } = useAuth();
     const [snapshot, setSnapshot] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ export function useCuentaDetalle(id) {
         let alive = true;
         setLoading(true);
         setError(false);
-        fetchReconcileSnapshotById(id, token)
+        fetchSettlementSnapshotById(id, token)
             .then((data) => alive && setSnapshot(data))
             .catch((err) => {
                 console.error('Error cargando snapshot:', err);

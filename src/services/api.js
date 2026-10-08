@@ -219,9 +219,9 @@ export const refundCuota = async (gastoId, token) => {
     return data.data;
 };
 
-export const pagarCuota = async (gastoId, token, { direct = false } = {}) => {
+export const settleQuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
-        `/gastos/${gastoId}/pagar-cuota`,
+        `/gastos/${gastoId}/settle-quota`,
         direct ? { direct: true } : {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -273,9 +273,9 @@ export const createCategory = async (payload, token) => {
     return data.data;
 };
 
-export const pagarCuotasLote = async (ids, token) => {
+export const settleQuotasLote = async (ids, token) => {
     const { data } = await api.post(
-        `/gastos/pagar-lote`,
+        `/gastos/settle-lote`,
         { purchase_ids: ids },
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -283,58 +283,58 @@ export const pagarCuotasLote = async (ids, token) => {
 };
 
 /* ===============================
-   MODO HACER CUENTAS (reconcile)
+   MODO HACER CUENTAS (settlement)
 =============================== */
 
-export const fetchReconcileSession = async (token) => {
-    const { data } = await api.get('/reconcile/session', {
+export const fetchSettlementSession = async (token) => {
+    const { data } = await api.get('/settlement/session', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data; // { session, items } | null
 };
 
-export const startReconcileSession = async (token) => {
+export const startSettlementSession = async (token) => {
     const { data } = await api.post(
-        '/reconcile/session',
+        '/settlement/session',
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data; // { session, items, alreadyOpen }
 };
 
-export const setReconcileItem = async ({ purchase_id, purchase_ids, checked }, token) => {
+export const setSettlementItem = async ({ purchase_id, purchase_ids, checked }, token) => {
     const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked };
-    const { data } = await api.put('/reconcile/session/items', body, {
+    const { data } = await api.put('/settlement/session/items', body, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data; // { session, items }
 };
 
-export const finishReconcileSession = async (token) => {
+export const finishSettlementSession = async (token) => {
     const { data } = await api.post(
-        '/reconcile/session/finish',
+        '/settlement/session/finish',
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data; // snapshot
 };
 
-export const discardReconcileSession = async (token) => {
-    const { data } = await api.delete('/reconcile/session', {
+export const discardSettlementSession = async (token) => {
+    const { data } = await api.delete('/settlement/session', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
 
-export const fetchReconcileSnapshots = async (token) => {
-    const { data } = await api.get('/reconcile/snapshots', {
+export const fetchSettlementSnapshots = async (token) => {
+    const { data } = await api.get('/settlement/snapshots', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
 
-export const fetchReconcileSnapshotById = async (id, token) => {
-    const { data } = await api.get(`/reconcile/snapshots/${id}`, {
+export const fetchSettlementSnapshotById = async (id, token) => {
+    const { data } = await api.get(`/settlement/snapshots/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;

@@ -8,7 +8,7 @@ import {
     desvincularUsuarioEntidad,
     fetchGastosEliminados,
     restaurarGasto as restaurarGastoApi,
-    pagarCuota as pagarCuotaApi,
+    settleQuota as settleQuotaApi,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
@@ -179,10 +179,10 @@ export function useEntidadData() {
     // El "modo hacer cuentas" vive solo en el dashboard: desde el detalle de
     // entidad el pago es SIEMPRE directo (aunque haya una sesión abierta). Si el
     // gasto estaba postergado, el backend le quita la postergación al pagar.
-    const pagarCuota = useCallback(
+    const settleQuota = useCallback(
         async (gasto) => {
             try {
-                const updated = await pagarCuotaApi(gasto.id, token, { direct: true });
+                const updated = await settleQuotaApi(gasto.id, token, { direct: true });
                 const isFinished =
                     !updated.fixed_expense &&
                     Number(updated.payed_quotas) >= Number(updated.number_of_quotas);
@@ -229,7 +229,7 @@ export function useEntidadData() {
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
-        pagarCuota,
+        settleQuota,
         setEntity,
         gastosEliminados,
         restaurarGasto,
