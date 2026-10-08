@@ -169,7 +169,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario abre el dashboard.
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
-    3. El sistema calcula por moneda los totales "debo", "me deben" y balance.
+    3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance.
     4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
     5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, la cantidad de gastos compartidos pendientes.
 - **Flujos alternativos**

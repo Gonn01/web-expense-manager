@@ -37,7 +37,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-DSH-01 | El dashboard muestra los gastos **activos** del usuario agrupados por entidad. Un gasto es activo si no está eliminado, está aprobado (`ACTIVE`) y es fijo o le quedan cuotas por pagar. | CU-08 |
 | RF-DSH-02 | Las entidades favoritas se muestran primero; a igualdad, primero la que tiene el gasto más reciente. Dentro de cada entidad, primero los gastos favoritos y luego los más recientes. | CU-08 |
 | RF-DSH-03 | Una entidad sin gastos activos no se muestra, salvo que sea favorita, no haya filtros aplicados y no haya una sesión de cuentas abierta. | CU-08 |
-| RF-DSH-04 | El dashboard muestra, por moneda, los totales "debo", "me deben" y el balance, tanto del saldo restante como de la cuota del período. | CU-08 |
+| RF-DSH-04 | El dashboard muestra, por moneda, los totales de egreso, de ingreso y el balance, tanto del saldo restante como de la cuota del período. | CU-08 |
 | RF-DSH-05 | El usuario puede filtrar los gastos por texto (coincide con el nombre del gasto o de la entidad), por moneda, por tipo (egreso/ingreso) y por gasto fijo / no fijo. Por defecto no hay filtro de moneda. | CU-08 |
 | RF-DSH-06 | El sistema muestra los montos convertidos a la moneda preferida usando la cotización vigente de USD, EUR, BRL, CLP y UYU frente a ARS, obtenida de un servicio externo. | CU-08 |
 | RF-DSH-07 | El usuario puede ver gráficos de sus gastos activos: evolución de cuotas, evolución de montos y distribución por categoría, incluyendo qué porcentaje del sueldo representa cada categoría. | CU-08 |
