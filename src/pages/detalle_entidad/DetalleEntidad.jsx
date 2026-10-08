@@ -22,6 +22,7 @@ import Loader from '@/components/Loader';
 import PeligroEliminar from '@/components/PeligroEliminar';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
+import { Currency } from '@/utils/enums';
 import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
@@ -45,14 +46,13 @@ export default function EntidadDetalle() {
         loadingVincular,
         navigate,
         onDeleteEntity,
-        payModalOpen,
-        payModalItem,
-        openPayModal,
-        onConfirmPay,
-        setPayModalOpen,
-        loadingPayIds,
+        settleModalOpen,
+        settleModalItem,
+        openSettleModal,
+        onConfirmSettle,
+        setSettleModalOpen,
+        loadingSettleIds,
         gastosEliminados,
-        loadingEliminados,
         onRestaurarGasto,
         restoringIds,
     } = useEntidadUI();
@@ -62,9 +62,9 @@ export default function EntidadDetalle() {
 
     const { user } = useAuth();
     const { rates } = useExchangeRates();
-    const preferredCurrency = ['ARS', 'USD', 'EUR'].includes(user?.preferred_currency)
+    const preferredCurrency = Object.values(Currency).includes(user?.preferred_currency)
         ? user.preferred_currency
-        : 'ARS';
+        : Currency.ARS;
 
     // Resumen para WhatsApp: mismo formato que en el dashboard, sobre los gastos activos.
     const whatsappGroup = useMemo(
@@ -187,9 +187,9 @@ export default function EntidadDetalle() {
                             <ExpenseCard
                                 key={g.id}
                                 gasto={g}
-                                loading={loadingPayIds.has(g.id)}
+                                loading={loadingSettleIds.has(g.id)}
                                 onClick={() => navigate(`/app/gastos/${g.id}`)}
-                                onPayClick={() => openPayModal(g)}
+                                onSettleClick={() => openSettleModal(g)}
                             />
                         ))}
                 </ListContainer>
@@ -239,14 +239,10 @@ export default function EntidadDetalle() {
 
             {tab === 'eliminados' && (
                 <ListContainer
-                    empty={!loadingEliminados && (gastosEliminados ?? []).length === 0}
-                    emptyLabel={
-                        loadingEliminados
-                            ? 'Cargando…'
-                            : 'No hay gastos eliminados en esta entidad.'
-                    }
+                    empty={gastosEliminados.length === 0}
+                    emptyLabel="No hay gastos eliminados en esta entidad."
                 >
-                    {(gastosEliminados ?? []).map((g) => (
+                    {gastosEliminados.map((g) => (
                         <DeletedGastoRow
                             key={g.id}
                             gasto={g}
@@ -277,13 +273,13 @@ export default function EntidadDetalle() {
             <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} restorable={true} />
 
             <ConfirmInstallmentPaymentModal
-                open={payModalOpen}
+                open={settleModalOpen}
                 entityName={entity?.name ?? ''}
-                items={payModalItem ? [payModalItem] : []}
-                onCancel={() => setPayModalOpen(false)}
-                onConfirm={onConfirmPay}
-                reconcileActive={false}
-                showReconcileWarning={false}
+                items={settleModalItem ? [settleModalItem] : []}
+                onCancel={() => setSettleModalOpen(false)}
+                onConfirm={onConfirmSettle}
+                settlementActive={false}
+                showSettlementWarning={false}
             />
             {/* MODAL EDITAR */}
             {openEditEntity && (

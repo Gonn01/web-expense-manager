@@ -13,12 +13,16 @@ const byFavThenDate = (aFav, bFav, aDate, bDate) => {
     return new Date(bDate) - new Date(aDate);
 };
 import useAuth from '@/store/use-auth-store';
-import { usePayments } from '@/hooks/use-payments';
+import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useSettlementStore } from '@/store/use-settlement-store';
+import { Currency } from '@/utils/enums';
+
+const CURRENCY_VALUES = Object.values(Currency);
 
 export function useDashboardData() {
     const { token, user } = useAuth();
-    const { handleConfirm } = usePayments(token);
+    const { handleConfirm } = useSettlements(token);
 
     const [summaryByCurrency, setSummaryByCurrency] = useState(null);
     const [groups, setGroups] = useState([]);
@@ -26,11 +30,12 @@ export function useDashboardData() {
     const [loading, setLoading] = useState(false);
 
     const recalcSummary = useCallback((groupsToUse) => {
-        const totals = {
-            ARS: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            USD: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            EUR: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-        };
+        const totals = Object.fromEntries(
+            CURRENCY_VALUES.map((cur) => [
+                cur,
+                { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
+            ]),
+        );
 
         groupsToUse.forEach((group) => {
             group.items.forEach((g) => {
@@ -48,7 +53,7 @@ export function useDashboardData() {
             });
         });
 
-        const summary = ['ARS', 'USD', 'EUR'].reduce((acc, cur) => {
+        const summary = CURRENCY_VALUES.reduce((acc, cur) => {
             acc[cur] = {
                 total_debo: totals[cur].debo,
                 total_me_deben: totals[cur].meDeben,
@@ -155,7 +160,7 @@ export function useDashboardData() {
         [groups, recalcSummary],
     );
 
-    const pagarCuotas = useCallback(
+    const settleQuotas = useCallback(
         async (items) => {
             const updatedItems = await handleConfirm(items);
             updateAfterPayment(updatedItems);
@@ -174,57 +179,78 @@ export function useDashboardData() {
 
     const postergarGasto = useCallback(
         async (gastoId, postponed) => {
-            // Optimista: reflejamos el flag y dejamos que loadDashboard reconcilie.
-            setGroups((prev) =>
-                prev.map((g) => ({
+            // Optimista, confirmado por la respuesta del endpoint: no hace falta
+            // recargar todo el dashboard para un solo campo.
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) => ({
                     ...g,
                     items: g.items.map((it) =>
                         String(it.id) === String(gastoId) ? { ...it, is_postponed: postponed } : it,
                     ),
-                })),
-            );
+                }));
+            });
+
+            // Si se posterga un gasto ya marcado en la sesión de "hacer cuentas",
+            // hay que revertir esa marca: un gasto postergado no debe quedar
+            // contado como pago pendiente de cerrar.
+            const settlement = useSettlementStore.getState();
+            if (postponed && settlement.session && settlement.isChecked(gastoId)) {
+                await settlement.toggleExpense({ id: gastoId });
+            }
+
             try {
                 await postergarGastoApi(gastoId, postponed, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error postergando gasto:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     const favoritoGasto = useCallback(
         async (gastoId, favorite) => {
-            setGroups((prev) =>
-                prev.map((g) => ({
+            // Optimista, confirmado por la respuesta del endpoint: no hace falta
+            // recargar todo el dashboard para un solo campo.
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) => ({
                     ...g,
                     items: g.items.map((it) =>
                         String(it.id) === String(gastoId) ? { ...it, is_favorite: favorite } : it,
                     ),
-                })),
-            );
+                }));
+            });
             try {
                 await favoritoGastoApi(gastoId, favorite, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error marcando favorito:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     const favoritoEntidad = useCallback(
         async (entidadId, favorite) => {
-            setGroups((prev) =>
-                prev.map((g) =>
+            let previous;
+            setGroups((prev) => {
+                previous = prev;
+                return prev.map((g) =>
                     String(g.id) === String(entidadId) ? { ...g, is_favorite: favorite } : g,
-                ),
-            );
+                );
+            });
             try {
                 await favoritoEntidadApi(entidadId, favorite, token);
-            } finally {
-                await loadDashboard();
+            } catch (err) {
+                console.error('Error marcando favorito de entidad:', err);
+                setGroups(previous);
             }
         },
-        [token, loadDashboard],
+        [token],
     );
 
     useEffect(() => {
@@ -273,7 +299,7 @@ export function useDashboardData() {
         summaryByCurrency,
         loadDashboard,
         getSummaryForCurrency: (currency) => summaryByCurrency?.[currency] ?? null,
-        pagarCuotas,
+        settleQuotas,
         crearGasto,
         postergarGasto,
         favoritoGasto,

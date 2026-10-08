@@ -3,22 +3,22 @@ import Sidebar from '@/components/Sidebar';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useCategoriesStore } from '@/store/use-categories-store';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useEffect } from 'react';
 
 export default function AppLayout() {
     const { token } = useAuth();
     const { loadEntities } = useEntitiesStore();
     const { loadCategories } = useCategoriesStore();
-    const loadReconcileSession = useReconcileStore((s) => s.loadSession);
+    const loadSettlementSession = useSettlementStore((s) => s.loadSession);
 
     useEffect(() => {
         if (token) {
             loadEntities(token);
             loadCategories(token);
-            loadReconcileSession();
+            loadSettlementSession();
         }
-    }, [loadEntities, loadCategories, loadReconcileSession, token]);
+    }, [loadEntities, loadCategories, loadSettlementSession, token]);
 
     return (
         <div className="font-display bg-background-light dark:bg-background-dark">

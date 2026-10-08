@@ -5,13 +5,13 @@ import Loader from '@/components/Loader';
 import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDate, formatDateShort } from '@/utils/FormatDate';
-import { buildReconcileEntityText, buildReconcileSnapshotText } from '@/utils/build-reconcile-text';
-import { useCuentaDetalle, monthLabel } from './hooks/use-cuentas';
+import { buildSettlementEntityText, buildSettlementSnapshotText } from '@/utils/build-settlement-text';
+import { useSettlementDetail, monthLabel } from './hooks/use-settlement-history';
 
-export default function CuentaDetalle() {
+export default function SettlementDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { snapshot, loading, error } = useCuentaDetalle(id);
+    const { snapshot, loading, error } = useSettlementDetail(id);
 
     const groups = useMemo(() => {
         const items = Array.isArray(snapshot?.items) ? snapshot.items : [];
@@ -32,7 +32,7 @@ export default function CuentaDetalle() {
                 <Icon name="error" className="text-5xl opacity-40" />
                 <p>No se encontró el resumen.</p>
                 <button
-                    onClick={() => navigate('/app/cuentas')}
+                    onClick={() => navigate('/app/settlement')}
                     className="text-primary font-semibold cursor-pointer hover:underline"
                 >
                     Volver al historial
@@ -47,7 +47,7 @@ export default function CuentaDetalle() {
     return (
         <div className="flex flex-col flex-1 min-h-0">
             <button
-                onClick={() => navigate('/app/cuentas')}
+                onClick={() => navigate('/app/settlement')}
                 className="shrink-0 flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-primary transition-colors cursor-pointer mb-3 w-fit"
             >
                 <Icon name="arrow_back" className="text-base" />
@@ -68,7 +68,7 @@ export default function CuentaDetalle() {
                 <WhatsAppCopyButton
                     label="Exportar"
                     title="Copiar resumen del mes"
-                    getText={() => buildReconcileSnapshotText(snapshot, monthLabel(snapshot.month))}
+                    getText={() => buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))}
                 />
             </div>
 
@@ -127,7 +127,7 @@ export default function CuentaDetalle() {
                                     {items.length} {items.length === 1 ? 'gasto' : 'gastos'}
                                 </span>
                                 <WhatsAppCopyButton
-                                    getText={() => buildReconcileEntityText(entityName, items)}
+                                    getText={() => buildSettlementEntityText(entityName, items)}
                                     title={`Copiar resumen de ${entityName}`}
                                 />
                             </div>
@@ -155,12 +155,6 @@ export default function CuentaDetalle() {
                                                     {it.type === 'INGRESO' ? 'Ingreso' : 'Egreso'}
                                                 </span>
                                                 {it.fixed_expense && <span>· Fijo</span>}
-                                                <span>
-                                                    ·{' '}
-                                                    {it.auto
-                                                        ? 'pagado en la sesión'
-                                                        : 'marcado a mano'}
-                                                </span>
                                             </p>
                                         </div>
 

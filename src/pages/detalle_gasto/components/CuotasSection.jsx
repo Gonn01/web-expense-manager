@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Cuota } from './Cuota';
 import { formatMoney } from '@/utils/FormatMoney';
 
-export default function CuotasSection({ gasto, onRefund, reconcileActive = false }) {
+export default function CuotasSection({ gasto, onRefund, settlementActive = false }) {
     const [refundUnlocked, setRefundUnlocked] = useState(false);
 
     const paymentDates = (gasto.movements ?? [])
@@ -48,7 +48,7 @@ export default function CuotasSection({ gasto, onRefund, reconcileActive = false
                     next={index + 1 === gasto.payed_quotas + 1}
                     isLastPaid={index + 1 === gasto.payed_quotas}
                     refundUnlocked={refundUnlocked}
-                    reconcileActive={reconcileActive}
+                    settlementActive={settlementActive}
                     onRefund={onRefund}
                 />
             ))}

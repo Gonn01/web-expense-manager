@@ -2,34 +2,34 @@ import { create } from 'zustand';
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import {
-    fetchReconcileSession,
-    startReconcileSession,
-    setReconcileItem,
-    finishReconcileSession,
-    discardReconcileSession,
+    fetchSettlementSession,
+    startSettlementSession,
+    setSettlementItem,
+    finishSettlementSession,
+    discardSettlementSession,
 } from '@/services/api';
 
 const token = () => useAuth.getState().token;
 const toast = (msg, type = 'error') => useSnackbarStore.getState().show(msg, type);
 
-/** items: [{ purchase_id, auto, checked_at }] -> { [id]: { auto, checked_at } } */
+/** items: [{ purchase_id, checked_at }] -> { [id]: { checked_at } } */
 function itemsToMap(items = []) {
     const map = {};
     for (const it of items) {
-        map[String(it.purchase_id)] = { auto: it.auto, checked_at: it.checked_at };
+        map[String(it.purchase_id)] = { checked_at: it.checked_at };
     }
     return map;
 }
 
 /**
  * "Modo hacer cuentas". La sesión y las marcas viven en la DB
- * (endpoints /reconcile/*), así el usuario puede retomarla cuando quiera
+ * (endpoints /settlement/*), así el usuario puede retomarla cuando quiera
  * y desde cualquier dispositivo. El store solo cachea el estado del server.
  */
-export const useReconcileStore = create((set, get) => ({
+export const useSettlementStore = create((set, get) => ({
     active: false,
     session: null, // { id, started_at } | null
-    checkedExpenses: {}, // { [purchaseId]: { auto, checked_at } }
+    checkedExpenses: {}, // { [purchaseId]: { checked_at } }
     loading: false,
     loaded: false,
 
@@ -37,7 +37,7 @@ export const useReconcileStore = create((set, get) => ({
         if (!token()) return;
         set({ loading: true });
         try {
-            const data = await fetchReconcileSession(token());
+            const data = await fetchSettlementSession(token());
             if (data?.session) {
                 set({
                     active: true,
@@ -57,7 +57,7 @@ export const useReconcileStore = create((set, get) => ({
     startSession: async () => {
         if (!token()) return;
         try {
-            const data = await startReconcileSession(token());
+            const data = await startSettlementSession(token());
             set({ active: true, session: data.session, checkedExpenses: itemsToMap(data.items) });
             toast('Modo hacer cuentas activado.', 'success');
         } catch (err) {
@@ -68,7 +68,7 @@ export const useReconcileStore = create((set, get) => ({
     finishSession: async () => {
         if (!get().session) return null;
         try {
-            const snapshot = await finishReconcileSession(token());
+            const snapshot = await finishSettlementSession(token());
             set({ active: false, session: null, checkedExpenses: {} });
             return snapshot;
         } catch (err) {
@@ -80,7 +80,7 @@ export const useReconcileStore = create((set, get) => ({
     discardSession: async () => {
         if (!get().session) return;
         try {
-            await discardReconcileSession(token());
+            await discardSettlementSession(token());
         } catch (err) {
             console.error('Error descartando sesión de cuentas:', err);
         } finally {
@@ -100,13 +100,13 @@ export const useReconcileStore = create((set, get) => ({
         // Optimista
         set((s) => {
             const next = { ...s.checkedExpenses };
-            if (checked) next[id] = { auto: false, checked_at: new Date().toISOString() };
+            if (checked) next[id] = { checked_at: new Date().toISOString() };
             else delete next[id];
             return { checkedExpenses: next };
         });
 
         try {
-            const data = await setReconcileItem({ purchase_id: expense.id, checked }, token());
+            const data = await setSettlementItem({ purchase_id: expense.id, checked }, token());
             set({ checkedExpenses: itemsToMap(data.items) });
         } catch (err) {
             console.error('Error marcando gasto:', err);
@@ -132,14 +132,14 @@ export const useReconcileStore = create((set, get) => ({
             for (const e of expenses) {
                 const id = String(e.id);
                 if (checked)
-                    next[id] = next[id] ?? { auto: false, checked_at: new Date().toISOString() };
+                    next[id] = next[id] ?? { checked_at: new Date().toISOString() };
                 else delete next[id];
             }
             return { checkedExpenses: next };
         });
 
         try {
-            const data = await setReconcileItem({ purchase_ids: ids, checked }, token());
+            const data = await setSettlementItem({ purchase_ids: ids, checked }, token());
             set({ checkedExpenses: itemsToMap(data.items) });
         } catch (err) {
             console.error('Error marcando entidad:', err);
@@ -151,7 +151,7 @@ export const useReconcileStore = create((set, get) => ({
     refreshAfterPayment: async () => {
         if (!get().session) return;
         try {
-            const data = await fetchReconcileSession(token());
+            const data = await fetchSettlementSession(token());
             if (data?.session) set({ checkedExpenses: itemsToMap(data.items) });
         } catch {
             /* noop */

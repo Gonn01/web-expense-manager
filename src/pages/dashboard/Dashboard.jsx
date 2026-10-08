@@ -7,7 +7,7 @@ import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseM
 import CuotasChart from '@/components/CuotasChart';
 import MontoChart from '@/components/MontoChart';
 import CategoriaChart from '@/components/CategoriaChart';
-import { ReconcileToggle, ReconcileBar } from './components/ReconcileBar';
+import { SettlementToggle, SettlementBar } from './components/SettlementBar';
 import { useDashboardUI } from './hooks/use-dashboard-ui';
 import { useDashboardData } from './hooks/use-dashboard-data';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
@@ -16,7 +16,7 @@ import Loader from '@/components/Loader';
 
 export default function Dashboard() {
     const data = useDashboardData();
-    const ui = useDashboardUI(data.groups, data.pagarCuotas);
+    const ui = useDashboardUI(data.groups, data.settleQuotas);
     const { rates } = useExchangeRates();
     const balancesHidden = useUIStore((s) => s.balancesHidden);
     const toggleBalances = useUIStore((s) => s.toggleBalances);
@@ -54,7 +54,7 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <ReconcileToggle />
+                    <SettlementToggle />
                     <button
                         onClick={() => ui.setOpenNewExpense(true)}
                         className="cursor-pointer flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
@@ -65,7 +65,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <ReconcileBar totalItems={allItems.length} />
+            <SettlementBar totalItems={allItems.length} />
 
             {/* MAIN LAYOUT */}
             <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
@@ -127,9 +127,9 @@ export default function Dashboard() {
                         onFixedFilterChange={ui.setFixedFilter}
                         preferredCurrency={ui.preferredCurrency}
                         rates={rates}
-                        payModal={ui.payModal}
-                        loadingPayIds={ui.loadingPayIds}
-                        onConfirmPay={ui.onConfirmPay}
+                        settleModal={ui.settleModal}
+                        loadingSettleIds={ui.loadingSettleIds}
+                        onConfirmSettle={ui.onConfirmSettle}
                         onTogglePostpone={data.postergarGasto}
                         onToggleFavoriteGasto={data.favoritoGasto}
                         onToggleFavoriteEntity={data.favoritoEntidad}

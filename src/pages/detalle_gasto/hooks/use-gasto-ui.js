@@ -5,7 +5,7 @@ import { useGastoData } from './use-gasto-data';
 export function useGastoUI() {
     const nav = useNavigate();
 
-    const { gasto, setGasto, actualizar, pagarCuota, refundCuota, eliminar, loading } = useGastoData();
+    const { gasto, setGasto, actualizar, settleQuota, refundCuota, eliminar, loading } = useGastoData();
 
     const totalPagado = useMemo(() => {
         if (!gasto) return 0;
@@ -39,7 +39,7 @@ export function useGastoUI() {
         porcentaje,
         loading,
         actualizar,
-        pagarCuota,
+        settleQuota,
         refundCuota,
         eliminar,
         onSeleccionAdjuntos,

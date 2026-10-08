@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import {
-    pagarCuota as pagarCuota2,
+    settleQuota as settleQuotaApi,
     refundCuota as refundCuota2,
     fetchGastoById,
     updateGasto,
     deleteGasto,
 } from '@/services/api';
-import { isReconcileActive } from '@/hooks/use-payments';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { isSettlementActive } from '@/hooks/use-settlements';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 export function useGastoData() {
@@ -45,12 +45,12 @@ export function useGastoData() {
     // En el detalle de gasto se puede pagar/revertir SIN sesión de "hacer
     // cuentas": con sesión abierta el pago queda diferido (se registra al
     // cerrarla); sin sesión se registra ahora, solo en el historial del gasto.
-    async function pagarCuota() {
+    async function settleQuota() {
         if (!gasto) return;
-        const deferred = isReconcileActive();
+        const deferred = isSettlementActive();
         try {
-            await pagarCuota2(gasto.id, token);
-            if (deferred) useReconcileStore.getState().refreshAfterPayment();
+            await settleQuotaApi(gasto.id, token);
+            if (deferred) useSettlementStore.getState().refreshAfterPayment();
             await load(true);
             useSnackbarStore
                 .getState()
@@ -91,7 +91,7 @@ export function useGastoData() {
     return {
         gasto,
         actualizar,
-        pagarCuota,
+        settleQuota,
         refundCuota,
         eliminar,
         load,

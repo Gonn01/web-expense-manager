@@ -1,10 +1,4 @@
-import { Currency } from '@/utils/enums';
-
-const CURRENCY_LABELS = {
-    [Currency.ARS]: 'ARS (Pesos Argentinos)',
-    [Currency.USD]: 'USD (Dólares)',
-    [Currency.EUR]: 'EUR (Euros)',
-};
+import { Currency, CURRENCY_LABELS } from '@/utils/enums';
 
 export function PreferenciasCard({ moneda, setMoneda, loading, onSave }) {
     return (

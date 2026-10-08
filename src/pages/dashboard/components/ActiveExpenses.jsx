@@ -18,9 +18,9 @@ export default function ActiveExpenses({
     onFixedFilterChange,
     preferredCurrency,
     rates,
-    payModal,
-    loadingPayIds,
-    onConfirmPay,
+    settleModal,
+    loadingSettleIds,
+    onConfirmSettle,
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
@@ -135,10 +135,10 @@ export default function ActiveExpenses({
                         currency={currency}
                         preferredCurrency={preferredCurrency}
                         rates={rates}
-                        loadingIds={loadingPayIds}
-                        onOpenGroup={payModal.openGroup}
+                        loadingIds={loadingSettleIds}
+                        onOpenGroup={settleModal.openGroup}
                         onItemClick={(it) => navigate(`/app/gastos/${it.id}`)}
-                        onPayClick={(g, it) => payModal.openItem(g, it)}
+                        onSettleClick={(g, it) => settleModal.openItem(g, it)}
                         onTogglePostpone={onTogglePostpone}
                         onToggleFavoriteGasto={onToggleFavoriteGasto}
                         onToggleFavoriteEntity={onToggleFavoriteEntity}
@@ -154,11 +154,11 @@ export default function ActiveExpenses({
 
             {/* MODAL */}
             <ConfirmInstallmentPaymentModal
-                open={payModal.modalOpen}
-                entityName={payModal.modalEntity}
-                items={payModal.modalItems}
-                onCancel={() => payModal.setModalOpen(false)}
-                onConfirm={onConfirmPay}
+                open={settleModal.modalOpen}
+                entityName={settleModal.modalEntity}
+                items={settleModal.modalItems}
+                onCancel={() => settleModal.setModalOpen(false)}
+                onConfirm={onConfirmSettle}
             />
         </div>
     );

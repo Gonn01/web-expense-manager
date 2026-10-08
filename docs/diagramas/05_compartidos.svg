@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="786" viewBox="0 0 1040 786" font-family="Helvetica">
+<rect width="1040" height="786" fill="white"/>
+<text x="520.0" y="42" font-size="21" font-weight="bold" text-anchor="middle" fill="#1F4E79">Gastos compartidos</text>
+<rect x="360" y="76" width="320" height="680" rx="8" fill="#FBFCFE" stroke="#1F4E79" stroke-width="1.6"/>
+<text x="520.0" y="100" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F4E79">Plataforma de Gestión de Deudas</text>
+<line x1="142.0" y1="270.4" x2="392.0" y2="164.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="270.4" x2="392.0" y2="428.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="270.4" x2="392.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="164.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="252.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="340.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="516.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="604.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="898.0" y1="305.6" x2="648.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="862.0" y1="674.4" x2="648.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<ellipse cx="520" cy="164.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="160.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-32</text>
+<text x="520" y="176.0" text-anchor="middle" fill="#1F2937" font-size="13">Ver compartidos</text>
+<ellipse cx="520" cy="252.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="248.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-33</text>
+<text x="520" y="264.0" text-anchor="middle" fill="#1F2937" font-size="13">Aprobar gasto compartido</text>
+<ellipse cx="520" cy="340.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="328.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-34</text>
+<text x="520" y="344.0" text-anchor="middle" fill="#1F2937" font-size="13">Rechazar gasto</text>
+<text x="520" y="360.0" text-anchor="middle" fill="#1F2937" font-size="13">compartido</text>
+<ellipse cx="520" cy="428.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="416.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-35</text>
+<text x="520" y="432.0" text-anchor="middle" fill="#1F2937" font-size="13">Reintentar gasto</text>
+<text x="520" y="448.0" text-anchor="middle" fill="#1F2937" font-size="13">rechazado</text>
+<ellipse cx="520" cy="516.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="504.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-36</text>
+<text x="520" y="520.0" text-anchor="middle" fill="#1F2937" font-size="13">Confirmar pago</text>
+<text x="520" y="536.0" text-anchor="middle" fill="#1F2937" font-size="13">compartido</text>
+<ellipse cx="520" cy="604.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="600.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-37</text>
+<text x="520" y="616.0" text-anchor="middle" fill="#1F2937" font-size="13">Rechazar pago compartido</text>
+<ellipse cx="520" cy="692.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="680.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-38</text>
+<text x="520" y="696.0" text-anchor="middle" fill="#1F2937" font-size="13">Recibir notificaciones</text>
+<text x="520" y="712.0" text-anchor="middle" fill="#1F2937" font-size="13">en tiempo real</text>
+<circle cx="120" cy="248.39999999999998" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="120" y1="259.4" x2="120" y2="290.4" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="100" y1="270.4" x2="140" y2="270.4" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="290.4" x2="105" y2="314.4" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="290.4" x2="135" y2="314.4" stroke="#1F2937" stroke-width="2" fill="none"/><text x="120" y="334.4" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Usuario</text>
+<circle cx="920" cy="283.6" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="920" y1="294.6" x2="920" y2="325.6" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="900" y1="305.6" x2="940" y2="305.6" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="920" y1="325.6" x2="905" y2="349.6" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="920" y1="325.6" x2="935" y2="349.6" stroke="#1F2937" stroke-width="2" fill="none"/><text x="920" y="369.6" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Contraparte</text>
+<rect x="862" y="648.4" width="116" height="52" rx="4" fill="#FFF7E6" stroke="#1F2937" stroke-width="1.4"/><text x="920" y="668.4" font-size="11" text-anchor="middle" fill="#6B7280">«sistema»</text><text x="920" y="687.4" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Pusher</text>
+</svg>

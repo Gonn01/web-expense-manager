@@ -36,6 +36,10 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'Ese gasto compartido no está rechazado.',
         variant: 'snackbar',
     },
+    GASTO_YA_SALDADO: {
+        message: 'Ese gasto ya tiene todas sus cuotas pagas.',
+        variant: 'snackbar',
+    },
     SIN_CUOTAS_PARA_REVERTIR: {
         message: 'No hay cuotas pagadas para revertir.',
         variant: 'snackbar',
@@ -91,8 +95,8 @@ export const ERROR_PRESENTATION = Object.freeze({
     // ─── Categorías ─────────────────────────────────────────────────────────
     CATEGORIA_NOT_FOUND: { message: 'No encontramos esa categoría.', variant: 'snackbar' },
 
-    // ─── Modo "hacer cuentas" (reconcile) ───────────────────────────────────
-    RECONCILE_REQUIRED: {
+    // ─── Modo "hacer cuentas" (settlement) ───────────────────────────────────
+    SETTLEMENT_REQUIRED: {
         message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',
         variant: 'snackbar',
         icon: 'playlist_add_check',

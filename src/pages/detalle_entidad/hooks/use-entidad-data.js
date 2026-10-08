@@ -8,7 +8,7 @@ import {
     desvincularUsuarioEntidad,
     fetchGastosEliminados,
     restaurarGasto as restaurarGastoApi,
-    pagarCuota as pagarCuotaApi,
+    settleQuota as settleQuotaApi,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
@@ -21,10 +21,10 @@ export function useEntidadData() {
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Gastos eliminados de la entidad (soft-delete). Se cargan on-demand
-    // cuando el usuario abre la pestaña "Eliminados".
-    const [gastosEliminados, setGastosEliminados] = useState(null); // null = nunca cargado
-    const [loadingEliminados, setLoadingEliminados] = useState(false);
+    // Gastos eliminados de la entidad (soft-delete): se traen junto con el
+    // resto al abrir la pantalla, para no disparar un pedido extra recien
+    // cuando se abre la pestaña "Eliminados".
+    const [gastosEliminados, setGastosEliminados] = useState([]);
 
     useEffect(() => {
         if (!token) return;
@@ -32,8 +32,12 @@ export function useEntidadData() {
         const load = async () => {
             try {
                 setLoading(true);
-                const data = await fetchFinancialEntityById(id, token);
+                const [data, eliminados] = await Promise.all([
+                    fetchFinancialEntityById(id, token),
+                    fetchGastosEliminados(id, token),
+                ]);
                 setEntity(data);
+                setGastosEliminados(Array.isArray(eliminados) ? eliminados : []);
             } catch (err) {
                 console.error('Error cargando entidad', err);
             } finally {
@@ -122,9 +126,12 @@ export function useEntidadData() {
 
     const actualizarEntidad = useCallback(
         async (newName) => {
-            await updateFinancialEntity(id, newName, token);
-            const data = await fetchFinancialEntityById(id, token);
-            setEntity(data);
+            const data = await updateFinancialEntity(id, newName, token);
+            setEntity((prev) =>
+                prev
+                    ? { ...prev, name: data.name, movements: data.movements ?? prev.movements }
+                    : prev,
+            );
         },
         [id, token],
     );
@@ -133,29 +140,17 @@ export function useEntidadData() {
         await deleteFinancialEntity(id, token);
     }, [id, token]);
 
-    const cargarGastosEliminados = useCallback(async () => {
-        setLoadingEliminados(true);
-        try {
-            const data = await fetchGastosEliminados(id, token);
-            setGastosEliminados(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error cargando gastos eliminados', err);
-            setGastosEliminados((prev) => prev ?? []);
-        } finally {
-            setLoadingEliminados(false);
-        }
-    }, [id, token]);
-
     const restaurarGasto = useCallback(
         async (gastoId) => {
-            await restaurarGastoApi(gastoId, token);
-            // Sale de la lista de eliminados y recargamos la entidad para que
-            // vuelva a aparecer en activos / finalizados / pendientes.
-            setGastosEliminados((prev) => (prev ?? []).filter((g) => g.id !== gastoId));
-            const data = await fetchFinancialEntityById(id, token);
-            setEntity(data);
+            const restored = await restaurarGastoApi(gastoId, token);
+            // Sale de la lista de eliminados y vuelve a activos, sin recargar
+            // toda la entidad.
+            setGastosEliminados((prev) => prev.filter((g) => g.id !== gastoId));
+            setEntity((prev) =>
+                prev ? { ...prev, gastos_activos: [restored, ...prev.gastos_activos] } : prev,
+            );
         },
-        [id, token],
+        [token],
     );
 
     const vincularUsuario = useCallback(
@@ -184,12 +179,36 @@ export function useEntidadData() {
     // El "modo hacer cuentas" vive solo en el dashboard: desde el detalle de
     // entidad el pago es SIEMPRE directo (aunque haya una sesión abierta). Si el
     // gasto estaba postergado, el backend le quita la postergación al pagar.
-    const pagarCuota = useCallback(
+    const settleQuota = useCallback(
         async (gasto) => {
             try {
-                await pagarCuotaApi(gasto.id, token, { direct: true });
-                const data = await fetchFinancialEntityById(id, token);
-                setEntity(data);
+                const updated = await settleQuotaApi(gasto.id, token, { direct: true });
+                const isFinished =
+                    !updated.fixed_expense &&
+                    Number(updated.payed_quotas) >= Number(updated.number_of_quotas);
+
+                setEntity((prev) => {
+                    if (!prev) return prev;
+                    let movedToInactive = false;
+                    const activos = prev.gastos_activos.reduce((acc, g) => {
+                        if (g.id !== updated.id) {
+                            acc.push(g);
+                        } else if (!isFinished) {
+                            acc.push(updated);
+                        } else {
+                            movedToInactive = true;
+                        }
+                        return acc;
+                    }, []);
+                    return {
+                        ...prev,
+                        gastos_activos: activos,
+                        gastos_inactivos: movedToInactive
+                            ? [updated, ...prev.gastos_inactivos]
+                            : prev.gastos_inactivos,
+                    };
+                });
+
                 useSnackbarStore
                     .getState()
                     .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
@@ -198,7 +217,7 @@ export function useEntidadData() {
                 console.error('Error registrando pago', err);
             }
         },
-        [id, token],
+        [token],
     );
 
     return {
@@ -210,11 +229,9 @@ export function useEntidadData() {
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
-        pagarCuota,
+        settleQuota,
         setEntity,
         gastosEliminados,
-        loadingEliminados,
-        cargarGastosEliminados,
         restaurarGasto,
     };
 }

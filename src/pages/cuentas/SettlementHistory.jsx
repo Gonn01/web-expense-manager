@@ -5,10 +5,10 @@ import Loader from '@/components/Loader';
 import DateRangeFilter, { inDateRange } from '@/components/DateRangeFilter';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
-import { useCuentasList, monthLabel } from './hooks/use-cuentas';
+import { useSettlementHistoryList, monthLabel } from './hooks/use-settlement-history';
 
-export default function Cuentas() {
-    const { snapshots, loading } = useCuentasList();
+export default function SettlementHistory() {
+    const { snapshots, loading } = useSettlementHistoryList();
     const navigate = useNavigate();
     const [range, setRange] = useState({ from: '', to: '' });
 
@@ -60,7 +60,7 @@ export default function Cuentas() {
                         <SnapshotCard
                             key={snap.id}
                             snap={snap}
-                            onClick={() => navigate(`/app/cuentas/${snap.id}`)}
+                            onClick={() => navigate(`/app/settlement/${snap.id}`)}
                         />
                     ))}
                 </div>

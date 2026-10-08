@@ -2,6 +2,7 @@ import axios from 'axios';
 import { normalizeApiError, notifyError } from '@/services/error-handler';
 import { useDialogStore } from '@/store/use-dialog-store';
 import useAuth from '@/store/use-auth-store';
+import { markSessionExpired } from '@/utils/session-expired';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -21,7 +22,7 @@ let sessionExpiredHandled = false;
  * Manejo central de errores: TODA request que falle pasa por acá.
  *  - normaliza el error (code / status / message amigable)
  *  - lo muestra como snackbar o dialog según el catálogo (salvo endpoints silent)
- *  - en 401 cierra la sesión y manda al login
+ *  - en 401 cierra la sesión y manda al login, que muestra el cartel de sesión vencida
  * y re-lanza el error normalizado para que los `catch` locales sigan andando.
  */
 api.interceptors.response.use(
@@ -35,12 +36,16 @@ api.interceptors.response.use(
             if (!sessionExpiredHandled) {
                 sessionExpiredHandled = true;
                 useAuth.getState().logout();
-                useDialogStore.getState().alert({
-                    title: normalized.title,
-                    message: normalized.message,
-                    tone: normalized.tone,
-                });
-                if (!window.location.pathname.startsWith('/login')) {
+                if (window.location.pathname.startsWith('/login')) {
+                    useDialogStore.getState().alert({
+                        title: normalized.title,
+                        message: normalized.message,
+                        tone: normalized.tone,
+                    });
+                } else {
+                    // La recarga borra cualquier dialog: el aviso lo muestra
+                    // la pantalla de login (cartel de sesión vencida).
+                    markSessionExpired();
                     window.location.assign('/login');
                 }
             }
@@ -235,9 +240,9 @@ export const refundCuota = async (gastoId, token) => {
     return data.data;
 };
 
-export const pagarCuota = async (gastoId, token, { direct = false } = {}) => {
+export const settleQuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
-        `/gastos/${gastoId}/pagar-cuota`,
+        `/gastos/${gastoId}/settle-quota`,
         direct ? { direct: true } : {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -289,9 +294,9 @@ export const createCategory = async (payload, token) => {
     return data.data;
 };
 
-export const pagarCuotasLote = async (ids, token) => {
+export const settleQuotasLote = async (ids, token) => {
     const { data } = await api.post(
-        `/gastos/pagar-lote`,
+        `/gastos/settle-lote`,
         { purchase_ids: ids },
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -299,58 +304,58 @@ export const pagarCuotasLote = async (ids, token) => {
 };
 
 /* ===============================
-   MODO HACER CUENTAS (reconcile)
+   MODO HACER CUENTAS (settlement)
 =============================== */
 
-export const fetchReconcileSession = async (token) => {
-    const { data } = await api.get('/reconcile/session', {
+export const fetchSettlementSession = async (token) => {
+    const { data } = await api.get('/settlement/session', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data; // { session, items } | null
 };
 
-export const startReconcileSession = async (token) => {
+export const startSettlementSession = async (token) => {
     const { data } = await api.post(
-        '/reconcile/session',
+        '/settlement/session',
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data; // { session, items, alreadyOpen }
 };
 
-export const setReconcileItem = async ({ purchase_id, purchase_ids, checked, auto }, token) => {
-    const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked, auto };
-    const { data } = await api.put('/reconcile/session/items', body, {
+export const setSettlementItem = async ({ purchase_id, purchase_ids, checked }, token) => {
+    const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked };
+    const { data } = await api.put('/settlement/session/items', body, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data; // { session, items }
 };
 
-export const finishReconcileSession = async (token) => {
+export const finishSettlementSession = async (token) => {
     const { data } = await api.post(
-        '/reconcile/session/finish',
+        '/settlement/session/finish',
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data; // snapshot
 };
 
-export const discardReconcileSession = async (token) => {
-    const { data } = await api.delete('/reconcile/session', {
+export const discardSettlementSession = async (token) => {
+    const { data } = await api.delete('/settlement/session', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
 
-export const fetchReconcileSnapshots = async (token) => {
-    const { data } = await api.get('/reconcile/snapshots', {
+export const fetchSettlementSnapshots = async (token) => {
+    const { data } = await api.get('/settlement/snapshots', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
 
-export const fetchReconcileSnapshotById = async (id, token) => {
-    const { data } = await api.get(`/reconcile/snapshots/${id}`, {
+export const fetchSettlementSnapshotById = async (id, token) => {
+    const { data } = await api.get(`/settlement/snapshots/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;

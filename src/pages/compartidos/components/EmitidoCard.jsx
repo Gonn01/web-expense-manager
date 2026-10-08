@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import StatusBadge from './StatusBadge';
+import TypeBadge from './TypeBadge';
 
 export default function EmitidoCard({ item, onReintentar, loadingId }) {
     const isLoading = loadingId === item.id;
@@ -10,6 +11,9 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
             {/* Cabecera */}
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                        <TypeBadge type="gasto" />
+                    </div>
                     <p className="font-semibold dark:text-white truncate">{item.name}</p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         {item.currency_type}{' '}

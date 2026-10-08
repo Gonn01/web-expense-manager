@@ -11,7 +11,7 @@ export function Cuota({
     next,
     isLastPaid,
     refundUnlocked,
-    reconcileActive = false,
+    settlementActive = false,
     onRefund,
 }) {
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -32,7 +32,7 @@ export function Cuota({
 
     const refundMessage =
         `Se eliminará el pago de ${title} y se registrará un reembolso. Esta acción no se puede deshacer.` +
-        (reconcileActive
+        (settlementActive
             ? ''
             : ' No hay una sesión de «Hacer cuentas» abierta: el reembolso queda en el historial del gasto, pero no en el historial de cuentas.');
 

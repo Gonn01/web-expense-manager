@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
-import { useReconcile } from '@/hooks/use-reconcile';
+import { useSettlement } from '@/hooks/use-settlement';
 
 /** Botón del header del dashboard para activar el modo. */
-export function ReconcileToggle() {
-    const active = useReconcileStore((s) => s.active);
-    const startSession = useReconcileStore((s) => s.startSession);
+export function SettlementToggle() {
+    const active = useSettlementStore((s) => s.active);
+    const startSession = useSettlementStore((s) => s.startSession);
     const [starting, setStarting] = useState(false);
 
     if (active) return null;
@@ -30,10 +30,10 @@ export function ReconcileToggle() {
 }
 
 /** Banner visible mientras la sesión de cuentas está abierta. */
-export function ReconcileBar({ totalItems = 0 }) {
-    const { active, checkedCount, startedLabel } = useReconcile();
-    const finishSession = useReconcileStore((s) => s.finishSession);
-    const discardSession = useReconcileStore((s) => s.discardSession);
+export function SettlementBar({ totalItems = 0 }) {
+    const { active, checkedCount, startedLabel } = useSettlement();
+    const finishSession = useSettlementStore((s) => s.finishSession);
+    const discardSession = useSettlementStore((s) => s.discardSession);
     const showSnackbar = useSnackbarStore((s) => s.show);
     const navigate = useNavigate();
     const [working, setWorking] = useState(false);
@@ -54,7 +54,7 @@ export function ReconcileBar({ totalItems = 0 }) {
         setWorking(false);
         if (snapshot) {
             showSnackbar('Cuentas cerradas. Guardamos el resumen del mes.', 'success');
-            navigate(`/app/cuentas/${snapshot.id}`);
+            navigate(`/app/settlement/${snapshot.id}`);
         }
     };
 

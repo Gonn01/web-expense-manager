@@ -38,7 +38,7 @@ function groupByCurrency(items) {
 const sum = (arr) => arr.reduce((s, it) => s + Number(it.amount_per_quota ?? 0), 0);
 
 /** Resumen de lo pagado/cobrado para una entidad dentro de un snapshot. */
-export function buildReconcileEntityText(entityName, items = []) {
+export function buildSettlementEntityText(entityName, items = []) {
     const buf = [`${entityName}:\n`];
 
     for (const [cur, curItems] of groupByCurrency(items)) {
@@ -61,7 +61,7 @@ export function buildReconcileEntityText(entityName, items = []) {
 }
 
 /** Resumen completo del mes (todas las entidades + totales). */
-export function buildReconcileSnapshotText(snapshot, monthLabelText) {
+export function buildSettlementSnapshotText(snapshot, monthLabelText) {
     const items = Array.isArray(snapshot?.items) ? snapshot.items : [];
     const totals = snapshot?.totals ?? {};
     const buf = [];
@@ -78,7 +78,7 @@ export function buildReconcileSnapshotText(snapshot, monthLabelText) {
         groups.get(key).push(it);
     }
     for (const [name, its] of groups) {
-        buf.push('\n' + buildReconcileEntityText(name, its) + '\n');
+        buf.push('\n' + buildSettlementEntityText(name, its) + '\n');
     }
 
     const byCurrency = totals.byCurrency ?? {};

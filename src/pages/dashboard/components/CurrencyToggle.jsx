@@ -1,5 +1,7 @@
+import { Currency } from '@/utils/enums';
+
 export default function CurrencyToggle({ currency, onChange }) {
-    const options = ['ARS', 'USD', 'EUR'];
+    const options = Object.values(Currency);
 
     return (
         <div className="flex">

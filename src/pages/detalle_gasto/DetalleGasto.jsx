@@ -15,14 +15,14 @@ import { formatMoney } from '@/utils/FormatMoney';
 import UpdateExpenseModal from '@/components/modals/Expenses/UpdateExpense/UpdateExpenseModal';
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
-import { useReconcileStore } from '@/store/use-reconcile-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 export default function DetalleGasto() {
     const {
         gasto,
         porcentaje,
         totalPagado,
-        pagarCuota,
+        settleQuota,
         refundCuota,
         actualizar,
         eliminar,
@@ -33,7 +33,7 @@ export default function DetalleGasto() {
     const { getEntityById } = useEntitiesStore();
     // Verificador: sin sesión de "hacer cuentas" abierta no se puede pagar
     // ni revertir cuotas. Se refleja en los botones de esta pantalla.
-    const reconcileActive = useReconcileStore((s) => s.active);
+    const settlementActive = useSettlementStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -96,7 +96,7 @@ export default function DetalleGasto() {
                             gasto={gasto}
                             loading={loading}
                             onRefund={refundCuota}
-                            reconcileActive={reconcileActive}
+                            settlementActive={settlementActive}
                         />
                     )}
                     {gasto.fixed_expense && (
@@ -129,14 +129,14 @@ export default function DetalleGasto() {
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={async () => {
                     setConfirmLoading(true);
-                    await pagarCuota();
+                    await settleQuota();
                     setConfirmLoading(false);
                     setConfirmOpen(false);
                 }}
                 loading={confirmLoading}
                 items={gasto ? [gasto] : []}
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
-                reconcileActive={reconcileActive}
+                settlementActive={settlementActive}
             />
 
             {/* MODAL EDITAR */}

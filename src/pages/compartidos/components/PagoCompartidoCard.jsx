@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
+import TypeBadge from './TypeBadge';
 
 export default function PagoCompartidoCard({ pago, variant, onConfirmar, onRechazar, loadingId }) {
     const isLoading = loadingId === pago.movement_id;
@@ -9,6 +10,9 @@ export default function PagoCompartidoCard({ pago, variant, onConfirmar, onRecha
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                        <TypeBadge type="pago" />
+                    </div>
                     <p className="font-semibold dark:text-white truncate">{pago.gasto_name}</p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         Pago de{' '}

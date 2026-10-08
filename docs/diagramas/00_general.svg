@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="874" viewBox="0 0 1040 874" font-family="Helvetica">
+<rect width="1040" height="874" fill="white"/>
+<text x="520.0" y="42" font-size="21" font-weight="bold" text-anchor="middle" fill="#1F4E79">Diagrama general de casos de uso</text>
+<rect x="360" y="76" width="320" height="768" rx="8" fill="#FBFCFE" stroke="#1F4E79" stroke-width="1.6"/>
+<text x="520.0" y="100" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F4E79">Plataforma de Gestión de Deudas</text>
+<line x1="142.0" y1="156.0" x2="392.0" y2="164.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="862.0" y1="164.0" x2="648.0" y2="164.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="252.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="340.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="428.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="516.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="604.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="508.0" x2="392.0" y2="780.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="728.0" x2="392.0" y2="692.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="142.0" y1="728.0" x2="392.0" y2="780.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="862.0" y1="780.0" x2="648.0" y2="780.0" stroke="#1F2937" stroke-width="1.3"/>
+<line x1="120" y1="692.0" x2="120" y2="582.0" stroke="#1F2937" stroke-width="1.4"/>
+<polygon points="120.0,582.0 127.5,596.1 112.5,596.1" fill="white" stroke="#1F2937" stroke-width="1.4"/>
+<ellipse cx="520" cy="164.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="160.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-01 a CU-04</text>
+<text x="520" y="176.0" text-anchor="middle" fill="#1F2937" font-size="13">Autenticarse</text>
+<ellipse cx="520" cy="252.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="248.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-05 a CU-07</text>
+<text x="520" y="264.0" text-anchor="middle" fill="#1F2937" font-size="13">Configurar perfil</text>
+<ellipse cx="520" cy="340.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="336.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-08</text>
+<text x="520" y="352.0" text-anchor="middle" fill="#1F2937" font-size="13">Consultar dashboard</text>
+<ellipse cx="520" cy="428.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="416.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-09 a CU-16</text>
+<text x="520" y="432.0" text-anchor="middle" fill="#1F2937" font-size="13">Gestionar entidades</text>
+<text x="520" y="448.0" text-anchor="middle" fill="#1F2937" font-size="13">financieras</text>
+<ellipse cx="520" cy="516.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="512.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-17 a CU-25</text>
+<text x="520" y="528.0" text-anchor="middle" fill="#1F2937" font-size="13">Gestionar gastos</text>
+<ellipse cx="520" cy="604.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="600.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-26 a CU-31</text>
+<text x="520" y="616.0" text-anchor="middle" fill="#1F2937" font-size="13">Hacer cuentas</text>
+<ellipse cx="520" cy="692.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="680.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-32 a CU-37</text>
+<text x="520" y="696.0" text-anchor="middle" fill="#1F2937" font-size="13">Gestionar gastos</text>
+<text x="520" y="712.0" text-anchor="middle" fill="#1F2937" font-size="13">compartidos</text>
+<ellipse cx="520" cy="780.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
+<text x="520" y="776.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-38</text>
+<text x="520" y="792.0" text-anchor="middle" fill="#1F2937" font-size="13">Recibir notificaciones</text>
+<circle cx="120" cy="134.0" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="120" y1="145.0" x2="120" y2="176.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="100" y1="156.0" x2="140" y2="156.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="176.0" x2="105" y2="200.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="176.0" x2="135" y2="200.0" stroke="#1F2937" stroke-width="2" fill="none"/><text x="120" y="220.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Visitante</text>
+<circle cx="120" cy="486.0" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="120" y1="497.0" x2="120" y2="528.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="100" y1="508.0" x2="140" y2="508.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="528.0" x2="105" y2="552.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="528.0" x2="135" y2="552.0" stroke="#1F2937" stroke-width="2" fill="none"/><text x="120" y="572.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Usuario</text>
+<circle cx="120" cy="706.0" r="11" stroke="#1F2937" stroke-width="2" fill="none" fill="white"/><line x1="120" y1="717.0" x2="120" y2="748.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="100" y1="728.0" x2="140" y2="728.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="748.0" x2="105" y2="772.0" stroke="#1F2937" stroke-width="2" fill="none"/><line x1="120" y1="748.0" x2="135" y2="772.0" stroke="#1F2937" stroke-width="2" fill="none"/><text x="120" y="792.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Contraparte</text>
+<rect x="862" y="138.0" width="116" height="52" rx="4" fill="#FFF7E6" stroke="#1F2937" stroke-width="1.4"/><text x="920" y="158.0" font-size="11" text-anchor="middle" fill="#6B7280">«sistema»</text><text x="920" y="177.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Firebase</text>
+<rect x="862" y="754.0" width="116" height="52" rx="4" fill="#FFF7E6" stroke="#1F2937" stroke-width="1.4"/><text x="920" y="774.0" font-size="11" text-anchor="middle" fill="#6B7280">«sistema»</text><text x="920" y="793.0" font-size="14" font-weight="bold" text-anchor="middle" fill="#1F2937">Pusher</text>
+</svg>

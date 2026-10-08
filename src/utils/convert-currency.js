@@ -1,6 +1,6 @@
 /**
  * Converts an amount from one currency to another using ARS as the pivot.
- * rates: { USD: number (ARS per USD), EUR: number (ARS per EUR) }
+ * rates: { [currency]: number (ARS per unit) } for every non-ARS currency (USD, EUR, BRL, CLP, UYU)
  * Returns null if the conversion is not possible.
  */
 export function convertCurrency(amount, from, to, rates) {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Currency } from '@/utils/enums';
 
 const CACHE_DURATION_MS = 5 * 60 * 1000;
+const FOREIGN_CURRENCIES = Object.values(Currency).filter((c) => c !== Currency.ARS);
 let _cache = null;
 let _cacheTime = null;
 
@@ -25,13 +27,12 @@ export function useExchangeRates() {
                 });
                 const data = await res.json();
 
-                const usd = data.find((d) => d.moneda === 'USD');
-                const eur = data.find((d) => d.moneda === 'EUR');
-
-                const parsed = {
-                    USD: usd?.venta ?? null,
-                    EUR: eur?.venta ?? null,
-                };
+                const parsed = Object.fromEntries(
+                    FOREIGN_CURRENCIES.map((cur) => [
+                        cur,
+                        data.find((d) => d.moneda === cur)?.venta ?? null,
+                    ]),
+                );
 
                 _cache = parsed;
                 _cacheTime = Date.now();
