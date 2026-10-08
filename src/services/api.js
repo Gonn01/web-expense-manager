@@ -2,6 +2,7 @@ import axios from 'axios';
 import { normalizeApiError, notifyError } from '@/services/error-handler';
 import { useDialogStore } from '@/store/use-dialog-store';
 import useAuth from '@/store/use-auth-store';
+import { markSessionExpired } from '@/utils/session-expired';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -21,7 +22,7 @@ let sessionExpiredHandled = false;
  * Manejo central de errores: TODA request que falle pasa por acá.
  *  - normaliza el error (code / status / message amigable)
  *  - lo muestra como snackbar o dialog según el catálogo (salvo endpoints silent)
- *  - en 401 cierra la sesión y manda al login
+ *  - en 401 cierra la sesión y manda al login, que muestra el cartel de sesión vencida
  * y re-lanza el error normalizado para que los `catch` locales sigan andando.
  */
 api.interceptors.response.use(
@@ -35,12 +36,16 @@ api.interceptors.response.use(
             if (!sessionExpiredHandled) {
                 sessionExpiredHandled = true;
                 useAuth.getState().logout();
-                useDialogStore.getState().alert({
-                    title: normalized.title,
-                    message: normalized.message,
-                    tone: normalized.tone,
-                });
-                if (!window.location.pathname.startsWith('/login')) {
+                if (window.location.pathname.startsWith('/login')) {
+                    useDialogStore.getState().alert({
+                        title: normalized.title,
+                        message: normalized.message,
+                        tone: normalized.tone,
+                    });
+                } else {
+                    // La recarga borra cualquier dialog: el aviso lo muestra
+                    // la pantalla de login (cartel de sesión vencida).
+                    markSessionExpired();
                     window.location.assign('/login');
                 }
             }

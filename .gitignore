@@ -25,5 +25,3 @@ dist-ssr
 
 .env
 
-# Claude Code project instructions (local-only)
-CLAUDE.md

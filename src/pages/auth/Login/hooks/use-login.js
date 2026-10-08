@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
+import { clearSessionExpired, isSessionExpiredMarked } from '@/utils/session-expired';
 
 export function useLogin() {
     const nav = useNavigate();
@@ -8,6 +9,13 @@ export function useLogin() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Llegamos acá porque la API rechazó el token (ver interceptor de axios).
+    // Se lee una vez y se limpia la marca para que no reaparezca al recargar.
+    const [sessionExpired] = useState(isSessionExpiredMarked);
+    useEffect(() => {
+        clearSessionExpired();
+    }, []);
 
     const validar = ({ email, password }) => {
         if (!email.includes('@')) return 'Email inválido';
@@ -41,6 +49,7 @@ export function useLogin() {
         loading,
         error,
         setError,
+        sessionExpired,
         handleLogin,
     };
 }
