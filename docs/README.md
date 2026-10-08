@@ -17,7 +17,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-38` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 
-Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: están en [../.claude/guides/](../.claude/guides/).
+Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).
 
 ## Glosario
 
