@@ -166,13 +166,6 @@ export const desvincularUsuarioEntidad = async (entityId, token) => {
     return data.data;
 };
 
-export const fetchGastosEliminados = async (entityId, token) => {
-    const { data } = await api.get(`/entidades-financieras/${entityId}/gastos-eliminados`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return data.data;
-};
-
 /* ===============================
    GASTOS
 =============================== */

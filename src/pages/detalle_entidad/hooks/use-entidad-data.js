@@ -6,7 +6,6 @@ import {
     deleteFinancialEntity,
     vincularUsuarioEntidad,
     desvincularUsuarioEntidad,
-    fetchGastosEliminados,
     restaurarGasto as restaurarGastoApi,
     settleQuota as settleQuotaApi,
 } from '@/services/api';
@@ -21,23 +20,14 @@ export function useEntidadData() {
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Gastos eliminados de la entidad (soft-delete): se traen junto con el
-    // resto al abrir la pantalla, para no disparar un pedido extra recien
-    // cuando se abre la pestaña "Eliminados".
-    const [gastosEliminados, setGastosEliminados] = useState([]);
-
     useEffect(() => {
         if (!token) return;
 
         const load = async () => {
             try {
                 setLoading(true);
-                const [data, eliminados] = await Promise.all([
-                    fetchFinancialEntityById(id, token),
-                    fetchGastosEliminados(id, token),
-                ]);
+                const data = await fetchFinancialEntityById(id, token);
                 setEntity(data);
-                setGastosEliminados(Array.isArray(eliminados) ? eliminados : []);
             } catch (err) {
                 console.error('Error cargando entidad', err);
             } finally {
@@ -145,9 +135,16 @@ export function useEntidadData() {
             const restored = await restaurarGastoApi(gastoId, token);
             // Sale de la lista de eliminados y vuelve a activos, sin recargar
             // toda la entidad.
-            setGastosEliminados((prev) => prev.filter((g) => g.id !== gastoId));
             setEntity((prev) =>
-                prev ? { ...prev, gastos_activos: [restored, ...prev.gastos_activos] } : prev,
+                prev
+                    ? {
+                          ...prev,
+                          gastos_eliminados: (prev.gastos_eliminados ?? []).filter(
+                              (g) => g.id !== gastoId,
+                          ),
+                          gastos_activos: [restored, ...prev.gastos_activos],
+                      }
+                    : prev,
             );
         },
         [token],
@@ -231,7 +228,8 @@ export function useEntidadData() {
         desvincularUsuario,
         settleQuota,
         setEntity,
-        gastosEliminados,
+        // Gastos eliminados (soft-delete): vienen dentro del detalle de la entidad.
+        gastosEliminados: entity?.gastos_eliminados ?? [],
         restaurarGasto,
     };
 }
