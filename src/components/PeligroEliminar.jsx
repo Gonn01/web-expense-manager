@@ -6,6 +6,7 @@ export default function PeligroEliminar({
     label = 'Eliminar',
     linked = false,
     linkedEntityName = '',
+    restorable = false,
 }) {
     const [open, setOpen] = useState(false);
     const [deleteLinked, setDeleteLinked] = useState(false);
@@ -17,7 +18,9 @@ export default function PeligroEliminar({
                 <div>
                     <p className="font-bold text-white">{label}</p>
                     <p className="text-sm text-gray-400">
-                        Una vez eliminada, esta acción no se puede deshacer.
+                        {restorable
+                            ? "Se puede restaurar después desde 'Ver eliminadas'."
+                            : 'Una vez eliminada, esta acción no se puede deshacer.'}
                     </p>
                 </div>
 
@@ -36,7 +39,9 @@ export default function PeligroEliminar({
                 message={
                     linked ? (
                         <span className="block">
-                            Esta acción no se puede deshacer.
+                            {restorable
+                                ? "Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras."
+                                : 'Esta acción no se puede deshacer.'}
                             <label className="mt-4 flex items-center gap-2 cursor-pointer select-none text-white">
                                 <input
                                     type="checkbox"
@@ -48,7 +53,9 @@ export default function PeligroEliminar({
                             </label>
                         </span>
                     ) : (
-                        'Esta acción no se puede deshacer.'
+                        restorable
+                            ? "Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras."
+                            : 'Esta acción no se puede deshacer.'
                     )
                 }
                 confirmLabel="Eliminar"
