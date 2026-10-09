@@ -1,9 +1,21 @@
+import InfoTooltip from '@/components/InfoTooltip';
+
 export default function Heading({ onCreate, viewMode, setViewMode, setShowDeletedModal }) {
     return (
         <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
-                Mis Entidades
-            </h1>
+            <div className="flex items-center gap-2">
+                <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
+                    Mis Entidades
+                </h1>
+                <InfoTooltip
+                    align="start"
+                    text={
+                        'Una entidad es cualquier tarjeta, cuenta bancaria, billetera virtual o ' +
+                        'persona con la que compartís gastos. Creá una por cada lugar donde ' +
+                        'quieras registrar tus gastos y pagos.'
+                    }
+                />
+            </div>
 
             <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1 rounded-lg border border-black/10 dark:border-white/10 p-1">
