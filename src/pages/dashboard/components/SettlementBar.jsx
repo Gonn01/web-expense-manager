@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
+import InfoTooltip from '@/components/InfoTooltip';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlement } from '@/hooks/use-settlement';
@@ -14,18 +15,29 @@ export function SettlementToggle() {
     if (active) return null;
 
     return (
-        <button
-            onClick={async () => {
-                setStarting(true);
-                await startSession();
-                setStarting(false);
-            }}
-            disabled={starting}
-            className="cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
-        >
-            <Icon name="playlist_add_check" className="mr-2" />
-            Hacer cuentas
-        </button>
+        <div className="flex items-center gap-1.5">
+            <button
+                onClick={async () => {
+                    setStarting(true);
+                    await startSession();
+                    setStarting(false);
+                }}
+                disabled={starting}
+                className="cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
+            >
+                <Icon name="playlist_add_check" className="mr-2" />
+                Hacer cuentas
+            </button>
+            <InfoTooltip
+                align="end"
+                text={
+                    'Al activar este modo, pagar o cobrar un gasto solo lo marca — todavía no ' +
+                    'registra el pago. Cuando toques "Terminar" se registran de una vez todos ' +
+                    'los pagos marcados y se guarda un resumen del mes. Podés salir y volver ' +
+                    'cuando quieras: la sesión queda guardada hasta que la termines.'
+                }
+            />
+        </div>
     );
 }
 
@@ -77,6 +89,14 @@ export function SettlementBar({ totalItems = 0 }) {
                             · iniciado {startedLabel}
                         </span>
                     )}
+                    <InfoTooltip
+                        align="start"
+                        text={
+                            '"Terminar" registra todos los pagos marcados y guarda un resumen ' +
+                            'del mes. "Descartar" cierra la sesión sin registrar nada: se ' +
+                            'pierden las marcas y no queda resumen.'
+                        }
+                    />
                 </div>
 
                 <div className="flex items-center gap-2 min-w-[180px] flex-1">
