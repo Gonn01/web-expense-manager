@@ -62,7 +62,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google; sesión persistente; cierre de sesión y expiración. |
 | CFG — Configuración | Perfil, moneda preferida y sueldo. |
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
-| ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración. |
+| ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración (solo web). |
 | GAS — Gastos | Alta (con entidad nueva, gasto espejo o cuotas ya pagas), detalle, edición, baja lógica, postergación, favoritos e historial. |
 | PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión del último pago, pagos pendientes de confirmación en gastos compartidos. |
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
@@ -78,8 +78,8 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 - **Importar movimientos.** Los gastos se cargan a mano; no se leen resúmenes de tarjeta ni extractos bancarios.
 - **Contabilidad o finanzas de empresas.** Es una herramienta personal: no hay organizaciones, roles, permisos compartidos ni facturación.
 - **Uso sin conexión.** Los clientes necesitan la API para operar.
-- **Funcionalidad conversada pero no implementada** (imágenes adjuntas, recuperar entidades eliminadas, recordatorios de vencimientos, integración con Mercado Pago, entre otras): se listan en [Pendiente / fuera de alcance](requerimientos-funcionales.md#pendiente--fuera-de-alcance). Hasta que se implementen no forman parte del alcance.
+- **Funcionalidad conversada pero no implementada** (imágenes adjuntas, recordatorios de vencimientos, integración con Mercado Pago, entre otras): se listan en [Pendiente / fuera de alcance](requerimientos-funcionales.md#pendiente--fuera-de-alcance). Hasta que se implementen no forman parte del alcance.
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe el sistema completo. Las diferencias puntuales entre clientes (por ejemplo, RF-CAT-04: la web no edita ni elimina categorías) se aclaran en el `RF` correspondiente, y los incumplimientos conocidos de calidad (transacciones, CORS, canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (transacciones, CORS, canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).

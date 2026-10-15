@@ -188,14 +188,15 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-09 — Listar y buscar entidades
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-ENT-01
+- **Requerimientos**: RF-ENT-01, RF-ENT-13
 - **Flujo principal**
     1. El usuario abre Entidades.
-    2. El sistema muestra sus entidades con la cantidad de gastos, los pendientes y a quién está vinculada cada una.
+    2. El sistema trae sus entidades en una sola consulta (activas y eliminadas) y muestra las activas con la cantidad de gastos, los pendientes y a quién está vinculada cada una.
     3. El usuario escribe en el buscador; el sistema filtra por nombre.
 - **Flujos alternativos**
     - 2a. No tiene entidades: el sistema muestra un estado vacío con la opción de crear una.
     - 2b. El usuario alterna entre vista de lista y de grilla.
+    - 2c. El usuario elige "Ver eliminadas": el sistema muestra las entidades eliminadas ya traídas en el paso 2, sin otra consulta. Al elegir restaurar una y confirmar, el sistema la reactiva y la entidad vuelve al listado de activas. (Solo en la web.)
 
 ### CU-10 — Crear entidad
 
@@ -416,7 +417,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-25 — Gestionar categorías
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-CAT-01, RF-CAT-02, RF-CAT-04
+- **Requerimientos**: RF-CAT-01, RF-CAT-02
 - **Flujo principal**
     1. Al crear o editar un gasto, el usuario abre el selector de categorías.
     2. El sistema muestra sus categorías.

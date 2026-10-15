@@ -30,7 +30,7 @@ export function useConfiguracionData() {
         async (moneda) => {
             if (!user?.id) throw new Error('No se encontró el ID de usuario.');
 
-            const updated = await updatePreferredCurrency(user.id, moneda, token);
+            const updated = await updatePreferredCurrency(moneda, token);
             updateUser({ ...updated, preferred_currency: moneda, monedaPreferida: moneda });
         },
         [user, token, updateUser],

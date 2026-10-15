@@ -76,13 +76,13 @@ export const loginWithFirebase = async (firebaseData) => {
     return data.data;
 };
 
-export const updatePreferredCurrency = async (userId, preferredCurrency, token) => {
+export const updatePreferredCurrency = async (preferredCurrency, token) => {
     const { data } = await api.put(
-        '/auth/preferred-currency',
-        { user_id: userId, preferred_currency: preferredCurrency },
+        '/user/preferred-currency',
+        { preferred_currency: preferredCurrency },
         { headers: { Authorization: `Bearer ${token}` } },
     );
-    return data.data[0];
+    return data.data;
 };
 
 /* ===============================
@@ -148,13 +148,6 @@ export const deleteFinancialEntity = async (id, token) => {
         headers: { Authorization: `Bearer ${token}` },
     });
     return true;
-};
-
-export const fetchDeletedEntities = async (token) => {
-    const { data } = await api.get('/entidades-financieras/eliminadas', {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return data.data;
 };
 
 export const restoreEntity = async (id, token) => {

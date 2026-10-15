@@ -2,13 +2,8 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
-import { fetchDeletedEntities } from '@/services/api';
-import useAuth from '@/store/use-auth-store';
 
-export default function DeletedEntitiesModal({ isOpen, onClose, onRestore }) {
-    const { token } = useAuth();
-    const [deletedEntities, setDeletedEntities] = useState([]);
-    const [loading, setLoading] = useState(false);
+export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onClose, onRestore }) {
     const [selected, setSelected] = useState(null);
     const [restoringId, setRestoringId] = useState(null);
 
@@ -28,31 +23,15 @@ export default function DeletedEntitiesModal({ isOpen, onClose, onRestore }) {
         return () => document.removeEventListener('keydown', onKey);
     }, [isOpen, onClose]);
 
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const load = async () => {
-            try {
-                setLoading(true);
-                const data = await fetchDeletedEntities(token);
-                setDeletedEntities(data ?? []);
-            } catch (err) {
-                console.error('Error fetching deleted entities:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        load();
-    }, [isOpen, token]);
-
     const confirmRestore = async () => {
         if (!selected) return;
         setRestoringId(selected.id);
         try {
             await onRestore?.(selected.id);
+        } catch (err) {
+            // El interceptor de axios ya mostró el error.
+            console.error('Error restoring entity:', err);
         } finally {
-            setDeletedEntities((prev) => prev.filter((e) => e.id !== selected.id));
             setRestoringId(null);
             setSelected(null);
         }
@@ -102,9 +81,7 @@ export default function DeletedEntitiesModal({ isOpen, onClose, onRestore }) {
 
                     {/* Body */}
                     <div className="flex-1 px-6 pb-6 max-h-[60vh] overflow-y-auto">
-                        {loading ? (
-                            <p className="text-[#9eb7a8] text-sm text-center py-6">Cargando...</p>
-                        ) : deletedEntities.length === 0 ? (
+                        {deletedEntities.length === 0 ? (
                             <p className="text-[#9eb7a8] text-sm text-center py-6">
                                 No tenés entidades eliminadas.
                             </p>

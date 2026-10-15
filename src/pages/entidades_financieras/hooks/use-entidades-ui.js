@@ -6,7 +6,8 @@ import { useDialogStore } from '@/store/use-dialog-store';
 
 export function useEntidadesUI() {
     const navigate = useNavigate();
-    const { entities, loading, crearEntidad, eliminarEntidad, restaurarEntidad } = useEntidadesData();
+    const { entities, deletedEntities, loading, crearEntidad, eliminarEntidad, restaurarEntidad } =
+        useEntidadesData();
 
     const [query, setQuery] = useState('');
     const [openNew, setOpenNew] = useState(false);
@@ -68,6 +69,7 @@ export function useEntidadesUI() {
         viewMode,
         setViewMode,
         filtered,
+        deletedEntities,
         showEmpty,
         loading,
 
