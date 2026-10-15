@@ -13,6 +13,7 @@ export default function EntidadesFinancieras() {
         query,
         setQuery,
         filtered,
+        deletedEntities,
         openNew,
         setOpenNew,
         showDeletedModal,
@@ -61,6 +62,7 @@ export default function EntidadesFinancieras() {
 
             <DeletedEntitiesModal
                 isOpen={showDeletedModal}
+                deletedEntities={deletedEntities}
                 onClose={() => setShowDeletedModal(false)}
                 onRestore={restaurarEntidad}
             />

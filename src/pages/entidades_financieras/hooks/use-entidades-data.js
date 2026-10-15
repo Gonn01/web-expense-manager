@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     fetchFinancialEntities,
     createEntity,
@@ -11,9 +11,14 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 
 export function useEntidadesData() {
     const { token } = useAuth();
-    const [entities, setEntities] = useState([]);
+    // Todas las entidades (activas y eliminadas): el endpoint las trae juntas
+    // con el campo `deleted` y se separan acá.
+    const [allEntities, setAllEntities] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { addEntity } = useEntitiesStore();
+    const { addEntity, removeEntity } = useEntitiesStore();
+
+    const entities = useMemo(() => allEntities.filter((e) => !e.deleted), [allEntities]);
+    const deletedEntities = useMemo(() => allEntities.filter((e) => e.deleted), [allEntities]);
 
     const loadEntities = useCallback(async () => {
         try {
@@ -28,7 +33,7 @@ export function useEntidadesData() {
                 type: e.type ?? 'bank',
             }));
 
-            setEntities(normalized);
+            setAllEntities(normalized);
         } catch (err) {
             console.error('Error fetching entities:', err);
         } finally {
@@ -54,7 +59,7 @@ export function useEntidadesData() {
             }
         }
 
-        setEntities((prev) => [finalEntity, ...prev]);
+        setAllEntities((prev) => [finalEntity, ...prev]);
         addEntity(finalEntity);
 
         return { entity: finalEntity, linkError };
@@ -62,20 +67,23 @@ export function useEntidadesData() {
 
     async function eliminarEntidad(id) {
         await deleteFinancialEntity(id, token);
-        setEntities((prev) => prev.filter((e) => e.id !== id));
+        setAllEntities((prev) => prev.map((e) => (e.id === id ? { ...e, deleted: true } : e)));
+        removeEntity(id);
     }
 
     async function restaurarEntidad(id) {
         await restoreEntity(id, token);
-        await loadEntities();
+        const restored = allEntities.find((e) => e.id === id);
+        setAllEntities((prev) => prev.map((e) => (e.id === id ? { ...e, deleted: false } : e)));
+        if (restored) addEntity({ ...restored, deleted: false });
     }
 
     return {
         entities,
+        deletedEntities,
         loading,
         crearEntidad,
         eliminarEntidad,
         restaurarEntidad,
-        setEntities,
     };
 }

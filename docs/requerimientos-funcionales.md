@@ -49,7 +49,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 
 | ID | Requerimiento | CU |
 | --- | --- | --- |
-| RF-ENT-01 | El usuario puede listar sus entidades, con la cantidad de gastos y de pendientes de cada una, y buscarlas por nombre. El orden es el mismo que en el dashboard. | CU-09 |
+| RF-ENT-01 | El usuario puede listar sus entidades activas, con la cantidad de gastos y de pendientes de cada una, y buscarlas por nombre. El orden es el mismo que en el dashboard. | CU-09 |
 | RF-ENT-02 | El usuario puede crear una entidad indicando su nombre. No puede haber dos entidades activas con el mismo nombre para un mismo usuario (`ENTIDAD_YA_EXISTE`). | CU-10 |
 | RF-ENT-03 | Al crear una entidad se puede indicar el email de otro usuario para dejarla vinculada en el mismo paso. | CU-10, CU-15 |
 | RF-ENT-04 | El usuario puede renombrar una entidad, respetando la unicidad de nombre. El cambio queda en el historial de la entidad. | CU-11 |
@@ -61,6 +61,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-ENT-10 | El usuario puede desvincular una entidad, previa confirmación. La entidad muestra en todo momento a quién está vinculada. | CU-15 |
 | RF-ENT-11 | El usuario puede ver los gastos eliminados de una entidad y restaurarlos. | CU-16 |
 | RF-ENT-12 | Un usuario solo puede ver y operar sobre sus propias entidades. | — |
+| RF-ENT-13 | El listado de entidades muestra solo las activas; un botón permite ver las eliminadas y restaurarlas, previa confirmación. El listado se obtiene en una sola consulta que trae activas y eliminadas (campo `deleted`) y el cliente las separa. *Cumplimiento parcial*: la vista de eliminadas existe solo en la web; la app Flutter descarta las eliminadas del listado y todavía no ofrece restaurarlas. | CU-09 |
 
 ## GAS — Gastos
 
@@ -106,7 +107,6 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-CAT-01 | El usuario puede listar sus categorías. Cada categoría tiene nombre y color y pertenece a un único usuario. | CU-25 |
 | RF-CAT-02 | El usuario puede crear una categoría, incluso mientras crea o edita un gasto. | CU-25 |
 | RF-CAT-03 | Un gasto puede tener cero o más categorías, que se asignan al crearlo o al editarlo. | CU-17, CU-19 |
-| RF-CAT-04 | La API permite además modificar y eliminar categorías (`PUT` / `DELETE /categorias/:id`). La web todavía no expone estas dos operaciones. | CU-25 |
 
 ## CTA — Hacer cuentas
 
@@ -152,7 +152,6 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 Funcionalidad conversada pero **no implementada**. No son requerimientos vigentes; se listan para no confundirlos con comportamiento existente. Detalle en `checklist_mis_cuentas.md` y `checklits_expense_manager.md`.
 
 - Imágenes adjuntas para gastos y entidades.
-- Pantalla de entidades eliminadas con opción de restaurar.
 - Historial ampliado del gasto (ediciones, "finalizado") y reembolso de pagos puntuales en gastos fijos.
 - Métricas de ingresos/egresos por categoría.
 - Notificaciones de vencimientos, integración con Mercado Pago, entidades privadas con contraseña, modo daltonismo, modo simple/avanzado.

@@ -93,7 +93,6 @@ export const ERROR_PRESENTATION = Object.freeze({
     },
 
     // ─── Categorías ─────────────────────────────────────────────────────────
-    CATEGORIA_NOT_FOUND: { message: 'No encontramos esa categoría.', variant: 'snackbar' },
 
     // ─── Modo "hacer cuentas" (settlement) ───────────────────────────────────
     SETTLEMENT_REQUIRED: {

@@ -12,7 +12,7 @@ The README.md is outdated — it describes an older, purely local/localStorage-o
 
 ## Documentation and guides
 
-- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case diagrams in `docs/diagramas/`. It lives in this repo but covers all three projects.
+- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case diagrams in `docs/diagramas/`. It lives in this repo but covers all three projects.
 - `.claude/guides/` — development guides of this repo: `arquitectura-web.md` (this project's architecture) and `documentacion.md` (what to update after a change, for all three projects).
 - Each project keeps its own architecture guide in its own repo: `d:\proyectos_flutter\app_expense_manager\.claude\guides\arquitectura-flutter.md` and `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\arquitectura-api.md`. Read the guide for the project you are about to change before writing code.
 
@@ -20,7 +20,7 @@ The README.md is outdated — it describes an older, purely local/localStorage-o
 
 **Every change made in any of the three projects** (this web app, the Flutter app, the API) **must update, in the same change, whatever it leaves stale** in:
 
-1. `docs/` in this repo — requirements, use cases and diagrams.
+1. `docs/` in this repo — system overview/objectives/scope (`descripcion-general.md`), requirements, use cases and diagrams. `descripcion-general.md` must be updated whenever a change adds/removes a module, changes what a module is for, adds a platform/language/currency/external service, or moves something into or out of scope. `mision-vision-valores.md` must be updated when a change alters, fixes or breaks a commitment listed in its values table, or renumbers an RF/RNF it cites.
 2. The architecture guide of the affected project, in that project's own repo (`.claude/guides/arquitectura-<web|flutter|api>.md`).
 3. The `CLAUDE.md` of the affected repo(s), if a command, folder, layer or convention changed.
 
