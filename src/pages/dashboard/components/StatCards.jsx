@@ -23,7 +23,7 @@ export default function StatCards({
 
     if (!summary) return null;
 
-    const { cuota_debo = 0, cuota_me_deben = 0, cuota_balance = 0 } = summary;
+    const { cuota_egreso = 0, cuota_ingreso = 0, cuota_balance = 0 } = summary;
 
     const cuotaCards = [
         {
@@ -36,12 +36,12 @@ export default function StatCards({
         },
         {
             label: `Cuota EGRESO (${currency})`,
-            value: formatMoney(cuota_debo, currency),
+            value: formatMoney(cuota_egreso, currency),
             tone: 'text-red-500 dark:text-red-400',
         },
         {
             label: `Cuota INGRESO (${currency})`,
-            value: formatMoney(cuota_me_deben, currency),
+            value: formatMoney(cuota_ingreso, currency),
             tone: 'text-emerald-600 dark:text-emerald-400',
         },
     ];
@@ -180,12 +180,12 @@ function StatCardsBreakdown({ summaryByCurrency, preferredCurrency, rates, verti
         },
         {
             label: 'Cuota EGRESO',
-            key: 'cuota_debo',
+            key: 'cuota_egreso',
             tone: () => 'text-red-500 dark:text-red-400',
         },
         {
             label: 'Cuota INGRESO',
-            key: 'cuota_me_deben',
+            key: 'cuota_ingreso',
             tone: () => 'text-emerald-600 dark:text-emerald-400',
         },
     ];

@@ -17,7 +17,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-38` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 
-Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: están en [../.claude/guides/](../.claude/guides/).
+Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).
 
 ## Glosario
 
@@ -25,7 +25,7 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 | --- | --- |
 | **Entidad financiera** | Agrupador de gastos: una persona, una tarjeta, un banco, un comercio. Todo gasto pertenece a una entidad. |
 | **Gasto** | Deuda o crédito registrado en una entidad (`purchases` en la base). Puede ser en cuotas, de pago único o fijo. |
-| **Egreso / Ingreso** | Tipo del gasto. Egreso = "debo"; ingreso = "me deben". |
+| **Egreso / Ingreso** | Tipo del gasto. Egreso = lo que el usuario debe pagar; ingreso = lo que le deben cobrar. |
 | **Gasto fijo** | Gasto recurrente sin cantidad de cuotas (alquiler, suscripción). Nunca se finaliza. |
 | **Cuota** | Cada pago de un gasto. `monto por cuota = monto / cantidad de cuotas`. |
 | **Gasto finalizado** | Gasto no fijo con todas sus cuotas pagas. Deja de aparecer en el dashboard. |

@@ -33,7 +33,7 @@ export function useDashboardData() {
         const totals = Object.fromEntries(
             CURRENCY_VALUES.map((cur) => [
                 cur,
-                { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
+                { egreso: 0, ingreso: 0, cuotaEgreso: 0, cuotaIngreso: 0 },
             ]),
         );
 
@@ -44,23 +44,23 @@ export function useDashboardData() {
                 const cuota = Number(g.amount_per_quota || 0);
 
                 if (g.type === 'INGRESO') {
-                    totals[curr].meDeben += restante;
-                    totals[curr].cuotaMeDeben += cuota;
+                    totals[curr].ingreso += restante;
+                    totals[curr].cuotaIngreso += cuota;
                 } else {
-                    totals[curr].debo += restante;
-                    totals[curr].cuotaDebo += cuota;
+                    totals[curr].egreso += restante;
+                    totals[curr].cuotaEgreso += cuota;
                 }
             });
         });
 
         const summary = CURRENCY_VALUES.reduce((acc, cur) => {
             acc[cur] = {
-                total_debo: totals[cur].debo,
-                total_me_deben: totals[cur].meDeben,
-                total_balance: totals[cur].meDeben - totals[cur].debo,
-                cuota_debo: totals[cur].cuotaDebo,
-                cuota_me_deben: totals[cur].cuotaMeDeben,
-                cuota_balance: totals[cur].cuotaMeDeben - totals[cur].cuotaDebo,
+                total_egreso: totals[cur].egreso,
+                total_ingreso: totals[cur].ingreso,
+                total_balance: totals[cur].ingreso - totals[cur].egreso,
+                cuota_egreso: totals[cur].cuotaEgreso,
+                cuota_ingreso: totals[cur].cuotaIngreso,
+                cuota_balance: totals[cur].cuotaIngreso - totals[cur].cuotaEgreso,
             };
             return acc;
         }, {});

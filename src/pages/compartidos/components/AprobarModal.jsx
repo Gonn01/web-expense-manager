@@ -13,7 +13,12 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
 
     useEffect(() => {
         if (!open) return;
-        loadEntities(token);
+        // Solo se recarga si la entidad sugerida no esta en el store (p. ej.
+        // creada desde otro dispositivo).
+        const suggestedId = gasto?.suggested_entity_id;
+        if (suggestedId && !useEntitiesStore.getState().getEntityById(suggestedId)) {
+            loadEntities(token);
+        }
         setNewEntityName('');
         setSelectedEntityId(gasto?.suggested_entity_id?.toString() || '');
         setMode('existing');

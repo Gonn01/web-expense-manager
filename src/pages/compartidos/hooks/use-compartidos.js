@@ -9,6 +9,7 @@ import {
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
+import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
@@ -61,7 +62,7 @@ export function useCompartidos() {
         async (gastoId, financialEntityId, newEntityName) => {
             setLoadingAction(gastoId);
             try {
-                await aprobarCompartido(
+                const approved = await aprobarCompartido(
                     gastoId,
                     {
                         financial_entity_id: financialEntityId ?? null,
@@ -69,12 +70,29 @@ export function useCompartidos() {
                     },
                     token,
                 );
+                // La entidad nueva la crea el backend al aprobar (vinculada al
+                // emisor): se suma al store sin recargar el listado.
+                const entityId = approved?.financial_entity_id;
+                const { getEntityById, addEntity } = useEntitiesStore.getState();
+                if (newEntityName && entityId && !getEntityById(entityId)) {
+                    const gasto = compartidos.recibidos.find((r) => r.id === gastoId);
+                    addEntity({
+                        id: entityId,
+                        name: newEntityName,
+                        is_favorite: false,
+                        linked_user_id: gasto?.sender_id ?? null,
+                        linked_user_name: gasto?.sender_name ?? null,
+                        linked_user_email: gasto?.sender_email ?? null,
+                        cantidad: 1,
+                        pending_count: 0,
+                    });
+                }
                 await load();
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, load, compartidos.recibidos],
     );
 
     const rechazar = useCallback(

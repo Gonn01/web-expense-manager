@@ -2,12 +2,15 @@
 
 Regla: **todo cambio en cualquiera de los tres proyectos (web, app Flutter, API) se cierra actualizando la documentación y las guías que ese cambio deja desactualizadas, en el mismo cambio.** No es una tarea aparte ni posterior.
 
-Todo vive en el repo de la web, sin importar en qué proyecto se hizo el cambio:
+La documentación funcional y esta guía describen el sistema completo y viven en el repo de la web, sin importar en qué proyecto se hizo el cambio. La guía de arquitectura de cada proyecto vive en su propio repo:
 
 | Qué | Dónde |
 | --- | --- |
 | Documentación funcional | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\docs\` |
-| Guías de desarrollo | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\.claude\guides\` |
+| Esta guía | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\.claude\guides\documentacion.md` |
+| Guía de arquitectura de la web | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\.claude\guides\arquitectura-web.md` |
+| Guía de arquitectura de la app Flutter | `d:\proyectos_flutter\app_expense_manager\.claude\guides\arquitectura-flutter.md` |
+| Guía de arquitectura de la API | `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\arquitectura-api.md` |
 | Resumen operativo de cada repo | `CLAUDE.md` en la raíz de cada uno de los tres repos |
 
 ## Qué actualizar según el cambio
@@ -17,7 +20,7 @@ Todo vive en el repo de la web, sin importar en qué proyecto se hizo el cambio:
 | agrega, modifica o quita un comportamiento visible para el usuario | `docs/requerimientos-funcionales.md` + el `CU` afectado en `docs/casos-de-uso.md` |
 | agrega o quita un caso de uso, un actor o una relación `«include»` / `«extend»` | lo anterior + el catálogo de `docs/casos-de-uso.md` + el `.svg` del módulo y `00_general.svg` en `docs/diagramas/` |
 | cambia una regla de negocio (validación, estado, quién puede hacer qué) | el `RF` y los flujos alternativos del `CU`; si cambia un flujo de estados, también los diagramas de comportamiento al final de `docs/casos-de-uso.md` |
-| agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
+| agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` (repo de la API) si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
 | cambia seguridad, rendimiento, tolerancia a fallos, dependencias externas o entornos | `docs/requerimientos-no-funcionales.md` |
 | corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había) |
 | cambia la estructura de carpetas, una capa, una convención o un comando | la guía de arquitectura de ese proyecto + su `CLAUDE.md` |
