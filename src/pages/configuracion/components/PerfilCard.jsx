@@ -1,3 +1,5 @@
+import UserAvatar from '@/components/UserAvatar';
+
 export function PerfilCard({ preview, nombreVisible, email }) {
     return (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-background-dark/70">
@@ -10,11 +12,10 @@ export function PerfilCard({ preview, nombreVisible, email }) {
                     <p className="text-slate-600 dark:text-slate-300 font-medium">Foto de perfil</p>
 
                     <div className="flex items-center gap-4">
-                        <div
-                            className="size-16 rounded-full bg-cover bg-center border border-black/20 dark:border-white/20"
-                            style={{
-                                backgroundImage: preview ? `url(${preview})` : 'none',
-                            }}
+                        <UserAvatar
+                            src={preview}
+                            name={nombreVisible}
+                            className="size-16 text-xl border border-black/20 dark:border-white/20"
                         />
                     </div>
                 </div>

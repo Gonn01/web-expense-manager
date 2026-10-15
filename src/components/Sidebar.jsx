@@ -7,6 +7,7 @@ import { useUIStore } from '@/store/use-ui-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import Snackbar from './Snackbar';
+import UserAvatar from './UserAvatar';
 import ConfirmDeleteModal from './modals/ConfirmDeleteModal';
 
 export default function Sidebar() {
@@ -141,11 +142,7 @@ export default function Sidebar() {
                 <div className="flex flex-col gap-4 w-full">
                     {/* Perfil del usuario */}
                     <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-                        <div
-                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shrink-0"
-                            aria-label="User profile picture"
-                            style={{ backgroundImage: `url(${avatar})` }}
-                        />
+                        <UserAvatar src={avatar} name={nombreVisible} className="size-10 text-sm" />
                         {!collapsed && (
                             <div className="flex flex-col">
                                 <h1 className="text-slate-900 dark:text-white text-base font-medium leading-normal">
