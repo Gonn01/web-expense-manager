@@ -8,16 +8,20 @@ export default function ExpenseInstallmentsSection({
     totalInstallments,
     progressPct,
     setPaidInstallments,
+    error,
 }) {
     return (
         <>
-            <div className="grid grid-cols-2 gap-4">
-                <TextInput
-                    label="Cantidad de cuotas"
-                    type="number"
-                    value={installments}
-                    onChange={(e) => setInstallments(e.target.value)}
-                />
+            <div className="grid grid-cols-2 gap-4 items-start">
+                <div data-field="installments">
+                    <TextInput
+                        label="Cantidad de cuotas"
+                        type="number"
+                        value={installments}
+                        onChange={(e) => setInstallments(e.target.value)}
+                        error={error}
+                    />
+                </div>
 
                 <TextInput
                     label="Cuotas pagadas"

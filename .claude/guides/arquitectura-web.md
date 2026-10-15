@@ -63,7 +63,8 @@ Consecuencias:
 
 ## 4. Estado y feedback
 
-- **Feedback global**: `GlobalFeedback.jsx` monta una vez el snackbar y el diálogo. Se disparan desde cualquier lado con `useSnackbarStore.getState().show(mensaje, tipo, icono)` y `useDialogStore.getState().alert({ title, message, tone })`. Sin prop drilling.
+- **Feedback global**: `GlobalFeedback.jsx` monta una vez el snackbar y el diálogo. Se disparan desde cualquier lado con `useSnackbarStore.getState().show(mensaje, tipo, icono)` y `useDialogStore.getState().alert({ title, message, tone })`. Sin prop drilling. El snackbar (`z-[70]`) queda por encima de los modales (`z-50`) y del diálogo (`z-[60]`).
+- **Validación de formularios de gasto**: `components/modals/Expenses/validate-expense.js` devuelve `{ campo: mensaje }` y lo usan los modales de alta y edición. El botón de guardar nunca se deshabilita por datos faltantes: al tocarlo con errores, cada campo los muestra (prop `error` de `TextInput` y de los selectores; los contenedores llevan `data-field`), la vista se lleva al primer campo con error y el footer fijo muestra el resumen (`ExpenseFormErrors`).
 - **Auth con persistencia manual**: `use-auth-store.js` lee y escribe `user` / `token` en `localStorage` dentro de sus acciones (no usa el middleware `persist`). Un campo persistido nuevo requiere tocar `getStoredAuthData()`, las acciones que lo setean y la limpieza de `logout()`.
 - **Preferencias de UI**: `use-ui-store.js`, persistidas en `localStorage` bajo `ui:prefs`.
 - **Actualización optimista** para cambios de un solo campo (favorito, postergar, marcar en la sesión): aplicar en pantalla, llamar a la API y revertir en el `catch`.

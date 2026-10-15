@@ -300,7 +300,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-17 — Crear gasto
 
 - **Actores**: Usuario; Contraparte (si la entidad está vinculada)
-- **Requerimientos**: RF-GAS-01 a RF-GAS-06, RF-CAT-03, RF-CMP-01
+- **Requerimientos**: RF-GAS-01 a RF-GAS-06, RF-GAS-15, RF-CAT-03, RF-CMP-01
 - **Flujo principal**
     1. El usuario elige "Crear gasto" (desde el dashboard o desde una entidad).
     2. Indica tipo (egreso o ingreso), nombre, entidad, monto, moneda y modalidad: pago único, en cuotas o gasto fijo.
@@ -313,7 +313,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
     - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
-    - 2b. Faltan datos obligatorios: el sistema lo informa.
+    - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
 - **Postcondición**: el gasto existe; según el caso, también su espejo y/o la copia de la contraparte.
 
 ### CU-18 — Ver detalle de gasto
@@ -331,12 +331,13 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-19 — Editar gasto
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-GAS-08, RF-CAT-03
+- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-CAT-03
 - **Flujo principal**
     1. En el detalle del gasto, el usuario elige editar.
     2. Modifica nombre, monto, tipo, condición de gasto fijo y/o categorías.
     3. El sistema guarda los cambios. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
+    - 2a. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no guarda e indica qué falta, igual que en CU-17 (2b).
     - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole el tipo opuesto.
 
 ### CU-20 — Eliminar gasto

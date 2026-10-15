@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { FieldError } from '@/components/TextInput';
 
 export default function EntitySelector({
     entity,
@@ -13,9 +14,12 @@ export default function EntitySelector({
     handleCreateEntity,
     loading,
     loadingNewEntity,
+    error,
 }) {
+    const borderClass = error ? 'border-red-500' : 'border-[#3d5245]';
+
     return (
-        <div className="space-y-2">
+        <div className="space-y-2" data-field="entity">
             <label className="text-white text-sm font-medium">Entidad financiera</label>
 
             <div className="relative">
@@ -24,15 +28,18 @@ export default function EntitySelector({
                         <div className="h-4 w-32 bg-[#29382f] rounded" />
                     </div>
                 ) : entities.length === 0 ? (
-                    <div className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 flex items-center gap-2 text-[#9eb7a8] text-sm">
+                    <div
+                        className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620] px-3 flex items-center gap-2 text-[#9eb7a8] text-sm`}
+                    >
                         <Icon name="info" className="text-base" />
                         No tenés entidades creadas aún
                     </div>
                 ) : (
                     <div className="relative">
                         <select
-                            className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620]
-                       px-3 pr-10 text-white appearance-none"
+                            aria-invalid={error ? true : undefined}
+                            className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620]
+                       px-3 pr-10 text-white appearance-none`}
                             value={entity}
                             onChange={(e) => setEntity(e.target.value)}
                         >
@@ -50,6 +57,12 @@ export default function EntitySelector({
                     </div>
                 )}
             </div>
+
+            {error && (
+                <FieldError
+                    message={entities.length === 0 ? `${error} Creá una nueva más abajo.` : error}
+                />
+            )}
 
             {!showNewEntity && (
                 <button

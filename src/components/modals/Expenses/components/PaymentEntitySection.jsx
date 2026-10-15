@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { FieldError } from '@/components/TextInput';
 
 /**
  * "Pagar con otra entidad": crea un movimiento espejo (tipo opuesto) en la
@@ -12,11 +13,12 @@ export default function PaymentEntitySection({
     setPaymentEntity,
     excludeId,
     oppositeTypeLabel,
+    error,
 }) {
     const options = entities.filter((e) => String(e.id) !== String(excludeId));
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3" data-field="paymentEntity">
             <label className="flex items-center gap-3 cursor-pointer select-none">
                 <div
                     onClick={() => setEnabled((v) => !v)}
@@ -32,7 +34,10 @@ export default function PaymentEntitySection({
                 <div className="p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
                     <div className="relative">
                         <select
-                            className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#111714] px-3 pr-10 text-white appearance-none"
+                            aria-invalid={error ? true : undefined}
+                            className={`h-12 w-full rounded-lg border ${
+                                error ? 'border-red-500' : 'border-[#3d5245]'
+                            } bg-[#111714] px-3 pr-10 text-white appearance-none`}
                             value={paymentEntity}
                             onChange={(e) => setPaymentEntity(e.target.value)}
                         >
@@ -47,6 +52,8 @@ export default function PaymentEntitySection({
                             <Icon name="expand_more" />
                         </div>
                     </div>
+
+                    {error && <FieldError message={error} />}
 
                     <p className="flex items-start gap-2 text-xs text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />

@@ -48,6 +48,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-USA-06 | Las acciones de un solo campo (favorito, postergar, marcar en la sesión) se reflejan en pantalla de inmediato y se revierten si el servidor las rechaza. | Web, App |
 | RNF-USA-07 | Toda carga de datos muestra un indicador de progreso. | Web, App |
 | RNF-USA-08 | Las preferencias de interfaz (barra lateral colapsada, balances ocultos, vista en lista o grilla) se recuerdan entre sesiones en el dispositivo. | Web |
+| RNF-USA-09 | Un formulario con datos faltantes o inválidos no deshabilita el botón de guardar sin explicación: al intentar guardar marca cada campo con error con un mensaje concreto y muestra un resumen siempre visible, sin necesidad de scrollear. Los avisos globales se muestran por encima de los modales. | Web (formularios de gasto); App: pendiente |
 
 ## REN — Rendimiento
 

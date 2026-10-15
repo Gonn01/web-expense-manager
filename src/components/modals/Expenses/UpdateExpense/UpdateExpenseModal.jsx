@@ -11,6 +11,8 @@ import ExpenseInstallmentsSection from '../components/ExpenseInstallmentsSection
 import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import { useCategoriesStore } from '@/store/use-categories-store';
+import ExpenseFormErrors from '../components/ExpenseFormErrors';
+import { validateExpenseForm, focusFirstError } from '../validate-expense';
 
 export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const { token } = useAuth();
@@ -63,9 +65,13 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const paid = Math.min(Number(paidInstallments) || 0, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
 
-    const canSave = useMemo(() => {
-        return name?.trim() && entity && Number(amount) > 0 && currency;
-    }, [name, entity, amount, currency]);
+    const errors = useMemo(
+        () => validateExpenseForm({ entity, name, amount, isInstallment, installments }),
+        [entity, name, amount, isInstallment, installments],
+    );
+    // Los errores se muestran recién después del primer intento de guardar.
+    const [submitted, setSubmitted] = useState(false);
+    const visibleErrors = submitted ? errors : {};
 
     const handleCreateEntity = async () => {
         if (!newEntityName.trim()) return;
@@ -103,7 +109,12 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     };
 
     const handleSubmit = async () => {
-        if (!canSave || saving) return;
+        if (saving) return;
+        if (Object.keys(errors).length > 0) {
+            setSubmitted(true);
+            focusFirstError(containerRef.current, errors);
+            return;
+        }
 
         const payload = {
             financial_entity_id: entity,
@@ -206,24 +217,30 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         newEntityName={newEntityName}
                         setNewEntityName={setNewEntityName}
                         handleCreateEntity={handleCreateEntity}
+                        error={visibleErrors.entity}
                     />
 
-                    <TextInput
-                        label="Nombre del gasto"
-                        placeholder="Ej: Préstamo personal"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
+                    <div data-field="name">
+                        <TextInput
+                            label="Nombre del gasto"
+                            placeholder="Ej: Préstamo personal"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={visibleErrors.name}
+                        />
+                    </div>
 
                     <ExpenseAmountSection
                         amount={amount}
                         setAmount={setAmount}
                         currency={currency}
                         setCurrency={setCurrency}
+                        error={visibleErrors.amount}
                     />
 
                     {isInstallment && (
                         <ExpenseInstallmentsSection
+                            error={visibleErrors.installments}
                             installments={installments}
                             setInstallments={setInstallments}
                             paidInstallments={paidInstallments}
@@ -244,7 +261,9 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                 </div>
 
                 {/* FOOTER */}
-                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                <footer className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                    <ExpenseFormErrors errors={visibleErrors} />
+
                     <button
                         onClick={onClose}
                         disabled={saving}
@@ -254,7 +273,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     </button>
 
                     <button
-                        disabled={!canSave || saving}
+                        disabled={saving}
                         onClick={handleSubmit}
                         className="h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                     >

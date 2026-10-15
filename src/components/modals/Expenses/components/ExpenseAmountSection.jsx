@@ -2,29 +2,27 @@ import Icon from '@/components/Icon';
 import TextInput from '@/components/TextInput';
 import { Currency } from '@/utils/enums';
 
-export default function ExpenseAmountSection({ amount, setAmount, currency, setCurrency }) {
-    const isInvalid = amount !== '' && Number(amount) <= 0;
+export default function ExpenseAmountSection({ amount, setAmount, currency, setCurrency, error }) {
+    // Aviso inmediato de monto negativo/cero, aunque todavía no se haya tocado Guardar.
+    const liveError =
+        amount !== '' && Number(amount) <= 0
+            ? 'El monto debe ser mayor a 0 (no se aceptan números negativos).'
+            : null;
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-end">
-            <div className="sm:col-span-3">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-start">
+            <div className="sm:col-span-3" data-field="amount">
                 <TextInput
                     label="Monto total"
                     type="number"
                     placeholder="150000"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
+                    error={liveError ?? error}
                 />
-
-                {/* Mensaje de error */}
-                {isInvalid && (
-                    <p className="text-red-400 text-sm mt-1">
-                        El monto debe ser mayor a 0 (no se aceptan números negativos).
-                    </p>
-                )}
             </div>
 
-            <div className="relative sm:col-span-2">
+            <div className="relative sm:col-span-2 space-y-2">
                 <label className="text-white text-sm font-medium">Moneda</label>
 
                 <div className="relative">

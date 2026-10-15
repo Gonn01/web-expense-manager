@@ -80,6 +80,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-GAS-12 | El usuario puede marcar y desmarcar un gasto como favorito. Cuando el gasto se finaliza, deja de ser favorito automáticamente. | CU-24 |
 | RF-GAS-13 | Cada gasto conserva un historial de movimientos: creación, pagos, pagos pendientes, reembolsos, postergación y fin de postergación. | CU-18 |
 | RF-GAS-14 | Un usuario solo puede ver y operar sobre gastos de sus propias entidades (`NO_AUTORIZADO`). La copia de un gasto compartido que todavía no fue asignada a una entidad solo puede verla quien la recibió. | — |
+| RF-GAS-15 | Al crear o editar un gasto son obligatorios: entidad, nombre y monto mayor a 0; si la modalidad es en cuotas, una cantidad de cuotas entera mayor a 0; y si se paga con otra entidad, una entidad de pago distinta de la del gasto. Si falta algo, el formulario no se envía e indica qué campo falta y por qué. **Cumplimiento parcial**: la web lo cumple completo; la app Flutter impide guardar pero no indica qué falta y no valida la cantidad de cuotas (si queda vacía usa 1). La API solo exige entidad, nombre, monto y moneda (`Faltan campos obligatorios`), sin validar monto positivo ni cantidad de cuotas. | CU-17, CU-19 |
 
 ## PAG — Pagos y cobros
 
