@@ -5,6 +5,7 @@ import PagoCompartidoCard from './components/PagoCompartidoCard';
 import AprobarModal from './components/AprobarModal';
 import Loader from '@/components/Loader';
 import Icon from '@/components/Icon';
+import InfoTooltip from '@/components/InfoTooltip';
 import { useState } from 'react';
 
 export default function Compartidos() {
@@ -104,7 +105,17 @@ export default function Compartidos() {
     return (
         <>
             <div className="mb-6">
-                <h1 className="text-3xl sm:text-4xl font-black dark:text-white">Compartidos</h1>
+                <h1 className="text-3xl sm:text-4xl font-black dark:text-white flex items-center gap-2">
+                    Compartidos
+                    <InfoTooltip
+                        align="start"
+                        text={
+                            'Esto aparece cuando vinculás una entidad a otra persona: los ' +
+                            'gastos y pagos que registra esa entidad le llegan acá para que ' +
+                            'los apruebe o confirme, y viceversa con los suyos.'
+                        }
+                    />
+                </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                     Gastos y pagos compartidos que todavía están pendientes
                 </p>

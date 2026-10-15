@@ -1,9 +1,21 @@
-export default function Heading({ onCreate, viewMode, setViewMode }) {
+import InfoTooltip from '@/components/InfoTooltip';
+
+export default function Heading({ onCreate, viewMode, setViewMode, setShowDeletedModal }) {
     return (
         <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
-                Mis Entidades
-            </h1>
+            <div className="flex items-center gap-2">
+                <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
+                    Mis Entidades
+                </h1>
+                <InfoTooltip
+                    align="start"
+                    text={
+                        'Una entidad es cualquier tarjeta, cuenta bancaria, billetera virtual o ' +
+                        'persona con la que compartís gastos. Creá una por cada lugar donde ' +
+                        'quieras registrar tus gastos y pagos.'
+                    }
+                />
+            </div>
 
             <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1 rounded-lg border border-black/10 dark:border-white/10 p-1">
@@ -32,6 +44,14 @@ export default function Heading({ onCreate, viewMode, setViewMode }) {
                         <span className="material-symbols-outlined text-lg">grid_view</span>
                     </button>
                 </div>
+
+                <button
+                    onClick={() => setShowDeletedModal?.(true)}
+                    className="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 border border-black/10 dark:border-white/10 text-slate-700 dark:text-white text-sm font-bold tracking-wide hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                >
+                    <span className="material-symbols-outlined text-lg">restore</span>
+                    <span className="truncate">Ver eliminadas</span>
+                </button>
 
                 <button
                     onClick={onCreate}

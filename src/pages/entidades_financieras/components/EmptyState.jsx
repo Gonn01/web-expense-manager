@@ -10,7 +10,13 @@ export default function EmptyState({ onCreate }) {
                     Aún no tienes entidades creadas
                 </h2>
                 <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Crea tu primera entidad para empezar a organizar tus finanzas.
+                    Una <strong>entidad</strong> es cualquier tarjeta, cuenta bancaria, billetera
+                    virtual o persona con la que compartís gastos — por ejemplo{' '}
+                    <em>&ldquo;Tarjeta Visa&rdquo;</em>, <em>&ldquo;Efectivo&rdquo;</em> o{' '}
+                    <em>&ldquo;Mamá&rdquo;</em>.
+                </p>
+                <p className="text-slate-500 dark:text-slate-400 max-w-sm">
+                    Creá tu primera entidad para empezar a registrar ahí tus gastos y pagos.
                 </p>
             </div>
 

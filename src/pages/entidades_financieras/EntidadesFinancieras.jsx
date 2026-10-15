@@ -2,6 +2,7 @@ import Heading from './components/Heading';
 import SearchBox from './components/SearchBox';
 import EntitiesList from './components/EntitiesList';
 import EmptyState from './components/EmptyState';
+import DeletedEntitiesModal from './components/DeletedEntitiesModal';
 import NewEntityModal from '@/components/modals/NewEntityModal';
 import Loader from '@/components/Loader';
 
@@ -14,12 +15,15 @@ export default function EntidadesFinancieras() {
         filtered,
         openNew,
         setOpenNew,
+        showDeletedModal,
+        setShowDeletedModal,
         viewMode,
         setViewMode,
         showEmpty,
         loading,
         handleSaveNew,
         handleDelete,
+        restaurarEntidad,
         navigate,
     } = useEntidadesUI();
 
@@ -33,6 +37,7 @@ export default function EntidadesFinancieras() {
                 onCreate={() => setOpenNew(true)}
                 viewMode={viewMode}
                 setViewMode={setViewMode}
+                setShowDeletedModal={setShowDeletedModal}
             />
 
             <SearchBox query={query} setQuery={setQuery} />
@@ -52,6 +57,12 @@ export default function EntidadesFinancieras() {
                 open={openNew}
                 onClose={() => setOpenNew(false)}
                 onSave={handleSaveNew}
+            />
+
+            <DeletedEntitiesModal
+                isOpen={showDeletedModal}
+                onClose={() => setShowDeletedModal(false)}
+                onRestore={restaurarEntidad}
             />
         </>
     );

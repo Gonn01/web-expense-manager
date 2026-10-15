@@ -35,6 +35,13 @@ export default function ActiveExpenses({
         return acc;
     }, {});
     const totalCount = groups.reduce((sum, g) => sum + g.items.length, 0);
+    const countByFixed = [true, false].reduce((acc, val) => {
+        acc[val] = groups.reduce(
+            (sum, g) => sum + g.items.filter((it) => it.fixed_expense === val).length,
+            0,
+        );
+        return acc;
+    }, {});
     const visibleEntities = filteredGroups.length;
     const visibleExpenses = filteredGroups.reduce((sum, g) => sum + g.items.length, 0);
 
@@ -110,16 +117,16 @@ export default function ActiveExpenses({
 
                 <FilterGroup label="Frecuencia">
                     {[
-                        { value: null, label: 'Todos' },
-                        { value: true, label: 'Fijos' },
-                        { value: false, label: 'Variables' },
-                    ].map(({ value, label }) => (
+                        { value: null, label: 'Todos', count: totalCount },
+                        { value: true, label: 'Fijos', count: countByFixed[true] },
+                        { value: false, label: 'Variables', count: countByFixed[false] },
+                    ].map(({ value, label, count }) => (
                         <ToggleButton
                             key={label}
                             active={fixedFilter === value}
                             onClick={() => onFixedFilterChange(value)}
                         >
-                            {label}
+                            {label} ({count})
                         </ToggleButton>
                     ))}
                 </FilterGroup>

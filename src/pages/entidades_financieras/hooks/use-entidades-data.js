@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     fetchFinancialEntities,
     createEntity,
     deleteFinancialEntity,
+    restoreEntity,
     vincularUsuarioEntidad,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
@@ -14,32 +15,31 @@ export function useEntidadesData() {
     const [loading, setLoading] = useState(true);
     const { addEntity } = useEntitiesStore();
 
+    const loadEntities = useCallback(async () => {
+        try {
+            setLoading(true);
+
+            const data = await fetchFinancialEntities(token);
+
+            const normalized = data.map((e) => ({
+                ...e,
+                balances: e.balances ?? [{ currency: 'ARS', amount: 0 }],
+                activeExpenses: e.activeExpenses ?? 0,
+                type: e.type ?? 'bank',
+            }));
+
+            setEntities(normalized);
+        } catch (err) {
+            console.error('Error fetching entities:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [token]);
+
     useEffect(() => {
         if (!token) return;
-
-        const load = async () => {
-            try {
-                setLoading(true);
-
-                const data = await fetchFinancialEntities(token);
-
-                const normalized = data.map((e) => ({
-                    ...e,
-                    balances: e.balances ?? [{ currency: 'ARS', amount: 0 }],
-                    activeExpenses: e.activeExpenses ?? 0,
-                    type: e.type ?? 'bank',
-                }));
-
-                setEntities(normalized);
-            } catch (err) {
-                console.error('Error fetching entities:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        load();
-    }, [token]);
+        loadEntities();
+    }, [token, loadEntities]);
     async function crearEntidad({ name, email }) {
         const created = await createEntity({ name }, token);
 
@@ -65,11 +65,17 @@ export function useEntidadesData() {
         setEntities((prev) => prev.filter((e) => e.id !== id));
     }
 
+    async function restaurarEntidad(id) {
+        await restoreEntity(id, token);
+        await loadEntities();
+    }
+
     return {
         entities,
         loading,
         crearEntidad,
         eliminarEntidad,
+        restaurarEntidad,
         setEntities,
     };
 }

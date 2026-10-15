@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Currency, CURRENCY_LABELS } from '@/utils/enums';
+import InfoTooltip from '@/components/InfoTooltip';
 
 function parseAmountInput(raw) {
     let cleaned = raw.replace(/\./g, '').replace(',', '.');
@@ -43,7 +44,17 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
 
     return (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-background-dark/70">
-            <h2 className="text-base font-medium mb-3 text-slate-900 dark:text-white">Sueldo</h2>
+            <h2 className="text-base font-medium mb-3 text-slate-900 dark:text-white flex items-center gap-1.5">
+                Sueldo
+                <InfoTooltip
+                    align="start"
+                    text={
+                        'Se usa para calcular qué porcentaje de tu sueldo representa cada ' +
+                        'categoría de gasto (lo ves en el gráfico de categorías del dashboard ' +
+                        'y de cada entidad). No afecta ningún cálculo de pagos ni balances.'
+                    }
+                />
+            </h2>
 
             <form className="space-y-4 text-sm" onSubmit={(e) => e.preventDefault()}>
                 <div className="flex flex-col gap-1">

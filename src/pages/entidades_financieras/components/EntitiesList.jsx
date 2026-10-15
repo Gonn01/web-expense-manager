@@ -43,7 +43,7 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
             <ConfirmDeleteModal
                 open={modalOpen}
                 title="Eliminar entidad"
-                message={`¿Seguro que querés eliminar "${selected?.name}"? Esta acción no se puede deshacer.`}
+                message={`¿Seguro que querés eliminar "${selected?.name}"? Podés restaurarla más tarde desde "Ver eliminadas".`}
                 confirmLabel="Eliminar entidad"
                 onCancel={() => setModalOpen(false)}
                 onConfirm={confirmDelete}
