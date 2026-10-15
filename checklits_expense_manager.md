@@ -29,6 +29,8 @@
 - [x] checkbox de entra el mes siguiente (se reemplazo por el boton postergar)
 - [x] Flechita para ocultar los balances y también que el sidebar se oculte (flechitas individuales: una colapsa el sidebar, otra oculta la columna de balances; preferencia persistida)
 - [x] agregar favoritos
+- [x] agregar InfoTooltip (componente de ayuda contextual) en EmptyState, Heading de entidades, Compartidos, SueldoCard y SettlementBar
+- [x] el filtro de "Frecuencia" (Fijos/Variables) en Entidades activas ahora muestra la cantidad de gastos por opción, igual que el filtro de Moneda
 
 ## ENTIDADES FINANCIERAS
 
