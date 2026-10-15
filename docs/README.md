@@ -12,6 +12,8 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 
 | Documento | Qué contiene |
 | --- | --- |
+| [descripcion-general.md](descripcion-general.md) | Qué es el sistema, sus objetivos y su alcance. Empezar por acá |
+| [mision-vision-valores.md](mision-vision-valores.md) | Misión, visión y valores centrales de la organización, y cómo se reflejan en el sistema |
 | [requerimientos-funcionales.md](requerimientos-funcionales.md) | Qué hace el sistema, por módulo (`RF-<módulo>-NN`) |
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-38` |
@@ -42,6 +44,7 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 
 Esta documentación tiene que reflejar el comportamiento **actual** del sistema. Todo cambio funcional en cualquiera de los tres proyectos se documenta en el mismo cambio:
 
+0. **Descripción general**: si el cambio agrega o quita un módulo, cambia el propósito de uno, suma una plataforma, un idioma, una moneda o un servicio externo, o mueve algo hacia o desde el alcance, actualizar [descripcion-general.md](descripcion-general.md). Si el cambio cumple, rompe o agrega un compromiso de la tabla de valores, o cambia un `RF`/`RNF` que esa tabla cita, actualizar [mision-vision-valores.md](mision-vision-valores.md).
 1. **Requerimientos funcionales**: agregar, modificar o eliminar el `RF` afectado. Los IDs no se reutilizan: un requerimiento eliminado se borra y su número queda vacante.
 2. **Casos de uso**: actualizar la especificación del `CU` afectado (flujos, precondiciones, reglas). Un caso de uso nuevo toma el siguiente número libre (`CU-39`, …) y se agrega al catálogo.
 3. **Diagramas**: si se agrega, quita o renombra un caso de uso, un actor o una relación `«include»`/`«extend»`, editar el `.svg` correspondiente en [diagramas/](diagramas/) y el diagrama general `00_general.svg`. Regenerar el `.png` a partir del `.svg`; si no se puede regenerar, borrar el `.png` desactualizado antes que dejar uno que contradiga al `.svg`.

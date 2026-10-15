@@ -12,5 +12,5 @@ Guías para trabajar en los tres proyectos de la Plataforma de Gestión de Deuda
 Qué describe cada cosa:
 
 - **Las guías de arquitectura** — *cómo* se construye cada proyecto: capas, convenciones, checklists, trampas.
-- **[`docs/`](../../docs/)** — *qué* hace el sistema: requerimientos funcionales, no funcionales, casos de uso y diagramas.
+- **[`docs/`](../../docs/)** — *qué* hace el sistema: descripción general (objetivos y alcance), requerimientos funcionales, no funcionales, casos de uso y diagramas.
 - **`CLAUDE.md`** de cada repo — resumen operativo de ese repo (comandos, estructura) y las reglas transversales.

@@ -17,16 +17,18 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 
 | Si el cambio… | Actualizar |
 | --- | --- |
+| agrega o quita un módulo, cambia el propósito de uno, o cambia componentes, plataformas, idiomas, monedas o servicios externos del sistema | `docs/descripcion-general.md` (descripción, objetivos y tabla de alcance) + lo que corresponda de abajo |
 | agrega, modifica o quita un comportamiento visible para el usuario | `docs/requerimientos-funcionales.md` + el `CU` afectado en `docs/casos-de-uso.md` |
 | agrega o quita un caso de uso, un actor o una relación `«include»` / `«extend»` | lo anterior + el catálogo de `docs/casos-de-uso.md` + el `.svg` del módulo y `00_general.svg` en `docs/diagramas/` |
 | cambia una regla de negocio (validación, estado, quién puede hacer qué) | el `RF` y los flujos alternativos del `CU`; si cambia un flujo de estados, también los diagramas de comportamiento al final de `docs/casos-de-uso.md` |
 | agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` (repo de la API) si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
 | cambia seguridad, rendimiento, tolerancia a fallos, dependencias externas o entornos | `docs/requerimientos-no-funcionales.md` |
-| corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había) |
+| corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había); si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |
+| cambia o renumera un `RF`/`RNF` citado en la tabla de valores, o cambia el comportamiento que esa tabla describe | `docs/mision-vision-valores.md` |
 | cambia la estructura de carpetas, una capa, una convención o un comando | la guía de arquitectura de ese proyecto + su `CLAUDE.md` |
 | introduce un patrón nuevo o deja uno en desuso | la guía de arquitectura de ese proyecto, incluido su checklist |
 | agrega un término de dominio | el glosario de `docs/README.md` |
-| implementa algo de "Pendiente / fuera de alcance" | moverlo de esa lista a un `RF` real, y marcarlo en el checklist correspondiente de la raíz de la web |
+| implementa algo de "Pendiente / fuera de alcance", o decide sacar algo del alcance | moverlo de esa lista a un `RF` real (o al revés), revisar la sección "Alcance" de `docs/descripcion-general.md`, y marcarlo en el checklist correspondiente de la raíz de la web |
 
 No requieren actualizar nada: cambios puramente visuales (layout, espaciado, colores, elección de componentes), refactors internos que no alteran capas ni convenciones, y correcciones de bugs que hacen que el código cumpla lo que la documentación ya decía.
 
