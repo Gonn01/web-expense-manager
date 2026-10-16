@@ -47,7 +47,9 @@ export function useDashboardUI(groups = [], settleQuotas) {
 
                 return { ...g, items };
             })
-            .filter((g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive));
+            .filter(
+                (g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive),
+            );
     }, [groups, currency, query, typeFilter, fixedFilter, settlementActive]);
 
     const [modalOpen, setModalOpen] = useState(false);

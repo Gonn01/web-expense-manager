@@ -104,6 +104,11 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'No tenés una sesión de cuentas abierta.',
         variant: 'snackbar',
     },
+    SETTLEMENT_EMPTY: {
+        message: 'Marcá al menos un gasto para terminar las cuentas, o descartá la sesión.',
+        variant: 'snackbar',
+        icon: 'playlist_add_check',
+    },
     SNAPSHOT_NOT_FOUND: { message: 'No encontramos esa sesión de cuentas.', variant: 'snackbar' },
 });
 

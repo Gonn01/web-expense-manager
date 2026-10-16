@@ -24,6 +24,7 @@ export default function ActiveExpenses({
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
+    busyKeys,
 }) {
     const navigate = useNavigate();
 
@@ -149,6 +150,7 @@ export default function ActiveExpenses({
                         onTogglePostpone={onTogglePostpone}
                         onToggleFavoriteGasto={onToggleFavoriteGasto}
                         onToggleFavoriteEntity={onToggleFavoriteEntity}
+                        busyKeys={busyKeys}
                     />
                 ))}
 

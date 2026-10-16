@@ -82,4 +82,4 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (transacciones, CORS, canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (CORS, canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).

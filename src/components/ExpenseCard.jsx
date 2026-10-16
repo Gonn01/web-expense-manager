@@ -14,20 +14,26 @@ export default function ExpenseCard({
     onSettleClick,
     onTogglePostpone,
     onToggleFavorite,
+    // Pedido en curso para postergar / favorito: spinner hasta que responde el servidor.
+    postponeBusy = false,
+    favoriteBusy = false,
     loading = false,
     // El "modo hacer cuentas" (indicador + pago diferido) solo existe en el
     // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
     settlementEnabled = false,
 }) {
     const sessionActive = useSettlementStore((s) => s.active);
-    const settlementChecked = useSettlementStore((s) => Boolean(s.checkedExpenses[String(gasto.id)]));
+    const settlementChecked = useSettlementStore((s) =>
+        Boolean(s.checkedExpenses[String(gasto.id)]),
+    );
     const toggleSettlement = useSettlementStore((s) => s.toggleExpense);
+    const settlementPending = useSettlementStore((s) => Boolean(s.pendingIds[String(gasto.id)]));
     const settlementActive = settlementEnabled && sessionActive;
     const progress = gasto.fixed_expense
         ? 100
         : gasto.number_of_quotas > 0
-            ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
-            : (gasto.progress ?? 0);
+          ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
+          : (gasto.progress ?? 0);
 
     const pendingQuotas = gasto.pending_quotas ?? 0;
     const previewProgress =
@@ -73,20 +79,27 @@ export default function ExpenseCard({
                                         ? 'Quitar de favoritos'
                                         : 'Marcar como favorito'
                                 }
+                                disabled={favoriteBusy}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onToggleFavorite(gasto);
                                 }}
-                                className={`shrink-0 cursor-pointer transition-colors ${gasto.is_favorite
+                                className={`relative shrink-0 cursor-pointer transition-colors disabled:cursor-wait ${
+                                    gasto.is_favorite
                                         ? 'text-amber-400 hover:text-amber-500'
                                         : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
-                                    }`}
+                                }`}
                             >
                                 <Icon
                                     name="star"
-                                    className="text-base"
+                                    className={`text-base ${favoriteBusy ? 'invisible' : ''}`}
                                     filled={gasto.is_favorite}
                                 />
+                                {favoriteBusy && (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                        <span className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                                    </span>
+                                )}
                             </button>
                         )}
                         <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
@@ -175,8 +188,8 @@ export default function ExpenseCard({
 
                 {onTogglePostpone && (
                     <button
-                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-sky-500/15 text-sky-600 dark:text-sky-400 px-2.5 py-1.5 rounded-md hover:bg-sky-500/25 transition-colors flex items-center gap-1.5 shrink-0"
-                        disabled={loading}
+                        className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-sky-500/15 text-sky-600 dark:text-sky-400 px-2.5 py-1.5 rounded-md hover:bg-sky-500/25 transition-colors flex items-center shrink-0 disabled:cursor-wait"
+                        disabled={loading || postponeBusy}
                         title={
                             gasto.is_postponed
                                 ? 'Volver a incluir en la sesión de cuentas'
@@ -187,28 +200,52 @@ export default function ExpenseCard({
                             onTogglePostpone(gasto);
                         }}
                     >
-                        <Icon name={gasto.is_postponed ? 'undo' : 'schedule'} className="text-sm" />
-                        {gasto.is_postponed ? 'Reactivar' : 'Postergar'}
+                        <span
+                            className={`flex items-center gap-1.5 ${postponeBusy ? 'invisible' : ''}`}
+                        >
+                            <Icon
+                                name={gasto.is_postponed ? 'undo' : 'schedule'}
+                                className="text-sm"
+                            />
+                            {gasto.is_postponed ? 'Reactivar' : 'Postergar'}
+                        </span>
+                        {postponeBusy && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-3 h-3 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                            </span>
+                        )}
                     </button>
                 )}
 
                 {settlementActive && settlementChecked ? (
                     <button
-                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-1.5 shrink-0"
+                        className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait"
+                        disabled={settlementPending}
                         onClick={(e) => {
                             e.stopPropagation();
                             toggleSettlement(gasto);
                         }}
                     >
-                        <Icon name="undo" className="text-sm" />
-                        Revertir
+                        {/* El contenido queda invisible (no se quita) para que el botón no cambie de tamaño. */}
+                        <span
+                            className={`flex items-center gap-1.5 ${settlementPending ? 'invisible' : ''}`}
+                        >
+                            <Icon name="undo" className="text-sm" />
+                            Revertir
+                        </span>
+                        {settlementPending && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </span>
+                        )}
                     </button>
                 ) : (
                     onSettleClick &&
                     (!gasto.is_postponed || !settlementEnabled) && (
                         <button
-                            className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${settlementEnabled && !sessionActive ? 'opacity-50' : ''
-                                }`}
+                            className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
+                                settlementEnabled && !sessionActive ? 'opacity-50' : ''
+                            }`}
                             disabled={loading}
                             title={
                                 settlementEnabled && !sessionActive
@@ -224,21 +261,19 @@ export default function ExpenseCard({
                                 onSettleClick(gasto);
                             }}
                         >
-                            {loading ? (
-                                <>
+                            <span className={loading ? 'invisible' : ''}>
+                                {gasto.type === 'INGRESO'
+                                    ? settlementActive
+                                        ? 'Marcar cobro'
+                                        : 'Registrar cobro'
+                                    : settlementActive
+                                      ? 'Marcar pago'
+                                      : 'Pagar cuota'}
+                            </span>
+                            {loading && (
+                                <span className="absolute inset-0 flex items-center justify-center">
                                     <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                    Procesando…
-                                </>
-                            ) : gasto.type === 'INGRESO' ? (
-                                settlementActive ? (
-                                    'Marcar cobro'
-                                ) : (
-                                    'Registrar cobro'
-                                )
-                            ) : settlementActive ? (
-                                'Marcar pago'
-                            ) : (
-                                'Pagar cuota'
+                                </span>
                             )}
                         </button>
                     )

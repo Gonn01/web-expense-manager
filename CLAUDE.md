@@ -78,7 +78,7 @@ src/
 
 Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 
-**Global feedback singletons**: `src/components/GlobalFeedback.jsx` mounts a snackbar/dialog once at the app root. Trigger them from anywhere with `useSnackbarStore.getState().show(...)` / `useDialogStore.getState().alert(...)` — no prop drilling needed.
+**Global feedback singletons**: `src/components/GlobalFeedback.jsx` mounts a snackbar/dialog once at the app root. Trigger them from anywhere with `useSnackbarStore.getState().show(...)` / `useDialogStore.getState().alert(...)` — no prop drilling needed. For yes/no confirmations use `await useDialogStore.getState().confirm({ title, message, tone, confirmLabel })` (resolves `true`/`false`); never use native `window.alert`/`window.confirm`. For a slow confirmed action pass it as `onConfirm: async () => …`: the dialog stays open and locked, with the spinner on its confirm button, until it finishes.
 
 **Auth persistence is manual**: `use-auth-store.js` reads/writes `user`/`token` to `localStorage` directly inside its actions (not via zustand's `persist` middleware). New persisted auth fields need updates in `getStoredAuthData()`, the relevant actions, and `logout()`'s cleanup.
 

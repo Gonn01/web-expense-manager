@@ -38,9 +38,10 @@ export function useSettlements(token, onPaid) {
                     updatedItems = updated;
                 }
 
-                // El backend marcó los items en la sesión; resincronizamos.
-                // El pago real se registra al terminar las cuentas.
-                useSettlementStore.getState().refreshAfterPayment();
+                // El backend confirmó que los marcó en la sesión: se reflejan con
+                // su respuesta, sin otro pedido. El pago real se registra al
+                // terminar las cuentas.
+                useSettlementStore.getState().applyMarked(updatedItems.map((it) => it.id));
 
                 useSnackbarStore
                     .getState()

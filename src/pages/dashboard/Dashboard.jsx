@@ -133,6 +133,7 @@ export default function Dashboard() {
                         onTogglePostpone={data.postergarGasto}
                         onToggleFavoriteGasto={data.favoritoGasto}
                         onToggleFavoriteEntity={data.favoritoEntidad}
+                        busyKeys={data.busyKeys}
                     />
                 </div>
             </div>

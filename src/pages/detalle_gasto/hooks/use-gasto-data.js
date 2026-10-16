@@ -50,7 +50,7 @@ export function useGastoData() {
         const deferred = isSettlementActive();
         try {
             await settleQuotaApi(gasto.id, token);
-            if (deferred) useSettlementStore.getState().refreshAfterPayment();
+            if (deferred) useSettlementStore.getState().applyMarked([gasto.id]);
             await load(true);
             useSnackbarStore
                 .getState()

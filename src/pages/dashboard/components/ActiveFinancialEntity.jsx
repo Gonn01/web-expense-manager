@@ -39,6 +39,7 @@ export default function ActiveFinancialEntity({
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
+    busyKeys,
 }) {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
@@ -53,6 +54,12 @@ export default function ActiveFinancialEntity({
     const checkedInGroup = checkableItems.filter((it) => checkedExpenses[String(it.id)]).length;
     const allChecked = checkableItems.length > 0 && checkedInGroup === checkableItems.length;
     const entityDone = settlementActive && allChecked;
+
+    // Algún gasto de la entidad se está marcando (diálogo de pago) o
+    // desmarcando: el botón de la entidad espera la respuesta del servidor.
+    const pendingIds = useSettlementStore((s) => s.pendingIds);
+    const favoriteBusy = Boolean(busyKeys?.has(`favEntidad:${group.id}`));
+    const groupBusy = group.items.some((it) => loadingIds?.has(it.id) || pendingIds[String(it.id)]);
 
     const count = group.items.length;
 
@@ -96,14 +103,24 @@ export default function ActiveFinancialEntity({
                             title={
                                 group.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorita'
                             }
+                            disabled={favoriteBusy}
                             onClick={() => onToggleFavoriteEntity(group.id, !group.is_favorite)}
-                            className={`shrink-0 cursor-pointer transition-colors ${
+                            className={`relative shrink-0 cursor-pointer transition-colors disabled:cursor-wait ${
                                 group.is_favorite
                                     ? 'text-amber-400 hover:text-amber-500'
                                     : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
                             }`}
                         >
-                            <Icon name="star" className="text-xl" filled={group.is_favorite} />
+                            <Icon
+                                name="star"
+                                className={`text-xl ${favoriteBusy ? 'invisible' : ''}`}
+                                filled={group.is_favorite}
+                            />
+                            {favoriteBusy && (
+                                <span className="absolute inset-0 flex items-center justify-center">
+                                    <span className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                                </span>
+                            )}
                         </button>
                     )}
 
@@ -159,20 +176,28 @@ export default function ActiveFinancialEntity({
                     />
                     {entityDone ? (
                         <button
-                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center gap-1.5"
+                            className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center disabled:cursor-wait"
+                            disabled={groupBusy}
                             onClick={() => setExpensesChecked(group.items, group.name, false)}
                             type="button"
                         >
-                            <Icon name="undo" className="text-sm" />
-                            Revertir
+                            <span
+                                className={`flex items-center gap-1.5 ${groupBusy ? 'invisible' : ''}`}
+                            >
+                                <Icon name="undo" className="text-sm" />
+                                Revertir
+                            </span>
+                            {groupBusy && <ButtonSpinner />}
                         </button>
                     ) : (
                         <button
-                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors"
+                            className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors disabled:cursor-wait"
+                            disabled={groupBusy}
                             onClick={() => onOpenGroup?.(group)}
                             type="button"
                         >
-                            Pagar / Cobrar
+                            <span className={groupBusy ? 'invisible' : ''}>Pagar / Cobrar</span>
+                            {groupBusy && <ButtonSpinner />}
                         </button>
                     )}
                 </div>
@@ -185,13 +210,15 @@ export default function ActiveFinancialEntity({
                         Sin gastos que coincidan con el filtro.
                     </p>
                 ) : (
-                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-1.5 py-1">
+                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-1.5 py-1.5">
                         {group.items.map((it) => (
-                            <li key={it.id}>
+                            <li key={it.id} className="py-2 first:pt-0 last:pb-0">
                                 <ExpenseCard
                                     gasto={it}
                                     settlementEnabled
                                     loading={loadingIds?.has(it.id)}
+                                    postponeBusy={Boolean(busyKeys?.has(`postpone:${it.id}`))}
+                                    favoriteBusy={Boolean(busyKeys?.has(`favGasto:${it.id}`))}
                                     onClick={() => onItemClick?.(it)}
                                     onSettleClick={() => onSettleClick?.(group, it)}
                                     onTogglePostpone={
@@ -210,5 +237,14 @@ export default function ActiveFinancialEntity({
                     </ul>
                 ))}
         </div>
+    );
+}
+
+/** Spinner centrado sobre el contenido (invisible) de un botón, sin cambiar su tamaño. */
+function ButtonSpinner() {
+    return (
+        <span className="absolute inset-0 flex items-center justify-center">
+            <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </span>
     );
 }

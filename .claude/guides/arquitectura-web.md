@@ -57,16 +57,18 @@ Excepción: los `SILENT_PATHS` (`/auth/login`, `/auth/register`), cuyo formulari
 
 Consecuencias:
 
-- **No** mostrar el error otra vez en un `catch`: ya lo mostró el interceptor. El `catch` local solo revierte estado optimista o corta el flujo.
+- **No** mostrar el error otra vez en un `catch`: ya lo mostró el interceptor. El `catch` local solo corta el flujo (no hay estado optimista que revertir).
 - **No** saltear el interceptor con manejo ad hoc fuera de `SILENT_PATHS`.
 - Código de error nuevo en la API → entrada nueva en `ERROR_PRESENTATION` (`utils/error-catalog.js`).
 
 ## 4. Estado y feedback
 
-- **Feedback global**: `GlobalFeedback.jsx` monta una vez el snackbar y el diálogo. Se disparan desde cualquier lado con `useSnackbarStore.getState().show(mensaje, tipo, icono)` y `useDialogStore.getState().alert({ title, message, tone })`. Sin prop drilling.
+- **Feedback global**: `GlobalFeedback.jsx` monta una vez el snackbar y el diálogo. Se disparan desde cualquier lado con `useSnackbarStore.getState().show(mensaje, tipo, icono)` y `useDialogStore.getState().alert({ title, message, tone })`. Sin prop drilling. Para pedir confirmación se usa `await useDialogStore.getState().confirm({ title, message, tone, confirmLabel })`, que resuelve `true`/`false`; no se usan `window.alert`/`window.confirm` nativos. Si la acción confirmada tarda (p. ej. terminar o descartar la sesión de cuentas), se pasa como `onConfirm: async () => …`: el diálogo queda abierto y bloqueado, con el spinner en su botón, hasta que termina.
 - **Auth con persistencia manual**: `use-auth-store.js` lee y escribe `user` / `token` en `localStorage` dentro de sus acciones (no usa el middleware `persist`). Un campo persistido nuevo requiere tocar `getStoredAuthData()`, las acciones que lo setean y la limpieza de `logout()`.
 - **Preferencias de UI**: `use-ui-store.js`, persistidas en `localStorage` bajo `ui:prefs`.
-- **Actualización optimista** para cambios de un solo campo (favorito, postergar, marcar en la sesión): aplicar en pantalla, llamar a la API y revertir en el `catch`.
+- **Sin actualizaciones optimistas**: ningún cambio se aplica en pantalla antes de que responda el servidor. El botón muestra un spinner mientras el pedido está en curso, sin cambiar de tamaño (el contenido queda `invisible` y el spinner va encima), y la pantalla se actualiza con la respuesta, sin recargar todo. Si falla, no hay nada que revertir.
+    - Favorito y postergar en el dashboard: `busyKeys` de `use-dashboard-data.js` (claves `postpone:<id>`, `favGasto:<id>`, `favEntidad:<id>`).
+    - Marcar y desmarcar en la sesión de cuentas: `pendingIds` de `use-settlement-store.js`, o `loadingSettleIds` del dashboard para el diálogo de pago. Después del diálogo, las marcas se toman de la respuesta del POST (`applyMarked`), sin volver a pedir la sesión.
 - **Evitar recargas completas**: tras una mutación puntual, aplicar la respuesta del endpoint al estado local en lugar de volver a pedir toda la pantalla.
 
 ## 5. Tiempo real
@@ -82,6 +84,7 @@ Flujo transversal, no una pantalla: `store/use-settlement-store.js` (caché del 
 - La sesión y las marcas viven en la base; el store solo las cachea. `AppLayout` la carga al entrar.
 - Con sesión abierta, pagar **marca** el gasto; el pago real se registra al terminar.
 - Desde el dashboard no se puede pagar sin sesión: `ensureSettlementActive()` lo frena en el cliente y la API responde 409 `SETTLEMENT_REQUIRED` en el pago en lote.
+- No se puede terminar una sesión sin gastos marcados: `SettlementBar` muestra un snackbar en vez de confirmar, y si la API responde 409 `SETTLEMENT_EMPTY` (porque al cerrar descartó todos los marcados), el store vuelve a cargar la sesión.
 - Desde el detalle de un gasto, sin sesión, el pago es directo. Desde el detalle de una entidad es siempre directo (`settleQuota(id, token, { direct: true })`).
 
 Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PAG y CTA).

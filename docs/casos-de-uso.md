@@ -465,7 +465,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-28 — Finalizar sesión de cuentas
 
 - **Actores**: Usuario; Contraparte (por los gastos compartidos)
-- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07
+- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07, RF-CTA-11
 - **Precondición**: hay una sesión de cuentas abierta.
 - **Flujo principal**
     1. El usuario elige "Terminar" y confirma.
@@ -476,8 +476,11 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. La aplicación sale del modo "Hacer cuentas" y muestra el snapshot generado.
 - **Flujos alternativos**
     - 2a. Un gasto marcado fue eliminado, no es del usuario, está postergado o ya está saldado: el sistema lo quita de la sesión y no lo incluye en el snapshot.
-    - 2b. Falla el pago de un gasto: el sistema lo registra en el log y continúa con el resto.
+    - 2b. Falla cualquier paso del cierre (pagos, snapshot o cierre de la sesión): no se guarda nada, porque todo el cierre es una transacción. El sistema informa el error y la sesión sigue abierta para reintentar.
+    - 1c. Se pide terminar la misma sesión dos veces a la vez (por ejemplo, desde dos dispositivos): el segundo pedido espera al primero y responde que no hay sesión abierta. Los pagos se registran una sola vez.
     - 1a. No hay sesión abierta: el sistema lo informa.
+    - 1b. No hay gastos marcados: la aplicación avisa que hay que marcar al menos uno o descartar la sesión, y no pide confirmación. La sesión sigue abierta.
+    - 2c. Después de 2a no queda ningún gasto marcado: el sistema no genera el snapshot ni cierra la sesión y responde `SETTLEMENT_EMPTY`. La aplicación recarga las marcas y muestra el mismo aviso que en 1b.
 - **Postcondición**: los pagos quedan en el historial de cada gasto, existe un snapshot nuevo y no hay sesión abierta.
 
 ### CU-29 — Descartar sesión
@@ -675,9 +678,14 @@ sequenceDiagram
             A-)X: pago.pendiente (CU-38)
         end
     end
-    A->>A: genera snapshot, cierra sesión, libera postergados
-    A-->>C: snapshot
-    C-->>U: resumen de la sesión
+    alt no quedó ningún gasto marcado (RF-CTA-11)
+        A-->>C: 409 SETTLEMENT_EMPTY, la sesión sigue abierta
+        C-->>U: aviso: marcar al menos un gasto o descartar
+    else hay gastos marcados
+        A->>A: genera snapshot, cierra sesión, libera postergados
+        A-->>C: snapshot
+        C-->>U: resumen de la sesión
+    end
 
     X->>A: confirmar pago (CU-36)
     A-)C: pago.confirmado (CU-38)
