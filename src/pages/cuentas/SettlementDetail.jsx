@@ -2,10 +2,13 @@ import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
-import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
+import CopyButton from '@/components/CopyButton';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDate, formatDateShort } from '@/utils/FormatDate';
-import { buildSettlementEntityText, buildSettlementSnapshotText } from '@/utils/build-settlement-text';
+import {
+    buildSettlementEntityText,
+    buildSettlementSnapshotText,
+} from '@/utils/build-settlement-text';
 import { useSettlementDetail, monthLabel } from './hooks/use-settlement-history';
 
 export default function SettlementDetail() {
@@ -65,10 +68,13 @@ export default function SettlementDetail() {
                         {formatDate(snapshot.finished_at)}
                     </p>
                 </div>
-                <WhatsAppCopyButton
+                <CopyButton
+                    size="sm"
                     label="Exportar"
                     title="Copiar resumen del mes"
-                    getText={() => buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))}
+                    getText={() =>
+                        buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))
+                    }
                 />
             </div>
 
@@ -126,7 +132,8 @@ export default function SettlementDetail() {
                                 <span className="text-xs text-slate-500 dark:text-slate-400">
                                     {items.length} {items.length === 1 ? 'gasto' : 'gastos'}
                                 </span>
-                                <WhatsAppCopyButton
+                                <CopyButton
+                                    size="sm"
                                     getText={() => buildSettlementEntityText(entityName, items)}
                                     title={`Copiar resumen de ${entityName}`}
                                 />
