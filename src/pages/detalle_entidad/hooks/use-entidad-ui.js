@@ -43,7 +43,6 @@ export function useEntidadUI() {
     const [loadingUpdatingEntity, setLoadingUpdatingEntity] = useState(false);
     const [loadingVincular, setLoadingVincular] = useState(false);
 
-    // Payment modal
     const [settleModalOpen, setSettleModalOpen] = useState(false);
     const [settleModalItem, setPayModalItem] = useState(null);
     const [loadingSettleIds, setLoadingPayIds] = useState(new Set());

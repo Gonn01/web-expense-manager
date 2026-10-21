@@ -48,7 +48,6 @@ export default function ActiveExpenses({
 
     return (
         <div className="lg:col-span-3 xl:col-span-3 flex flex-col gap-4 rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-white/5 min-h-0 flex-1">
-            {/* HEADER */}
             <div className="flex items-center justify-between gap-4">
                 <div className="shrink-0">
                     <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
@@ -75,7 +74,6 @@ export default function ActiveExpenses({
                 </div>
             </div>
 
-            {/* FILTERS */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2 border-y border-black/10 dark:border-white/10">
                 <FilterGroup label="Moneda">
                     <ToggleButton
@@ -133,7 +131,6 @@ export default function ActiveExpenses({
                 </FilterGroup>
             </div>
 
-            {/* LIST */}
             <div className="flex flex-col gap-3 overflow-y-auto pr-2 flex-1 min-h-0">
                 {filteredGroups.map((group) => (
                     <ActiveFinancialEntity
@@ -161,7 +158,6 @@ export default function ActiveExpenses({
                 )}
             </div>
 
-            {/* MODAL */}
             <ConfirmInstallmentPaymentModal
                 open={settleModal.modalOpen}
                 entityName={settleModal.modalEntity}

@@ -70,8 +70,6 @@ export function useCompartidos() {
                     },
                     token,
                 );
-                // La entidad nueva la crea el backend al aprobar (vinculada al
-                // emisor): se suma al store sin recargar el listado.
                 const entityId = approved?.financial_entity_id;
                 const { getEntityById, addEntity } = useEntitiesStore.getState();
                 if (newEntityName && entityId && !getEntityById(entityId)) {
@@ -135,7 +133,6 @@ export function useCompartidos() {
                 useSnackbarStore.getState().show('Pago confirmado', 'success');
                 await load();
             } catch (err) {
-                // El interceptor de axios ya mostró el error.
                 console.error('Error confirmando pago', err);
             } finally {
                 setLoadingAction(null);
@@ -152,7 +149,6 @@ export function useCompartidos() {
                 useSnackbarStore.getState().show('Pago rechazado', 'success');
                 await load();
             } catch (err) {
-                // El interceptor de axios ya mostró el error.
                 console.error('Error rechazando pago', err);
             } finally {
                 setLoadingAction(null);

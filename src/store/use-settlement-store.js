@@ -12,7 +12,6 @@ import {
 const token = () => useAuth.getState().token;
 const toast = (msg, type = 'error') => useSnackbarStore.getState().show(msg, type);
 
-/** items: [{ purchase_id, checked_at }] -> { [id]: { checked_at } } */
 function itemsToMap(items = []) {
     const map = {};
     for (const it of items) {
@@ -21,7 +20,6 @@ function itemsToMap(items = []) {
     return map;
 }
 
-/** Marca `ids` como "en curso" mientras corre `fn`, y los libera al terminar. */
 async function withPending(set, ids, fn) {
     const keys = ids.map(String);
     set((s) => {
@@ -40,18 +38,11 @@ async function withPending(set, ids, fn) {
     }
 }
 
-/**
- * "Modo hacer cuentas". La sesión y las marcas viven en la DB
- * (endpoints /settlement/*), así el usuario puede retomarla cuando quiera
- * y desde cualquier dispositivo. El store solo cachea el estado del server.
- */
 export const useSettlementStore = create((set, get) => ({
     active: false,
-    session: null, // { id, started_at } | null
-    checkedExpenses: {}, // { [purchaseId]: { checked_at } }
-    // Gastos con un pedido de marcar/desmarcar en curso: la interfaz muestra
-    // un spinner hasta que responde el servidor (no hay cambios optimistas).
-    pendingIds: {}, // { [purchaseId]: true }
+    session: null,
+    checkedExpenses: {},
+    pendingIds: {},
     loading: false,
     loaded: false,
 
@@ -95,8 +86,6 @@ export const useSettlementStore = create((set, get) => ({
             return snapshot;
         } catch (err) {
             console.error('Error cerrando sesión de cuentas:', err);
-            // La API sacó de la sesión los marcados que ya no se podían pagar y
-            // no quedó ninguno: se resincronizan las marcas (la sesión sigue abierta).
             if (err?.code === 'SETTLEMENT_EMPTY') get().loadSession();
             return null;
         }
@@ -126,7 +115,6 @@ export const useSettlementStore = create((set, get) => ({
                 const data = await setSettlementItem({ purchase_id: expense.id, checked }, token());
                 set({ checkedExpenses: itemsToMap(data.items) });
             } catch (err) {
-                // El interceptor ya mostró el error; las marcas no cambiaron.
                 console.error('Error marcando gasto:', err);
             }
         });
@@ -146,11 +134,6 @@ export const useSettlementStore = create((set, get) => ({
         });
     },
 
-    /**
-     * Tras marcar desde el diálogo de pago (POST settle-quota / settle-lote):
-     * el servidor ya confirmó que estos gastos quedaron marcados en la sesión,
-     * así que se reflejan directo sin volver a pedir la sesión.
-     */
     applyMarked: (ids) => {
         if (!get().session || !ids?.length) return;
         set((s) => {

@@ -16,8 +16,6 @@ export default function ConfirmInstallmentPaymentModal({
     items = [],
     loading = false,
     settlementActive = true,
-    // Aviso "esto no queda en el historial de cuentas". Tiene sentido en la
-    // pantalla de detalle de gasto; en el resto no hablamos de "hacer cuentas".
     showSettlementWarning = true,
 }) {
     const [removedIds, setRemovedIds] = useState(() => new Set());
@@ -37,7 +35,6 @@ export default function ConfirmInstallmentPaymentModal({
         };
     }, [open, onCancel]);
 
-    // Reinicia la lista de excluidos cada vez que se abre el modal o cambian los items.
     const itemsKey = items.map((it) => it.id).join(',');
     useEffect(() => {
         setRemovedIds(new Set());

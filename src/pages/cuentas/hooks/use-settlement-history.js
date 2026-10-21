@@ -55,7 +55,6 @@ export function useSettlementDetail(id) {
 
 const MONTH_FMT = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' });
 
-/** 'YYYY-MM' -> 'agosto 2026' */
 export function monthLabel(month) {
     if (!month) return '';
     const [y, m] = month.split('-').map(Number);

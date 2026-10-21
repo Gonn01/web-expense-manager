@@ -37,7 +37,6 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
             <label className="text-white text-sm font-medium">Categorías (opcional)</label>
 
             <div className="relative" ref={dropdownRef}>
-                {/* Trigger */}
                 {loading ? (
                     <div className="h-12 w-full rounded-lg bg-[#1c2620] border border-[#3d5245] animate-pulse flex items-center px-3">
                         <div className="h-4 w-32 bg-[#29382f] rounded" />
@@ -85,7 +84,6 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     </button>
                 )}
 
-                {/* Dropdown panel */}
                 {open && categories.length > 0 && (
                     <div className="absolute z-20 mt-1 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] shadow-xl overflow-hidden">
                         <ul className="max-h-48 overflow-y-auto py-1">
@@ -133,7 +131,6 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                 )}
             </div>
 
-            {/* Nueva categoría */}
             {!showForm ? (
                 <button
                     type="button"

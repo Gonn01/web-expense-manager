@@ -39,7 +39,6 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
                 )}
             </div>
 
-            {/* MODAL */}
             <ConfirmDeleteModal
                 open={modalOpen}
                 title="Eliminar entidad"

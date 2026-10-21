@@ -2,12 +2,10 @@ export default function SearchBox({ query, setQuery }) {
     return (
         <div className="px-0 my-6">
             <div className="relative w-full">
-                {/* Ícono lupa dentro del input */}
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
                     search
                 </span>
 
-                {/* Input estilo Dashboard */}
                 <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}

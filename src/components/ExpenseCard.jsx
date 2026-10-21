@@ -14,12 +14,9 @@ export default function ExpenseCard({
     onSettleClick,
     onTogglePostpone,
     onToggleFavorite,
-    // Pedido en curso para postergar / favorito: spinner hasta que responde el servidor.
     postponeBusy = false,
     favoriteBusy = false,
     loading = false,
-    // El "modo hacer cuentas" (indicador + pago diferido) solo existe en el
-    // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
     settlementEnabled = false,
 }) {
     const sessionActive = useSettlementStore((s) => s.active);
@@ -40,8 +37,6 @@ export default function ExpenseCard({
         pendingQuotas > 0 && !gasto.fixed_expense && gasto.number_of_quotas > 0
             ? Math.min(100, ((gasto.payed_quotas + pendingQuotas) / gasto.number_of_quotas) * 100)
             : null;
-    // Ya esta todo cubierto entre pagos confirmados y pendientes de
-    // confirmacion (gasto compartido): no queda nada mas para registrar.
     const quotasExhausted =
         !gasto.fixed_expense &&
         gasto.number_of_quotas > 0 &&
@@ -60,7 +55,6 @@ export default function ExpenseCard({
                 <div className="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-sm rounded-lg animate-pulse z-10" />
             )}
 
-            {/* Top row */}
             <div className="flex items-start justify-between gap-4">
                 <div
                     className={`flex flex-col gap-1.5 flex-1 ${settlementActive && settlementChecked ? 'opacity-60' : ''}`}
@@ -144,7 +138,6 @@ export default function ExpenseCard({
                     </div>
                 </div>
 
-                {/* Amounts */}
                 <div className="flex flex-col items-end gap-0.5 text-right shrink-0">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                         {formatMoney(gasto.amount_per_quota, cur)}
@@ -168,7 +161,6 @@ export default function ExpenseCard({
                 </div>
             </div>
 
-            {/* Progress row */}
             <div className="flex items-center gap-3">
                 <div className="flex-1">
                     <ProgressBar
@@ -226,7 +218,6 @@ export default function ExpenseCard({
                             toggleSettlement(gasto);
                         }}
                     >
-                        {/* El contenido queda invisible (no se quita) para que el botón no cambie de tamaño. */}
                         <span
                             className={`flex items-center gap-1.5 ${settlementPending ? 'invisible' : ''}`}
                         >

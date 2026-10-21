@@ -1,11 +1,5 @@
 import Icon from '@/components/Icon';
 
-/**
- * Filtro de rango de fechas (dos inputs date). Controlado: el padre guarda
- * `from` / `to` como strings 'YYYY-MM-DD' ('' = sin límite).
- *
- * Para filtrar una lista usá `inDateRange(fecha, from, to)`.
- */
 export default function DateRangeFilter({ from, to, onChange, className = '' }) {
     const hasRange = from || to;
 
@@ -49,7 +43,6 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
     );
 }
 
-/** ¿`date` (Date | string | number) cae dentro de [from, to]? Límites vacíos = sin tope. */
 export function inDateRange(date, from, to) {
     const t = new Date(date).getTime();
     if (Number.isNaN(t)) return false;

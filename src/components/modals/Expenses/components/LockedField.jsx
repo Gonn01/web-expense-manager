@@ -1,10 +1,5 @@
 import Icon from '@/components/Icon';
 
-/**
- * Envuelve un campo del formulario de gasto que la API puede bloquear
- * (`gasto.edit_locks`). Con `reason`, deshabilita todos los controles de
- * adentro y muestra el motivo debajo; sin `reason`, no cambia nada.
- */
 export default function LockedField({ reason, children }) {
     if (!reason) return children;
 

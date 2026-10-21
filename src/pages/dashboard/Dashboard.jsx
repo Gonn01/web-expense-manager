@@ -27,7 +27,6 @@ export default function Dashboard() {
             await data.crearGasto(payload);
             ui.setOpenNewExpense(false);
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error creando gasto:', err);
         } finally {
             ui.setLoadingCreatingExpense(false);
@@ -44,7 +43,6 @@ export default function Dashboard() {
 
     return (
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            {/* HEADER */}
             <div className="flex justify-between mb-4">
                 <div>
                     <p className="text-4xl font-black text-slate-900 dark:text-white">Dashboard</p>
@@ -67,10 +65,7 @@ export default function Dashboard() {
 
             <SettlementBar totalItems={allItems.length} />
 
-            {/* MAIN LAYOUT */}
             <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
-                {/* LEFT: StatCards + botón gráficos */}
-                {/* El panel queda montado: se anima el ancho al plegar/desplegar. */}
                 <div
                     className={`relative shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
                         balancesHidden ? 'w-6' : 'w-52'
@@ -127,7 +122,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* RIGHT: Active Expenses */}
                 <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
                     <ActiveExpenses
                         query={ui.query}
@@ -153,7 +147,6 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* MODAL: Nuevo gasto */}
             {ui.openNewExpense && (
                 <NewExpenseModal
                     onClose={() => ui.setOpenNewExpense(false)}
@@ -162,7 +155,6 @@ export default function Dashboard() {
                 />
             )}
 
-            {/* MODAL: Gráficos */}
             {showCharts && <ChartsModal gastos={allItems} onClose={() => setShowCharts(false)} />}
         </div>
     );

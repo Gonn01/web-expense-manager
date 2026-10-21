@@ -39,9 +39,6 @@ export function useDashboardUI(groups = [], settleQuotas) {
                     const matchType = typeFilter === null || it.type === typeFilter;
                     const matchFixed = fixedFilter === null || it.fixed_expense === fixedFilter;
 
-                    // Los postergados se siguen mostrando aunque haya una sesión de
-                    // cuentas activa: si desaparecieran de la lista no habría forma
-                    // de revertir la postergación sin esperar a que termine la sesión.
                     return matchTitle && matchCurrency && matchType && matchFixed;
                 });
 

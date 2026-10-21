@@ -1,9 +1,5 @@
 import Icon from '@/components/Icon';
 
-/**
- * "Pagar con otra entidad": crea un movimiento espejo (tipo opuesto) en la
- * entidad de pago elegida, con el mismo monto, cuotas y estado de pago.
- */
 export default function PaymentEntitySection({
     enabled,
     setEnabled,

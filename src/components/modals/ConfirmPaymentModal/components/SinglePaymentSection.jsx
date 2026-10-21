@@ -32,7 +32,6 @@ export default function SinglePaymentSection({ item }) {
                 </div>
             </div>
 
-            {/* Progress bar */}
             {!item.fixed_expense && item.number_of_quotas > 0 && (
                 <ProgressBar
                     progress={Math.min(100, (item.payed_quotas / item.number_of_quotas) * 100)}
@@ -48,7 +47,6 @@ export default function SinglePaymentSection({ item }) {
 
             <p className="text-xs text-slate-500"></p>
 
-            {/* Total */}
             <div className="rounded-lg border border-black/10 p-3 bg-white/60 dark:bg-background-dark/60">
                 <div className="flex items-baseline justify-between">
                     <span className="text-xs text-slate-500">Monto a pagar</span>

@@ -17,9 +17,7 @@ export function formatMoney(amount, currency) {
                 minimumFractionDigits: 2,
             });
             return `${sign}${f.format(abs)}`;
-        } catch {
-            /* moneda inválida: caemos al formato sin símbolo */
-        }
+        } catch {}
     }
 
     const f = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2 });

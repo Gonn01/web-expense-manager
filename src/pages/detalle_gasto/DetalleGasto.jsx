@@ -28,11 +28,8 @@ export default function DetalleGasto() {
         eliminar,
         loading,
         volverALista,
-        // onSeleccionAdjuntos,
     } = useGastoUI();
     const { getEntityById } = useEntitiesStore();
-    // Verificador: sin sesión de "hacer cuentas" abierta no se puede pagar
-    // ni revertir cuotas. Se refleja en los botones de esta pantalla.
     const settlementActive = useSettlementStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -103,11 +100,6 @@ export default function DetalleGasto() {
                         <PagosFijosSection gasto={gasto} onRefund={refundCuota} />
                     )}
 
-                    {/* <AdjuntosSection
-                        adjuntos={detalle.adjuntos}
-                        onSeleccionAdjuntos={onSeleccionAdjuntos}
-                    /> */}
-
                     <HistorialSection gasto={gasto} />
 
                     <PeligroEliminar
@@ -123,7 +115,6 @@ export default function DetalleGasto() {
                 </div>
             </div>
 
-            {/* MODAL CONFIRMAR PAGO */}
             <ConfirmInstallmentPaymentModal
                 open={confirmOpen}
                 onCancel={() => setConfirmOpen(false)}
@@ -139,7 +130,6 @@ export default function DetalleGasto() {
                 settlementActive={settlementActive}
             />
 
-            {/* MODAL EDITAR */}
             {editOpen && (
                 <UpdateExpenseModal
                     gasto={gasto}

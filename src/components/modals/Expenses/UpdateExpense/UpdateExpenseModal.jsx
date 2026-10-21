@@ -26,13 +26,10 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const [amount, setAmount] = useState(String(gasto.amount));
     const [currency, setCurrency] = useState(gasto.currency_type);
 
-    // Campos que la API no deja cambiar, con el motivo: { campo: motivo }.
-    // Los pagos nunca se editan acá: se registran con Pagar / Revertir.
     const locks = gasto.edit_locks ?? {};
     const paidLock =
         locks.payed_quotas ?? 'Los pagos se registran con Pagar y se deshacen con Revertir.';
 
-    // Un gasto no fijo con una sola cuota es un "pago único" (sin cuotas).
     const [isFixed, setIsFixed] = useState(Boolean(gasto.fixed_expense));
     const [isInstallment, setIsInstallment] = useState(
         !gasto.fixed_expense && gasto.number_of_quotas > 1,
@@ -42,7 +39,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         gasto.number_of_quotas > 1 ? String(gasto.number_of_quotas) : '',
     );
 
-    // Solo lectura: pagadas + pendientes de confirmación (gasto compartido).
     const paidQuotas = Number(gasto.payed_quotas) || 0;
     const committedQuotas = paidQuotas + (Number(gasto.pending_quotas) || 0);
     const hasPayments = committedQuotas > 0;
@@ -73,7 +69,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const paid = Math.min(paidQuotas, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
 
-    // Las cuotas no pueden quedar por debajo de las ya pagadas o pendientes.
     const installmentsError =
         isInstallment && installments !== '' && totalInstallments < committedQuotas
             ? `No puede ser menor que las cuotas ya pagadas o pendientes (${committedQuotas}).`
@@ -87,7 +82,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         return Number.isInteger(total) && total >= Math.max(1, committedQuotas);
     }, [name, entity, amount, currency, isInstallment, installments, committedQuotas]);
 
-    // Aviso (no bloquea): los pagos hechos conservan su monto.
     const amountNote =
         hasPayments && Number(amount) !== Number(gasto.amount)
             ? 'Los pagos ya registrados conservan su monto: el cambio solo afecta a las cuotas que faltan.'
@@ -106,7 +100,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         }
     };
 
-    // Mientras guarda, el modal no se cierra (ni con Escape ni clic afuera).
     const savingRef = useRef(false);
     savingRef.current = saving;
     const requestClose = () => {
@@ -131,7 +124,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         try {
             await onSave?.(payload);
         } catch (err) {
-            // El interceptor de axios ya mostró el error; el modal queda abierto.
             console.error('Error actualizando gasto', err);
         } finally {
             setSaving(false);
@@ -141,8 +133,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const handleSubmit = async () => {
         if (!canSave || saving) return;
 
-        // Sin `payed_quotas`: los pagos no se editan desde acá. En un gasto
-        // fijo la cantidad de cuotas no se usa y se manda la que ya tenía.
         const payload = {
             financial_entity_id: entity,
             name: name.trim(),
@@ -159,8 +149,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
             category_ids: selectedCategoryIds,
         };
 
-        // Si el gasto tiene un movimiento espejo vinculado, preguntamos si el
-        // cambio se aplica sólo a este o también al otro.
         if (gasto.linked_purchase_id) {
             setPendingPayload(payload);
             setLinkedPrompt(true);
@@ -191,7 +179,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]
                 "
             >
-                {/* HEADER */}
                 <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
                     <div className="flex items-center gap-3 text-white">
                         <Icon name="edit" className="text-primary" />
@@ -207,7 +194,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     </button>
                 </header>
 
-                {/* BODY */}
                 <div className="p-6 space-y-6">
                     <LockedField reason={locks.type}>
                         <ExpenseTypeSelector type={type} setType={setType} />
@@ -299,7 +285,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     />
                 </div>
 
-                {/* FOOTER */}
                 <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
                     <button
                         onClick={onClose}

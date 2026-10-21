@@ -7,7 +7,6 @@ import {
     favoritoEntidad as favoritoEntidadApi,
 } from '@/services/api';
 
-// Favoritos primero; a igualdad, más nuevo primero.
 const byFavThenDate = (aFav, bFav, aDate, bDate) => {
     if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
     return new Date(bDate) - new Date(aDate);
@@ -28,9 +27,6 @@ export function useDashboardData() {
     const [groups, setGroups] = useState([]);
     const [pendingTotal, setPendingTotal] = useState(0);
     const [loading, setLoading] = useState(false);
-    // Acciones de un solo campo con un pedido en curso, por clave
-    // (`postpone:<id>`, `favGasto:<id>`, `favEntidad:<id>`). No hay cambios
-    // optimistas: la interfaz muestra un spinner hasta que responde el servidor.
     const [busyKeys, setBusyKeys] = useState(() => new Set());
 
     const runBusy = useCallback(async (key, fn) => {
@@ -46,7 +42,6 @@ export function useDashboardData() {
         }
     }, []);
 
-    // Aplica `patch` al gasto `gastoId` dentro de los grupos.
     const patchGasto = useCallback((gastoId, patch) => {
         setGroups((prev) =>
             prev.map((g) => ({
@@ -125,7 +120,6 @@ export function useDashboardData() {
                             byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at),
                         );
 
-                    // Una entidad favorita se muestra aunque no tenga gastos activos.
                     if (items.length === 0 && !entity.is_favorite) return null;
 
                     return { ...entity, items };
@@ -206,15 +200,9 @@ export function useDashboardData() {
         [token, loadDashboard],
     );
 
-    // Las tres acciones de un solo campo esperan la respuesta del servidor y
-    // recién ahí actualizan la pantalla, sin recargar todo el dashboard. Si
-    // fallan no hay nada que revertir (el interceptor ya mostró el error).
     const postergarGasto = useCallback(
         (gastoId, postponed) =>
             runBusy(`postpone:${gastoId}`, async () => {
-                // Si se posterga un gasto ya marcado en la sesión de "hacer
-                // cuentas", primero se le saca la marca: un gasto postergado no
-                // debe quedar contado como pago pendiente de cerrar.
                 const settlement = useSettlementStore.getState();
                 if (postponed && settlement.session && settlement.isChecked(gastoId)) {
                     await settlement.toggleExpense({ id: gastoId });
@@ -266,8 +254,6 @@ export function useDashboardData() {
         loadDashboard();
     }, [loadDashboard]);
 
-    // Cuando el receptor aprueba un gasto compartido, descontamos el pendiente
-    // de la entidad correspondiente y refrescamos para traer el gasto ya activo.
     const onCompartidoAprobado = useCallback(
         ({ entityId } = {}) => {
             if (entityId != null) {
@@ -291,8 +277,6 @@ export function useDashboardData() {
     const pusherEvents = useMemo(
         () => ({
             'compartido.aprobado': onCompartidoAprobado,
-            // La otra persona confirmó/rechazó un pago que registramos: el estado
-            // "por confirmar" de la cuota cambió, hay que resincronizar.
             'pago.confirmado': loadDashboard,
             'pago.rechazado': loadDashboard,
         }),

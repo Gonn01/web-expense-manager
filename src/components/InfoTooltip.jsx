@@ -1,14 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 
-/**
- * Ícono de ayuda con un texto explicativo flotante — para aclarar conceptos
- * del dominio (qué es una "entidad", qué pasa en "modo hacer cuentas", etc.)
- * sin ocupar espacio permanente en la UI.
- *
- * Funciona con hover (desktop) y con click/tap (mobile y teclado), y se
- * cierra con click afuera o Escape.
- */
 export default function InfoTooltip({ text, className = '', align = 'center', side = 'bottom' }) {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
@@ -33,9 +25,6 @@ export default function InfoTooltip({ text, className = '', align = 'center', si
         end: 'right-0',
     }[align];
 
-    // "bottom" (default) abre el texto debajo del ícono — más seguro cuando el
-    // ícono está pegado arriba de un contenedor con scroll (ej. un <h1> de
-    // pantalla), donde abrir hacia arriba lo corta contra el borde superior.
     const sideClass = side === 'top' ? 'bottom-full mb-2' : 'top-full mt-2';
 
     return (

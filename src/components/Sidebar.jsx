@@ -139,7 +139,6 @@ export default function Sidebar() {
                 </button>
 
                 <div className="flex flex-col gap-4 w-full">
-                    {/* Perfil del usuario */}
                     <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
                         <div
                             className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 shrink-0"
@@ -158,7 +157,6 @@ export default function Sidebar() {
                         )}
                     </div>
 
-                    {/* Navegación */}
                     <nav className="flex flex-col gap-2 mt-4 w-full">
                         {navItems.map(({ to, icon, label, iconClass, extraIdle, badge }) => (
                             <NavLink
@@ -183,7 +181,6 @@ export default function Sidebar() {
                     </nav>
                 </div>
 
-                {/* Sección inferior */}
                 <div className="mt-auto flex flex-col gap-1 w-full">
                     <NavLink
                         to="/app/configuracion"

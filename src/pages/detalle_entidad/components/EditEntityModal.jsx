@@ -32,7 +32,6 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 overflow-hidden">
-                {/* OVERLAY LOADER */}
                 {saving && (
                     <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
                         <Icon
@@ -43,13 +42,11 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                     </div>
                 )}
 
-                {/* HEADER */}
                 <h2 className="text-xl font-bold mb-4 dark:text-white flex items-center gap-2">
                     <Icon name="edit" />
                     Editar Entidad
                 </h2>
 
-                {/* NOMBRE */}
                 <div className="mb-6">
                     <label className="text-sm text-zinc-600 dark:text-zinc-300">Nombre</label>
                     <input
@@ -65,7 +62,6 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                     {nameError && <p className="text-xs text-red-500 mt-1">{nameError}</p>}
                 </div>
 
-                {/* FOOTER */}
                 <div className="flex justify-between mt-2">
                     <button
                         disabled={saving}

@@ -155,14 +155,12 @@ export default function NewExpenseModal({
             className="fixed inset-0 z-50 flex items-center justify-center"
             onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
         >
-            {/* Background */}
             <div className="fixed inset-0 bg-black/60" />
 
             <div
                 ref={containerRef}
                 className="relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]"
             >
-                {/* HEADER */}
                 <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
                     <div className="flex items-center gap-3 text-white">
                         <Icon name="add_circle" className="text-primary" />
@@ -177,7 +175,6 @@ export default function NewExpenseModal({
                     </button>
                 </header>
 
-                {/* BODY */}
                 <div className="p-6 space-y-6">
                     <ExpenseTypeSelector type={type} setType={setType} />
 
@@ -285,7 +282,6 @@ export default function NewExpenseModal({
                     )}
                 </div>
 
-                {/* FOOTER */}
                 <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
                     <button
                         onClick={onClose}

@@ -13,8 +13,6 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
 
     useEffect(() => {
         if (!open) return;
-        // Solo se recarga si la entidad sugerida no esta en el store (p. ej.
-        // creada desde otro dispositivo).
         const suggestedId = gasto?.suggested_entity_id;
         if (suggestedId && !useEntitiesStore.getState().getEntityById(suggestedId)) {
             loadEntities(token);
@@ -55,23 +53,24 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                     {gasto?.currency_type} {Number(gasto?.amount).toLocaleString('es-AR')}
                 </p>
 
-                {/* TABS MODO */}
                 <div className="flex gap-2 mb-4">
                     <button
                         onClick={() => setMode('existing')}
-                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${mode === 'existing'
+                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
+                            mode === 'existing'
                                 ? 'bg-primary text-white border-primary'
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
-                            }`}
+                        }`}
                     >
                         Entidad existente
                     </button>
                     <button
                         onClick={() => setMode('new')}
-                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${mode === 'new'
+                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
+                            mode === 'new'
                                 ? 'bg-primary text-white border-primary'
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
-                            }`}
+                        }`}
                     >
                         Crear nueva
                     </button>

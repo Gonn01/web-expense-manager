@@ -27,9 +27,6 @@ export default function Compartidos() {
         setAprobarTarget(null);
     };
 
-    // El backend devuelve recibidos/emitidos en PENDING_APPROVAL o REJECTED
-    // (nada mas viejo que eso). Cada grupo junta gastos y pagos - TypeBadge
-    // distingue el tipo dentro de cada tarjeta.
     const recibidosPendientes = compartidos.recibidos.filter(
         (r) => r.status === 'PENDING_APPROVAL',
     );
@@ -59,7 +56,6 @@ export default function Compartidos() {
                 onRechazar={(id) => rechazar(id)}
             />
         )),
-        // Un gasto emitido rechazado si tiene accion posible: reintentar.
         ...emitidosRechazados.map((item) => (
             <EmitidoCard
                 key={`emitido-${item.id}`}
@@ -89,7 +85,6 @@ export default function Compartidos() {
         )),
     ];
 
-    // Gastos recibidos que vos ya rechazaste: informativo, sin mas accion.
     const rejected = recibidosRechazados.map((item) => (
         <RecibidoCard
             key={`recibido-${item.id}`}

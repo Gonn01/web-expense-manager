@@ -3,11 +3,6 @@ import TextInput from '@/components/TextInput';
 import { Currency } from '@/utils/enums';
 import { LockReason } from './LockedField';
 
-/**
- * Monto y moneda del gasto. `amountLock` / `currencyLock` son los motivos de
- * bloqueo que manda la API al editar (deshabilitan el campo); `amountNote` es
- * un aviso informativo debajo del monto.
- */
 export default function ExpenseAmountSection({
     amount,
     setAmount,
@@ -31,7 +26,6 @@ export default function ExpenseAmountSection({
                     onChange={(e) => setAmount(e.target.value)}
                 />
 
-                {/* Mensaje de error */}
                 {isInvalid && (
                     <p className="text-red-400 text-sm mt-1">
                         El monto debe ser mayor a 0 (no se aceptan números negativos).
@@ -66,7 +60,6 @@ export default function ExpenseAmountSection({
                         ))}
                     </select>
 
-                    {/* Flecha custom */}
                     <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#9eb7a8]">
                         <Icon name="expand_more" />
                     </div>

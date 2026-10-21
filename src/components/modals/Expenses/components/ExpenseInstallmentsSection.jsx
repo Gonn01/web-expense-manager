@@ -1,10 +1,6 @@
 import TextInput from '@/components/TextInput';
 import { LockReason } from './LockedField';
 
-/**
- * Cantidad de cuotas, cuotas pagadas y progreso. Al editar, la API puede
- * bloquear cualquiera de los dos campos (`installmentsLock` / `paidLock`).
- */
 export default function ExpenseInstallmentsSection({
     installments,
     setInstallments,

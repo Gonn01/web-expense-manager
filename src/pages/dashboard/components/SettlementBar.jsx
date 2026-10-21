@@ -7,7 +7,6 @@ import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { useSettlement } from '@/hooks/use-settlement';
 
-/** Botón del header del dashboard para activar el modo. */
 export function SettlementToggle() {
     const active = useSettlementStore((s) => s.active);
     const startSession = useSettlementStore((s) => s.startSession);
@@ -29,7 +28,6 @@ export function SettlementToggle() {
                 disabled={starting}
                 className="relative cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60 disabled:cursor-wait"
             >
-                {/* El contenido queda invisible (no se quita) para que el botón no cambie de tamaño. */}
                 <span className={`flex items-center ${starting ? 'invisible' : ''}`}>
                     <Icon name="playlist_add_check" className="mr-2" />
                     Hacer cuentas
@@ -53,7 +51,6 @@ export function SettlementToggle() {
     );
 }
 
-/** Banner visible mientras la sesión de cuentas está abierta. */
 export function SettlementBar({ totalItems = 0 }) {
     const { active, checkedCount, startedLabel } = useSettlement();
     const finishSession = useSettlementStore((s) => s.finishSession);
@@ -67,7 +64,6 @@ export function SettlementBar({ totalItems = 0 }) {
     const pct = totalItems > 0 ? Math.min(100, Math.round((checkedCount / totalItems) * 100)) : 0;
 
     const handleFinish = async () => {
-        // No se guarda un resumen vacío (la API también lo rechaza con SETTLEMENT_EMPTY).
         if (checkedCount === 0) {
             showSnackbar(
                 'Marcá al menos un gasto para terminar las cuentas, o descartá la sesión.',
@@ -76,8 +72,6 @@ export function SettlementBar({ totalItems = 0 }) {
             );
             return;
         }
-        // La acción corre dentro del dialog: su botón "Terminar" carga y el
-        // dialog bloquea el resto de la pantalla hasta que termina.
         let snapshot;
         await confirmDialog({
             title: 'Terminar cuentas',

@@ -38,6 +38,14 @@ Any functional/business-logic change made here (new feature, changed behavior, n
 
 When making a cross-cutting change, call out explicitly whether the equivalent change was also made (or is needed) in the Flutter app.
 
+## No code comments rule
+
+**Do not write comments in code** — in any of the three projects (this web app, the Flutter app, the API). No `//`, `/* */`, JSX `{/* */}`, JSDoc `/** */` or Dart `///` doc comments, not even section markers like `{/* HEADER */}`. Code must explain itself through names and structure; the "why" of a business rule belongs in `docs/` or the architecture guide, not in the source. When editing a file that still has a comment, remove it.
+
+Only tool directives are allowed, because they change behavior: `eslint-disable*`, `prettier-ignore`, Dart `// ignore:` / `// ignore_for_file:`. Generated files (`lib/l10n/gen/`, `firebase_options.dart`) are left as generated.
+
+An intentionally empty `catch {}` needs no comment: ESLint here allows it (`no-empty` with `allowEmptyCatch`).
+
 ## Commands
 
 ```

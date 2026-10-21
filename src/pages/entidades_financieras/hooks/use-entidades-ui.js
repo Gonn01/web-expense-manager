@@ -24,7 +24,6 @@ export function useEntidadesUI() {
         return result.sort((a, b) => (b.activeExpenses ?? 0) - (a.activeExpenses ?? 0));
     }, [query, entities]);
 
-    // const showEmpty = entities.length === 0 && filtered.length === 0;
     const showEmpty = !loading && entities.length === 0 && filtered.length === 0;
 
     async function handleSaveNew({ name, email }) {
@@ -34,7 +33,6 @@ export function useEntidadesUI() {
             navigate('/app/entidades');
 
             if (linkError) {
-                // Éxito parcial: la entidad quedó creada pero el vínculo falló.
                 console.error('Error vinculando usuario:', linkError);
                 useDialogStore.getState().alert({
                     title: 'Entidad creada',
@@ -45,7 +43,6 @@ export function useEntidadesUI() {
                 });
             }
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error creating entity:', err);
         }
     }
@@ -54,7 +51,6 @@ export function useEntidadesUI() {
         try {
             await eliminarEntidad(entity.id);
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error deleting entity:', err);
         }
     }

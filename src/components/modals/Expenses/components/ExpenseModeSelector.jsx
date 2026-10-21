@@ -1,7 +1,6 @@
 import Icon from '@/components/Icon';
 
 export default function ExpenseModeSelector({ isInstallment, isFixed, onChange }) {
-    // mode: 'none' | 'installment' | 'fixed'
     const mode = isFixed ? 'fixed' : isInstallment ? 'installment' : 'none';
 
     const set = (next) => {

@@ -5,7 +5,7 @@ const STORAGE_KEY = 'ui:prefs';
 const DEFAULTS = {
     sidebarCollapsed: false,
     balancesHidden: false,
-    entitiesViewMode: 'list', // 'list' | 'grid'
+    entitiesViewMode: 'list',
 };
 
 function readPrefs() {
@@ -27,18 +27,9 @@ function persist(state) {
                 entitiesViewMode: state.entitiesViewMode,
             }),
         );
-    } catch {
-        /* noop */
-    }
+    } catch {}
 }
 
-/**
- * Preferencias de UI globales, persistidas en localStorage para que se
- * recuerden entre sesiones y recargas:
- *  - sidebarCollapsed: sidebar colapsado (rail de iconos)
- *  - balancesHidden: columna de balances del dashboard oculta
- *  - entitiesViewMode: vista del listado de entidades ('list' | 'grid')
- */
 export const useUIStore = create((set) => ({
     ...readPrefs(),
 

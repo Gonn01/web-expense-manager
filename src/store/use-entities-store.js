@@ -9,7 +9,6 @@ export const useEntitiesStore = create((set, get) => ({
         set({ loading: true });
         try {
             const data = await fetchFinancialEntities(token);
-            // El endpoint trae también las eliminadas; acá solo van las activas.
             set({ entities: data.filter((e) => !e.deleted) });
         } catch (err) {
             console.error('Error loading entities', err);

@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useSettlementStore } from '@/store/use-settlement-store';
 
-/** Estado derivado del "modo hacer cuentas". */
 export function useSettlement() {
     const active = useSettlementStore((s) => s.active);
     const session = useSettlementStore((s) => s.session);

@@ -59,7 +59,6 @@ export default function GlobalDialog() {
                         disabled={current.busy}
                         className={`relative cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:cursor-wait ${tone.button}`}
                     >
-                        {/* El texto queda invisible (no se quita) para que el botón no cambie de tamaño. */}
                         <span className={current.busy ? 'invisible' : ''}>
                             {current.confirmLabel}
                         </span>

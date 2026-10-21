@@ -66,7 +66,6 @@ export default function EntidadDetalle() {
         ? user.preferred_currency
         : Currency.ARS;
 
-    // Resumen para WhatsApp: mismo formato que en el dashboard, sobre los gastos activos.
     const whatsappGroup = useMemo(
         () => ({
             id: entity?.id,
@@ -92,7 +91,6 @@ export default function EntidadDetalle() {
 
     return (
         <>
-            {/* Header */}
             <div className="flex flex-wrap items-center justify-between mb-6">
                 <h1 className="text-3xl sm:text-4xl font-black dark:text-white">{entity.name}</h1>
                 <div className="flex flex-wrap gap-3">
@@ -124,9 +122,7 @@ export default function EntidadDetalle() {
                 </div>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-                {/* <StatCard label="Balance Total" value={stats.amount} currency="ARS" /> */}
                 <StatCard
                     label="Gastos activos"
                     value={stats.debts}
@@ -172,10 +168,8 @@ export default function EntidadDetalle() {
                 Ver gráficos
             </button>
 
-            {/* Tabs */}
             <TabHeader tab={tab} setTab={setTab} pendingCount={stats.pending} />
 
-            {/* LISTAS */}
             {tab === 'activos' && (
                 <ListContainer
                     empty={entity.gastos_activos.length === 0}
@@ -281,7 +275,6 @@ export default function EntidadDetalle() {
                 settlementActive={false}
                 showSettlementWarning={false}
             />
-            {/* MODAL EDITAR */}
             {openEditEntity && (
                 <EditEntityModal
                     open={openEditEntity}
@@ -295,7 +288,6 @@ export default function EntidadDetalle() {
                 />
             )}
 
-            {/* MODAL NUEVO GASTO */}
             {openNewExpense && (
                 <NewExpenseModal
                     defaultEntityId={entity.id}
@@ -305,7 +297,6 @@ export default function EntidadDetalle() {
                 />
             )}
 
-            {/* MODAL: Gráficos */}
             {showCharts && (
                 <ChartsModal gastos={entity.gastos_activos} onClose={() => setShowCharts(false)} />
             )}

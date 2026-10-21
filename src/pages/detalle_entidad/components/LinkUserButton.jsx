@@ -3,15 +3,10 @@ import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import useAuth from '@/store/use-auth-store';
 
-/**
- * Botón de la página de detalle de entidad que se alterna entre
- * "Vincular usuario" y el usuario ya vinculado. Ambas acciones se
- * confirman mediante un dialog de alerta.
- */
 export default function LinkUserButton({ entity, onVincular, onDesvincular, loading = false }) {
     const isLinked = !!entity?.linked_user_id;
     const currentUserEmail = useAuth((s) => s.user?.email);
-    const [dialog, setDialog] = useState(null); // 'link' | 'unlink' | null
+    const [dialog, setDialog] = useState(null);
     const [emailInput, setEmailInput] = useState('');
     const [error, setError] = useState('');
 

@@ -10,8 +10,6 @@ export function useLogin() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Llegamos acá porque la API rechazó el token (ver interceptor de axios).
-    // Se lee una vez y se limpia la marca para que no reaparezca al recargar.
     const [sessionExpired] = useState(isSessionExpiredMarked);
     useEffect(() => {
         clearSessionExpired();

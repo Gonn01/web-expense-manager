@@ -48,15 +48,11 @@ export default function ActiveFinancialEntity({
     const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);
     const setExpensesChecked = useSettlementStore((s) => s.setExpensesChecked);
 
-    // Los postergados nunca se pueden marcar en la sesión: no deben impedir
-    // que la entidad se vea "completa" si el resto ya está marcado.
     const checkableItems = group.items.filter((it) => !it.is_postponed);
     const checkedInGroup = checkableItems.filter((it) => checkedExpenses[String(it.id)]).length;
     const allChecked = checkableItems.length > 0 && checkedInGroup === checkableItems.length;
     const entityDone = settlementActive && allChecked;
 
-    // Algún gasto de la entidad se está marcando (diálogo de pago) o
-    // desmarcando: el botón de la entidad espera la respuesta del servidor.
     const pendingIds = useSettlementStore((s) => s.pendingIds);
     const favoriteBusy = Boolean(busyKeys?.has(`favEntidad:${group.id}`));
     const groupBusy = group.items.some((it) => loadingIds?.has(it.id) || pendingIds[String(it.id)]);
@@ -71,7 +67,6 @@ export default function ActiveFinancialEntity({
                     : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-white/3'
             }`}
         >
-            {/* Entity header */}
             <div
                 className={`flex items-center justify-between gap-3 px-3 py-2.5 border-b ${
                     entityDone
@@ -203,7 +198,6 @@ export default function ActiveFinancialEntity({
                 </div>
             </div>
 
-            {/* Expenses inside the entity */}
             {!collapsed &&
                 (count === 0 ? (
                     <p className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">
@@ -240,7 +234,6 @@ export default function ActiveFinancialEntity({
     );
 }
 
-/** Spinner centrado sobre el contenido (invisible) de un botón, sin cambiar su tamaño. */
 function ButtonSpinner() {
     return (
         <span className="absolute inset-0 flex items-center justify-center">
