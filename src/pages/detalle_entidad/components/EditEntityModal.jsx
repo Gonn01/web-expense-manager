@@ -30,7 +30,10 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onMouseDown={(e) => e.target === e.currentTarget && !saving && onClose()}
+        >
             <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 overflow-hidden">
                 {saving && (
                     <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
@@ -73,7 +76,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                     <button
                         disabled={!canSave}
                         onClick={handleSaveName}
-                        className="px-4 py-2 rounded-lg bg-primary text-white flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="px-4 py-2 rounded-lg bg-primary text-background-dark font-bold flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         Guardar
                     </button>

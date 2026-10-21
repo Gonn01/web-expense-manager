@@ -51,7 +51,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                 aria-modal="true"
                 role="dialog"
                 aria-labelledby="new-entity-title"
-                onMouseDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
                 <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
                     <div className="flex items-start justify-between p-6">
@@ -83,7 +83,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                     Nombre de la entidad
                                 </p>
                                 <input
-                                    className="form-input flex w/full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#3d5245] bg-[#1c2620] focus:border-primary h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
                                     placeholder="Ej: Banco Galicia, Juan Pérez, etc."
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -97,7 +97,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                 </p>
                                 <input
                                     type="email"
-                                    className="form-input flex w/full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#3d5245] bg-[#1c2620] focus:border-primary h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
                                     placeholder="Email del usuario a vincular"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}

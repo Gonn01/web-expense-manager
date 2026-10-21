@@ -1,27 +1,8 @@
 import { useState } from 'react';
 import { Currency, CURRENCY_LABELS } from '@/utils/enums';
 import InfoTooltip from '@/components/InfoTooltip';
-
-function parseAmountInput(raw) {
-    let cleaned = raw.replace(/\./g, '').replace(',', '.');
-    cleaned = cleaned.replace(/[^0-9.]/g, '');
-
-    const firstDot = cleaned.indexOf('.');
-    if (firstDot !== -1) {
-        cleaned = cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
-    }
-
-    return cleaned;
-}
-
-function formatAmountForDisplay(value) {
-    if (value === '') return '';
-
-    const [intPart, decPart] = String(value).split('.');
-    const formattedInt = intPart === '' ? '' : Number(intPart).toLocaleString('es-AR');
-
-    return decPart !== undefined ? `${formattedInt},${decPart}` : formattedInt;
-}
+import AmountInput from '@/components/AmountInput';
+import Select from '@/components/Select';
 
 export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSave }) {
     const [aumento, setAumento] = useState('');
@@ -62,28 +43,24 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                         Sueldo mensual
                     </label>
                     <div className="flex gap-2">
-                        <input
+                        <AmountInput
                             id="sueldo"
-                            type="text"
-                            inputMode="decimal"
                             placeholder="0,00"
                             className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
-                            value={formatAmountForDisplay(sueldo)}
-                            onChange={(e) => setSueldo(parseAmountInput(e.target.value))}
+                            value={sueldo}
+                            onChange={setSueldo}
                         />
-                        <select
+                        <Select
                             id="sueldo-moneda"
                             aria-label="Moneda del sueldo"
-                            className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
+                            className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
                             value={moneda}
-                            onChange={(e) => setMoneda(e.target.value)}
-                        >
-                            {Object.values(Currency).map((c) => (
-                                <option key={c} value={c}>
-                                    {CURRENCY_LABELS[c]}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={setMoneda}
+                            options={Object.values(Currency).map((c) => ({
+                                value: c,
+                                label: CURRENCY_LABELS[c],
+                            }))}
+                        />
                     </div>
                 </div>
 
@@ -118,7 +95,7 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
 
                 <button
                     type="button"
-                    className="mt-2 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="mt-2 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold bg-primary text-background-dark hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={onSave}
                     disabled={loading}
                 >

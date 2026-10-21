@@ -166,11 +166,11 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     };
 
     const modal = (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && requestClose()}
-        >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                onMouseDown={requestClose}
+            />
 
             <div
                 ref={containerRef}
@@ -182,7 +182,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                 <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
                     <div className="flex items-center gap-3 text-white">
                         <Icon name="edit" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Editar Gasto</h2>
+                        <h2 className="text-white text-lg font-bold">Editar Gasto/Deuda</h2>
                     </div>
 
                     <button
@@ -197,47 +197,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                 <div className="p-6 space-y-6">
                     <LockedField reason={locks.type}>
                         <ExpenseTypeSelector type={type} setType={setType} />
-                    </LockedField>
-
-                    <LockedField reason={locks.mode}>
-                        <ExpenseModeSelector
-                            isInstallment={isInstallment}
-                            isFixed={isFixed}
-                            onChange={({ isInstallment: i, isFixed: f }) => {
-                                setIsInstallment(i);
-                                setIsFixed(f);
-                            }}
-                        />
-                    </LockedField>
-
-                    {!isInstallment && !isFixed && (
-                        <div className="space-y-1.5">
-                            <div className="flex items-center gap-3 select-none opacity-60">
-                                <div
-                                    className={`w-5 h-5 rounded flex items-center justify-center border shrink-0
-                                    ${paidQuotas > 0 ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
-                                >
-                                    {paidQuotas > 0 && (
-                                        <span className="text-black text-xs font-bold">✓</span>
-                                    )}
-                                </div>
-                                <span className="text-white text-sm font-medium">Pagado</span>
-                            </div>
-                            <LockReason reason={paidLock} />
-                        </div>
-                    )}
-
-                    <LockedField reason={locks.financial_entity_id}>
-                        <EntitySelector
-                            entity={entity}
-                            setEntity={setEntity}
-                            entities={entities}
-                            showNewEntity={showNewEntity}
-                            setShowNewEntity={setShowNewEntity}
-                            newEntityName={newEntityName}
-                            setNewEntityName={setNewEntityName}
-                            handleCreateEntity={handleCreateEntity}
-                        />
                     </LockedField>
 
                     <TextInput
@@ -256,6 +215,30 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         currencyLock={locks.currency_type}
                         amountNote={amountNote}
                     />
+
+                    <LockedField reason={locks.financial_entity_id}>
+                        <EntitySelector
+                            entity={entity}
+                            setEntity={setEntity}
+                            entities={entities}
+                            showNewEntity={showNewEntity}
+                            setShowNewEntity={setShowNewEntity}
+                            newEntityName={newEntityName}
+                            setNewEntityName={setNewEntityName}
+                            handleCreateEntity={handleCreateEntity}
+                        />
+                    </LockedField>
+
+                    <LockedField reason={locks.mode}>
+                        <ExpenseModeSelector
+                            isInstallment={isInstallment}
+                            isFixed={isFixed}
+                            onChange={({ isInstallment: i, isFixed: f }) => {
+                                setIsInstallment(i);
+                                setIsFixed(f);
+                            }}
+                        />
+                    </LockedField>
 
                     {isInstallment && (
                         <div className="space-y-1.5">
@@ -283,6 +266,23 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         onCreate={handleCreateCategory}
                         loading={loadingCategories}
                     />
+
+                    {!isInstallment && !isFixed && (
+                        <div className="space-y-1.5">
+                            <div className="flex items-center gap-3 select-none opacity-60">
+                                <div
+                                    className={`w-5 h-5 rounded flex items-center justify-center border shrink-0
+                                    ${paidQuotas > 0 ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                >
+                                    {paidQuotas > 0 && (
+                                        <span className="text-black text-xs font-bold">✓</span>
+                                    )}
+                                </div>
+                                <span className="text-white text-sm font-medium">Pagado</span>
+                            </div>
+                            <LockReason reason={paidLock} />
+                        </div>
+                    )}
                 </div>
 
                 <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">

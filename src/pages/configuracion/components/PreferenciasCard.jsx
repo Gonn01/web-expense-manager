@@ -1,4 +1,5 @@
 import { Currency, CURRENCY_LABELS } from '@/utils/enums';
+import Select from '@/components/Select';
 
 export function PreferenciasCard({ moneda, setMoneda, loading, onSave }) {
     return (
@@ -10,22 +11,21 @@ export function PreferenciasCard({ moneda, setMoneda, loading, onSave }) {
             <form className="space-y-4 text-sm" onSubmit={(e) => e.preventDefault()}>
                 <div className="flex flex-col gap-1">
                     <label className="text-slate-600 dark:text-slate-300">Moneda principal</label>
-                    <select
-                        className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
+                    <Select
+                        className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
                         value={moneda}
-                        onChange={(e) => setMoneda(e.target.value)}
-                    >
-                        {Object.values(Currency).map((c) => (
-                            <option key={c} value={c}>
-                                {CURRENCY_LABELS[c]}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={setMoneda}
+                        aria-label="Moneda principal"
+                        options={Object.values(Currency).map((c) => ({
+                            value: c,
+                            label: CURRENCY_LABELS[c],
+                        }))}
+                    />
                 </div>
 
                 <button
                     type="button"
-                    className="mt-2 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="mt-2 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold bg-primary text-background-dark hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={onSave}
                     disabled={loading}
                 >

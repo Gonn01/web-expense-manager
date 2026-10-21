@@ -69,6 +69,10 @@ export default function NewExpenseModal({
     const totalInstallments = Number(installments) || 0;
     const paid = Math.min(Number(paidInstallments) || 0, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
+    const fullyPaid = isInstallment
+        ? totalInstallments > 0 && paid >= totalInstallments
+        : !isFixed && isPaid;
+    const postponed = isPostponed && !fullyPaid;
 
     const containerRef = useRef(null);
 
@@ -144,18 +148,15 @@ export default function NewExpenseModal({
             payed_quotas: isInstallment ? Number(paidInstallments) : isPaid ? 1 : 0,
             category_ids: selectedCategoryIds,
             payment_entity_id: payWithEntity ? paymentEntity : null,
-            postponed: isPostponed,
+            postponed,
         };
 
         onSave?.(payload);
     }
 
     const modalContent = (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
-        >
-            <div className="fixed inset-0 bg-black/60" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black/60" onMouseDown={() => onClose?.()} />
 
             <div
                 ref={containerRef}
@@ -164,7 +165,7 @@ export default function NewExpenseModal({
                 <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
                     <div className="flex items-center gap-3 text-white">
                         <Icon name="add_circle" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Nuevo Gasto</h2>
+                        <h2 className="text-white text-lg font-bold">Nuevo Gasto/Deuda</h2>
                     </div>
 
                     <button
@@ -178,49 +179,19 @@ export default function NewExpenseModal({
                 <div className="p-6 space-y-6">
                     <ExpenseTypeSelector type={type} setType={setType} />
 
-                    <ExpenseModeSelector
-                        isInstallment={isInstallment}
-                        isFixed={isFixed}
-                        onChange={({ isInstallment: i, isFixed: f }) => {
-                            setIsInstallment(i);
-                            setIsFixed(f);
-                            if (!i) {
-                                setInstallments('');
-                                setPaidInstallments('0');
-                            }
-                            setIsPaid(false);
-                        }}
+                    <TextInput
+                        label="Nombre del gasto"
+                        placeholder="Ej: Préstamo personal"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
 
-                    {!isInstallment && !isFixed && (
-                        <label className="flex items-center gap-3 cursor-pointer select-none">
-                            <div
-                                onClick={() => setIsPaid((v) => !v)}
-                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
-                            >
-                                {isPaid && <span className="text-black text-xs font-bold">✓</span>}
-                            </div>
-                            <span className="text-white text-sm font-medium">Pagado</span>
-                        </label>
-                    )}
-
-                    <label className="flex items-start gap-3 cursor-pointer select-none">
-                        <div
-                            onClick={() => setIsPostponed((v) => !v)}
-                            className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                                ${isPostponed ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
-                        >
-                            {isPostponed && <span className="text-black text-xs font-bold">✓</span>}
-                        </div>
-                        <span className="text-white text-sm font-medium">
-                            Postergar para la próxima sesión de cuentas
-                            <span className="block text-xs font-normal text-[#9eb7a8]">
-                                Queda fuera de la sesión de cuentas actual (o de la próxima que
-                                abras). Se habilita cuando la cierres.
-                            </span>
-                        </span>
-                    </label>
+                    <ExpenseAmountSection
+                        amount={amount}
+                        setAmount={setAmount}
+                        currency={currency}
+                        setCurrency={setCurrency}
+                    />
 
                     <EntitySelector
                         entity={entity}
@@ -237,36 +208,18 @@ export default function NewExpenseModal({
                         handleCreateEntity={handleCreateEntity}
                     />
 
-                    <PaymentEntitySection
-                        enabled={payWithEntity}
-                        setEnabled={setPayWithEntity}
-                        entities={entities}
-                        paymentEntity={paymentEntity}
-                        setPaymentEntity={setPaymentEntity}
-                        excludeId={entity}
-                        oppositeTypeLabel={type === ExpenseType.EGRESO ? 'ingreso' : 'egreso'}
-                    />
-
-                    <CategorySelector
-                        categories={categories}
-                        selectedIds={selectedCategoryIds}
-                        onToggle={handleToggleCategory}
-                        onCreate={handleCreateCategory}
-                        loading={loadingCategories}
-                    />
-
-                    <TextInput
-                        label="Nombre del gasto"
-                        placeholder="Ej: Préstamo personal"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-
-                    <ExpenseAmountSection
-                        amount={amount}
-                        setAmount={setAmount}
-                        currency={currency}
-                        setCurrency={setCurrency}
+                    <ExpenseModeSelector
+                        isInstallment={isInstallment}
+                        isFixed={isFixed}
+                        onChange={({ isInstallment: i, isFixed: f }) => {
+                            setIsInstallment(i);
+                            setIsFixed(f);
+                            if (!i) {
+                                setInstallments('');
+                                setPaidInstallments('0');
+                            }
+                            setIsPaid(false);
+                        }}
                     />
 
                     {isInstallment && (
@@ -280,6 +233,62 @@ export default function NewExpenseModal({
                             progressPct={progressPct}
                         />
                     )}
+
+                    <CategorySelector
+                        categories={categories}
+                        selectedIds={selectedCategoryIds}
+                        onToggle={handleToggleCategory}
+                        onCreate={handleCreateCategory}
+                        loading={loadingCategories}
+                    />
+
+                    {!isInstallment && !isFixed && (
+                        <label
+                            onClick={() => setIsPaid((v) => !v)}
+                            className="flex items-center gap-3 cursor-pointer select-none"
+                        >
+                            <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
+                                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                            >
+                                {isPaid && <span className="text-black text-xs font-bold">✓</span>}
+                            </div>
+                            <span className="text-white text-sm font-medium">Pagado</span>
+                        </label>
+                    )}
+
+                    <PaymentEntitySection
+                        enabled={payWithEntity}
+                        setEnabled={setPayWithEntity}
+                        entities={entities}
+                        paymentEntity={paymentEntity}
+                        setPaymentEntity={setPaymentEntity}
+                        excludeId={entity}
+                        oppositeTypeLabel={type === ExpenseType.EGRESO ? 'ingreso' : 'egreso'}
+                    />
+
+                    <label
+                        onClick={() => !fullyPaid && setIsPostponed((v) => !v)}
+                        className={`flex items-start gap-3 select-none ${
+                            fullyPaid ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                        }`}
+                    >
+                        <div
+                            className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
+                                ${fullyPaid ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                ${postponed ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                        >
+                            {postponed && <span className="text-black text-xs font-bold">✓</span>}
+                        </div>
+                        <span className="text-white text-sm font-medium">
+                            Postergar para la próxima sesión de cuentas
+                            <span className="block text-xs font-normal text-[#9eb7a8]">
+                                {fullyPaid
+                                    ? 'No disponible: un gasto pagado no tiene nada para postergar.'
+                                    : 'Queda fuera de la sesión de cuentas actual (o de la próxima que abras). Se habilita cuando la cierres.'}
+                            </span>
+                        </span>
+                    </label>
                 </div>
 
                 <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
@@ -305,10 +314,7 @@ export default function NewExpenseModal({
                                 Guardando...
                             </>
                         ) : (
-                            <>
-                                <Icon name="save" />
-                                Guardar gasto
-                            </>
+                            'Guardar gasto'
                         )}
                     </button>
                 </footer>

@@ -65,7 +65,7 @@ export default function ActiveExpenses({
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                     />
                     <input
-                        className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary/50 focus:ring-primary/50"
+                        className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
                         placeholder="Buscar gasto..."
                         type="text"
                         value={query}

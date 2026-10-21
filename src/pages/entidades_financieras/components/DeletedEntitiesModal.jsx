@@ -50,7 +50,7 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                 aria-modal="true"
                 role="dialog"
                 aria-labelledby="deleted-entities-title"
-                onMouseDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
                 <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
                     <div className="flex items-start justify-between p-6">

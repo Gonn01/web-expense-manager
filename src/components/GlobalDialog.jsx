@@ -4,13 +4,21 @@ import Icon from '@/components/Icon';
 import { useDialogStore } from '@/store/use-dialog-store';
 
 const TONE = {
-    error: { icon: 'error', color: 'text-red-400', button: 'bg-red-600 hover:bg-red-700' },
+    error: {
+        icon: 'error',
+        color: 'text-red-400',
+        button: 'bg-red-600 hover:bg-red-700 text-white',
+    },
     warning: {
         icon: 'warning',
         color: 'text-amber-400',
-        button: 'bg-amber-600 hover:bg-amber-700',
+        button: 'bg-amber-600 hover:bg-amber-700 text-white',
     },
-    info: { icon: 'info', color: 'text-primary', button: 'bg-primary hover:bg-primary/80' },
+    info: {
+        icon: 'info',
+        color: 'text-primary',
+        button: 'bg-primary hover:bg-primary/80 text-background-dark',
+    },
 };
 
 export default function GlobalDialog() {
@@ -57,7 +65,7 @@ export default function GlobalDialog() {
                         autoFocus
                         onClick={accept}
                         disabled={current.busy}
-                        className={`relative cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:cursor-wait ${tone.button}`}
+                        className={`relative cursor-pointer h-10 px-4 rounded-lg text-sm font-bold transition-colors disabled:cursor-wait ${tone.button}`}
                     >
                         <span className={current.busy ? 'invisible' : ''}>
                             {current.confirmLabel}

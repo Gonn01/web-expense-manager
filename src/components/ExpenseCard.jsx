@@ -7,6 +7,7 @@ import AlertModal from '@/components/modals/AlertModal';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { ExpenseStatus } from '@/utils/enums';
 
 export default function ExpenseCard({
     gasto,
@@ -18,6 +19,7 @@ export default function ExpenseCard({
     favoriteBusy = false,
     loading = false,
     settlementEnabled = false,
+    counterpartyName,
 }) {
     const sessionActive = useSettlementStore((s) => s.active);
     const settlementChecked = useSettlementStore((s) =>
@@ -41,6 +43,9 @@ export default function ExpenseCard({
         !gasto.fixed_expense &&
         gasto.number_of_quotas > 0 &&
         gasto.payed_quotas + pendingQuotas >= gasto.number_of_quotas;
+
+    const counterparty = counterpartyName || 'la otra persona';
+    const awaitingApproval = gasto.status === ExpenseStatus.PENDING_APPROVAL;
 
     const cur = gasto.currency_type;
     const paidTotal = (gasto.payed_quotas ?? 0) * (gasto.amount_per_quota ?? 0);
@@ -111,15 +116,24 @@ export default function ExpenseCard({
                                 Postergada
                             </span>
                         )}
+                        {awaitingApproval && (
+                            <span
+                                className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
+                                title={`Creaste este gasto en una entidad vinculada: ${counterparty} tiene que aprobarlo para que pase a activos`}
+                            >
+                                <Icon name="hourglass_empty" className="text-xs" />
+                                Esperando que lo apruebe {counterparty}
+                            </span>
+                        )}
                         {pendingQuotas > 0 && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
-                                title="Pago registrado, esperando confirmación de la otra persona"
+                                title={`Registraste ${pendingQuotas === 1 ? 'el pago' : 'los pagos'}: ${counterparty} tiene que confirmar${pendingQuotas === 1 ? 'lo' : 'los'} para que cuente${pendingQuotas === 1 ? '' : 'n'}`}
                             >
                                 <Icon name="hourglass_empty" className="text-xs" />
                                 {pendingQuotas === 1
-                                    ? 'Pago por confirmar'
-                                    : `${pendingQuotas} pagos por confirmar`}
+                                    ? `Esperando que ${counterparty} confirme el pago`
+                                    : `Esperando que ${counterparty} confirme ${pendingQuotas} pagos`}
                             </span>
                         )}
                     </div>

@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
+import CurrencyBadge from './CurrencyBadge';
 
 export default function MultiPaymentSection({ items, removedItems = [], onRemove, onRestore }) {
     const totals = Array.from(
@@ -25,9 +26,10 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
                 <ul className="flex flex-col gap-1 text-sm text-white">
                     {items.map((it) => (
                         <li key={it.id} className="flex items-center justify-between gap-2">
-                            <span>
+                            <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                                <CurrencyBadge currency={it.currency_type} />
                                 {it.name}
-                                <span className="ml-2 text-xs text-slate-500">
+                                <span className="text-xs text-slate-500">
                                     ({formatMoney(it.amount_per_quota, it.currency_type)})
                                 </span>
                             </span>
@@ -50,9 +52,10 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
                     <ul className="flex flex-col gap-1 text-sm text-slate-400">
                         {removedItems.map((it) => (
                             <li key={it.id} className="flex items-center justify-between gap-2">
-                                <span className="line-through">
-                                    {it.name}
-                                    <span className="ml-2 text-xs text-slate-600">
+                                <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                                    <CurrencyBadge currency={it.currency_type} muted />
+                                    <span className="line-through">{it.name}</span>
+                                    <span className="text-xs text-slate-600 line-through">
                                         ({formatMoney(it.amount_per_quota, it.currency_type)})
                                     </span>
                                 </span>

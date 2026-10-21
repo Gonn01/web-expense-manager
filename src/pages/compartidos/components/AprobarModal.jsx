@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Icon from '@/components/Icon';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import useAuth from '@/store/use-auth-store';
+import Select from '@/components/Select';
 
 export default function AprobarModal({ open, gasto, onClose, onConfirm, loading }) {
     const { token } = useAuth();
@@ -38,7 +39,10 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onMouseDown={(e) => e.target === e.currentTarget && !loading && onClose()}
+        >
             <div
                 className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6"
                 onClick={(e) => e.stopPropagation()}
@@ -58,7 +62,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                         onClick={() => setMode('existing')}
                         className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
                             mode === 'existing'
-                                ? 'bg-primary text-white border-primary'
+                                ? 'bg-primary text-background-dark border-primary'
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
                         }`}
                     >
@@ -68,7 +72,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                         onClick={() => setMode('new')}
                         className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
                             mode === 'new'
-                                ? 'bg-primary text-white border-primary'
+                                ? 'bg-primary text-background-dark border-primary'
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
                         }`}
                     >
@@ -79,18 +83,14 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                 {mode === 'existing' && (
                     <div>
                         {hasEntities ? (
-                            <select
+                            <Select
                                 value={selectedEntityId}
-                                onChange={(e) => setSelectedEntityId(e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-white text-sm"
-                            >
-                                <option value="">Seleccioná una entidad</option>
-                                {entities.map((e) => (
-                                    <option key={e.id} value={e.id}>
-                                        {e.name}
-                                    </option>
-                                ))}
-                            </select>
+                                onChange={setSelectedEntityId}
+                                placeholder="Seleccioná una entidad"
+                                aria-label="Entidad"
+                                className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-white text-sm cursor-pointer"
+                                options={entities.map((e) => ({ value: e.id, label: e.name }))}
+                            />
                         ) : (
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
                                 No tenés entidades. Creá una nueva.

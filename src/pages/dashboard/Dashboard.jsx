@@ -1,12 +1,9 @@
-import { createPortal } from 'react-dom';
+import ChartsModal from '@/components/modals/ChartsModal';
 import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
 import StatCards from './components/StatCards';
 import ActiveExpenses from './components/ActiveExpenses';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
-import CuotasChart from '@/components/CuotasChart';
-import MontoChart from '@/components/MontoChart';
-import CategoriaChart from '@/components/CategoriaChart';
 import { SettlementToggle, SettlementBar } from './components/SettlementBar';
 import { useDashboardUI } from './hooks/use-dashboard-ui';
 import { useDashboardData } from './hooks/use-dashboard-data';
@@ -16,7 +13,7 @@ import Loader from '@/components/Loader';
 
 export default function Dashboard() {
     const data = useDashboardData();
-    const ui = useDashboardUI(data.groups, data.settleQuotas);
+    const ui = useDashboardUI(data.groups, data.settleQuotas, data.postergarGasto);
     const { rates } = useExchangeRates();
     const balancesHidden = useUIStore((s) => s.balancesHidden);
     const toggleBalances = useUIStore((s) => s.toggleBalances);
@@ -67,8 +64,8 @@ export default function Dashboard() {
 
             <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
                 <div
-                    className={`relative shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
-                        balancesHidden ? 'w-6' : 'w-52'
+                    className={`relative shrink-0 overflow-hidden [interpolate-size:allow-keywords] transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
+                        balancesHidden ? 'w-6' : 'w-max'
                     }`}
                 >
                     <button
@@ -87,7 +84,7 @@ export default function Dashboard() {
                     <div
                         inert={balancesHidden}
                         aria-hidden={balancesHidden}
-                        className={`flex flex-col gap-4 w-52 h-full overflow-y-auto transition-opacity duration-200 motion-reduce:transition-none ${
+                        className={`flex flex-col gap-4 w-max min-w-52 h-full overflow-y-auto transition-opacity duration-200 motion-reduce:transition-none ${
                             balancesHidden ? 'opacity-0' : 'opacity-100 delay-100'
                         }`}
                     >
@@ -139,7 +136,7 @@ export default function Dashboard() {
                         settleModal={ui.settleModal}
                         loadingSettleIds={ui.loadingSettleIds}
                         onConfirmSettle={ui.onConfirmSettle}
-                        onTogglePostpone={data.postergarGasto}
+                        onTogglePostpone={ui.requestTogglePostpone}
                         onToggleFavoriteGasto={data.favoritoGasto}
                         onToggleFavoriteEntity={data.favoritoEntidad}
                         busyKeys={data.busyKeys}
@@ -157,36 +154,5 @@ export default function Dashboard() {
 
             {showCharts && <ChartsModal gastos={allItems} onClose={() => setShowCharts(false)} />}
         </div>
-    );
-}
-
-function ChartsModal({ gastos, onClose }) {
-    return createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && onClose()}
-        >
-            <div className="fixed inset-0 bg-black/60" />
-            <div className="relative z-10 w-[92vw] max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]">
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
-                        <Icon name="bar_chart" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Gráficos</h2>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="cursor-pointer text-slate-400 hover:text-white transition-colors"
-                    >
-                        <Icon name="close" />
-                    </button>
-                </header>
-                <div className="p-6 grid grid-cols-1 gap-4">
-                    <CuotasChart gastos={gastos} />
-                    <MontoChart gastos={gastos} />
-                    <CategoriaChart gastos={gastos} />
-                </div>
-            </div>
-        </div>,
-        document.body,
     );
 }

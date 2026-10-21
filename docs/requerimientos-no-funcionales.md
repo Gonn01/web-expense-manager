@@ -11,7 +11,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. | API |
+| RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
 | RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. | Todos |
 | RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
 | RNF-SEG-04 | El usuario que opera se toma siempre del token, nunca de un dato enviado por el cliente. Toda lectura o modificación de entidades, gastos, categorías, sesiones y snapshots se restringe al dueño. | API |
@@ -98,7 +98,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la web y la app móvil no tienen pruebas automatizadas. En la API, los services de compartidos, categorías y entidades tampoco (sí los de gastos y settlement, y los helpers de transacciones de `db.js`).
+*Limitación conocida*: la web y la app móvil no tienen pruebas automatizadas. En la API, los services de compartidos, categorías y entidades tampoco (sí los de gastos, settlement y auth, y los helpers de transacciones de `db.js`).
 
 ## POR — Portabilidad y entorno
 
@@ -125,5 +125,6 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-LOC-01 | La interfaz, los mensajes de error y los términos del dominio están en español rioplatense. | Todos |
 | RNF-LOC-02 | La app móvil no contiene textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | App |
 | RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR, BRL, CLP, UYU). | Web, App |
+| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal. | Web |
 
-*Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español.
+*Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español. La app móvil todavía no formatea los campos de monto mientras se escribe (RNF-LOC-04).

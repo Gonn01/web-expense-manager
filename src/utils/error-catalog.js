@@ -7,6 +7,11 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
         icon: 'schedule',
     },
+    GASTO_PAGADO_NO_POSTERGABLE: {
+        message: 'Un gasto con todas sus cuotas pagas no se puede postergar.',
+        variant: 'snackbar',
+        icon: 'schedule',
+    },
     GASTO_NO_PENDIENTE_APROBACION: {
         message: 'El gasto ya no está pendiente de aprobación.',
         variant: 'snackbar',

@@ -2,6 +2,7 @@ import Icon from '@/components/Icon';
 import TextInput from '@/components/TextInput';
 import { Currency } from '@/utils/enums';
 import { LockReason } from './LockedField';
+import Select from '@/components/Select';
 
 export default function ExpenseAmountSection({
     amount,
@@ -19,11 +20,11 @@ export default function ExpenseAmountSection({
             <div className="sm:col-span-3 space-y-1.5">
                 <TextInput
                     label="Monto total"
-                    type="number"
-                    placeholder="150000"
+                    type="amount"
+                    placeholder="150.000"
                     value={amount}
                     disabled={Boolean(amountLock)}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={setAmount}
                 />
 
                 {isInvalid && (
@@ -46,23 +47,17 @@ export default function ExpenseAmountSection({
                 <label className="text-white text-sm font-medium">Moneda</label>
 
                 <div className="relative">
-                    <select
-                        className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620]
-                       px-3 pr-10 text-white cursor-pointer appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
+                    <Select
+                        className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 text-white cursor-pointer"
                         value={currency}
                         disabled={Boolean(currencyLock)}
-                        onChange={(e) => setCurrency(e.target.value)}
-                    >
-                        {Object.values(Currency).map((curr) => (
-                            <option key={curr} value={curr}>
-                                {curr}
-                            </option>
-                        ))}
-                    </select>
-
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#9eb7a8]">
-                        <Icon name="expand_more" />
-                    </div>
+                        onChange={setCurrency}
+                        aria-label="Moneda"
+                        options={Object.values(Currency).map((curr) => ({
+                            value: curr,
+                            label: curr,
+                        }))}
+                    />
                 </div>
 
                 <LockReason reason={currencyLock} />

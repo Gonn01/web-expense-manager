@@ -18,7 +18,6 @@ export default function SearchBox({ query, setQuery }) {
                         pl-10 pr-4
                         text-base text-slate-900 dark:text-white
                         placeholder:text-slate-400 dark:placeholder:text-slate-500
-                        focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary
                         transition-all
                     "
                 />

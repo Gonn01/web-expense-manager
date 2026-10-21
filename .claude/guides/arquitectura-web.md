@@ -96,6 +96,8 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - Archivos de componentes en `PascalCase.jsx`; hooks, stores y utilidades en `kebab-case.js`.
 - Carpetas de `pages/` y términos del dominio en español, igual que la API.
 - Enums de dominio en `utils/enums.js`; no comparar contra strings sueltos.
+- Campos de monto con `components/AmountInput.jsx` (o `TextInput` con `type="amount"`): muestra los puntos de miles y la coma decimal mientras se escribe, pero el valor del estado sigue siendo el número crudo (`"1234.5"`), listo para `Number(...)`. No usar `type="number"` para montos.
+- Desplegables con `components/Select.jsx`, nunca con `<select>` nativo: recibe `options` (`{ value, label }`), `value`, `onChange(valor)` (siempre string, como el `<select>`) y un `placeholder` opcional que funciona como opción vacía. Con más de 10 opciones muestra un buscador (sin distinguir mayúsculas ni tildes). La lista se abre en un portal, así que no la recorta el `overflow` de un modal.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.
 

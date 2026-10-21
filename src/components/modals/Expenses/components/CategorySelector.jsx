@@ -52,7 +52,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                         onClick={() => setOpen((v) => !v)}
                         className="w-full min-h-12 rounded-lg border border-[#3d5245] bg-[#1c2620]
                             px-3 pr-10 text-left flex flex-wrap gap-1.5 items-center py-2
-                            hover:border-primary/60 transition-colors relative cursor-pointer"
+                            outline-none focus:outline-none focus-visible:outline-none relative cursor-pointer"
                     >
                         {selected.length === 0 ? (
                             <span className="text-[#9eb7a8] text-sm">
@@ -71,9 +71,13 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                             e.stopPropagation();
                                             onToggle(c.id);
                                         }}
-                                        className="hover:opacity-70 cursor-pointer leading-none"
+                                        className="flex items-center justify-center hover:opacity-70 cursor-pointer"
                                     >
-                                        <Icon name="close" className="text-xs" />
+                                        <Icon
+                                            name="close"
+                                            className="block"
+                                            style={{ fontSize: 12, lineHeight: 1 }}
+                                        />
                                     </span>
                                 </span>
                             ))
@@ -100,7 +104,11 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                             ${isSelected ? 'bg-primary border-primary' : 'border-[#3d5245]'}`}
                                         >
                                             {isSelected && (
-                                                <Icon name="check" className="text-xs text-black" />
+                                                <Icon
+                                                    name="check"
+                                                    className="block text-black"
+                                                    style={{ fontSize: 12, lineHeight: 1 }}
+                                                />
                                             )}
                                         </div>
                                         <div
@@ -160,8 +168,8 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                 setShowForm(false);
                                 setNewName('');
                             }}
-                            className={`text-sm px-3 py-1.5 rounded-lg cursor-pointer
-                                ${creating ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white'}`}
+                            className={`text-sm px-3 py-1.5 rounded-lg
+                                ${creating ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white cursor-pointer'}`}
                         >
                             Cancelar
                         </button>
@@ -169,8 +177,8 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                             type="button"
                             disabled={creating || !newName.trim()}
                             onClick={handleCreate}
-                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer
-                                ${creating ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black'}`}
+                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
+                                ${creating ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
                         >
                             {creating ? (
                                 <>

@@ -50,7 +50,7 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
                     onClick={() => setDialog('unlink')}
                     disabled={loading}
                     title="Desvincular usuario"
-                    className="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 px-4 py-2 rounded-lg font-bold text-zinc-700 dark:text-white cursor-pointer disabled:opacity-50"
+                    className="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 px-4 py-2 rounded-lg font-bold text-zinc-700 dark:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <Icon name="link" />
                     <span className="max-w-[12rem] truncate">
@@ -62,7 +62,7 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
                     type="button"
                     onClick={() => setDialog('link')}
                     disabled={loading}
-                    className="flex items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 py-2 rounded-lg text-primary font-bold cursor-pointer disabled:opacity-50"
+                    className="flex items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 py-2 rounded-lg text-primary font-bold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <Icon name="person_add" />
                     Vincular usuario
@@ -71,7 +71,10 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
 
             {dialog &&
                 createPortal(
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+                    <div
+                        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+                        onMouseDown={(e) => e.target === e.currentTarget && closeDialog()}
+                    >
                         <div className="w-full max-w-sm rounded-xl bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-xl p-6">
                             {dialog === 'link' ? (
                                 <>
@@ -138,10 +141,10 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
                                         loading ||
                                         (dialog === 'link' && (!emailInput.trim() || isSelfEmail))
                                     }
-                                    className={`px-4 py-2 rounded-lg text-white text-sm font-medium flex items-center gap-1 disabled:opacity-50 ${
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 disabled:opacity-50 ${
                                         dialog === 'link'
-                                            ? 'bg-primary'
-                                            : 'bg-red-600 hover:bg-red-700'
+                                            ? 'bg-primary text-background-dark font-bold'
+                                            : 'bg-red-600 hover:bg-red-700 text-white'
                                     }`}
                                 >
                                     {loading && (

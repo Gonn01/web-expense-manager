@@ -14,10 +14,10 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | --- | --- | --- |
 | RF-AUT-01 | El sistema permite registrarse con nombre (mínimo 2 caracteres), email y contraseña (mínimo 6 caracteres). | CU-01 |
 | RF-AUT-02 | El sistema rechaza el registro si el email ya pertenece a una cuenta (`EMAIL_YA_REGISTRADO`). | CU-01 |
-| RF-AUT-03 | El sistema permite iniciar sesión con email y contraseña. Ante email inexistente o contraseña incorrecta responde el mismo error (`CREDENCIALES_INVALIDAS`), sin revelar cuál de los dos falló. | CU-02 |
+| RF-AUT-03 | El sistema permite iniciar sesión con email y contraseña. Ante email inexistente, contraseña incorrecta o una cuenta creada con Google que no tiene contraseña responde el mismo error (`CREDENCIALES_INVALIDAS`), sin revelar el motivo. | CU-02 |
 | RF-AUT-04 | El sistema permite iniciar sesión con una cuenta de Google (Firebase Authentication). Si no existe una cuenta para esa identidad, la crea. | CU-03 |
 | RF-AUT-05 | Si se inicia sesión con Google y ya existe una cuenta creada con credenciales para el mismo email, el sistema vincula la identidad de Google a esa cuenta en lugar de crear una duplicada. | CU-03 |
-| RF-AUT-06 | Al autenticarse, el sistema entrega un token de sesión y los datos del usuario; el cliente los conserva para mantener la sesión entre reinicios. | CU-02, CU-03 |
+| RF-AUT-06 | Al autenticarse, por cualquier vía, el sistema entrega un token de sesión y los mismos datos del usuario (id, nombre, email, foto, moneda preferida y sueldo); el cliente los conserva para mantener la sesión entre reinicios. | CU-02, CU-03 |
 | RF-AUT-07 | Todas las pantallas y operaciones, salvo registro e inicio de sesión, requieren una sesión válida. Sin sesión, el cliente redirige al inicio de sesión. | — |
 | RF-AUT-08 | El usuario puede cerrar sesión, previa confirmación. Al hacerlo se eliminan el token y los datos de usuario guardados en el dispositivo. | CU-04 |
 | RF-AUT-09 | Cuando la API informa que la sesión no es válida o venció (401), el cliente cierra la sesión y lleva al usuario al inicio de sesión, donde un cartel le informa que su sesión venció. El cartel no aparece cuando el usuario cerró la sesión por su cuenta. | CU-02 |
@@ -72,12 +72,12 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-GAS-03 | Al crear un gasto se puede crear en el mismo paso la entidad a la que pertenece. | CU-10, CU-17 |
 | RF-GAS-04 | Al crear un gasto se puede elegir "pagar con otra entidad" propia. El sistema crea un **gasto espejo** en esa entidad: mismos datos, cuotas y categorías, con el tipo opuesto, y deja ambos gastos enlazados. | CU-17 |
 | RF-GAS-05 | Si la entidad del gasto está vinculada a otro usuario, el gasto nace pendiente de aprobación y el sistema genera una copia para la contraparte (ver [CMP](#cmp--gastos-compartidos)). | CU-17 |
-| RF-GAS-06 | Al crear un gasto se lo puede marcar como postergado. | CU-17, CU-23 |
+| RF-GAS-06 | Al crear un gasto se lo puede marcar como postergado, salvo que se cree con todas sus cuotas pagas (pago único marcado como pagado, o en cuotas con todas pagas): en ese caso los clientes deshabilitan la opción y el sistema lo rechaza (`GASTO_PAGADO_NO_POSTERGABLE`). | CU-17, CU-23 |
 | RF-GAS-07 | El detalle de un gasto muestra sus datos, la entidad, sus categorías, el progreso de pago y su historial de movimientos. | CU-18 |
 | RF-GAS-08 | El usuario puede editar nombre, monto, moneda, tipo, modalidad (pago único, en cuotas o fijo), cantidad de cuotas, entidad y categorías de un gasto, salvo los campos bloqueados por RF-GAS-15. Los campos que el cliente no envía quedan como estaban (la imagen incluida). Cada cambio queda en el historial del gasto. Si el gasto tiene espejo, puede elegir aplicar los cambios también al espejo, que conserva su entidad y el tipo opuesto; valen también los bloqueos del espejo. *Limitación conocida*: en la app Flutter los cambios se aplican siempre a ambos, sin preguntar. | CU-19 |
 | RF-GAS-09 | El usuario puede eliminar un gasto, previa confirmación. La baja es lógica. Si el gasto tiene espejo, puede elegir eliminarlo también; si no, el enlace entre ambos se rompe. | CU-20 |
 | RF-GAS-10 | El usuario puede restaurar un gasto eliminado de una entidad propia. | CU-16 |
-| RF-GAS-11 | El usuario puede postergar un gasto y quitar la postergación. Un gasto postergado queda fuera de la sesión de cuentas en curso. Si se posterga un gasto ya marcado en la sesión, la marca se quita. | CU-23 |
+| RF-GAS-11 | El usuario puede postergar un gasto y quitar la postergación. Un gasto postergado queda fuera de la sesión de cuentas en curso. Si se posterga un gasto ya marcado en la sesión, la marca se quita. Un gasto con todas sus cuotas pagas no se puede postergar (`GASTO_PAGADO_NO_POSTERGABLE`), pero sí se le puede quitar la postergación; los gastos fijos no tienen esta restricción. | CU-23 |
 | RF-GAS-12 | El usuario puede marcar y desmarcar un gasto como favorito. Cuando el gasto se finaliza, deja de ser favorito automáticamente. | CU-24 |
 | RF-GAS-13 | Cada gasto conserva un historial de movimientos: creación, pagos, pagos pendientes, reembolsos, postergación y fin de postergación. | CU-18 |
 | RF-GAS-14 | Un usuario solo puede ver y operar sobre gastos de sus propias entidades (`NO_AUTORIZADO`). La copia de un gasto compartido que todavía no fue asignada a una entidad solo puede verla quien la recibió. | — |

@@ -5,6 +5,7 @@ import ExpenseCard from '@/components/ExpenseCard';
 import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
 import GroupBalance from '@/pages/dashboard/components/GroupBalance';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { ExpenseType } from '@/utils/enums';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -24,6 +25,18 @@ function EntityAvatar({ name, done }) {
             {initials}
         </div>
     );
+}
+
+function groupSettleLabel(items, settlementActive) {
+    const hasEgreso = items.some((it) => it.type !== ExpenseType.INGRESO);
+    const hasIngreso = items.some((it) => it.type === ExpenseType.INGRESO);
+
+    if (settlementActive) {
+        if (hasEgreso && hasIngreso) return 'Marcar pagos / cobros';
+        return hasIngreso ? 'Marcar cobros' : 'Marcar pagos';
+    }
+    if (hasEgreso && hasIngreso) return 'Pagar / Cobrar';
+    return hasIngreso ? 'Cobrar' : 'Pagar';
 }
 
 export default function ActiveFinancialEntity({
@@ -186,12 +199,21 @@ export default function ActiveFinancialEntity({
                         </button>
                     ) : (
                         <button
-                            className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors disabled:cursor-wait"
+                            className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
+                                settlementActive ? '' : 'opacity-50'
+                            }`}
                             disabled={groupBusy}
+                            title={
+                                settlementActive
+                                    ? undefined
+                                    : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                            }
                             onClick={() => onOpenGroup?.(group)}
                             type="button"
                         >
-                            <span className={groupBusy ? 'invisible' : ''}>Pagar / Cobrar</span>
+                            <span className={groupBusy ? 'invisible' : ''}>
+                                {groupSettleLabel(group.items, settlementActive)}
+                            </span>
                             {groupBusy && <ButtonSpinner />}
                         </button>
                     )}
