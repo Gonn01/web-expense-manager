@@ -56,7 +56,9 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                             hover:border-primary/60 transition-colors relative cursor-pointer"
                     >
                         {selected.length === 0 ? (
-                            <span className="text-[#9eb7a8] text-sm">Seleccionar categorías...</span>
+                            <span className="text-[#9eb7a8] text-sm">
+                                Seleccionar categorías...
+                            </span>
                         ) : (
                             selected.map((c) => (
                                 <span
@@ -66,7 +68,10 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                     {c.name}
                                     <span
                                         role="button"
-                                        onClick={(e) => { e.stopPropagation(); onToggle(c.id); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onToggle(c.id);
+                                        }}
                                         className="hover:opacity-70 cursor-pointer leading-none"
                                     >
                                         <Icon name="close" className="text-xs" />
@@ -92,10 +97,13 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                         onClick={() => onToggle(c.id)}
                                         className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#29382f] transition-colors"
                                     >
-                                        <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors shrink-0
+                                        <div
+                                            className={`w-4 h-4 rounded flex items-center justify-center border transition-colors shrink-0
                                             ${isSelected ? 'bg-primary border-primary' : 'border-[#3d5245]'}`}
                                         >
-                                            {isSelected && <Icon name="check" className="text-xs text-black" />}
+                                            {isSelected && (
+                                                <Icon name="check" className="text-xs text-black" />
+                                            )}
                                         </div>
                                         <div
                                             className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -109,7 +117,9 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
 
                         {selected.length > 0 && (
                             <div className="border-t border-[#29382f] px-3 py-2 flex justify-between items-center">
-                                <span className="text-xs text-[#9eb7a8]">{selected.length} seleccionada{selected.length !== 1 ? 's' : ''}</span>
+                                <span className="text-xs text-[#9eb7a8]">
+                                    {selected.length} seleccionada{selected.length !== 1 ? 's' : ''}
+                                </span>
                                 <button
                                     type="button"
                                     onClick={() => setOpen(false)}
@@ -131,8 +141,8 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     onClick={() => setShowForm(true)}
                     className="text-primary text-sm mt-1 flex items-center gap-1 hover:underline disabled:opacity-50"
                 >
-                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}
-                    + Crear nueva categoría
+                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}+
+                    Crear nueva categoría
                 </button>
             ) : (
                 <div className="mt-2 p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
@@ -149,7 +159,10 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                         <button
                             type="button"
                             disabled={creating}
-                            onClick={() => { setShowForm(false); setNewName(''); }}
+                            onClick={() => {
+                                setShowForm(false);
+                                setNewName('');
+                            }}
                             className={`text-sm px-3 py-1.5 rounded-lg cursor-pointer
                                 ${creating ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white'}`}
                         >
@@ -167,7 +180,9 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                     <Icon name="progress_activity" className="animate-spin" />
                                     Creando...
                                 </>
-                            ) : 'Crear'}
+                            ) : (
+                                'Crear'
+                            )}
                         </button>
                     </div>
                 </div>

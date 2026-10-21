@@ -45,6 +45,18 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
     },
     LISTA_IDS_INVALIDA: { message: 'La selección de gastos no es válida.', variant: 'snackbar' },
+    // Sin `message`: el backend explica el motivo (entidad compartida o vinculada).
+    GASTO_ENTIDAD_NO_EDITABLE: {
+        variant: 'dialog',
+        title: 'No se puede mover el gasto',
+        tone: 'warning',
+    },
+    // Sin `message`: el backend dice qué campo está bloqueado y por qué.
+    GASTO_CAMPO_NO_EDITABLE: {
+        variant: 'dialog',
+        title: 'No se puede cambiar ese dato',
+        tone: 'warning',
+    },
 
     // ─── Entidades financieras ──────────────────────────────────────────────
     ENTIDAD_NOT_FOUND: { message: 'No encontramos esa entidad.', variant: 'snackbar' },

@@ -1,5 +1,10 @@
 import TextInput from '@/components/TextInput';
+import { LockReason } from './LockedField';
 
+/**
+ * Cantidad de cuotas, cuotas pagadas y progreso. Al editar, la API puede
+ * bloquear cualquiera de los dos campos (`installmentsLock` / `paidLock`).
+ */
 export default function ExpenseInstallmentsSection({
     installments,
     setInstallments,
@@ -8,32 +13,42 @@ export default function ExpenseInstallmentsSection({
     totalInstallments,
     progressPct,
     setPaidInstallments,
+    installmentsLock,
+    paidLock,
 }) {
     return (
         <>
-            <div className="grid grid-cols-2 gap-4">
-                <TextInput
-                    label="Cantidad de cuotas"
-                    type="number"
-                    value={installments}
-                    onChange={(e) => setInstallments(e.target.value)}
-                />
+            <div className="grid grid-cols-2 gap-4 items-start">
+                <div className="space-y-1.5">
+                    <TextInput
+                        label="Cantidad de cuotas"
+                        type="number"
+                        value={installments}
+                        disabled={Boolean(installmentsLock)}
+                        onChange={(e) => setInstallments(e.target.value)}
+                    />
+                    <LockReason reason={installmentsLock} />
+                </div>
 
-                <TextInput
-                    label="Cuotas pagadas"
-                    type="number"
-                    value={paidInstallments}
-                    onChange={(e) => {
-                        const value = Number(e.target.value);
-                        const max = Number(installments) || 0;
+                <div className="space-y-1.5">
+                    <TextInput
+                        label="Cuotas pagadas"
+                        type="number"
+                        value={paidInstallments}
+                        disabled={Boolean(paidLock)}
+                        onChange={(e) => {
+                            const value = Number(e.target.value);
+                            const max = Number(installments) || 0;
 
-                        if (value < 0) return setPaidInstallments('0');
+                            if (value < 0) return setPaidInstallments('0');
 
-                        if (value > max) return setPaidInstallments(String(max));
+                            if (value > max) return setPaidInstallments(String(max));
 
-                        setPaidInstallments(e.target.value);
-                    }}
-                />
+                            setPaidInstallments(e.target.value);
+                        }}
+                    />
+                    <LockReason reason={paidLock} />
+                </div>
             </div>
 
             <div>

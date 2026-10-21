@@ -332,13 +332,17 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-19 — Editar gasto
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-GAS-08, RF-CAT-03
+- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-GAS-16, RF-CAT-03
 - **Flujo principal**
     1. En el detalle del gasto, el usuario elige editar.
-    2. Modifica nombre, monto, tipo, condición de gasto fijo y/o categorías.
-    3. El sistema guarda los cambios. Si cambió el nombre, lo registra en el historial de la entidad.
+    2. Modifica nombre, monto, moneda, tipo, modalidad, cuotas, entidad y/o categorías. Los campos bloqueados se ven deshabilitados, con el motivo.
+    3. El sistema valida los datos y guarda los cambios en el historial del gasto. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
-    - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole el tipo opuesto.
+    - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole su entidad y el tipo opuesto.
+    - 3b. El usuario intenta cambiar un campo bloqueado (gasto con pagos, finalizado, compartido o marcado en la sesión de cuentas): el sistema rechaza la edición y explica el motivo.
+    - 3c. El gasto tiene pagos y cambió el monto: el sistema avisa que los pagos ya registrados conservan su valor y guarda el cambio.
+    - 3d. Cambió la entidad: el sistema mueve el gasto y lo registra en el historial de ambas entidades. Si alguna de las dos está vinculada a otro usuario, o es la entidad del espejo, lo impide.
+    - 3e. Algún dato es inválido (nombre vacío, monto no positivo, menos cuotas que las ya pagadas o pendientes): el sistema lo rechaza sin guardar nada.
 
 ### CU-20 — Eliminar gasto
 

@@ -70,17 +70,32 @@ export default function Dashboard() {
             {/* MAIN LAYOUT */}
             <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
                 {/* LEFT: StatCards + botón gráficos */}
-                {balancesHidden ? (
+                {/* El panel queda montado: se anima el ancho al plegar/desplegar. */}
+                <div
+                    className={`relative shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
+                        balancesHidden ? 'w-6' : 'w-52'
+                    }`}
+                >
                     <button
                         onClick={toggleBalances}
                         aria-label="Mostrar balances"
                         title="Mostrar balances"
-                        className="cursor-pointer flex items-start justify-center pt-2 w-6 shrink-0 text-slate-400 hover:text-primary transition-colors"
+                        tabIndex={balancesHidden ? 0 : -1}
+                        className={`cursor-pointer absolute inset-y-0 left-0 z-10 flex items-start justify-center pt-2 w-6 text-slate-400 hover:text-primary transition-opacity duration-200 motion-reduce:transition-none ${
+                            balancesHidden
+                                ? 'opacity-100 delay-150'
+                                : 'opacity-0 pointer-events-none'
+                        }`}
                     >
                         <Icon name="chevron_right" />
                     </button>
-                ) : (
-                    <div className="flex flex-col gap-4 w-52 shrink-0 overflow-y-auto">
+                    <div
+                        inert={balancesHidden}
+                        aria-hidden={balancesHidden}
+                        className={`flex flex-col gap-4 w-52 h-full overflow-y-auto transition-opacity duration-200 motion-reduce:transition-none ${
+                            balancesHidden ? 'opacity-0' : 'opacity-100 delay-100'
+                        }`}
+                    >
                         <div className="flex items-center justify-between">
                             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                                 Balances
@@ -110,7 +125,7 @@ export default function Dashboard() {
                             Ver gráficos
                         </button>
                     </div>
-                )}
+                </div>
 
                 {/* RIGHT: Active Expenses */}
                 <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
