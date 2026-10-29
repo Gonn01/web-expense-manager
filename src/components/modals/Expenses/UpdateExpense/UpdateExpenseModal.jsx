@@ -12,6 +12,7 @@ import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import LockedField, { LockReason } from '../components/LockedField';
 import { useCategoriesStore } from '@/store/use-categories-store';
+import { transferTargets } from '@/utils/expense-transfer';
 
 export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const { token } = useAuth();
@@ -25,6 +26,14 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
 
     const [amount, setAmount] = useState(String(gasto.amount));
     const [currency, setCurrency] = useState(gasto.currency_type);
+
+    const entityOptions = useMemo(
+        () => [
+            ...entities.filter((e) => e.id == gasto.financial_entity_id),
+            ...transferTargets(gasto, entities),
+        ],
+        [entities, gasto],
+    );
 
     const locks = gasto.edit_locks ?? {};
     const paidLock =
@@ -222,7 +231,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         <EntitySelector
                             entity={entity}
                             setEntity={setEntity}
-                            entities={entities}
+                            entities={entityOptions}
                             showNewEntity={showNewEntity}
                             setShowNewEntity={setShowNewEntity}
                             newEntityName={newEntityName}

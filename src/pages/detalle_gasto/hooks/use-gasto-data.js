@@ -42,6 +42,15 @@ export function useGastoData() {
         setGasto(updated);
     }
 
+    async function transferir(entityId, entityName) {
+        if (!gasto) return;
+        const updated = await updateGasto(gasto.id, { financial_entity_id: entityId }, token);
+        setGasto(updated);
+        useSnackbarStore
+            .getState()
+            .show(`Gasto transferido a "${entityName}".`, 'success', 'swap_horiz');
+    }
+
     async function settleQuota() {
         if (!gasto) return;
         const deferred = isSettlementActive();
@@ -86,6 +95,7 @@ export function useGastoData() {
     return {
         gasto,
         actualizar,
+        transferir,
         settleQuota,
         refundCuota,
         eliminar,

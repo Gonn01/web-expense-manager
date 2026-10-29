@@ -13,6 +13,7 @@ import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { formatMoney } from '@/utils/FormatMoney';
 import UpdateExpenseModal from '@/components/modals/Expenses/UpdateExpense/UpdateExpenseModal';
+import TransferExpenseModal from '@/components/modals/Expenses/TransferExpense/TransferExpenseModal';
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
 import { useSettlementStore } from '@/store/use-settlement-store';
@@ -25,6 +26,8 @@ export default function DetalleGasto() {
         settleQuota,
         refundCuota,
         actualizar,
+        transferir,
+        transferLock,
         eliminar,
         loading,
         volverALista,
@@ -32,6 +35,7 @@ export default function DetalleGasto() {
     const { getEntityById } = useEntitiesStore();
     const settlementActive = useSettlementStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
+    const [transferOpen, setTransferOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -50,6 +54,8 @@ export default function DetalleGasto() {
                             gasto={gasto}
                             marcarProxima={() => setConfirmOpen(true)}
                             abrirEditar={() => setEditOpen(true)}
+                            abrirTransferir={() => setTransferOpen(true)}
+                            transferLock={transferLock}
                         />
                     ) : null}
                     <div className="bg-white dark:bg-[#111714] rounded-xl p-6 shadow-sm flex flex-col gap-6">
@@ -129,6 +135,17 @@ export default function DetalleGasto() {
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
                 settlementActive={settlementActive}
             />
+
+            {transferOpen && (
+                <TransferExpenseModal
+                    gasto={gasto}
+                    onClose={() => setTransferOpen(false)}
+                    onTransfer={async (entityId, entityName) => {
+                        await transferir(entityId, entityName);
+                        setTransferOpen(false);
+                    }}
+                />
+            )}
 
             {editOpen && (
                 <UpdateExpenseModal

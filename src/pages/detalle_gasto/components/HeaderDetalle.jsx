@@ -1,6 +1,17 @@
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
+import Icon from '@/components/Icon';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
 
-export default function HeaderDetalle({ gasto, marcarProxima, abrirEditar }) {
+export default function HeaderDetalle({
+    gasto,
+    marcarProxima,
+    abrirEditar,
+    abrirTransferir,
+    transferLock,
+}) {
+    const avisarTransferBloqueado = () =>
+        useSnackbarStore.getState().show(transferLock, 'error', 'lock');
+
     return (
         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <div>
@@ -27,6 +38,16 @@ export default function HeaderDetalle({ gasto, marcarProxima, abrirEditar }) {
                     className="cursor-pointer h-10 px-4 rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold hover:bg-opacity-80 transition-all"
                 >
                     Editar
+                </button>
+
+                <button
+                    onClick={transferLock ? avisarTransferBloqueado : abrirTransferir}
+                    aria-disabled={Boolean(transferLock)}
+                    title={transferLock ?? 'Mover el gasto a otra entidad'}
+                    className={`cursor-pointer h-10 px-4 rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold hover:bg-opacity-80 transition-all flex items-center gap-1.5 ${transferLock ? 'opacity-50' : ''}`}
+                >
+                    <Icon name="swap_horiz" className="text-lg" />
+                    Transferir
                 </button>
             </div>
         </div>

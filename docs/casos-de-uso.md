@@ -351,6 +351,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. Modifica nombre, monto, moneda, tipo, modalidad, cuotas, entidad y/o categorías. Los campos bloqueados se ven deshabilitados, con el motivo.
     3. El sistema valida los datos y guarda los cambios en el historial del gasto. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
+    - 1a. El usuario elige **Transferir** en lugar de editar: el sistema le ofrece las entidades a las que se puede mover el gasto; el usuario elige una (en la app móvil, además, confirma) y el sistema cambia solo la entidad, como en 3d, sin tocar el espejo. Si el gasto no se puede mover (bloqueo de RF-GAS-15 o entidad vinculada a otro usuario), la acción aparece atenuada y, al elegirla, el sistema muestra el motivo en un snackbar, por ejemplo que el gasto está compartido con otro usuario.
     - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole su entidad y el tipo opuesto.
     - 3b. El usuario intenta cambiar un campo bloqueado (gasto con pagos, finalizado, compartido o marcado en la sesión de cuentas): el sistema rechaza la edición y explica el motivo.
     - 3c. El gasto tiene pagos y cambió el monto: el sistema avisa que los pagos ya registrados conservan su valor y guarda el cambio.

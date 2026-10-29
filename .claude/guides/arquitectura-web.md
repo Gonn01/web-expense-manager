@@ -60,7 +60,7 @@ Consecuencias:
 - **No** mostrar el error otra vez en un `catch`: ya lo mostró el interceptor. El `catch` local solo corta el flujo (no hay estado optimista que revertir).
 - **No** saltear el interceptor con manejo ad hoc fuera de `SILENT_PATHS`.
 - Código de error nuevo en la API → entrada nueva en `ERROR_PRESENTATION` (`utils/error-catalog.js`).
-- **Campos bloqueados al editar un gasto**: la API los manda en `gasto.edit_locks` (`{ campo: motivo }`). `UpdateExpenseModal` los envuelve en `LockedField` (o les pasa el motivo como prop, p. ej. `amountLock`), que los deshabilita y muestra el motivo. El cliente no decide qué se bloquea: solo lee `edit_locks`.
+- **Campos bloqueados al editar un gasto**: la API los manda en `gasto.edit_locks` (`{ campo: motivo }`). `UpdateExpenseModal` los envuelve en `LockedField` (o les pasa el motivo como prop, p. ej. `amountLock`), que los deshabilita y muestra el motivo. El cliente no decide qué se bloquea: solo lee `edit_locks`. La acción **Transferir** del detalle (`TransferExpenseModal`) usa `utils/expense-transfer.js`: `transferBlockReason` toma el bloqueo de `edit_locks.financial_entity_id` y agrega el caso de la entidad actual vinculada a otro usuario (la API lo rechaza al guardar, no lo manda en `edit_locks`), y `transferTargets` filtra las entidades de destino válidas, también para el selector de entidad de `UpdateExpenseModal`.
 
 ## 4. Estado y feedback
 
