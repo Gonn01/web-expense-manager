@@ -8,6 +8,12 @@ import {
     ResponsiveContainer,
     Legend,
 } from 'recharts';
+import {
+    currentMonthIndex,
+    monthIndexFromDateString,
+    keyFromMonthIndex,
+    labelFromKey,
+} from '@/utils/chart-months';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
 import { convertCurrency } from '@/utils/convert-currency';
@@ -15,34 +21,6 @@ import { formatMoney } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
 
 const CURRENCY_VALUES = Object.values(Currency);
-
-function currentMonthIndex() {
-    const today = new Date();
-    return today.getFullYear() * 12 + today.getMonth();
-}
-
-function monthIndexFromDateString(dateStr) {
-    const match = /^(\d{4})-(\d{2})/.exec(String(dateStr));
-    if (!match) {
-        const d = new Date(dateStr);
-        return d.getFullYear() * 12 + d.getMonth();
-    }
-    return Number(match[1]) * 12 + (Number(match[2]) - 1);
-}
-
-function keyFromMonthIndex(idx) {
-    const year = Math.floor(idx / 12);
-    const month = idx % 12;
-    return `${year}-${String(month + 1).padStart(2, '0')}`;
-}
-
-function labelFromKey(key) {
-    const [year, month] = key.split('-');
-    return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('es-AR', {
-        month: 'short',
-        year: 'numeric',
-    });
-}
 
 function accumulateAmounts(gastos, type, amounts, preferredCurrency, rates) {
     const currentMonth = currentMonthIndex();

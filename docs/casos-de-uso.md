@@ -187,7 +187,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.
     - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden.
-    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y distribución por categoría.
+    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual; el usuario puede pasar a los meses siguientes con cuotas pendientes.
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
 
@@ -323,7 +323,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. El sistema registra "gasto creado" en el historial de la entidad y muestra el gasto en pantalla.
 - **Flujos alternativos**
     - 2a. La entidad no existe todavía: el usuario la crea en el mismo formulario (CU-10).
-    - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
+    - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago; si no existe todavía, la crea en el mismo formulario (CU-10) y queda elegida como entidad de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
     - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
     - 2b. Faltan datos obligatorios: el sistema lo informa.

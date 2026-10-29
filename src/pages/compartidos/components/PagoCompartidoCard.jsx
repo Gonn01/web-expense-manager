@@ -32,26 +32,6 @@ export default function PagoCompartidoCard({ pago, variant, onConfirmar, onRecha
                 </span>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                <Icon name="person" className="text-base" />
-                {porConfirmar ? (
-                    <span>
-                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                            {pago.registrar_name}
-                        </span>{' '}
-                        registró este pago
-                    </span>
-                ) : (
-                    <span>
-                        Esperando que{' '}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                            {pago.counterparty_name}
-                        </span>{' '}
-                        lo confirme
-                    </span>
-                )}
-            </div>
-
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
                 {new Date(pago.created_at).toLocaleDateString('es-AR', {
                     day: '2-digit',

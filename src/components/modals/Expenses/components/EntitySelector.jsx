@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import Select from '@/components/Select';
+import NewEntityInlineForm from './NewEntityInlineForm';
 
 export default function EntitySelector({
     entity,
@@ -63,58 +64,18 @@ export default function EntitySelector({
             )}
 
             {showNewEntity && (
-                <div className="mt-3 p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
-                    <input
-                        disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
-               text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Ej: Banco Galicia"
-                        value={newEntityName}
-                        onChange={(e) => setNewEntityName(e.target.value)}
-                        autoFocus
-                    />
-
-                    <input
-                        type="email"
-                        disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
-               text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Ej: juan@email.com (opcional)"
-                        value={newEntityEmail}
-                        onChange={(e) => setNewEntityEmail(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleCreateEntity()}
-                    />
-
-                    <div className="flex justify-end gap-2">
-                        <button
-                            onClick={() => {
-                                setShowNewEntity(false);
-                                setNewEntityEmail('');
-                            }}
-                            disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg
-                            ${loadingNewEntity ? 'bg-slate-100/60 dark:bg-[#29382f]/60 cursor-not-allowed text-slate-400 dark:text-white/50' : 'bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer'}`}
-                        >
-                            Cancelar
-                        </button>
-
-                        <button
-                            onClick={handleCreateEntity}
-                            disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
-                                ${loadingNewEntity ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
-                        >
-                            {loadingNewEntity ? (
-                                <>
-                                    <Icon name="progress_activity" className="animate-spin" />
-                                    Creando...
-                                </>
-                            ) : (
-                                'Crear'
-                            )}
-                        </button>
-                    </div>
-                </div>
+                <NewEntityInlineForm
+                    name={newEntityName}
+                    setName={setNewEntityName}
+                    email={newEntityEmail}
+                    setEmail={setNewEntityEmail}
+                    loading={loadingNewEntity}
+                    onCancel={() => {
+                        setShowNewEntity(false);
+                        setNewEntityEmail?.('');
+                    }}
+                    onCreate={handleCreateEntity}
+                />
             )}
         </div>
     );

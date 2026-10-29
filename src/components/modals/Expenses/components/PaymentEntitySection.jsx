@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import Select from '@/components/Select';
+import NewEntityInlineForm from './NewEntityInlineForm';
 
 export default function PaymentEntitySection({
     enabled,
@@ -9,6 +10,14 @@ export default function PaymentEntitySection({
     setPaymentEntity,
     excludeId,
     oppositeTypeLabel,
+    showNewEntity,
+    setShowNewEntity,
+    newEntityName,
+    setNewEntityName,
+    newEntityEmail,
+    setNewEntityEmail,
+    handleCreateEntity,
+    loadingNewEntity,
 }) {
     const options = entities.filter((e) => String(e.id) !== String(excludeId));
 
@@ -44,6 +53,29 @@ export default function PaymentEntitySection({
                             }))}
                         />
                     </div>
+
+                    {showNewEntity ? (
+                        <NewEntityInlineForm
+                            name={newEntityName}
+                            setName={setNewEntityName}
+                            email={newEntityEmail}
+                            setEmail={setNewEntityEmail}
+                            loading={loadingNewEntity}
+                            onCancel={() => {
+                                setShowNewEntity(false);
+                                setNewEntityEmail('');
+                            }}
+                            onCreate={handleCreateEntity}
+                        />
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => setShowNewEntity(true)}
+                            className="text-primary text-sm flex items-center gap-1 hover:underline"
+                        >
+                            + Crear nueva entidad
+                        </button>
+                    )}
 
                     <p className="flex items-start gap-2 text-xs text-slate-500 dark:text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />

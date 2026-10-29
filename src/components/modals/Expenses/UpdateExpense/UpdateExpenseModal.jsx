@@ -188,7 +188,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     rounded-2xl shadow-xl bg-white dark:bg-[#111714] border border-slate-200 dark:border-[#29382f]
                 "
             >
-                <header className="sticky top-0 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="edit" className="text-primary" />
                         <h2 className="text-slate-900 dark:text-white text-lg font-bold">
@@ -298,7 +298,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     )}
                 </div>
 
-                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                <footer className="sticky bottom-0 z-10 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
                     <button
                         onClick={onClose}
                         disabled={saving}

@@ -77,13 +77,17 @@ export default function Select({
     useLayoutEffect(() => {
         if (!open) return;
         updatePosition();
+        const onScroll = (e) => {
+            if (popoverRef.current?.contains(e.target)) return;
+            close(false);
+        };
         window.addEventListener('resize', updatePosition);
-        window.addEventListener('scroll', updatePosition, true);
+        window.addEventListener('scroll', onScroll, true);
         return () => {
             window.removeEventListener('resize', updatePosition);
-            window.removeEventListener('scroll', updatePosition, true);
+            window.removeEventListener('scroll', onScroll, true);
         };
-    }, [open, updatePosition]);
+    }, [open, updatePosition, close]);
 
     useEffect(() => {
         if (!open) return;

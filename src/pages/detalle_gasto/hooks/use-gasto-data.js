@@ -86,10 +86,16 @@ export function useGastoData() {
     }
 
     async function eliminar(deleteLinked = false) {
-        if (!gasto) return;
+        if (!gasto) return false;
         setLoading(true);
-        await deleteGasto(gasto.id, token, { deleteLinked });
-        setLoading(false);
+        try {
+            await deleteGasto(gasto.id, token, { deleteLinked });
+            return true;
+        } catch {
+            return false;
+        } finally {
+            setLoading(false);
+        }
     }
 
     return {

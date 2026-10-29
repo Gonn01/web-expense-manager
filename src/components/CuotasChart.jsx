@@ -8,34 +8,12 @@ import {
     ResponsiveContainer,
     Legend,
 } from 'recharts';
-
-function currentMonthIndex() {
-    const today = new Date();
-    return today.getFullYear() * 12 + today.getMonth();
-}
-
-function monthIndexFromDateString(dateStr) {
-    const match = /^(\d{4})-(\d{2})/.exec(String(dateStr));
-    if (!match) {
-        const d = new Date(dateStr);
-        return d.getFullYear() * 12 + d.getMonth();
-    }
-    return Number(match[1]) * 12 + (Number(match[2]) - 1);
-}
-
-function keyFromMonthIndex(idx) {
-    const year = Math.floor(idx / 12);
-    const month = idx % 12;
-    return `${year}-${String(month + 1).padStart(2, '0')}`;
-}
-
-function labelFromKey(key) {
-    const [year, month] = key.split('-');
-    return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('es-AR', {
-        month: 'short',
-        year: 'numeric',
-    });
-}
+import {
+    currentMonthIndex,
+    monthIndexFromDateString,
+    keyFromMonthIndex,
+    labelFromKey,
+} from '@/utils/chart-months';
 
 function accumulateCounts(gastos, type, counts) {
     const currentMonth = currentMonthIndex();

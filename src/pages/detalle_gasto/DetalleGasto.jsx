@@ -113,9 +113,8 @@ export default function DetalleGasto() {
                         linkedEntityName={
                             getEntityById(gasto.linked_financial_entity_id)?.name ?? ''
                         }
-                        onDelete={(deleteLinked) => {
-                            eliminar(deleteLinked);
-                            volverALista();
+                        onDelete={async (deleteLinked) => {
+                            if (await eliminar(deleteLinked)) volverALista();
                         }}
                     />
                 </div>
