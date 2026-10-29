@@ -158,7 +158,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     <input
                         disabled={creating}
                         className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245] text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Nombre de la categoría"
+                        placeholder="Ej: Supermercado"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreate()}

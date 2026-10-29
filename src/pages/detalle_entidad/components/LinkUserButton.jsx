@@ -88,7 +88,7 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
                                     </p>
                                     <input
                                         type="email"
-                                        placeholder="Email del usuario"
+                                        placeholder="Ej: juan@email.com"
                                         value={emailInput}
                                         disabled={loading}
                                         autoFocus

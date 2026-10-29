@@ -98,7 +98,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                 <input
                                     type="email"
                                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] h-12 placeholder:text-slate-400 dark:placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
-                                    placeholder="Email del usuario a vincular"
+                                    placeholder="Ej: juan@email.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />

@@ -66,7 +66,7 @@ export default function ActiveExpenses({
                     />
                     <input
                         className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
-                        placeholder="Buscar gasto..."
+                        placeholder="Buscar gasto... (ej: Préstamo personal)"
                         type="text"
                         value={query}
                         onChange={(e) => onQueryChange?.(e.target.value)}

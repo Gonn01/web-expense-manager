@@ -21,7 +21,7 @@ export default function ExpenseAmountSection({
                 <TextInput
                     label="Monto total"
                     type="amount"
-                    placeholder="150.000"
+                    placeholder="Ej: 150.000"
                     value={amount}
                     disabled={Boolean(amountLock)}
                     onChange={setAmount}

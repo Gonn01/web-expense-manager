@@ -68,7 +68,7 @@ export default function EntitySelector({
                         disabled={loadingNewEntity}
                         className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
                text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Nombre de la nueva entidad"
+                        placeholder="Ej: Banco Galicia"
                         value={newEntityName}
                         onChange={(e) => setNewEntityName(e.target.value)}
                         autoFocus
@@ -79,7 +79,7 @@ export default function EntitySelector({
                         disabled={loadingNewEntity}
                         className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
                text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Vincular a un usuario (opcional)"
+                        placeholder="Ej: juan@email.com (opcional)"
                         value={newEntityEmail}
                         onChange={(e) => setNewEntityEmail(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreateEntity()}
