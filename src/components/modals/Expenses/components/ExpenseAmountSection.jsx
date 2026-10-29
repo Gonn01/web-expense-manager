@@ -44,11 +44,11 @@ export default function ExpenseAmountSection({
             </div>
 
             <div className="relative sm:col-span-2 space-y-2">
-                <label className="text-white text-sm font-medium">Moneda</label>
+                <label className="text-slate-900 dark:text-white text-sm font-medium">Moneda</label>
 
                 <div className="relative">
                     <Select
-                        className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 text-white cursor-pointer"
+                        className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer"
                         value={currency}
                         disabled={Boolean(currencyLock)}
                         onChange={setCurrency}

@@ -29,6 +29,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-CFG-01 | El usuario puede ver su perfil: nombre, email y foto. | CU-05 |
 | RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD, EUR, BRL, CLP y UYU. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
 | RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos. | CU-07 |
+| RF-CFG-04 | El usuario puede elegir el tema de la interfaz: Sistema (sigue la preferencia del dispositivo y cambia cuando esta cambia), Claro u Oscuro. Por defecto es Sistema. La elección se guarda solo en el dispositivo o navegador (no en la cuenta) y se aplica al instante, también en las pantallas de inicio de sesión y registro. | CU-39 |
 
 ## DSH — Dashboard
 

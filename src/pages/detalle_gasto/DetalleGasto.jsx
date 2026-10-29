@@ -42,7 +42,7 @@ export default function DetalleGasto() {
     if (!gasto) return null;
     console.log('Gasto en DetalleGasto:', gasto);
     return (
-        <div className="min-h-dvh w-full bg-background-dark text-white font-display">
+        <div className="min-h-dvh w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
             <div className="px-4 md:px-10 lg:px-20 xl:px-40 py-6 flex justify-center">
                 <div className="w-full max-w-[960px] flex flex-col gap-8">
                     {!loading ? (
@@ -52,7 +52,7 @@ export default function DetalleGasto() {
                             abrirEditar={() => setEditOpen(true)}
                         />
                     ) : null}
-                    <div className="bg-[#111714] rounded-xl p-6 shadow-sm flex flex-col gap-6">
+                    <div className="bg-white dark:bg-[#111714] rounded-xl p-6 shadow-sm flex flex-col gap-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
                             <InfoItem
                                 label="Entidad"

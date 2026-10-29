@@ -94,6 +94,8 @@ Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 
 **"Modo hacer cuentas" (settlement)**: a session-based flow (`store/use-settlement-store.js`, `hooks/use-settlement.js`, `hooks/use-settlements.js`, backend `/settlement/*` endpoints). With a session open, paying only *marks* the expense; the real payments are recorded when the session is finished, which also produces a snapshot. Paying from the dashboard requires an open session (client guard `ensureSettlementActive()`; the backend returns 409 `SETTLEMENT_REQUIRED` for batch payments). From the expense detail a payment is direct when no session is open, and from the entity detail it is always direct (`{ direct: true }`). This is a cross-cutting business rule, not just a UI feature — full rules in `docs/requerimientos-funcionales.md` (PAG and CTA).
 
+**Light/dark theme**: Tailwind's `dark:` variant is class-based (`@custom-variant dark` in `index.css`), driven by `themeMode` (`system`/`light`/`dark`) in `use-ui-store.js` and applied by `utils/theme.js` + `hooks/use-theme-sync.js`. Every background/text/border color needs its light and `dark:` pair; don't add dark-only hex colors.
+
 **Path alias `@/*` → `src/*`** must stay in sync across three configs: `vite.config.js` (`resolve.alias`), `jsconfig.json` (`compilerOptions.paths`), `eslint.config.js` (`import/resolver.alias`).
 
 `checklist_mis_cuentas.md` and `checklits_expense_manager.md` (repo root) are informal running checklists of implemented/pending features — useful for context on what's done vs. planned, not formal specs.

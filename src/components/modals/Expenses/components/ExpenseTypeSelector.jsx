@@ -3,8 +3,8 @@ import { ExpenseType } from '@/utils/enums';
 
 export default function ExpenseTypeSelector({ type, setType }) {
     return (
-        <div className="flex h-12 items-center justify-center rounded-lg bg-[#29382f] p-1.5">
-            <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-[#9eb7a8] text-sm font-medium has-checked:bg-red-500/10 has-checked:text-red-400">
+        <div className="flex h-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] p-1.5">
+            <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-slate-500 dark:text-[#9eb7a8] text-sm font-medium has-checked:bg-red-500/10 has-checked:text-red-400">
                 <Icon name="arrow_upward" />
                 <span>EGRESO</span>
                 <input
@@ -16,7 +16,7 @@ export default function ExpenseTypeSelector({ type, setType }) {
                 />
             </label>
 
-            <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-[#9eb7a8] text-sm font-medium has-checked:bg-green-500/10 has-checked:text-green-400">
+            <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-slate-500 dark:text-[#9eb7a8] text-sm font-medium has-checked:bg-green-500/10 has-checked:text-green-400">
                 <Icon name="arrow_downward" />
                 <span>INGRESO</span>
                 <input

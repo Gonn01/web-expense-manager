@@ -16,14 +16,16 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
 
     return (
         <div className="flex flex-col gap-4 rounded-lg border bg-black/5 dark:bg-white/5 p-4">
-            <p className="text-sm font-semibold text-white">Gastos a afectar:</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                Gastos a afectar:
+            </p>
 
             {items.length === 0 ? (
                 <p className="text-sm text-slate-400 ml-1">
                     No queda ningún gasto seleccionado. Restaurá al menos uno para continuar.
                 </p>
             ) : (
-                <ul className="flex flex-col gap-1 text-sm text-white">
+                <ul className="flex flex-col gap-1 text-sm text-slate-900 dark:text-white">
                     {items.map((it) => (
                         <li key={it.id} className="flex items-center justify-between gap-2">
                             <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
@@ -76,14 +78,19 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
 
             <div className="border-t" />
 
-            <p className="text-sm font-semibold text-white">Monto total a pagar/cobrar:</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                Monto total a pagar/cobrar:
+            </p>
 
             <div className="flex flex-col gap-2">
                 {totals.length === 0 ? (
                     <span className="text-sm text-slate-400">—</span>
                 ) : (
                     totals.map((row) => (
-                        <div key={row.currency} className="flex justify-between text-white">
+                        <div
+                            key={row.currency}
+                            className="flex justify-between text-slate-900 dark:text-white"
+                        >
                             <span className="text-xs">En {row.currency}</span>
                             <span className="text-lg font-bold">
                                 {formatMoney(row.amount, row.currency)}

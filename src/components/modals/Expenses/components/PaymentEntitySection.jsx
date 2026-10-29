@@ -20,18 +20,20 @@ export default function PaymentEntitySection({
             >
                 <div
                     className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                        ${enabled ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                        ${enabled ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                 >
                     {enabled && <span className="text-black text-xs font-bold">✓</span>}
                 </div>
-                <span className="text-white text-sm font-medium">Pagar con otra entidad</span>
+                <span className="text-slate-900 dark:text-white text-sm font-medium">
+                    Pagar con otra entidad
+                </span>
             </label>
 
             {enabled && (
-                <div className="p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
+                <div className="p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
                     <div className="relative">
                         <Select
-                            className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#111714] px-3 text-white cursor-pointer"
+                            className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-white dark:bg-[#111714] px-3 text-slate-900 dark:text-white cursor-pointer"
                             value={paymentEntity}
                             onChange={setPaymentEntity}
                             placeholder="Seleccionar entidad de pago..."
@@ -43,7 +45,7 @@ export default function PaymentEntitySection({
                         />
                     </div>
 
-                    <p className="flex items-start gap-2 text-xs text-[#9eb7a8]">
+                    <p className="flex items-start gap-2 text-xs text-slate-500 dark:text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />
                         Se creará un {oppositeTypeLabel} espejo en esa entidad, con el mismo monto,
                         cuotas y estado de pago.

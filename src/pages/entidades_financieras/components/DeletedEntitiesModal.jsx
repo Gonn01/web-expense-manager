@@ -52,22 +52,22 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                 aria-labelledby="deleted-entities-title"
                 onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
-                <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
+                <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-white dark:bg-[#18211b] rounded-xl border border-slate-300 dark:border-[#3d5245] shadow-xl">
                     <div className="flex items-start justify-between p-6">
                         <div className="flex flex-col gap-1">
                             <h2
                                 id="deleted-entities-title"
-                                className="text-white text-xl font-bold tracking-tight"
+                                className="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
                             >
                                 Entidades Eliminadas
                             </h2>
-                            <p className="text-[#9eb7a8] text-sm">
+                            <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
                                 Restaurá una entidad para que vuelva a tu listado.
                             </p>
                         </div>
                         <button
                             type="button"
-                            className="text-[#9eb7a8] transition-colors duration-200 hover:text-white"
+                            className="text-slate-500 dark:text-[#9eb7a8] transition-colors duration-200 hover:text-slate-900 dark:hover:text-white"
                             onClick={onClose}
                             aria-label="Cerrar"
                         >
@@ -77,7 +77,7 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
 
                     <div className="flex-1 px-6 pb-6 max-h-[60vh] overflow-y-auto">
                         {deletedEntities.length === 0 ? (
-                            <p className="text-[#9eb7a8] text-sm text-center py-6">
+                            <p className="text-slate-500 dark:text-[#9eb7a8] text-sm text-center py-6">
                                 No tenés entidades eliminadas.
                             </p>
                         ) : (
@@ -85,9 +85,9 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                                 {deletedEntities.map((entity) => (
                                     <li
                                         key={entity.id}
-                                        className="flex items-center justify-between gap-3 rounded-lg border border-[#3d5245] bg-[#1c2620] px-4 py-3"
+                                        className="flex items-center justify-between gap-3 rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-4 py-3"
                                     >
-                                        <span className="text-white text-sm font-medium truncate">
+                                        <span className="text-slate-900 dark:text-white text-sm font-medium truncate">
                                             {entity.name}
                                         </span>
                                         <button
@@ -107,10 +107,10 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                         )}
                     </div>
 
-                    <div className="flex items-center justify-end gap-3 p-6 bg-[#1c2620]/60 border-t border-[#3d5245]">
+                    <div className="flex items-center justify-end gap-3 p-6 bg-slate-50/60 dark:bg-[#1c2620]/60 border-t border-slate-300 dark:border-[#3d5245]">
                         <button
                             type="button"
-                            className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-[#29382f] text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-[#34453a]"
+                            className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-slate-200 dark:hover:bg-[#34453a]"
                             onClick={onClose}
                         >
                             <span className="truncate">Cerrar</span>

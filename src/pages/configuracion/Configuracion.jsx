@@ -1,4 +1,5 @@
 import Snackbar from '@/components/Snackbar';
+import { AparienciaCard } from './components/AparienciaCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
 import { SueldoCard } from './components/SueldoCard';
@@ -22,7 +23,12 @@ export default function Configuracion() {
         loadingSueldo,
         onSaveSueldo,
 
+        themeMode,
+
+        setThemeMode,
+
         snackbar,
+
         closeSnackbar,
     } = useConfiguracionUI();
 
@@ -50,6 +56,8 @@ export default function Configuracion() {
                     loading={loadingMoneda}
                     onSave={onSaveMoneda}
                 />
+
+                <AparienciaCard themeMode={themeMode} setThemeMode={setThemeMode} />
 
                 <SueldoCard
                     sueldo={sueldo}

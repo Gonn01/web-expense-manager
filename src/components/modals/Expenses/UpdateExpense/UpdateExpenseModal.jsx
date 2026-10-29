@@ -176,19 +176,21 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                 ref={containerRef}
                 className="
                     relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto
-                    rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]
+                    rounded-2xl shadow-xl bg-white dark:bg-[#111714] border border-slate-200 dark:border-[#29382f]
                 "
             >
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
+                <header className="sticky top-0 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="edit" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Editar Gasto/Deuda</h2>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold">
+                            Editar Gasto/Deuda
+                        </h2>
                     </div>
 
                     <button
                         onClick={requestClose}
                         disabled={saving}
-                        className="disabled:opacity-50 disabled:cursor-not-allowed flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
+                        className="disabled:opacity-50 disabled:cursor-not-allowed flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
                     </button>
@@ -272,24 +274,26 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                             <div className="flex items-center gap-3 select-none opacity-60">
                                 <div
                                     className={`w-5 h-5 rounded flex items-center justify-center border shrink-0
-                                    ${paidQuotas > 0 ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                    ${paidQuotas > 0 ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                                 >
                                     {paidQuotas > 0 && (
                                         <span className="text-black text-xs font-bold">✓</span>
                                     )}
                                 </div>
-                                <span className="text-white text-sm font-medium">Pagado</span>
+                                <span className="text-slate-900 dark:text-white text-sm font-medium">
+                                    Pagado
+                                </span>
                             </div>
                             <LockReason reason={paidLock} />
                         </div>
                     )}
                 </div>
 
-                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
                     <button
                         onClick={onClose}
                         disabled={saving}
-                        className="h-11 px-4 text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancelar
                     </button>
@@ -310,9 +314,9 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
 
                 {linkedPrompt && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 rounded-2xl p-4">
-                        <div className="w-full max-w-sm rounded-xl bg-[#111714] p-6 border border-[#29382f] shadow-lg text-white">
+                        <div className="w-full max-w-sm rounded-xl bg-white dark:bg-[#111714] p-6 border border-slate-200 dark:border-[#29382f] shadow-lg text-slate-900 dark:text-white">
                             <h3 className="text-lg font-bold mb-2">Movimiento vinculado</h3>
-                            <p className="text-sm text-[#9eb7a8] mb-6">
+                            <p className="text-sm text-slate-500 dark:text-[#9eb7a8] mb-6">
                                 Este movimiento está vinculado a otro en otra entidad. ¿Querés
                                 aplicar los cambios también a ese movimiento?
                             </p>
@@ -327,7 +331,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                 <button
                                     onClick={() => confirmLinked(false)}
                                     disabled={saving}
-                                    className="h-11 px-4 text-sm font-bold rounded-lg bg-[#29382f] text-white cursor-pointer hover:bg-[#3d5245] disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="h-11 px-4 text-sm font-bold rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer hover:bg-slate-200 dark:hover:bg-[#3d5245] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     Sólo este
                                 </button>
@@ -337,7 +341,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                         setPendingPayload(null);
                                     }}
                                     disabled={saving}
-                                    className="h-9 px-4 text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="h-9 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     Cancelar
                                 </button>

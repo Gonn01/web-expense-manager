@@ -121,8 +121,8 @@ function formatAxis(value) {
 const CustomTooltip = ({ active, payload, label, currency }) => {
     if (!active || !payload?.length) return null;
     return (
-        <div className="rounded-lg border border-white/10 bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
-            <p className="font-semibold text-white mb-1">{label}</p>
+        <div className="rounded-lg border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
+            <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
                     {p.dataKey === 'egreso' ? 'Egresos' : 'Ingresos'}:{' '}
@@ -152,16 +152,16 @@ export default function MontoChart({ gastos }) {
             </p>
             <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={data} margin={{ top: 4, right: 8, left: 8, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                         dataKey="label"
-                        tick={{ fill: '#9eb7a8', fontSize: 11 }}
+                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                     />
                     <YAxis
                         allowDecimals={false}
-                        tick={{ fill: '#9eb7a8', fontSize: 11 }}
+                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(v) => formatAxis(v, preferredCurrency)}

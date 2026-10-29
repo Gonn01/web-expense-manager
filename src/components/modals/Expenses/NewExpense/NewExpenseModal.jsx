@@ -160,17 +160,19 @@ export default function NewExpenseModal({
 
             <div
                 ref={containerRef}
-                className="relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]"
+                className="relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-white dark:bg-[#111714] border border-slate-200 dark:border-[#29382f]"
             >
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
+                <header className="sticky top-0 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="add_circle" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Nuevo Gasto/Deuda</h2>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold">
+                            Nuevo Gasto/Deuda
+                        </h2>
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
                     </button>
@@ -249,11 +251,13 @@ export default function NewExpenseModal({
                         >
                             <div
                                 className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                    ${isPaid ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                             >
                                 {isPaid && <span className="text-black text-xs font-bold">✓</span>}
                             </div>
-                            <span className="text-white text-sm font-medium">Pagado</span>
+                            <span className="text-slate-900 dark:text-white text-sm font-medium">
+                                Pagado
+                            </span>
                         </label>
                     )}
 
@@ -276,13 +280,13 @@ export default function NewExpenseModal({
                         <div
                             className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
                                 ${fullyPaid ? 'cursor-not-allowed' : 'cursor-pointer'}
-                                ${postponed ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                ${postponed ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                         >
                             {postponed && <span className="text-black text-xs font-bold">✓</span>}
                         </div>
-                        <span className="text-white text-sm font-medium">
+                        <span className="text-slate-900 dark:text-white text-sm font-medium">
                             Postergar para la próxima sesión de cuentas
-                            <span className="block text-xs font-normal text-[#9eb7a8]">
+                            <span className="block text-xs font-normal text-slate-500 dark:text-[#9eb7a8]">
                                 {fullyPaid
                                     ? 'No disponible: un gasto pagado no tiene nada para postergar.'
                                     : 'Queda fuera de la sesión de cuentas actual (o de la próxima que abras). Se habilita cuando la cierres.'}
@@ -291,10 +295,10 @@ export default function NewExpenseModal({
                     </label>
                 </div>
 
-                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
                     <button
                         onClick={onClose}
-                        className="h-11 px-4 text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] rounded-lg cursor-pointer"
+                        className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
                     >
                         Cancelar
                     </button>

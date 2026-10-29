@@ -16,7 +16,7 @@ export default function LockedField({ reason, children }) {
 export function LockReason({ reason }) {
     if (!reason) return null;
     return (
-        <p className="flex items-start gap-1.5 text-xs text-[#9eb7a8]">
+        <p className="flex items-start gap-1.5 text-xs text-slate-500 dark:text-[#9eb7a8]">
             <Icon name="lock" className="text-sm shrink-0" />
             <span>{reason}</span>
         </p>

@@ -66,11 +66,11 @@ const CustomTooltip = ({ active, payload, total }) => {
     const item = payload[0];
     const pct = total > 0 ? (item.value / total) * 100 : 0;
     return (
-        <div className="rounded-lg border border-white/10 bg-[#1c2620] px-3 py-2 text-sm shadow-lg">
+        <div className="rounded-lg border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-[#1c2620] px-3 py-2 text-sm shadow-lg">
             <p className="font-semibold mb-1" style={{ color: item.payload.color }}>
                 {item.name}
             </p>
-            <p className="text-slate-300">{formatAmount(item.value)}</p>
+            <p className="text-slate-700 dark:text-slate-300">{formatAmount(item.value)}</p>
             <p className="text-slate-400 text-xs">{formatPercent(pct)} del total</p>
         </div>
     );

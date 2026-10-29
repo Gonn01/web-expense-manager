@@ -25,7 +25,8 @@ export function Cuota({
               minute: '2-digit',
           })
         : null;
-    const base = 'flex items-center justify-between p-4 rounded-lg shadow-sm bg-[#111714]';
+    const base =
+        'flex items-center justify-between p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]';
     const mods = paid ? 'opacity-60' : next ? 'border border-primary/50' : '';
 
     const canRefund = paid && isLastPaid && refundUnlocked;
@@ -41,18 +42,18 @@ export function Cuota({
             <div className={`${base} ${mods}`}>
                 <div className="flex items-center gap-4">
                     <span
-                        className={`material-symbols-outlined ${paid ? 'text-primary' : next ? 'text-primary animate-pulse' : 'text-gray-600'}`}
+                        className={`material-symbols-outlined ${paid ? 'text-primary' : next ? 'text-primary animate-pulse' : 'text-slate-400 dark:text-gray-600'}`}
                     >
                         {icon}
                     </span>
 
                     <div className="flex flex-col">
                         <p
-                            className={`font-medium ${paid ? 'line-through text-white' : 'text-white'}`}
+                            className={`font-medium ${paid ? 'line-through text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}
                         >
                             {title}
                         </p>
-                        <p className="text-sm text-[#9eb7a8]">
+                        <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
                             {paid ? `Pagada el ${formattedDate}` : next ? 'Proxima' : 'Pendiente'}
                         </p>
                     </div>
@@ -61,11 +62,13 @@ export function Cuota({
                 <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
                         <p
-                            className={`font-semibold ${paid ? 'line-through text-white' : 'text-white'}`}
+                            className={`font-semibold ${paid ? 'line-through text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}
                         >
                             {monto}
                         </p>
-                        <span className="text-xs text-[#9eb7a8]">{currency}</span>
+                        <span className="text-xs text-slate-500 dark:text-[#9eb7a8]">
+                            {currency}
+                        </span>
                     </div>
 
                     {paid && (
@@ -82,7 +85,7 @@ export function Cuota({
                             className={`material-symbols-outlined text-xl transition-colors ${
                                 canRefund
                                     ? 'text-red-400 hover:text-red-300 cursor-pointer'
-                                    : 'text-gray-600 cursor-not-allowed'
+                                    : 'text-slate-400 dark:text-gray-600 cursor-not-allowed'
                             }`}
                         >
                             undo

@@ -13,7 +13,7 @@ src/
   layouts/         AppLayout: sidebar + Outlet; carga entidades, categorías y sesión de cuentas al montar
   pages/<feature>/ una carpeta por pantalla: <Feature>.jsx + components/ + hooks/
   components/      componentes compartidos entre pantallas (y modals/)
-  hooks/           hooks compartidos (use-pusher-channel, use-settlement, use-exchange-rates)
+  hooks/           hooks compartidos (use-pusher-channel, use-settlement, use-exchange-rates, use-theme-sync)
   services/        api.js (instancia única de axios + todas las llamadas), error-handler.js
   store/           stores de zustand, uno por dominio
   lib/             singletons de clientes de terceros (pusher.js)
@@ -66,7 +66,8 @@ Consecuencias:
 
 - **Feedback global**: `GlobalFeedback.jsx` monta una vez el snackbar y el diálogo. Se disparan desde cualquier lado con `useSnackbarStore.getState().show(mensaje, tipo, icono)` y `useDialogStore.getState().alert({ title, message, tone })`. Sin prop drilling. Para pedir confirmación se usa `await useDialogStore.getState().confirm({ title, message, tone, confirmLabel })`, que resuelve `true`/`false`; no se usan `window.alert`/`window.confirm` nativos. Si la acción confirmada tarda (p. ej. terminar o descartar la sesión de cuentas), se pasa como `onConfirm: async () => …`: el diálogo queda abierto y bloqueado, con el spinner en su botón, hasta que termina.
 - **Auth con persistencia manual**: `use-auth-store.js` lee y escribe `user` / `token` en `localStorage` dentro de sus acciones (no usa el middleware `persist`). Un campo persistido nuevo requiere tocar `getStoredAuthData()`, las acciones que lo setean y la limpieza de `logout()`.
-- **Preferencias de UI**: `use-ui-store.js`, persistidas en `localStorage` bajo `ui:prefs`.
+- **Preferencias de UI**: `use-ui-store.js`, persistidas en `localStorage` bajo `ui:prefs` (barra lateral, balances ocultos, vista de entidades y `themeMode`).
+- **Tema claro/oscuro**: `themeMode` (`ThemeMode` de `utils/enums.js`: `system`, `light`, `dark`; por defecto `system`). `utils/theme.js` pone o saca la clase `dark` en `<html>`; `main.jsx` la aplica antes del primer render (para que no parpadee) y `useThemeSync()` (montado en `App.jsx`) la mantiene al día, escuchando `prefers-color-scheme` cuando el modo es `system`. El selector está en Configuración (`AparienciaCard`).
 - **Sin actualizaciones optimistas**: ningún cambio se aplica en pantalla antes de que responda el servidor. El botón muestra un spinner mientras el pedido está en curso, sin cambiar de tamaño (el contenido queda `invisible` y el spinner va encima), y la pantalla se actualiza con la respuesta, sin recargar todo. Si falla, no hay nada que revertir.
     - Favorito y postergar en el dashboard: `busyKeys` de `use-dashboard-data.js` (claves `postpone:<id>`, `favGasto:<id>`, `favEntidad:<id>`).
     - Marcar y desmarcar en la sesión de cuentas: `pendingIds` de `use-settlement-store.js`, o `loadingSettleIds` del dashboard para el diálogo de pago. Después del diálogo, las marcas se toman de la respuesta del POST (`applyMarked`), sin volver a pedir la sesión.
@@ -97,6 +98,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - Carpetas de `pages/` y términos del dominio en español, igual que la API.
 - Enums de dominio en `utils/enums.js`; no comparar contra strings sueltos.
 - Campos de monto con `components/AmountInput.jsx` (o `TextInput` con `type="amount"`): muestra los puntos de miles y la coma decimal mientras se escribe, pero el valor del estado sigue siendo el número crudo (`"1234.5"`), listo para `Number(...)`. No usar `type="number"` para montos.
+- **Colores en los dos temas**: la variante `dark:` de Tailwind depende de la clase `dark` (`@custom-variant` en `index.css`), no del sistema operativo. Todo color de fondo, texto o borde lleva su par: `bg-white dark:bg-[#111714]`, `text-slate-900 dark:text-white`, `text-slate-500 dark:text-[#9eb7a8]`, `border-slate-200 dark:border-[#29382f]`. Un color sin `dark:` solo vale si sirve en los dos temas (texto blanco sobre un botón rojo o verde, overlays `bg-black/60`). Lo que no se pinta con clases (ejes y grilla de recharts) usa las variables `--chart-grid` y `--chart-tick` de `index.css`.
 - Desplegables con `components/Select.jsx`, nunca con `<select>` nativo: recibe `options` (`{ value, label }`), `value`, `onChange(valor)` (siempre string, como el `<select>`) y un `placeholder` opcional que funciona como opción vacía. Con más de 10 opciones muestra un buscador (sin distinguir mayúsculas ni tildes). La lista se abre en un portal, así que no la recorta el `overflow` de un modal.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.

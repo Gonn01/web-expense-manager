@@ -38,8 +38,8 @@ export function useGastoData() {
 
     async function actualizar(payload) {
         if (!gasto) return;
-        await updateGasto(gasto.id, payload, token);
-        await load(true);
+        const updated = await updateGasto(gasto.id, payload, token);
+        setGasto(updated);
     }
 
     async function settleQuota() {

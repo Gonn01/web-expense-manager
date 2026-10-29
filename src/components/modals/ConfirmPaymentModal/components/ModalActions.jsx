@@ -7,7 +7,7 @@ export default function ModalActions({ onCancel, onConfirm, loading = false, dis
                 type="button"
                 onClick={onCancel}
                 disabled={loading}
-                className="h-10 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 text-sm font-bold hover:bg-slate-600 transition-colors text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-10 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-900 dark:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 Cancelar
             </button>

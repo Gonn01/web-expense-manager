@@ -30,14 +30,14 @@ export default function AlertModal({ open, title, message, confirmLabel = 'Enten
         >
             <div
                 className={`
-                    w-[90vw] max-w-sm rounded-xl bg-[#111714] p-6 border border-[#29382f]
-                    shadow-lg text-white transition-all duration-150
+                    w-[90vw] max-w-sm rounded-xl bg-white dark:bg-[#111714] p-6 border border-slate-200 dark:border-[#29382f]
+                    shadow-lg text-slate-900 dark:text-white transition-all duration-150
                     ${open ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
                 `}
             >
                 <h2 className="text-lg font-bold mb-2">{title}</h2>
 
-                <p className="text-sm text-[#9eb7a8] mb-6">{message}</p>
+                <p className="text-sm text-slate-500 dark:text-[#9eb7a8] mb-6">{message}</p>
 
                 <div className="flex justify-end">
                     <button

@@ -11,7 +11,7 @@ export default function PasswordInput({ value, onChange, placeholder }) {
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className="form-input block h-12 w-full rounded-lg border border-gray-700 bg-background-dark px-3 text-white"
+                className="form-input block h-12 w-full rounded-lg border border-slate-300 dark:border-gray-700 bg-white dark:bg-background-dark px-3 text-slate-900 dark:text-white"
             />
             <button
                 type="button"

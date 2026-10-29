@@ -17,22 +17,24 @@ export default function EntitySelector({
 }) {
     return (
         <div className="space-y-2">
-            <label className="text-white text-sm font-medium">Entidad financiera</label>
+            <label className="text-slate-900 dark:text-white text-sm font-medium">
+                Entidad financiera
+            </label>
 
             <div className="relative">
                 {loading ? (
-                    <div className="h-12 w-full rounded-lg bg-[#1c2620] border border-[#3d5245] animate-pulse flex items-center px-3">
-                        <div className="h-4 w-32 bg-[#29382f] rounded" />
+                    <div className="h-12 w-full rounded-lg bg-slate-50 dark:bg-[#1c2620] border border-slate-300 dark:border-[#3d5245] animate-pulse flex items-center px-3">
+                        <div className="h-4 w-32 bg-slate-100 dark:bg-[#29382f] rounded" />
                     </div>
                 ) : entities.length === 0 ? (
-                    <div className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 flex items-center gap-2 text-[#9eb7a8] text-sm">
+                    <div className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm">
                         <Icon name="info" className="text-base" />
                         No tenés entidades creadas aún
                     </div>
                 ) : (
                     <div className="relative">
                         <Select
-                            className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 text-white cursor-pointer"
+                            className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer"
                             value={entity}
                             onChange={setEntity}
                             placeholder="Seleccionar..."
@@ -61,11 +63,11 @@ export default function EntitySelector({
             )}
 
             {showNewEntity && (
-                <div className="mt-3 p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
+                <div className="mt-3 p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
                     <input
                         disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
-               text-white px-3 disabled:opacity-60"
+                        className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
+               text-slate-900 dark:text-white px-3 disabled:opacity-60"
                         placeholder="Nombre de la nueva entidad"
                         value={newEntityName}
                         onChange={(e) => setNewEntityName(e.target.value)}
@@ -75,8 +77,8 @@ export default function EntitySelector({
                     <input
                         type="email"
                         disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
-               text-white px-3 disabled:opacity-60"
+                        className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245]
+               text-slate-900 dark:text-white px-3 disabled:opacity-60"
                         placeholder="Vincular a un usuario (opcional)"
                         value={newEntityEmail}
                         onChange={(e) => setNewEntityEmail(e.target.value)}
@@ -91,7 +93,7 @@ export default function EntitySelector({
                             }}
                             disabled={loadingNewEntity}
                             className={`text-sm px-3 py-1.5 rounded-lg
-                            ${loadingNewEntity ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white cursor-pointer'}`}
+                            ${loadingNewEntity ? 'bg-slate-100/60 dark:bg-[#29382f]/60 cursor-not-allowed text-slate-400 dark:text-white/50' : 'bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer'}`}
                         >
                             Cancelar
                         </button>

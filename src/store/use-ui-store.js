@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { ThemeMode } from '@/utils/enums';
 
 const STORAGE_KEY = 'ui:prefs';
 
@@ -50,6 +51,15 @@ export const useUIStore = create((set) => ({
     setEntitiesViewMode: (mode) =>
         set((s) => {
             const next = { entitiesViewMode: mode === 'grid' ? 'grid' : 'list' };
+            persist({ ...s, ...next });
+            return next;
+        }),
+
+    setThemeMode: (mode) =>
+        set((s) => {
+            const next = {
+                themeMode: Object.values(ThemeMode).includes(mode) ? mode : ThemeMode.SYSTEM,
+            };
             persist({ ...s, ...next });
             return next;
         }),

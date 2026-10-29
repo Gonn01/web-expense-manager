@@ -16,13 +16,15 @@ export default function HeaderDetalle({ gasto, marcarProxima, abrirEditar }) {
                         onClick={marcarProxima}
                         className="cursor-pointer h-10 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-opacity-90 transition-opacity"
                     >
-                        {gasto.type === 'INGRESO' ? 'Marcar cuota como cobrada' : 'Marcar cuota como pagada'}
+                        {gasto.type === 'INGRESO'
+                            ? 'Marcar cuota como cobrada'
+                            : 'Marcar cuota como pagada'}
                     </button>
                 ) : null}
 
                 <button
                     onClick={abrirEditar}
-                    className="cursor-pointer h-10 px-4 rounded-lg bg-[#29382f] text-white text-sm font-bold hover:bg-opacity-80 transition-all"
+                    className="cursor-pointer h-10 px-4 rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold hover:bg-opacity-80 transition-all"
                 >
                     Editar
                 </button>

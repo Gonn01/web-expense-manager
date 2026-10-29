@@ -60,7 +60,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | Módulo | Qué cubre |
 | --- | --- |
 | AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google; sesión persistente; cierre de sesión y expiración. |
-| CFG — Configuración | Perfil, moneda preferida y sueldo. |
+| CFG — Configuración | Perfil, moneda preferida, sueldo y tema de la interfaz (claro, oscuro o el del sistema). |
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
 | ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración (solo web). |
 | GAS — Gastos | Alta (con entidad nueva, gasto espejo o cuotas ya pagas), detalle, edición, baja lógica, postergación, favoritos e historial. |
@@ -82,4 +82,4 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (CORS, canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).

@@ -64,6 +64,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-36 | Confirmar pago compartido | Contraparte | 05 |
 | CU-37 | Rechazar pago compartido | Contraparte | 05 |
 | CU-38 | Recibir notificaciones en tiempo real | Usuario, Contraparte | 05 |
+| CU-39 | Elegir tema | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -161,6 +162,17 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 2a. El valor no es numérico o es negativo: el sistema lo rechaza.
 - **Postcondición**: las métricas "porcentaje del sueldo" usan el nuevo valor.
+
+### CU-39 — Elegir tema
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-04
+- **Flujo principal**
+    1. En Configuración, el usuario elige Sistema, Claro u Oscuro.
+    2. El cliente aplica el tema al instante y guarda la elección en el dispositivo.
+- **Flujos alternativos**
+    - 1a. El usuario elige Sistema: el cliente sigue el tema del dispositivo y lo vuelve a aplicar cada vez que este cambia.
+- **Postcondición**: el cliente abre con el tema elegido en ese dispositivo; otros dispositivos de la misma cuenta conservan el suyo.
 
 ### CU-08 — Consultar dashboard
 

@@ -3,7 +3,7 @@ export default function GoogleButton({ loading, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className="flex w-full justify-center items-center gap-3 rounded-lg border border-gray-700 px-3 py-2.5 text-sm text-gray-300"
+            className="flex w-full justify-center items-center gap-3 rounded-lg border border-slate-300 dark:border-gray-700 px-3 py-2.5 text-sm text-slate-700 dark:text-gray-300"
         >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24">
                 <g clipPath="url(#g)">
