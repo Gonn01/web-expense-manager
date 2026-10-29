@@ -38,11 +38,9 @@ export default function Select({
     const selected = options.find((o) => String(o.value) === String(value ?? ''));
 
     const visibleOptions = useMemo(() => {
-        const base = placeholder ? [{ value: '', label: placeholder, isPlaceholder: true }] : [];
         const q = normalize(query.trim());
-        const matches = q ? options.filter((o) => normalize(o.label).includes(q)) : options;
-        return q ? matches : [...base, ...matches];
-    }, [options, placeholder, query]);
+        return q ? options.filter((o) => normalize(o.label).includes(q)) : options;
+    }, [options, query]);
 
     const updatePosition = useCallback(() => {
         const rect = triggerRef.current?.getBoundingClientRect();
@@ -229,13 +227,11 @@ export default function Select({
                                             } ${
                                                 isSelected
                                                     ? 'font-semibold text-primary'
-                                                    : option.isPlaceholder
-                                                      ? 'text-slate-400'
-                                                      : 'text-slate-900 dark:text-white'
+                                                    : 'text-slate-900 dark:text-white'
                                             }`}
                                         >
                                             <span className="truncate">{option.label}</span>
-                                            {isSelected && !option.isPlaceholder && (
+                                            {isSelected && (
                                                 <Icon name="check" className="shrink-0 text-base" />
                                             )}
                                         </li>
