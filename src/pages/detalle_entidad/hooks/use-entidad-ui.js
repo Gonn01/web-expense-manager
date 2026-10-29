@@ -69,9 +69,14 @@ export function useEntidadUI() {
 
     async function onCreateExpense(payload) {
         setLoadingCreatingExpense(true);
-        await crearGastoEntidad(payload);
-        setLoadingCreatingExpense(false);
-        setOpenNewExpense(false);
+        try {
+            await crearGastoEntidad(payload);
+            setOpenNewExpense(false);
+        } catch (err) {
+            console.error('Error creando gasto', err);
+        } finally {
+            setLoadingCreatingExpense(false);
+        }
     }
 
     async function onUpdateEntity(newName) {
