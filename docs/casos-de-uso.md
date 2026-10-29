@@ -175,7 +175,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.
     - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden.
-    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y distribución por categoría.
+    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de las cuotas del mes, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web).
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
 

@@ -28,7 +28,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | --- | --- | --- |
 | RF-CFG-01 | El usuario puede ver su perfil: nombre, email y foto. | CU-05 |
 | RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD, EUR, BRL, CLP y UYU. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
-| RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos. | CU-07 |
+| RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos del mes (ver RF-DSH-07). Limitación conocida: la app móvil guarda el sueldo pero todavía no lo usa en ningún cálculo. | CU-07 |
 
 ## DSH — Dashboard
 
@@ -40,7 +40,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-DSH-04 | El dashboard muestra, por moneda, los totales de egreso, de ingreso y el balance, tanto del saldo restante como de la cuota del período. | CU-08 |
 | RF-DSH-05 | El usuario puede filtrar los gastos por texto (coincide con el nombre del gasto o de la entidad), por moneda, por tipo (egreso/ingreso) y por gasto fijo / no fijo. Por defecto no hay filtro de moneda. | CU-08 |
 | RF-DSH-06 | El sistema muestra los montos convertidos a la moneda preferida usando la cotización vigente de USD, EUR, BRL, CLP y UYU frente a ARS, obtenida de un servicio externo. | CU-08 |
-| RF-DSH-07 | El usuario puede ver gráficos de sus gastos activos: evolución de cuotas, evolución de montos y distribución por categoría, incluyendo qué porcentaje del sueldo representa cada categoría. | CU-08 |
+| RF-DSH-07 | El usuario puede ver gráficos de sus gastos activos: evolución de cuotas, evolución de montos y distribución por categoría. La distribución por categoría suma solo egresos y toma la cuota mensual de cada gasto (no el monto total), convertida a la moneda preferida. Si el usuario cargó su sueldo, muestra qué porcentaje del sueldo (convertido a la misma moneda) representa el total del mes y cada categoría; si no lo cargó, invita a cargarlo. Limitación conocida: por ahora solo en la web; la app móvil no tiene gráficos. | CU-08 |
 | RF-DSH-08 | El dashboard indica cuántos gastos compartidos están pendientes de aprobación por cada entidad. | CU-08, CU-32 |
 | RF-DSH-09 | El usuario puede copiar al portapapeles un resumen en texto de los gastos de una entidad, con formato apto para WhatsApp. | CU-31 |
 | RF-DSH-10 | Desde el dashboard se puede crear un gasto, postergarlo, marcarlo como favorito y marcar entidades como favoritas. | CU-13, CU-17, CU-23, CU-24 |

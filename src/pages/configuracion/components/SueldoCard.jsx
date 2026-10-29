@@ -30,9 +30,9 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                 <InfoTooltip
                     align="start"
                     text={
-                        'Se usa para calcular qué porcentaje de tu sueldo representa cada ' +
-                        'categoría de gasto (lo ves en el gráfico de categorías del dashboard ' +
-                        'y de cada entidad). No afecta ningún cálculo de pagos ni balances.'
+                        'Se usa en "Ver gráficos" (dashboard y detalle de cada entidad) para ' +
+                        'mostrar qué porcentaje de tu sueldo se lleva lo que pagás en el mes, ' +
+                        'en total y por categoría. No afecta ningún cálculo de pagos ni balances.'
                     }
                 />
             </h2>
