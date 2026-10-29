@@ -1,8 +1,5 @@
-/**
- * Validación de los formularios de alta y edición de gastos.
- * Devuelve un objeto { campo: mensaje } con los errores, en el mismo orden en
- * que los campos aparecen en pantalla (el primero es al que se lleva la vista).
- */
+export const MAX_INSTALLMENTS = 360;
+
 export const EXPENSE_FIELD_LABELS = {
     entity: 'Entidad financiera',
     paymentEntity: 'Entidad de pago',
@@ -10,6 +7,10 @@ export const EXPENSE_FIELD_LABELS = {
     amount: 'Monto',
     installments: 'Cantidad de cuotas',
 };
+
+export function exceedsMaxInstallments(installments) {
+    return Number(installments) > MAX_INSTALLMENTS;
+}
 
 export function validateExpenseForm({
     entity,
@@ -50,13 +51,14 @@ export function validateExpenseForm({
             errors.installments = 'La cantidad de cuotas es obligatoria.';
         } else if (!Number.isInteger(n) || n < 1) {
             errors.installments = 'La cantidad de cuotas debe ser un número entero mayor a 0.';
+        } else if (exceedsMaxInstallments(n)) {
+            errors.installments = `El máximo es de ${MAX_INSTALLMENTS} cuotas.`;
         }
     }
 
     return errors;
 }
 
-/** Lleva la vista al primer campo con error dentro del modal y le da foco. */
 export function focusFirstError(container, errors) {
     const first = Object.keys(errors)[0];
     if (!container || !first) return;

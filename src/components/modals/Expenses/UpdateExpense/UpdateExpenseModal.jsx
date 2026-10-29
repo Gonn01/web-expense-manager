@@ -13,7 +13,7 @@ import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import LockedField, { LockReason } from '../components/LockedField';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
-import { validateExpenseForm, focusFirstError } from '../validate-expense';
+import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
 export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const { token } = useAuth();
@@ -75,9 +75,11 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         () => validateExpenseForm({ entity, name, amount, isInstallment, installments }),
         [entity, name, amount, isInstallment, installments],
     );
-    // Los errores se muestran recién después del primer intento de guardar.
     const [submitted, setSubmitted] = useState(false);
     const visibleErrors = submitted ? errors : {};
+    const installmentsFieldError =
+        visibleErrors.installments ??
+        (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
     const installmentsError =
         isInstallment && installments !== '' && totalInstallments < committedQuotas
             ? `No puede ser menor que las cuotas ya pagadas o pendientes (${committedQuotas}).`
@@ -88,7 +90,11 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         if (!base) return false;
         if (!isInstallment) return true;
         const total = Number(installments);
-        return Number.isInteger(total) && total >= Math.max(1, committedQuotas);
+        return (
+            Number.isInteger(total) &&
+            total >= Math.max(1, committedQuotas) &&
+            !exceedsMaxInstallments(total)
+        );
     }, [name, entity, amount, currency, isInstallment, installments, committedQuotas]);
 
     const amountNote =
@@ -270,6 +276,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                 totalInstallments={totalInstallments}
                                 progressPct={progressPct}
                                 installmentsLock={locks.number_of_quotas}
+                                error={installmentsFieldError}
                                 paidLock={paidLock}
                             />
                             {installmentsError && (
@@ -304,7 +311,6 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     )}
                 </div>
 
-                {/* FOOTER */}
                 <footer className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
                     <ExpenseFormErrors errors={visibleErrors} />
 

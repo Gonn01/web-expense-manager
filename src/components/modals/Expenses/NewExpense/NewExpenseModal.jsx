@@ -17,7 +17,7 @@ import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import PaymentEntitySection from '../components/PaymentEntitySection';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
-import { validateExpenseForm, focusFirstError } from '../validate-expense';
+import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
 export default function NewExpenseModal({
     onClose,
@@ -91,10 +91,11 @@ export default function NewExpenseModal({
             }),
         [entity, name, amount, isInstallment, installments, payWithEntity, paymentEntity],
     );
-    // Los errores se muestran recién después del primer intento de guardar, y
-    // desde ahí se actualizan a medida que el usuario corrige los campos.
     const [submitted, setSubmitted] = useState(false);
     const visibleErrors = submitted ? errors : {};
+    const installmentsFieldError =
+        visibleErrors.installments ??
+        (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
 
     const handleCreateEntity = async () => {
         if (!newEntityName.trim()) return;
@@ -244,7 +245,7 @@ export default function NewExpenseModal({
 
                     {isInstallment && (
                         <ExpenseInstallmentsSection
-                            error={visibleErrors.installments}
+                            error={installmentsFieldError}
                             installments={installments}
                             setInstallments={setInstallments}
                             paidInstallments={paidInstallments}
@@ -312,7 +313,6 @@ export default function NewExpenseModal({
                         </span>
                     </label>
                 </div>
-                {/* FOOTER */}
                 <footer className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
                     <ExpenseFormErrors errors={visibleErrors} />
 
