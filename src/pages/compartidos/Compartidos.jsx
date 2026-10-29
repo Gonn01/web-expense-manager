@@ -3,6 +3,7 @@ import RecibidoCard from './components/RecibidoCard';
 import EmitidoCard from './components/EmitidoCard';
 import PagoCompartidoCard from './components/PagoCompartidoCard';
 import AprobarModal from './components/AprobarModal';
+import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import Loader from '@/components/Loader';
 import Icon from '@/components/Icon';
 import InfoTooltip from '@/components/InfoTooltip';
@@ -19,12 +20,27 @@ export default function Compartidos() {
         reintentar,
         confirmarPago,
         rechazarPago,
+        crearGasto,
     } = useCompartidos();
     const [aprobarTarget, setAprobarTarget] = useState(null);
+    const [openNewExpense, setOpenNewExpense] = useState(false);
+    const [savingExpense, setSavingExpense] = useState(false);
 
     const handleAprobar = async (entityId, newEntityName) => {
         await aprobar(aprobarTarget.id, entityId, newEntityName);
         setAprobarTarget(null);
+    };
+
+    const handleCreateExpense = async (payload) => {
+        setSavingExpense(true);
+        try {
+            await crearGasto(payload);
+            setOpenNewExpense(false);
+        } catch (err) {
+            console.error('Error creando gasto:', err);
+        } finally {
+            setSavingExpense(false);
+        }
     };
 
     const recibidosPendientes = compartidos.recibidos.filter(
@@ -95,6 +111,8 @@ export default function Compartidos() {
         />
     ));
 
+    const isEmpty = needsAction.length === 0 && waitingOther.length === 0 && rejected.length === 0;
+
     if (loading) return <Loader />;
 
     return (
@@ -116,15 +134,27 @@ export default function Compartidos() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                <SubSection title="Necesita tu acción" icon="priority_high">
-                    {needsAction}
-                </SubSection>
+            {isEmpty ? (
+                <EmptyState onNewExpense={() => setOpenNewExpense(true)} />
+            ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <SubSection title="Necesita tu acción" icon="priority_high">
+                        {needsAction}
+                    </SubSection>
 
-                <SubSection title="Esperando a la otra persona" icon="hourglass_top">
-                    {waitingOther}
-                </SubSection>
-            </div>
+                    <SubSection title="Esperando a la otra persona" icon="hourglass_top">
+                        {waitingOther}
+                    </SubSection>
+                </div>
+            )}
+
+            {openNewExpense && (
+                <NewExpenseModal
+                    onClose={() => setOpenNewExpense(false)}
+                    onSave={handleCreateExpense}
+                    saving={savingExpense}
+                />
+            )}
 
             {rejected.length > 0 && (
                 <div className="mt-6">
@@ -144,6 +174,29 @@ export default function Compartidos() {
                 />
             )}
         </>
+    );
+}
+
+function EmptyState({ onNewExpense }) {
+    return (
+        <div className="flex flex-col items-center text-center gap-3 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 px-6 py-10">
+            <Icon name="group" className="text-4xl text-zinc-400 dark:text-zinc-500" />
+            <p className="text-lg font-bold text-zinc-800 dark:text-white">
+                No tenés gastos compartidos pendientes
+            </p>
+            <p className="max-w-md text-sm text-zinc-500 dark:text-zinc-400">
+                Para compartir un gasto con alguien, podés vincular una entidad a su usuario usando
+                su email, desde el detalle de la entidad. El gasto le va a llegar para su
+                aprobación.
+            </p>
+            <button
+                onClick={onNewExpense}
+                className="cursor-pointer mt-2 flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
+            >
+                <Icon name="add_circle" className="mr-2" />
+                Crear Gasto / Deuda
+            </button>
+        </div>
     );
 }
 
