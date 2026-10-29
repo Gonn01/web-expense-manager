@@ -1,4 +1,5 @@
 import TextInput from '@/components/TextInput';
+import { LockReason } from './LockedField';
 
 export default function ExpenseInstallmentsSection({
     installments,
@@ -9,35 +10,43 @@ export default function ExpenseInstallmentsSection({
     progressPct,
     setPaidInstallments,
     error,
+    installmentsLock,
+    paidLock,
 }) {
     return (
         <>
             <div className="grid grid-cols-2 gap-4 items-start">
-                <div data-field="installments">
+                <div className="space-y-1.5" data-field="installments">
                     <TextInput
                         label="Cantidad de cuotas"
                         type="number"
                         value={installments}
+                        disabled={Boolean(installmentsLock)}
                         onChange={(e) => setInstallments(e.target.value)}
                         error={error}
                     />
+                    <LockReason reason={installmentsLock} />
                 </div>
 
-                <TextInput
-                    label="Cuotas pagadas"
-                    type="number"
-                    value={paidInstallments}
-                    onChange={(e) => {
-                        const value = Number(e.target.value);
-                        const max = Number(installments) || 0;
+                <div className="space-y-1.5">
+                    <TextInput
+                        label="Cuotas pagadas"
+                        type="number"
+                        value={paidInstallments}
+                        disabled={Boolean(paidLock)}
+                        onChange={(e) => {
+                            const value = Number(e.target.value);
+                            const max = Number(installments) || 0;
 
-                        if (value < 0) return setPaidInstallments('0');
+                            if (value < 0) return setPaidInstallments('0');
 
-                        if (value > max) return setPaidInstallments(String(max));
+                            if (value > max) return setPaidInstallments(String(max));
 
-                        setPaidInstallments(e.target.value);
-                    }}
-                />
+                            setPaidInstallments(e.target.value);
+                        }}
+                    />
+                    <LockReason reason={paidLock} />
+                </div>
             </div>
 
             <div>

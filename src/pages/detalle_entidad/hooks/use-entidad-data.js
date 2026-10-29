@@ -73,7 +73,6 @@ export function useEntidadData() {
             const total = Number(nuevo.number_of_quotas || 0);
 
             setEntity((prev) => {
-                // Gasto creado en una entidad vinculada: queda pendiente de aprobación.
                 if (nuevo.status === 'PENDING_APPROVAL') {
                     return {
                         ...prev,
@@ -133,8 +132,6 @@ export function useEntidadData() {
     const restaurarGasto = useCallback(
         async (gastoId) => {
             const restored = await restaurarGastoApi(gastoId, token);
-            // Sale de la lista de eliminados y vuelve a activos, sin recargar
-            // toda la entidad.
             setEntity((prev) =>
                 prev
                     ? {
@@ -173,9 +170,6 @@ export function useEntidadData() {
         }));
     }, [id, token]);
 
-    // El "modo hacer cuentas" vive solo en el dashboard: desde el detalle de
-    // entidad el pago es SIEMPRE directo (aunque haya una sesión abierta). Si el
-    // gasto estaba postergado, el backend le quita la postergación al pagar.
     const settleQuota = useCallback(
         async (gasto) => {
             try {
@@ -210,7 +204,6 @@ export function useEntidadData() {
                     .getState()
                     .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
             } catch (err) {
-                // El interceptor de axios ya mostró el mensaje según el código.
                 console.error('Error registrando pago', err);
             }
         },
@@ -228,7 +221,6 @@ export function useEntidadData() {
         desvincularUsuario,
         settleQuota,
         setEntity,
-        // Gastos eliminados (soft-delete): vienen dentro del detalle de la entidad.
         gastosEliminados: entity?.gastos_eliminados ?? [],
         restaurarGasto,
     };

@@ -4,9 +4,9 @@ import Icon from '@/components/Icon';
 import InfoTooltip from '@/components/InfoTooltip';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { useDialogStore } from '@/store/use-dialog-store';
 import { useSettlement } from '@/hooks/use-settlement';
 
-/** Botón del header del dashboard para activar el modo. */
 export function SettlementToggle() {
     const active = useSettlementStore((s) => s.active);
     const startSession = useSettlementStore((s) => s.startSession);
@@ -19,14 +19,24 @@ export function SettlementToggle() {
             <button
                 onClick={async () => {
                     setStarting(true);
-                    await startSession();
-                    setStarting(false);
+                    try {
+                        await startSession();
+                    } finally {
+                        setStarting(false);
+                    }
                 }}
                 disabled={starting}
-                className="cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60"
+                className="relative cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60 disabled:cursor-wait"
             >
-                <Icon name="playlist_add_check" className="mr-2" />
-                Hacer cuentas
+                <span className={`flex items-center ${starting ? 'invisible' : ''}`}>
+                    <Icon name="playlist_add_check" className="mr-2" />
+                    Hacer cuentas
+                </span>
+                {starting && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                        <span className="w-5 h-5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                    </span>
+                )}
             </button>
             <InfoTooltip
                 align="end"
@@ -41,29 +51,38 @@ export function SettlementToggle() {
     );
 }
 
-/** Banner visible mientras la sesión de cuentas está abierta. */
 export function SettlementBar({ totalItems = 0 }) {
     const { active, checkedCount, startedLabel } = useSettlement();
     const finishSession = useSettlementStore((s) => s.finishSession);
     const discardSession = useSettlementStore((s) => s.discardSession);
     const showSnackbar = useSnackbarStore((s) => s.show);
     const navigate = useNavigate();
-    const [working, setWorking] = useState(false);
+    const confirmDialog = useDialogStore((s) => s.confirm);
 
     if (!active) return null;
 
     const pct = totalItems > 0 ? Math.min(100, Math.round((checkedCount / totalItems) * 100)) : 0;
 
     const handleFinish = async () => {
-        if (
-            !confirm(
-                '¿Terminar las cuentas de este mes? Se van a registrar los pagos de los gastos marcados y se guardará un resumen.',
-            )
-        )
+        if (checkedCount === 0) {
+            showSnackbar(
+                'Marcá al menos un gasto para terminar las cuentas, o descartá la sesión.',
+                'info',
+                'playlist_add_check',
+            );
             return;
-        setWorking(true);
-        const snapshot = await finishSession();
-        setWorking(false);
+        }
+        let snapshot;
+        await confirmDialog({
+            title: 'Terminar cuentas',
+            message:
+                '¿Terminar las cuentas de este mes? Se van a registrar los pagos de los gastos marcados y se guardará un resumen.',
+            tone: 'info',
+            confirmLabel: 'Terminar',
+            onConfirm: async () => {
+                snapshot = await finishSession();
+            },
+        });
         if (snapshot) {
             showSnackbar('Cuentas cerradas. Guardamos el resumen del mes.', 'success');
             navigate(`/app/settlement/${snapshot.id}`);
@@ -71,11 +90,13 @@ export function SettlementBar({ totalItems = 0 }) {
     };
 
     const handleDiscard = async () => {
-        if (!confirm('¿Descartar esta sesión? Se pierden las marcas y no se guarda resumen.'))
-            return;
-        setWorking(true);
-        await discardSession();
-        setWorking(false);
+        await confirmDialog({
+            title: 'Descartar sesión',
+            message: '¿Descartar esta sesión? Se pierden las marcas y no se guarda resumen.',
+            tone: 'error',
+            confirmLabel: 'Descartar',
+            onConfirm: discardSession,
+        });
     };
 
     return (
@@ -115,15 +136,13 @@ export function SettlementBar({ totalItems = 0 }) {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleDiscard}
-                        disabled={working}
-                        className="cursor-pointer text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-50"
+                        className="cursor-pointer text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     >
                         Descartar
                     </button>
                     <button
                         onClick={handleFinish}
-                        disabled={working}
-                        className="cursor-pointer flex items-center gap-1.5 h-9 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-60"
+                        className="cursor-pointer flex items-center gap-1.5 h-9 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors"
                     >
                         <Icon name="check_circle" className="text-base" />
                         Terminar

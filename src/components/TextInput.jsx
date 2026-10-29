@@ -1,20 +1,45 @@
 import Icon from '@/components/Icon';
+import AmountInput from './AmountInput';
 
-export default function TextInput({ label, type = 'text', value, onChange, placeholder, error }) {
+const INPUT_CLASS =
+    'form-input block h-12 w-full rounded-lg border bg-background-dark px-3 text-white disabled:opacity-60 disabled:cursor-not-allowed';
+
+export default function TextInput({
+    label,
+    type = 'text',
+    value,
+    onChange,
+    placeholder,
+    disabled,
+    error,
+}) {
+    const className = `${INPUT_CLASS} ${error ? 'border-red-500' : 'border-gray-700'}`;
+
     return (
         <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">{label}</label>
-            <input
-                type={type}
-                required
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                aria-invalid={error ? true : undefined}
-                className={`form-input block h-12 w-full rounded-lg border bg-background-dark px-3 text-white ${
-                    error ? 'border-red-500' : 'border-gray-700'
-                }`}
-            />
+            {type === 'amount' ? (
+                <AmountInput
+                    required
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                    aria-invalid={error ? true : undefined}
+                    className={className}
+                />
+            ) : (
+                <input
+                    type={type}
+                    required
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                    aria-invalid={error ? true : undefined}
+                    className={className}
+                />
+            )}
             {error && <FieldError message={error} />}
         </div>
     );

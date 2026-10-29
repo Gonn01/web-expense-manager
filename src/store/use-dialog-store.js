@@ -2,21 +2,63 @@ import { create } from 'zustand';
 
 let idSeq = 0;
 
-/**
- * Dialog de acknowledgement global (un solo botón "Entendido").
- * Cualquier parte de la app, incluso fuera de React, puede abrirlo:
- *   useDialogStore.getState().alert({ title, message, tone })
- *
- * Para confirmaciones (aceptar / cancelar) seguí usando los modales dedicados
- * (ConfirmDeleteModal, etc.); esto es solo para "algo salió mal, enterate".
- */
-export const useDialogStore = create((set) => ({
-    current: null, // { id, title, message, tone, confirmLabel }
+export const useDialogStore = create((set, get) => ({
+    current: null,
 
     alert: ({ title = 'Error', message, tone = 'error', confirmLabel = 'Entendido' } = {}) => {
+        get().current?.resolve?.(false);
         idSeq += 1;
-        set({ current: { id: idSeq, title, message, tone, confirmLabel } });
+        set({ current: { id: idSeq, kind: 'alert', title, message, tone, confirmLabel } });
     },
 
-    close: () => set({ current: null }),
+    confirm: ({
+        title = '¿Estás seguro?',
+        message,
+        tone = 'warning',
+        confirmLabel = 'Confirmar',
+        cancelLabel = 'Cancelar',
+        onConfirm,
+    } = {}) =>
+        new Promise((resolve) => {
+            get().current?.resolve?.(false);
+            idSeq += 1;
+            set({
+                current: {
+                    id: idSeq,
+                    kind: 'confirm',
+                    title,
+                    message,
+                    tone,
+                    confirmLabel,
+                    cancelLabel,
+                    resolve,
+                    onConfirm,
+                    busy: false,
+                },
+            });
+        }),
+
+    accept: async () => {
+        const current = get().current;
+        if (!current || current.busy) return;
+        if (!current.onConfirm) {
+            get().close(true);
+            return;
+        }
+
+        set({ current: { ...current, busy: true } });
+        try {
+            await current.onConfirm();
+        } finally {
+            if (get().current?.id === current.id) set({ current: null });
+            current.resolve?.(true);
+        }
+    },
+
+    close: (result = false) => {
+        const current = get().current;
+        if (current?.busy) return;
+        current?.resolve?.(result);
+        set({ current: null });
+    },
 }));

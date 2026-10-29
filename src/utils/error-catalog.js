@@ -1,26 +1,14 @@
-/**
- * Catálogo de errores del front. Espeja los `code` que devuelve la API
- * (ver api-plataformas-desarrollo/utils/errors.js) y define, para cada uno,
- * cómo mostrarlo al usuario:
- *
- *   - message: texto amigable. Si se omite, se usa el `error` que mandó el
- *     backend y, si tampoco hay, el fallback por status.
- *   - variant: 'snackbar' (transitorio) | 'dialog' (requiere acknowledge).
- *   - icon: material symbol para el snackbar.
- *   - title: título del dialog (solo si variant === 'dialog').
- *   - tone: 'error' | 'warning' | 'info' (color del dialog).
- *
- * Para cambiar cómo se ve un error puntual, editá su entrada acá. Nada más.
- */
-
 export const ERROR_PRESENTATION = Object.freeze({
-    // ─── Validación de input ────────────────────────────────────────────────
     VALIDATION_ERROR: { variant: 'snackbar', icon: 'error' },
 
-    // ─── Gastos ─────────────────────────────────────────────────────────────
     GASTO_NOT_FOUND: { message: 'No encontramos ese gasto.', variant: 'snackbar' },
     GASTO_POSTERGADO: {
         message: 'Ese gasto está postergado para la próxima sesión de cuentas.',
+        variant: 'snackbar',
+        icon: 'schedule',
+    },
+    GASTO_PAGADO_NO_POSTERGABLE: {
+        message: 'Un gasto con todas sus cuotas pagas no se puede postergar.',
         variant: 'snackbar',
         icon: 'schedule',
     },
@@ -45,8 +33,17 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
     },
     LISTA_IDS_INVALIDA: { message: 'La selección de gastos no es válida.', variant: 'snackbar' },
+    GASTO_ENTIDAD_NO_EDITABLE: {
+        variant: 'dialog',
+        title: 'No se puede mover el gasto',
+        tone: 'warning',
+    },
+    GASTO_CAMPO_NO_EDITABLE: {
+        variant: 'dialog',
+        title: 'No se puede cambiar ese dato',
+        tone: 'warning',
+    },
 
-    // ─── Entidades financieras ──────────────────────────────────────────────
     ENTIDAD_NOT_FOUND: { message: 'No encontramos esa entidad.', variant: 'snackbar' },
     ENTIDAD_FINANCIERA_NOT_FOUND: {
         message: 'La entidad financiera no existe o fue eliminada.',
@@ -69,9 +66,8 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'No podés vincular tu propia cuenta.',
         variant: 'snackbar',
     },
-    ENTIDAD_YA_VINCULADA: { variant: 'snackbar' }, // el backend manda el nombre en el texto
+    ENTIDAD_YA_VINCULADA: { variant: 'snackbar' },
 
-    // ─── Usuarios / auth ────────────────────────────────────────────────────
     USUARIO_NOT_FOUND: { message: 'No encontramos tu usuario.', variant: 'snackbar' },
     USUARIO_EMAIL_NOT_FOUND: {
         message: 'No hay ningún usuario registrado con ese email.',
@@ -80,7 +76,6 @@ export const ERROR_PRESENTATION = Object.freeze({
     CREDENCIALES_INVALIDAS: { message: 'Email o contraseña incorrectos.', variant: 'snackbar' },
     EMAIL_YA_REGISTRADO: { message: 'Ya existe una cuenta con ese email.', variant: 'snackbar' },
 
-    // ─── Compartidos ────────────────────────────────────────────────────────
     NO_AUTORIZADO: {
         message: 'No tenés permiso para hacer esto.',
         variant: 'dialog',
@@ -92,9 +87,6 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
     },
 
-    // ─── Categorías ─────────────────────────────────────────────────────────
-
-    // ─── Modo "hacer cuentas" (settlement) ───────────────────────────────────
     SETTLEMENT_REQUIRED: {
         message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',
         variant: 'snackbar',
@@ -104,13 +96,14 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'No tenés una sesión de cuentas abierta.',
         variant: 'snackbar',
     },
+    SETTLEMENT_EMPTY: {
+        message: 'Marcá al menos un gasto para terminar las cuentas, o descartá la sesión.',
+        variant: 'snackbar',
+        icon: 'playlist_add_check',
+    },
     SNAPSHOT_NOT_FOUND: { message: 'No encontramos esa sesión de cuentas.', variant: 'snackbar' },
 });
 
-/**
- * Fallback por status HTTP cuando el error no trae un `code` conocido
- * (errores de red, 500 sin body, servicios de terceros, etc.).
- */
 export const STATUS_PRESENTATION = Object.freeze({
     0: {
         message: 'No pudimos conectarnos. Revisá tu conexión a internet.',

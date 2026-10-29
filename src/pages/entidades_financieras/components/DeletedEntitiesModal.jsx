@@ -29,7 +29,6 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
         try {
             await onRestore?.(selected.id);
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error restoring entity:', err);
         } finally {
             setRestoringId(null);
@@ -41,22 +40,19 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
 
     return createPortal(
         <>
-            {/* Backdrop */}
             <div
                 className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
                 onMouseDown={onClose}
             />
 
-            {/* Modal */}
             <div
                 className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8"
                 aria-modal="true"
                 role="dialog"
                 aria-labelledby="deleted-entities-title"
-                onMouseDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
                 <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
-                    {/* Header */}
                     <div className="flex items-start justify-between p-6">
                         <div className="flex flex-col gap-1">
                             <h2
@@ -79,7 +75,6 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                         </button>
                     </div>
 
-                    {/* Body */}
                     <div className="flex-1 px-6 pb-6 max-h-[60vh] overflow-y-auto">
                         {deletedEntities.length === 0 ? (
                             <p className="text-[#9eb7a8] text-sm text-center py-6">
@@ -97,7 +92,9 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                                         </span>
                                         <button
                                             type="button"
-                                            disabled={restoringId === entity.id || restoringId !== null}
+                                            disabled={
+                                                restoringId === entity.id || restoringId !== null
+                                            }
                                             onClick={() => setSelected(entity)}
                                             className="flex items-center justify-center gap-2 shrink-0 rounded-lg h-9 px-3 bg-primary text-[#111714] text-sm font-bold tracking-wide transition-opacity duration-200 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
@@ -110,7 +107,6 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                         )}
                     </div>
 
-                    {/* Footer */}
                     <div className="flex items-center justify-end gap-3 p-6 bg-[#1c2620]/60 border-t border-[#3d5245]">
                         <button
                             type="button"

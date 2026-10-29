@@ -5,16 +5,10 @@ import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 const SETTLEMENT_MSG = 'Activá el modo "Hacer cuentas" para marcar pagos desde acá.';
 
-/** ¿Hay una sesión de "hacer cuentas" abierta? (sin efectos secundarios) */
 export function isSettlementActive() {
     return useSettlementStore.getState().active;
 }
 
-/**
- * Verificador para el flujo de "marcar" del dashboard (pago en lote), que sí
- * necesita una sesión abierta. En el detalle de gasto NO se usa: ahí se puede
- * pagar/revertir sin sesión (queda solo en el historial del gasto).
- */
 export function ensureSettlementActive() {
     if (isSettlementActive()) return true;
     useSnackbarStore.getState().show(SETTLEMENT_MSG, 'error', 'playlist_add_check');
@@ -38,9 +32,7 @@ export function useSettlements(token, onPaid) {
                     updatedItems = updated;
                 }
 
-                // El backend marcó los items en la sesión; resincronizamos.
-                // El pago real se registra al terminar las cuentas.
-                useSettlementStore.getState().refreshAfterPayment();
+                useSettlementStore.getState().applyMarked(updatedItems.map((it) => it.id));
 
                 useSnackbarStore
                     .getState()
@@ -55,7 +47,6 @@ export function useSettlements(token, onPaid) {
                 onPaid?.();
                 return updatedItems;
             } catch (err) {
-                // El interceptor de axios ya mostró el mensaje según el código.
                 console.error('Error pagando cuotas:', err);
                 return [];
             }

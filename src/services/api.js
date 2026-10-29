@@ -11,20 +11,10 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-// Endpoints cuya UI muestra el error inline (formularios de login/registro):
-// no dispares el snackbar/dialog global para ellos, pero igual normalizá el
-// error para que el formulario lo pueda mostrar.
 const SILENT_PATHS = ['/auth/login', '/auth/register'];
 
 let sessionExpiredHandled = false;
 
-/**
- * Manejo central de errores: TODA request que falle pasa por acá.
- *  - normaliza el error (code / status / message amigable)
- *  - lo muestra como snackbar o dialog según el catálogo (salvo endpoints silent)
- *  - en 401 cierra la sesión y manda al login, que muestra el cartel de sesión vencida
- * y re-lanza el error normalizado para que los `catch` locales sigan andando.
- */
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -43,8 +33,6 @@ api.interceptors.response.use(
                         tone: normalized.tone,
                     });
                 } else {
-                    // La recarga borra cualquier dialog: el aviso lo muestra
-                    // la pantalla de login (cartel de sesión vencida).
                     markSessionExpired();
                     window.location.assign('/login');
                 }
@@ -56,10 +44,6 @@ api.interceptors.response.use(
         return Promise.reject(normalized);
     },
 );
-
-/* ===============================
-   AUTH
-=============================== */
 
 export const register = async (userInfo) => {
     const { data } = await api.post('/auth/register', userInfo);
@@ -85,10 +69,6 @@ export const updatePreferredCurrency = async (preferredCurrency, token) => {
     return data.data;
 };
 
-/* ===============================
-   USUARIO
-=============================== */
-
 export const updateSueldo = async (sueldo, sueldoCurrency, token) => {
     const { data } = await api.put(
         '/user/sueldo',
@@ -98,20 +78,12 @@ export const updateSueldo = async (sueldo, sueldoCurrency, token) => {
     return data.data;
 };
 
-/* ===============================
-   DASHBOARD (solo lectura)
-=============================== */
-
 export const fetchDashboardData = async (token) => {
     const { data } = await api.get('/dashboard', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
-
-/* ===============================
-   ENTIDADES FINANCIERAS
-=============================== */
 
 export const fetchFinancialEntities = async (token) => {
     const { data } = await api.get('/entidades-financieras', {
@@ -174,10 +146,6 @@ export const desvincularUsuarioEntidad = async (entityId, token) => {
     });
     return data.data;
 };
-
-/* ===============================
-   GASTOS
-=============================== */
 
 export const createGasto = async (payload, token) => {
     const { data } = await api.post('/gastos', payload, {
@@ -262,10 +230,6 @@ export const favoritoEntidad = async (entidadId, favorite, token) => {
     return data.data;
 };
 
-/* ===============================
-   CATEGORIAS
-=============================== */
-
 export const fetchCategories = async (token) => {
     const { data } = await api.get('/categorias', {
         headers: { Authorization: `Bearer ${token}` },
@@ -289,15 +253,11 @@ export const settleQuotasLote = async (ids, token) => {
     return data.data;
 };
 
-/* ===============================
-   MODO HACER CUENTAS (settlement)
-=============================== */
-
 export const fetchSettlementSession = async (token) => {
     const { data } = await api.get('/settlement/session', {
         headers: { Authorization: `Bearer ${token}` },
     });
-    return data.data; // { session, items } | null
+    return data.data;
 };
 
 export const startSettlementSession = async (token) => {
@@ -306,7 +266,7 @@ export const startSettlementSession = async (token) => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
-    return data.data; // { session, items, alreadyOpen }
+    return data.data;
 };
 
 export const setSettlementItem = async ({ purchase_id, purchase_ids, checked }, token) => {
@@ -314,7 +274,7 @@ export const setSettlementItem = async ({ purchase_id, purchase_ids, checked }, 
     const { data } = await api.put('/settlement/session/items', body, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    return data.data; // { session, items }
+    return data.data;
 };
 
 export const finishSettlementSession = async (token) => {
@@ -323,7 +283,7 @@ export const finishSettlementSession = async (token) => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
-    return data.data; // snapshot
+    return data.data;
 };
 
 export const discardSettlementSession = async (token) => {
@@ -347,15 +307,11 @@ export const fetchSettlementSnapshotById = async (id, token) => {
     return data.data;
 };
 
-/* ===============================
-   COMPARTIDOS
-=============================== */
-
 export const fetchCompartidos = async (token) => {
     const { data } = await api.get('/compartidos', {
         headers: { Authorization: `Bearer ${token}` },
     });
-    return data.data; // { recibidos, emitidos, pagos: { porConfirmar, esperando } }
+    return data.data;
 };
 
 export const aprobarCompartido = async (gastoId, payload, token) => {
@@ -382,11 +338,6 @@ export const reintentarCompartido = async (gastoId, token) => {
     );
     return data.data;
 };
-
-/* ===============================
-   PAGOS COMPARTIDOS (confirmación entre usuarios)
-   La lectura viaja dentro de fetchCompartidos() -> data.pagos
-=============================== */
 
 export const confirmarPago = async (movementId, token) => {
     const { data } = await api.post(

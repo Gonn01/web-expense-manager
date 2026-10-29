@@ -18,7 +18,8 @@ export default function EntityCard({ entity, onClick, onDelete }) {
                     </p>
 
                     <p className="mt-1 text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">
-                        {entity.cantidad == undefined ? 0 : entity.cantidad} gasto{entity.cantidad === 1 ? ' activo' : 's activos'}
+                        {entity.cantidad == undefined ? 0 : entity.cantidad} gasto
+                        {entity.cantidad === 1 ? ' activo' : 's activos'}
                     </p>
 
                     {entity.linked_user_name && (
@@ -30,7 +31,6 @@ export default function EntityCard({ entity, onClick, onDelete }) {
                 </div>
             </div>
 
-            {/* Tacho de basura */}
             <button
                 onClick={(e) => {
                     e.stopPropagation();

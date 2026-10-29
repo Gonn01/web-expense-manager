@@ -24,6 +24,7 @@ export default function ActiveExpenses({
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
+    busyKeys,
 }) {
     const navigate = useNavigate();
 
@@ -47,7 +48,6 @@ export default function ActiveExpenses({
 
     return (
         <div className="lg:col-span-3 xl:col-span-3 flex flex-col gap-4 rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-white/5 min-h-0 flex-1">
-            {/* HEADER */}
             <div className="flex items-center justify-between gap-4">
                 <div className="shrink-0">
                     <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
@@ -65,7 +65,7 @@ export default function ActiveExpenses({
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                     />
                     <input
-                        className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary/50 focus:ring-primary/50"
+                        className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
                         placeholder="Buscar gasto..."
                         type="text"
                         value={query}
@@ -74,7 +74,6 @@ export default function ActiveExpenses({
                 </div>
             </div>
 
-            {/* FILTERS */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2 border-y border-black/10 dark:border-white/10">
                 <FilterGroup label="Moneda">
                     <ToggleButton
@@ -132,7 +131,6 @@ export default function ActiveExpenses({
                 </FilterGroup>
             </div>
 
-            {/* LIST */}
             <div className="flex flex-col gap-3 overflow-y-auto pr-2 flex-1 min-h-0">
                 {filteredGroups.map((group) => (
                     <ActiveFinancialEntity
@@ -149,6 +147,7 @@ export default function ActiveExpenses({
                         onTogglePostpone={onTogglePostpone}
                         onToggleFavoriteGasto={onToggleFavoriteGasto}
                         onToggleFavoriteEntity={onToggleFavoriteEntity}
+                        busyKeys={busyKeys}
                     />
                 ))}
 
@@ -159,7 +158,6 @@ export default function ActiveExpenses({
                 )}
             </div>
 
-            {/* MODAL */}
             <ConfirmInstallmentPaymentModal
                 open={settleModal.modalOpen}
                 entityName={settleModal.modalEntity}

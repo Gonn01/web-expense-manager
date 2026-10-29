@@ -8,7 +8,6 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">
-            {/* Cabecera */}
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -26,7 +25,6 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                 <StatusBadge status={item.status} />
             </div>
 
-            {/* Info del emisor */}
             <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
                 <Icon name="person" className="text-base" />
                 <span>
@@ -34,13 +32,10 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                     <span className="font-medium text-zinc-700 dark:text-zinc-300">
                         {item.sender_name}
                     </span>
-                    {item.sender_entity_name && (
-                        <span> · {item.sender_entity_name}</span>
-                    )}
+                    {item.sender_entity_name && <span> · {item.sender_entity_name}</span>}
                 </span>
             </div>
 
-            {/* Entidad asignada (si ya fue aprobado) */}
             {item.status === 'ACTIVE' && item.assigned_entity_name && (
                 <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                     <Icon name="account_balance" className="text-base" />
@@ -48,7 +43,6 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                 </div>
             )}
 
-            {/* Fecha */}
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
                 {new Date(item.created_at).toLocaleDateString('es-AR', {
                     day: '2-digit',
@@ -57,7 +51,6 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                 })}
             </p>
 
-            {/* Acciones */}
             {isPending && (
                 <div className="flex gap-2 pt-1">
                     <button

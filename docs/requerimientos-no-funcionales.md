@@ -11,7 +11,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. | API |
+| RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
 | RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. | Todos |
 | RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
 | RNF-SEG-04 | El usuario que opera se toma siempre del token, nunca de un dato enviado por el cliente. Toda lectura o modificación de entidades, gastos, categorías, sesiones y snapshots se restringe al dueño. | API |
@@ -58,6 +58,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-02 | El dashboard y el listado de entidades se resuelven con una única consulta agregada cada uno, no con una consulta por entidad. | API |
 | RNF-REN-03 | Una mutación puntual actualiza el estado local con la respuesta del servidor; se evita recargar la pantalla completa. | Web, App |
 | RNF-REN-04 | Varios componentes suscritos al mismo canal de tiempo real comparten una única suscripción. | Web |
+| RNF-REN-05 | Las operaciones sobre varios gastos de una sesión de cuentas (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones en tiempo real que generan se envían en paralelo. | API |
 
 *Limitación conocida*: las acciones de compartidos y la creación de un gasto desde el dashboard todavía recargan la pantalla completa (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 
@@ -65,16 +66,14 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-DIS-01 | Un fallo al emitir una notificación en tiempo real no hace fallar la operación que la originó. | API |
+| RNF-DIS-01 | Un fallo al emitir una notificación en tiempo real no hace fallar la operación que la originó. La notificación se emite solo después de que la operación se guardó, y nunca si se deshizo. | API |
 | RNF-DIS-02 | Un fallo al escribir el historial de una entidad no hace fallar la operación que lo originó. | API |
 | RNF-DIS-03 | Un error no previsto en la API se registra y devuelve un 500 genérico, sin tumbar el servidor ni filtrar el detalle interno. | API |
 | RNF-DIS-04 | Sin servicio de tiempo real, los clientes siguen funcionando; los datos se actualizan al recargar o navegar. | Web, App |
 | RNF-DIS-05 | Sin el servicio de cotizaciones, la aplicación sigue funcionando sin mostrar equivalencias. | Web, App |
 | RNF-DIS-06 | La app móvil arranca y funciona aunque Firebase no esté configurado: el inicio con Google queda deshabilitado y la analítica no hace nada. | App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
-| RNF-DIS-08 | Al finalizar una sesión de cuentas, el fallo al pagar un gasto no impide pagar el resto ni generar el snapshot. | API |
-
-*Limitación conocida*: las operaciones que escriben varias filas (crear gasto con espejo y copia compartida, finalizar una sesión) no se ejecutan dentro de una transacción de base de datos; un fallo a mitad de camino puede dejar datos parciales.
+| RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. | API |
 
 ## INT — Integridad y auditoría
 
@@ -85,6 +84,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-INT-03 | Toda operación relevante sobre un gasto o una entidad deja un movimiento en su historial, con tipo y fecha. | API |
 | RNF-INT-04 | Un snapshot de cuentas es inmutable y autocontenido: guarda nombres y montos al momento del cierre y no cambia si después se editan o eliminan los gastos. | API |
 | RNF-INT-05 | Los montos se guardan en su moneda original. Las conversiones son solo de presentación y nunca se persisten. | Todos |
+| RNF-INT-06 | Toda operación que escribe más de una fila se ejecuta en una transacción de base de datos: si algo falla a mitad de camino, no queda nada a medias. Por ejemplo, crear un gasto con su espejo y su copia compartida, editarlo o eliminarlo junto con su espejo, aprobar o rechazar un compartido, o reemplazar las categorías de un gasto. La única excepción es el historial de entidades (RNF-DIS-02), que es best-effort. | API |
 
 *Limitación conocida*: las fechas se muestran con un corrimiento de 3 horas respecto de la hora local (pendiente en `checklist_mis_cuentas.md`).
 
@@ -99,7 +99,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la web y la app móvil no tienen pruebas automatizadas. Los services de la API distintos del de gastos (compartidos, categorías, settlement, entidades) tampoco.
+*Limitación conocida*: la web y la app móvil no tienen pruebas automatizadas. En la API, los services de compartidos, categorías y entidades tampoco (sí los de gastos, settlement y auth, y los helpers de transacciones de `db.js`).
 
 ## POR — Portabilidad y entorno
 
@@ -126,5 +126,6 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-LOC-01 | La interfaz, los mensajes de error y los términos del dominio están en español rioplatense. | Todos |
 | RNF-LOC-02 | La app móvil no contiene textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | App |
 | RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR, BRL, CLP, UYU). | Web, App |
+| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal. | Web |
 
-*Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español.
+*Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español. La app móvil todavía no formatea los campos de monto mientras se escribe (RNF-LOC-04).

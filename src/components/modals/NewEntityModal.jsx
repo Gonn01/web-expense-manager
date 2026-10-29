@@ -41,22 +41,19 @@ export default function NewEntityModal({ open, onClose, onSave }) {
 
     return createPortal(
         <>
-            {/* Backdrop */}
             <div
                 className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
                 onMouseDown={onClose}
             />
 
-            {/* Modal */}
             <div
                 className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8"
                 aria-modal="true"
                 role="dialog"
                 aria-labelledby="new-entity-title"
-                onMouseDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
                 <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
-                    {/* Header */}
                     <div className="flex items-start justify-between p-6">
                         <div className="flex flex-col gap-1">
                             <h2
@@ -79,7 +76,6 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                         </button>
                     </div>
 
-                    {/* Body */}
                     <div className="flex-1 px-6 pb-6">
                         <div className="flex flex-col gap-4">
                             <label className="flex flex-col w-full">
@@ -87,7 +83,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                     Nombre de la entidad
                                 </p>
                                 <input
-                                    className="form-input flex w/full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#3d5245] bg-[#1c2620] focus:border-primary h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
                                     placeholder="Ej: Banco Galicia, Juan Pérez, etc."
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -101,7 +97,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                 </p>
                                 <input
                                     type="email"
-                                    className="form-input flex w/full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#3d5245] bg-[#1c2620] focus:border-primary h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
                                     placeholder="Email del usuario a vincular"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -110,7 +106,6 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                         </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 p-6 bg-[#1c2620]/60 border-t border-[#3d5245]">
                         <button
                             type="button"
@@ -129,7 +124,9 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                             {saving && (
                                 <span className="w-4 h-4 border-2 border-[#111714]/30 border-t-[#111714] rounded-full animate-spin shrink-0" />
                             )}
-                            <span className="truncate">{saving ? 'Guardando...' : 'Guardar Entidad'}</span>
+                            <span className="truncate">
+                                {saving ? 'Guardando...' : 'Guardar Entidad'}
+                            </span>
                         </button>
                     </div>
                 </div>

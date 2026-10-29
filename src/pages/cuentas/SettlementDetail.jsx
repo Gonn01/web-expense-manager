@@ -78,7 +78,6 @@ export default function SettlementDetail() {
                 />
             </div>
 
-            {/* Totales */}
             <div className="shrink-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-6">
                 {Object.keys(byCurrency).length === 0 && (
                     <p className="text-sm text-slate-400">Este resumen no tiene gastos marcados.</p>
@@ -117,7 +116,6 @@ export default function SettlementDetail() {
                 ))}
             </div>
 
-            {/* Detalle por entidad */}
             <div className="flex flex-col gap-4 overflow-y-auto pr-1 flex-1 min-h-0 pb-4">
                 {groups.map(([entityName, items]) => (
                     <div
@@ -185,7 +183,6 @@ export default function SettlementDetail() {
     );
 }
 
-/** "cuota 3/12" | "pago n° 4" | null si no hay dato */
 function cuotaLabel(it) {
     const n = it.quota_number;
     if (!n || n < 1) return null;

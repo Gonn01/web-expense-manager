@@ -37,7 +37,6 @@ function groupByCurrency(items) {
 
 const sum = (arr) => arr.reduce((s, it) => s + Number(it.amount_per_quota ?? 0), 0);
 
-/** Resumen de lo pagado/cobrado para una entidad dentro de un snapshot. */
 export function buildSettlementEntityText(entityName, items = []) {
     const buf = [`${entityName}:\n`];
 
@@ -60,7 +59,6 @@ export function buildSettlementEntityText(entityName, items = []) {
     return buf.join('').trimEnd();
 }
 
-/** Resumen completo del mes (todas las entidades + totales). */
 export function buildSettlementSnapshotText(snapshot, monthLabelText) {
     const items = Array.isArray(snapshot?.items) ? snapshot.items : [];
     const totals = snapshot?.totals ?? {};

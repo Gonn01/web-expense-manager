@@ -75,7 +75,7 @@ function StatCard({ label, value, tone, sub = false, vertical = false }) {
                     : 'border-black/10 dark:border-white/10 bg-white dark:bg-white/5'
             }`}
         >
-            <p className="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">
+            <p className="whitespace-nowrap text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">
                 {label}
             </p>
             <p
@@ -95,7 +95,7 @@ function BreakdownRow({
     sub = false,
     vertical = false,
 }) {
-    const currencies = Object.values(Currency);
+    const currencies = currenciesWithExpenses(summaryByCurrency, preferredCurrency);
     const rowClass = vertical ? 'flex flex-col gap-3' : 'flex flex-row gap-4 flex-wrap';
 
     return (
@@ -116,7 +116,7 @@ function BreakdownRow({
                                 : 'border-black/10 dark:border-white/10 bg-white dark:bg-white/5'
                         }`}
                     >
-                        <p className="text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">
+                        <p className="whitespace-nowrap text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">
                             {card.label}
                         </p>
 
@@ -130,12 +130,12 @@ function BreakdownRow({
                                         className="flex items-center justify-between gap-2"
                                     >
                                         <span
-                                            className={`text-xs font-semibold w-8 ${isEmpty ? 'text-slate-600 dark:text-slate-700' : 'text-slate-400 dark:text-slate-500'}`}
+                                            className={`shrink-0 text-xs font-semibold w-8 ${isEmpty ? 'text-slate-600 dark:text-slate-700' : 'text-slate-400 dark:text-slate-500'}`}
                                         >
                                             {cur}
                                         </span>
                                         <span
-                                            className={`${sub ? 'text-sm' : 'text-base'} font-bold leading-tight tracking-tight ${isEmpty ? 'text-slate-600 dark:text-slate-700' : card.tone(val)}`}
+                                            className={`${sub ? 'text-sm' : 'text-base'} whitespace-nowrap font-bold leading-tight tracking-tight ${isEmpty ? 'text-slate-600 dark:text-slate-700' : card.tone(val)}`}
                                         >
                                             {new Intl.NumberFormat('es-AR', {
                                                 minimumFractionDigits: 2,
@@ -148,12 +148,12 @@ function BreakdownRow({
                         </div>
 
                         {rates && (
-                            <div className="mt-2 pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
-                                <span className="text-xs text-slate-400 dark:text-slate-500">
+                            <div className="mt-2 pt-2 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
+                                <span className="whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
                                     Total en {preferredCurrency}
                                 </span>
                                 <span
-                                    className={`${card.tone(total)} text-sm font-bold tracking-tight`}
+                                    className={`${card.tone(total)} ml-auto whitespace-nowrap text-sm font-bold tracking-tight`}
                                 >
                                     {formatMoney(total, preferredCurrency)}
                                 </span>
@@ -164,6 +164,14 @@ function BreakdownRow({
             })}
         </div>
     );
+}
+
+function currenciesWithExpenses(summaryByCurrency, preferredCurrency) {
+    const used = Object.values(Currency).filter((cur) => {
+        const s = summaryByCurrency[cur];
+        return Boolean(s?.cuota_egreso) || Boolean(s?.cuota_ingreso);
+    });
+    return used.length > 0 ? used : [preferredCurrency];
 }
 
 function StatCardsBreakdown({ summaryByCurrency, preferredCurrency, rates, vertical = false }) {

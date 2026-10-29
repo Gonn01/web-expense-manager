@@ -41,7 +41,6 @@ export function useConfiguracionUI() {
             await guardarMoneda(moneda);
             showSnackbar('Moneda preferida actualizada.');
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error guardando configuración:', err);
         } finally {
             setLoadingMoneda(false);
@@ -61,7 +60,6 @@ export function useConfiguracionUI() {
             await guardarSueldo(sueldoNumber, sueldoMoneda);
             showSnackbar('Sueldo actualizado.');
         } catch (err) {
-            // El interceptor de axios ya mostró el error.
             console.error('Error guardando sueldo:', err);
         } finally {
             setLoadingSueldo(false);

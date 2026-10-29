@@ -38,6 +38,14 @@ Any functional/business-logic change made here (new feature, changed behavior, n
 
 When making a cross-cutting change, call out explicitly whether the equivalent change was also made (or is needed) in the Flutter app.
 
+## No code comments rule
+
+**Do not write comments in code** — in any of the three projects (this web app, the Flutter app, the API). No `//`, `/* */`, JSX `{/* */}`, JSDoc `/** */` or Dart `///` doc comments, not even section markers like `{/* HEADER */}`. Code must explain itself through names and structure; the "why" of a business rule belongs in `docs/` or the architecture guide, not in the source. When editing a file that still has a comment, remove it.
+
+Only tool directives are allowed, because they change behavior: `eslint-disable*`, `prettier-ignore`, Dart `// ignore:` / `// ignore_for_file:`. Generated files (`lib/l10n/gen/`, `firebase_options.dart`) are left as generated.
+
+An intentionally empty `catch {}` needs no comment: ESLint here allows it (`no-empty` with `allowEmptyCatch`).
+
 ## Commands
 
 ```
@@ -78,7 +86,7 @@ src/
 
 Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 
-**Global feedback singletons**: `src/components/GlobalFeedback.jsx` mounts a snackbar/dialog once at the app root. Trigger them from anywhere with `useSnackbarStore.getState().show(...)` / `useDialogStore.getState().alert(...)` — no prop drilling needed.
+**Global feedback singletons**: `src/components/GlobalFeedback.jsx` mounts a snackbar/dialog once at the app root. Trigger them from anywhere with `useSnackbarStore.getState().show(...)` / `useDialogStore.getState().alert(...)` — no prop drilling needed. For yes/no confirmations use `await useDialogStore.getState().confirm({ title, message, tone, confirmLabel })` (resolves `true`/`false`); never use native `window.alert`/`window.confirm`. For a slow confirmed action pass it as `onConfirm: async () => …`: the dialog stays open and locked, with the spinner on its confirm button, until it finishes.
 
 **Auth persistence is manual**: `use-auth-store.js` reads/writes `user`/`token` to `localStorage` directly inside its actions (not via zustand's `persist` middleware). New persisted auth fields need updates in `getStoredAuthData()`, the relevant actions, and `logout()`'s cleanup.
 

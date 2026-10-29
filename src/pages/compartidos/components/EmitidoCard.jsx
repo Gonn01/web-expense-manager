@@ -8,7 +8,6 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">
-            {/* Cabecera */}
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -26,7 +25,6 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
                 <StatusBadge status={item.copy_status} />
             </div>
 
-            {/* Info entidad propia + receptor */}
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
                     <Icon name="account_balance" className="text-base" />
@@ -51,7 +49,6 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
                 )}
             </div>
 
-            {/* Fecha */}
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
                 {new Date(item.created_at).toLocaleDateString('es-AR', {
                     day: '2-digit',
@@ -60,7 +57,6 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
                 })}
             </p>
 
-            {/* Reintentar */}
             {isRejected && (
                 <button
                     disabled={isLoading}

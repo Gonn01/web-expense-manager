@@ -12,7 +12,6 @@ import {
 const token = () => useAuth.getState().token;
 const toast = (msg, type = 'error') => useSnackbarStore.getState().show(msg, type);
 
-/** items: [{ purchase_id, checked_at }] -> { [id]: { checked_at } } */
 function itemsToMap(items = []) {
     const map = {};
     for (const it of items) {
@@ -21,15 +20,29 @@ function itemsToMap(items = []) {
     return map;
 }
 
-/**
- * "Modo hacer cuentas". La sesión y las marcas viven en la DB
- * (endpoints /settlement/*), así el usuario puede retomarla cuando quiera
- * y desde cualquier dispositivo. El store solo cachea el estado del server.
- */
+async function withPending(set, ids, fn) {
+    const keys = ids.map(String);
+    set((s) => {
+        const next = { ...s.pendingIds };
+        for (const k of keys) next[k] = true;
+        return { pendingIds: next };
+    });
+    try {
+        return await fn();
+    } finally {
+        set((s) => {
+            const next = { ...s.pendingIds };
+            for (const k of keys) delete next[k];
+            return { pendingIds: next };
+        });
+    }
+}
+
 export const useSettlementStore = create((set, get) => ({
     active: false,
-    session: null, // { id, started_at } | null
-    checkedExpenses: {}, // { [purchaseId]: { checked_at } }
+    session: null,
+    checkedExpenses: {},
+    pendingIds: {},
     loading: false,
     loaded: false,
 
@@ -73,6 +86,7 @@ export const useSettlementStore = create((set, get) => ({
             return snapshot;
         } catch (err) {
             console.error('Error cerrando sesión de cuentas:', err);
+            if (err?.code === 'SETTLEMENT_EMPTY') get().loadSession();
             return null;
         }
     },
@@ -90,71 +104,42 @@ export const useSettlementStore = create((set, get) => ({
 
     isChecked: (id) => Boolean(get().checkedExpenses[String(id)]),
 
+    isPending: (id) => Boolean(get().pendingIds[String(id)]),
+
     toggleExpense: async (expense) => {
         const { session, checkedExpenses } = get();
         if (!session) return;
-        const id = String(expense.id);
-        const wasChecked = Boolean(checkedExpenses[id]);
-        const checked = !wasChecked;
-
-        // Optimista
-        set((s) => {
-            const next = { ...s.checkedExpenses };
-            if (checked) next[id] = { checked_at: new Date().toISOString() };
-            else delete next[id];
-            return { checkedExpenses: next };
+        const checked = !checkedExpenses[String(expense.id)];
+        await withPending(set, [expense.id], async () => {
+            try {
+                const data = await setSettlementItem({ purchase_id: expense.id, checked }, token());
+                set({ checkedExpenses: itemsToMap(data.items) });
+            } catch (err) {
+                console.error('Error marcando gasto:', err);
+            }
         });
-
-        try {
-            const data = await setSettlementItem({ purchase_id: expense.id, checked }, token());
-            set({ checkedExpenses: itemsToMap(data.items) });
-        } catch (err) {
-            console.error('Error marcando gasto:', err);
-            // Revertir (el interceptor ya mostró el error)
-            set((s) => {
-                const next = { ...s.checkedExpenses };
-                if (wasChecked) next[id] = checkedExpenses[id];
-                else delete next[id];
-                return { checkedExpenses: next };
-            });
-        }
     },
 
     setExpensesChecked: async (expenses, _entityName, checked) => {
         const { session } = get();
         if (!session || !expenses?.length) return;
         const ids = expenses.map((e) => e.id);
-        const prev = get().checkedExpenses;
-
-        // Optimista
-        set((s) => {
-            const next = { ...s.checkedExpenses };
-            for (const e of expenses) {
-                const id = String(e.id);
-                if (checked)
-                    next[id] = next[id] ?? { checked_at: new Date().toISOString() };
-                else delete next[id];
+        await withPending(set, ids, async () => {
+            try {
+                const data = await setSettlementItem({ purchase_ids: ids, checked }, token());
+                set({ checkedExpenses: itemsToMap(data.items) });
+            } catch (err) {
+                console.error('Error marcando entidad:', err);
             }
-            return { checkedExpenses: next };
         });
-
-        try {
-            const data = await setSettlementItem({ purchase_ids: ids, checked }, token());
-            set({ checkedExpenses: itemsToMap(data.items) });
-        } catch (err) {
-            console.error('Error marcando entidad:', err);
-            set({ checkedExpenses: prev });
-        }
     },
 
-    /** Tras un pago real: el backend ya marcó el item, resincronizamos. */
-    refreshAfterPayment: async () => {
-        if (!get().session) return;
-        try {
-            const data = await fetchSettlementSession(token());
-            if (data?.session) set({ checkedExpenses: itemsToMap(data.items) });
-        } catch {
-            /* noop */
-        }
+    applyMarked: (ids) => {
+        if (!get().session || !ids?.length) return;
+        set((s) => {
+            const next = { ...s.checkedExpenses };
+            for (const id of ids) next[String(id)] = next[String(id)] ?? { checked_at: null };
+            return { checkedExpenses: next };
+        });
     },
 }));

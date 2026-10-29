@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-/** Dialog informativo de un solo boton (sin cancelar), para avisos que no requieren confirmar nada. */
 export default function AlertModal({ open, title, message, confirmLabel = 'Entendido', onClose }) {
     const [visible, setVisible] = useState(open);
 

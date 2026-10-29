@@ -7,7 +7,6 @@ import {
     favoritoEntidad as favoritoEntidadApi,
 } from '@/services/api';
 
-// Favoritos primero; a igualdad, más nuevo primero.
 const byFavThenDate = (aFav, bFav, aDate, bDate) => {
     if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
     return new Date(bDate) - new Date(aDate);
@@ -28,6 +27,31 @@ export function useDashboardData() {
     const [groups, setGroups] = useState([]);
     const [pendingTotal, setPendingTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [busyKeys, setBusyKeys] = useState(() => new Set());
+
+    const runBusy = useCallback(async (key, fn) => {
+        setBusyKeys((prev) => new Set(prev).add(key));
+        try {
+            return await fn();
+        } finally {
+            setBusyKeys((prev) => {
+                const next = new Set(prev);
+                next.delete(key);
+                return next;
+            });
+        }
+    }, []);
+
+    const patchGasto = useCallback((gastoId, patch) => {
+        setGroups((prev) =>
+            prev.map((g) => ({
+                ...g,
+                items: g.items.map((it) =>
+                    String(it.id) === String(gastoId) ? { ...it, ...patch } : it,
+                ),
+            })),
+        );
+    }, []);
 
     const recalcSummary = useCallback((groupsToUse) => {
         const totals = Object.fromEntries(
@@ -96,7 +120,6 @@ export function useDashboardData() {
                             byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at),
                         );
 
-                    // Una entidad favorita se muestra aunque no tenga gastos activos.
                     if (items.length === 0 && !entity.is_favorite) return null;
 
                     return { ...entity, items };
@@ -178,87 +201,59 @@ export function useDashboardData() {
     );
 
     const postergarGasto = useCallback(
-        async (gastoId, postponed) => {
-            // Optimista, confirmado por la respuesta del endpoint: no hace falta
-            // recargar todo el dashboard para un solo campo.
-            let previous;
-            setGroups((prev) => {
-                previous = prev;
-                return prev.map((g) => ({
-                    ...g,
-                    items: g.items.map((it) =>
-                        String(it.id) === String(gastoId) ? { ...it, is_postponed: postponed } : it,
-                    ),
-                }));
-            });
+        (gastoId, postponed) =>
+            runBusy(`postpone:${gastoId}`, async () => {
+                const settlement = useSettlementStore.getState();
+                if (postponed && settlement.session && settlement.isChecked(gastoId)) {
+                    await settlement.toggleExpense({ id: gastoId });
+                }
 
-            // Si se posterga un gasto ya marcado en la sesión de "hacer cuentas",
-            // hay que revertir esa marca: un gasto postergado no debe quedar
-            // contado como pago pendiente de cerrar.
-            const settlement = useSettlementStore.getState();
-            if (postponed && settlement.session && settlement.isChecked(gastoId)) {
-                await settlement.toggleExpense({ id: gastoId });
-            }
-
-            try {
-                await postergarGastoApi(gastoId, postponed, token);
-            } catch (err) {
-                console.error('Error postergando gasto:', err);
-                setGroups(previous);
-            }
-        },
-        [token],
+                try {
+                    await postergarGastoApi(gastoId, postponed, token);
+                    patchGasto(gastoId, { is_postponed: postponed });
+                } catch (err) {
+                    console.error('Error postergando gasto:', err);
+                }
+            }),
+        [token, runBusy, patchGasto],
     );
 
     const favoritoGasto = useCallback(
-        async (gastoId, favorite) => {
-            // Optimista, confirmado por la respuesta del endpoint: no hace falta
-            // recargar todo el dashboard para un solo campo.
-            let previous;
-            setGroups((prev) => {
-                previous = prev;
-                return prev.map((g) => ({
-                    ...g,
-                    items: g.items.map((it) =>
-                        String(it.id) === String(gastoId) ? { ...it, is_favorite: favorite } : it,
-                    ),
-                }));
-            });
-            try {
-                await favoritoGastoApi(gastoId, favorite, token);
-            } catch (err) {
-                console.error('Error marcando favorito:', err);
-                setGroups(previous);
-            }
-        },
-        [token],
+        (gastoId, favorite) =>
+            runBusy(`favGasto:${gastoId}`, async () => {
+                try {
+                    await favoritoGastoApi(gastoId, favorite, token);
+                    patchGasto(gastoId, { is_favorite: favorite });
+                } catch (err) {
+                    console.error('Error marcando favorito:', err);
+                }
+            }),
+        [token, runBusy, patchGasto],
     );
 
     const favoritoEntidad = useCallback(
-        async (entidadId, favorite) => {
-            let previous;
-            setGroups((prev) => {
-                previous = prev;
-                return prev.map((g) =>
-                    String(g.id) === String(entidadId) ? { ...g, is_favorite: favorite } : g,
-                );
-            });
-            try {
-                await favoritoEntidadApi(entidadId, favorite, token);
-            } catch (err) {
-                console.error('Error marcando favorito de entidad:', err);
-                setGroups(previous);
-            }
-        },
-        [token],
+        (entidadId, favorite) =>
+            runBusy(`favEntidad:${entidadId}`, async () => {
+                try {
+                    await favoritoEntidadApi(entidadId, favorite, token);
+                    setGroups((prev) =>
+                        prev.map((g) =>
+                            String(g.id) === String(entidadId)
+                                ? { ...g, is_favorite: favorite }
+                                : g,
+                        ),
+                    );
+                } catch (err) {
+                    console.error('Error marcando favorito de entidad:', err);
+                }
+            }),
+        [token, runBusy],
     );
 
     useEffect(() => {
         loadDashboard();
     }, [loadDashboard]);
 
-    // Cuando el receptor aprueba un gasto compartido, descontamos el pendiente
-    // de la entidad correspondiente y refrescamos para traer el gasto ya activo.
     const onCompartidoAprobado = useCallback(
         ({ entityId } = {}) => {
             if (entityId != null) {
@@ -282,8 +277,6 @@ export function useDashboardData() {
     const pusherEvents = useMemo(
         () => ({
             'compartido.aprobado': onCompartidoAprobado,
-            // La otra persona confirmó/rechazó un pago que registramos: el estado
-            // "por confirmar" de la cuota cambió, hay que resincronizar.
             'pago.confirmado': loadDashboard,
             'pago.rechazado': loadDashboard,
         }),
@@ -304,6 +297,7 @@ export function useDashboardData() {
         postergarGasto,
         favoritoGasto,
         favoritoEntidad,
+        busyKeys,
         loading,
     };
 }

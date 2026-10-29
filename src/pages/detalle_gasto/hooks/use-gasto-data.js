@@ -42,15 +42,12 @@ export function useGastoData() {
         await load(true);
     }
 
-    // En el detalle de gasto se puede pagar/revertir SIN sesión de "hacer
-    // cuentas": con sesión abierta el pago queda diferido (se registra al
-    // cerrarla); sin sesión se registra ahora, solo en el historial del gasto.
     async function settleQuota() {
         if (!gasto) return;
         const deferred = isSettlementActive();
         try {
             await settleQuotaApi(gasto.id, token);
-            if (deferred) useSettlementStore.getState().refreshAfterPayment();
+            if (deferred) useSettlementStore.getState().applyMarked([gasto.id]);
             await load(true);
             useSnackbarStore
                 .getState()
@@ -62,7 +59,6 @@ export function useGastoData() {
                     deferred ? 'playlist_add_check' : 'check_circle',
                 );
         } catch (err) {
-            // El interceptor de axios ya mostró el mensaje según el código.
             console.error('Error registrando pago', err);
         }
     }
@@ -76,7 +72,6 @@ export function useGastoData() {
                 .getState()
                 .show('Pago revertido en el historial del gasto.', 'success', 'undo');
         } catch (err) {
-            // El interceptor de axios ya mostró el mensaje según el código.
             console.error('Error revirtiendo cuota', err);
         }
     }

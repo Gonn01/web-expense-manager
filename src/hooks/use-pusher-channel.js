@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 import { pusherClient } from '@/lib/pusher';
 
-/**
- * Ref-count por canal para que varios componentes puedan escuchar el mismo
- * canal a la vez sin que el desmontaje de uno cancele la suscripción del resto.
- */
 const subCounts = new Map();
 
 function acquire(channelName) {

@@ -6,6 +6,7 @@ import CopyButton from '@/components/CopyButton';
 import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import GroupBalance from '@/pages/dashboard/components/GroupBalance';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { ExpenseType } from '@/utils/enums';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -27,6 +28,18 @@ function EntityAvatar({ name, done }) {
     );
 }
 
+function groupSettleLabel(items, settlementActive) {
+    const hasEgreso = items.some((it) => it.type !== ExpenseType.INGRESO);
+    const hasIngreso = items.some((it) => it.type === ExpenseType.INGRESO);
+
+    if (settlementActive) {
+        if (hasEgreso && hasIngreso) return 'Marcar pagos / cobros';
+        return hasIngreso ? 'Marcar cobros' : 'Marcar pagos';
+    }
+    if (hasEgreso && hasIngreso) return 'Pagar / Cobrar';
+    return hasIngreso ? 'Cobrar' : 'Pagar';
+}
+
 export default function ActiveFinancialEntity({
     group,
     groups,
@@ -40,6 +53,7 @@ export default function ActiveFinancialEntity({
     onTogglePostpone,
     onToggleFavoriteGasto,
     onToggleFavoriteEntity,
+    busyKeys,
 }) {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
@@ -48,12 +62,14 @@ export default function ActiveFinancialEntity({
     const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);
     const setExpensesChecked = useSettlementStore((s) => s.setExpensesChecked);
 
-    // Los postergados nunca se pueden marcar en la sesión: no deben impedir
-    // que la entidad se vea "completa" si el resto ya está marcado.
     const checkableItems = group.items.filter((it) => !it.is_postponed);
     const checkedInGroup = checkableItems.filter((it) => checkedExpenses[String(it.id)]).length;
     const allChecked = checkableItems.length > 0 && checkedInGroup === checkableItems.length;
     const entityDone = settlementActive && allChecked;
+
+    const pendingIds = useSettlementStore((s) => s.pendingIds);
+    const favoriteBusy = Boolean(busyKeys?.has(`favEntidad:${group.id}`));
+    const groupBusy = group.items.some((it) => loadingIds?.has(it.id) || pendingIds[String(it.id)]);
 
     const count = group.items.length;
 
@@ -65,7 +81,6 @@ export default function ActiveFinancialEntity({
                     : 'border border-slate-200 dark:border-white/10 bg-white dark:bg-white/3'
             }`}
         >
-            {/* Entity header */}
             <div
                 className={`flex items-center justify-between gap-3 px-3 py-2.5 border-b ${
                     entityDone
@@ -97,14 +112,24 @@ export default function ActiveFinancialEntity({
                             title={
                                 group.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorita'
                             }
+                            disabled={favoriteBusy}
                             onClick={() => onToggleFavoriteEntity(group.id, !group.is_favorite)}
-                            className={`shrink-0 cursor-pointer transition-colors ${
+                            className={`relative shrink-0 cursor-pointer transition-colors disabled:cursor-wait ${
                                 group.is_favorite
                                     ? 'text-amber-400 hover:text-amber-500'
                                     : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
                             }`}
                         >
-                            <Icon name="star" className="text-xl" filled={group.is_favorite} />
+                            <Icon
+                                name="star"
+                                className={`text-xl ${favoriteBusy ? 'invisible' : ''}`}
+                                filled={group.is_favorite}
+                            />
+                            {favoriteBusy && (
+                                <span className="absolute inset-0 flex items-center justify-center">
+                                    <span className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                                </span>
+                            )}
                         </button>
                     )}
 
@@ -166,39 +191,57 @@ export default function ActiveFinancialEntity({
                     />
                     {entityDone ? (
                         <button
-                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center gap-1.5"
+                            className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center disabled:cursor-wait"
+                            disabled={groupBusy}
                             onClick={() => setExpensesChecked(group.items, group.name, false)}
                             type="button"
                         >
-                            <Icon name="undo" className="text-sm" />
-                            Revertir
+                            <span
+                                className={`flex items-center gap-1.5 ${groupBusy ? 'invisible' : ''}`}
+                            >
+                                <Icon name="undo" className="text-sm" />
+                                Revertir
+                            </span>
+                            {groupBusy && <ButtonSpinner />}
                         </button>
                     ) : (
                         <button
-                            className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/15 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/25 transition-colors"
+                            className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
+                                settlementActive ? '' : 'opacity-50'
+                            }`}
+                            disabled={groupBusy}
+                            title={
+                                settlementActive
+                                    ? undefined
+                                    : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                            }
                             onClick={() => onOpenGroup?.(group)}
                             type="button"
                         >
-                            Pagar / Cobrar
+                            <span className={groupBusy ? 'invisible' : ''}>
+                                {groupSettleLabel(group.items, settlementActive)}
+                            </span>
+                            {groupBusy && <ButtonSpinner />}
                         </button>
                     )}
                 </div>
             </div>
 
-            {/* Expenses inside the entity */}
             {!collapsed &&
                 (count === 0 ? (
                     <p className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">
                         Sin gastos que coincidan con el filtro.
                     </p>
                 ) : (
-                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-1.5 py-1">
+                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-1.5 py-1.5">
                         {group.items.map((it) => (
-                            <li key={it.id}>
+                            <li key={it.id} className="py-2 first:pt-0 last:pb-0">
                                 <ExpenseCard
                                     gasto={it}
                                     settlementEnabled
                                     loading={loadingIds?.has(it.id)}
+                                    postponeBusy={Boolean(busyKeys?.has(`postpone:${it.id}`))}
+                                    favoriteBusy={Boolean(busyKeys?.has(`favGasto:${it.id}`))}
                                     onClick={() => onItemClick?.(it)}
                                     onSettleClick={() => onSettleClick?.(group, it)}
                                     onTogglePostpone={
@@ -217,5 +260,13 @@ export default function ActiveFinancialEntity({
                     </ul>
                 ))}
         </div>
+    );
+}
+
+function ButtonSpinner() {
+    return (
+        <span className="absolute inset-0 flex items-center justify-center">
+            <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </span>
     );
 }

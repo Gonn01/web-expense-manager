@@ -10,6 +10,7 @@ import ExpenseAmountSection from '../components/ExpenseAmountSection';
 import ExpenseInstallmentsSection from '../components/ExpenseInstallmentsSection';
 import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
+import LockedField, { LockReason } from '../components/LockedField';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
 import { validateExpenseForm, focusFirstError } from '../validate-expense';
@@ -27,17 +28,22 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const [amount, setAmount] = useState(String(gasto.amount));
     const [currency, setCurrency] = useState(gasto.currency_type);
 
+    const locks = gasto.edit_locks ?? {};
+    const paidLock =
+        locks.payed_quotas ?? 'Los pagos se registran con Pagar y se deshacen con Revertir.';
+
     const [isFixed, setIsFixed] = useState(Boolean(gasto.fixed_expense));
-    const [isInstallment, setIsInstallment] = useState(gasto.number_of_quotas > 0);
-    const [isPaid, setIsPaid] = useState(gasto.payed_quotas > 0);
+    const [isInstallment, setIsInstallment] = useState(
+        !gasto.fixed_expense && gasto.number_of_quotas > 1,
+    );
 
     const [installments, setInstallments] = useState(
-        gasto.number_of_quotas ? String(gasto.number_of_quotas) : '',
+        gasto.number_of_quotas > 1 ? String(gasto.number_of_quotas) : '',
     );
 
-    const [paidInstallments, setPaidInstallments] = useState(
-        gasto.payed_quotas ? String(gasto.payed_quotas) : '0',
-    );
+    const paidQuotas = Number(gasto.payed_quotas) || 0;
+    const committedQuotas = paidQuotas + (Number(gasto.pending_quotas) || 0);
+    const hasPayments = committedQuotas > 0;
 
     const [saving, setSaving] = useState(false);
     const [showNewEntity, setShowNewEntity] = useState(false);
@@ -62,7 +68,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     };
 
     const totalInstallments = Number(installments) || 0;
-    const paid = Math.min(Number(paidInstallments) || 0, totalInstallments);
+    const paid = Math.min(paidQuotas, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
 
     const errors = useMemo(
@@ -72,6 +78,23 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     // Los errores se muestran recién después del primer intento de guardar.
     const [submitted, setSubmitted] = useState(false);
     const visibleErrors = submitted ? errors : {};
+    const installmentsError =
+        isInstallment && installments !== '' && totalInstallments < committedQuotas
+            ? `No puede ser menor que las cuotas ya pagadas o pendientes (${committedQuotas}).`
+            : null;
+
+    const canSave = useMemo(() => {
+        const base = name?.trim() && entity && Number(amount) > 0 && currency;
+        if (!base) return false;
+        if (!isInstallment) return true;
+        const total = Number(installments);
+        return Number.isInteger(total) && total >= Math.max(1, committedQuotas);
+    }, [name, entity, amount, currency, isInstallment, installments, committedQuotas]);
+
+    const amountNote =
+        hasPayments && Number(amount) !== Number(gasto.amount)
+            ? 'Los pagos ya registrados conservan su monto: el cambio solo afecta a las cuotas que faltan.'
+            : null;
 
     const handleCreateEntity = async () => {
         if (!newEntityName.trim()) return;
@@ -86,8 +109,14 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         }
     };
 
+    const savingRef = useRef(false);
+    savingRef.current = saving;
+    const requestClose = () => {
+        if (!savingRef.current) onClose?.();
+    };
+
     useEffect(() => {
-        const onKey = (e) => e.key === 'Escape' && onClose?.();
+        const onKey = (e) => e.key === 'Escape' && !savingRef.current && onClose?.();
         document.addEventListener('keydown', onKey);
 
         const prevScroll = document.body.style.overflow;
@@ -103,6 +132,8 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         setSaving(true);
         try {
             await onSave?.(payload);
+        } catch (err) {
+            console.error('Error actualizando gasto', err);
         } finally {
             setSaving(false);
         }
@@ -110,7 +141,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
 
     const handleSubmit = async () => {
         if (saving) return;
-        if (Object.keys(errors).length > 0) {
+        if (Object.keys(errors).length > 0 || !canSave) {
             setSubmitted(true);
             focusFirstError(containerRef.current, errors);
             return;
@@ -120,18 +151,18 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
             financial_entity_id: entity,
             name: name.trim(),
             amount: Number(amount),
-            number_of_quotas: isInstallment ? Number(installments) : 0,
+            number_of_quotas: isFixed
+                ? gasto.number_of_quotas
+                : isInstallment
+                  ? Number(installments)
+                  : 1,
             currency_type: currency,
-            first_quota_date: gasto.first_quota_date,
             fixed_expense: isFixed,
-            image: gasto.image ?? null,
+            image_url: gasto.image_url ?? null,
             type,
-            payed_quotas: isInstallment ? Number(paidInstallments) : isPaid ? 1 : 0,
             category_ids: selectedCategoryIds,
         };
 
-        // Si el gasto tiene un movimiento espejo vinculado, preguntamos si el
-        // cambio se aplica sólo a este o también al otro.
         if (gasto.linked_purchase_id) {
             setPendingPayload(payload);
             setLinkedPrompt(true);
@@ -149,11 +180,11 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     };
 
     const modal = (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
-        >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                onMouseDown={requestClose}
+            />
 
             <div
                 ref={containerRef}
@@ -162,63 +193,25 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]
                 "
             >
-                {/* HEADER */}
                 <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
                     <div className="flex items-center gap-3 text-white">
                         <Icon name="edit" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Editar Gasto</h2>
+                        <h2 className="text-white text-lg font-bold">Editar Gasto/Deuda</h2>
                     </div>
 
                     <button
-                        onClick={onClose}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
+                        onClick={requestClose}
+                        disabled={saving}
+                        className="disabled:opacity-50 disabled:cursor-not-allowed flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
                     </button>
                 </header>
 
-                {/* BODY */}
                 <div className="p-6 space-y-6">
-                    <ExpenseTypeSelector type={type} setType={setType} />
-
-                    <ExpenseModeSelector
-                        isInstallment={isInstallment}
-                        isFixed={isFixed}
-                        onChange={({ isInstallment: i, isFixed: f }) => {
-                            setIsInstallment(i);
-                            setIsFixed(f);
-                            if (!i) {
-                                setInstallments('');
-                                setPaidInstallments('0');
-                            }
-                            setIsPaid(false);
-                        }}
-                    />
-
-                    {!isInstallment && !isFixed && (
-                        <label className="flex items-center gap-3 cursor-pointer select-none">
-                            <div
-                                onClick={() => setIsPaid((v) => !v)}
-                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
-                            >
-                                {isPaid && <span className="text-black text-xs font-bold">✓</span>}
-                            </div>
-                            <span className="text-white text-sm font-medium">Pagado</span>
-                        </label>
-                    )}
-
-                    <EntitySelector
-                        entity={entity}
-                        setEntity={setEntity}
-                        entities={entities}
-                        showNewEntity={showNewEntity}
-                        setShowNewEntity={setShowNewEntity}
-                        newEntityName={newEntityName}
-                        setNewEntityName={setNewEntityName}
-                        handleCreateEntity={handleCreateEntity}
-                        error={visibleErrors.entity}
-                    />
+                    <LockedField reason={locks.type}>
+                        <ExpenseTypeSelector type={type} setType={setType} />
+                    </LockedField>
 
                     <div data-field="name">
                         <TextInput
@@ -235,20 +228,54 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         setAmount={setAmount}
                         currency={currency}
                         setCurrency={setCurrency}
+                        amountLock={locks.amount}
+                        currencyLock={locks.currency_type}
+                        amountNote={amountNote}
                         error={visibleErrors.amount}
                     />
 
-                    {isInstallment && (
-                        <ExpenseInstallmentsSection
-                            error={visibleErrors.installments}
-                            installments={installments}
-                            setInstallments={setInstallments}
-                            paidInstallments={paidInstallments}
-                            setPaidInstallments={setPaidInstallments}
-                            paid={paid}
-                            totalInstallments={totalInstallments}
-                            progressPct={progressPct}
+                    <LockedField reason={locks.financial_entity_id}>
+                        <EntitySelector
+                            entity={entity}
+                            setEntity={setEntity}
+                            entities={entities}
+                            showNewEntity={showNewEntity}
+                            setShowNewEntity={setShowNewEntity}
+                            newEntityName={newEntityName}
+                            setNewEntityName={setNewEntityName}
+                            handleCreateEntity={handleCreateEntity}
+                            error={visibleErrors.entity}
                         />
+                    </LockedField>
+
+                    <LockedField reason={locks.mode}>
+                        <ExpenseModeSelector
+                            isInstallment={isInstallment}
+                            isFixed={isFixed}
+                            onChange={({ isInstallment: i, isFixed: f }) => {
+                                setIsInstallment(i);
+                                setIsFixed(f);
+                            }}
+                        />
+                    </LockedField>
+
+                    {isInstallment && (
+                        <div className="space-y-1.5">
+                            <ExpenseInstallmentsSection
+                                installments={installments}
+                                setInstallments={setInstallments}
+                                paidInstallments={String(paidQuotas)}
+                                setPaidInstallments={() => {}}
+                                paid={paid}
+                                totalInstallments={totalInstallments}
+                                progressPct={progressPct}
+                                installmentsLock={locks.number_of_quotas}
+                                paidLock={paidLock}
+                            />
+                            {installmentsError && (
+                                <p className="text-red-400 text-sm">{installmentsError}</p>
+                            )}
+                        </div>
                     )}
 
                     <CategorySelector
@@ -258,6 +285,23 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         onCreate={handleCreateCategory}
                         loading={loadingCategories}
                     />
+
+                    {!isInstallment && !isFixed && (
+                        <div className="space-y-1.5">
+                            <div className="flex items-center gap-3 select-none opacity-60">
+                                <div
+                                    className={`w-5 h-5 rounded flex items-center justify-center border shrink-0
+                                    ${paidQuotas > 0 ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                >
+                                    {paidQuotas > 0 && (
+                                        <span className="text-black text-xs font-bold">✓</span>
+                                    )}
+                                </div>
+                                <span className="text-white text-sm font-medium">Pagado</span>
+                            </div>
+                            <LockReason reason={paidLock} />
+                        </div>
+                    )}
                 </div>
 
                 {/* FOOTER */}

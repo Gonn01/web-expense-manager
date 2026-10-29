@@ -96,13 +96,7 @@ export default function Sidebar() {
 
     const navItems = [
         { to: '/app/dashboard', icon: 'dashboard', label: 'Dashboard' },
-        {
-            to: '/app/entidades',
-            icon: 'account_balance',
-            label: 'Entidades Financieras',
-            iconClass: 'text-primary',
-            extraIdle: 'hover:text-primary',
-        },
+        { to: '/app/entidades', icon: 'account_balance', label: 'Entidades Financieras' },
         { to: '/app/settlement', icon: 'history', label: 'Historial de cuentas' },
         {
             to: '/app/compartidos',
@@ -112,10 +106,7 @@ export default function Sidebar() {
         },
     ];
 
-    const linkClass = (isActive, extraIdle = '') =>
-        `relative ${base} ${isActive ? active : `${idle} ${extraIdle}`} ${
-            collapsed ? 'justify-center px-2' : ''
-        }`;
+    const linkClass = (isActive) => `relative ${base} ${isActive ? active : idle}`;
 
     return (
         <>
@@ -123,8 +114,8 @@ export default function Sidebar() {
                 <Snackbar message={notification} onClose={() => setNotification(null)} />
             )}
             <aside
-                className={`relative flex flex-col border-r border-black/10 dark:border-white/10 p-4 bg-white/50 dark:bg-background-dark transition-[width] duration-200 ${
-                    collapsed ? 'w-20 items-center' : 'w-64'
+                className={`relative flex flex-col shrink-0 overflow-hidden whitespace-nowrap border-r border-black/10 dark:border-white/10 p-4 bg-white/50 dark:bg-background-dark transition-[width] duration-200 ${
+                    collapsed ? 'w-20' : 'w-64'
                 }`}
             >
                 <button
@@ -132,8 +123,8 @@ export default function Sidebar() {
                     onClick={toggleSidebar}
                     aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
                     title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-                    className={`mb-2 flex size-7 items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer ${
-                        collapsed ? 'self-center' : 'self-end'
+                    className={`mb-5 flex size-7 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer transition-[margin] duration-200 ${
+                        collapsed ? 'mr-2.5' : 'mr-0'
                     }`}
                 >
                     <Icon name={collapsed ? 'chevron_right' : 'chevron_left'} className="text-lg" />
@@ -144,8 +135,8 @@ export default function Sidebar() {
                     <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
                         <UserAvatar src={avatar} name={nombreVisible} className="size-10 text-sm" />
                         {!collapsed && (
-                            <div className="flex flex-col">
-                                <h1 className="text-slate-900 dark:text-white text-base font-medium leading-normal">
+                            <div className="flex flex-col min-w-0">
+                                <h1 className="text-slate-900 dark:text-white text-base font-medium leading-normal truncate">
                                     {nombreVisible}
                                 </h1>
                                 <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal truncate max-w-40">
@@ -155,20 +146,19 @@ export default function Sidebar() {
                         )}
                     </div>
 
-                    {/* Navegación */}
                     <nav className="flex flex-col gap-2 mt-4 w-full">
-                        {navItems.map(({ to, icon, label, iconClass, extraIdle, badge }) => (
+                        {navItems.map(({ to, icon, label, badge }) => (
                             <NavLink
                                 key={to}
                                 to={to}
                                 title={collapsed ? label : undefined}
-                                className={({ isActive }) => linkClass(isActive, extraIdle)}
+                                className={({ isActive }) => linkClass(isActive)}
                             >
-                                <Icon name={icon} className={`text-2xl ${iconClass ?? ''}`} />
+                                <Icon name={icon} className="text-2xl" />
                                 {!collapsed && <p className="flex-1">{label}</p>}
                                 {badge > 0 && (
                                     <span
-                                        className={`bg-primary text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 ${
+                                        className={`bg-emerald-700 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 ${
                                             collapsed ? 'absolute -top-1 -right-1' : 'ml-auto'
                                         }`}
                                     >
@@ -180,7 +170,6 @@ export default function Sidebar() {
                     </nav>
                 </div>
 
-                {/* Sección inferior */}
                 <div className="mt-auto flex flex-col gap-1 w-full">
                     <NavLink
                         to="/app/configuracion"

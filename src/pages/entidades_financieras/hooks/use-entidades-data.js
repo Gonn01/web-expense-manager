@@ -11,8 +11,6 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 
 export function useEntidadesData() {
     const { token } = useAuth();
-    // Todas las entidades (activas y eliminadas): el endpoint las trae juntas
-    // con el campo `deleted` y se separan acá.
     const [allEntities, setAllEntities] = useState([]);
     const [loading, setLoading] = useState(true);
     const { addEntity, removeEntity } = useEntitiesStore();

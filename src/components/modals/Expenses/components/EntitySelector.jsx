@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import { FieldError } from '@/components/TextInput';
+import Select from '@/components/Select';
 
 export default function EntitySelector({
     entity,
@@ -36,24 +37,18 @@ export default function EntitySelector({
                     </div>
                 ) : (
                     <div className="relative">
-                        <select
+                        <Select
                             aria-invalid={error ? true : undefined}
-                            className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620]
-                       px-3 pr-10 text-white appearance-none`}
+                            className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620] px-3 text-white cursor-pointer`}
                             value={entity}
-                            onChange={(e) => setEntity(e.target.value)}
-                        >
-                            <option value="">Seleccionar...</option>
-                            {entities.map((e) => (
-                                <option key={`entity-${e.id}`} value={e.id}>
-                                    {e.is_favorite ? `★ ${e.name}` : e.name}
-                                </option>
-                            ))}
-                        </select>
-
-                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#9eb7a8]">
-                            <Icon name="expand_more" />
-                        </div>
+                            onChange={setEntity}
+                            placeholder="Seleccionar..."
+                            aria-label="Entidad financiera"
+                            options={entities.map((e) => ({
+                                value: e.id,
+                                label: e.is_favorite ? `★ ${e.name}` : e.name,
+                            }))}
+                        />
                     </div>
                 )}
             </div>
@@ -108,8 +103,8 @@ export default function EntitySelector({
                                 setNewEntityEmail('');
                             }}
                             disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg cursor-pointer
-                            ${loadingNewEntity ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white'}`}
+                            className={`text-sm px-3 py-1.5 rounded-lg
+                            ${loadingNewEntity ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white cursor-pointer'}`}
                         >
                             Cancelar
                         </button>
@@ -117,8 +112,8 @@ export default function EntitySelector({
                         <button
                             onClick={handleCreateEntity}
                             disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer
-                                ${loadingNewEntity ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black'}`}
+                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
+                                ${loadingNewEntity ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
                         >
                             {loadingNewEntity ? (
                                 <>

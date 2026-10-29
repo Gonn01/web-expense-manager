@@ -39,6 +39,7 @@ export default function ConfirmDeleteModal({
                 transition-opacity duration-150
                 ${open ? 'opacity-100' : 'opacity-0'}
             `}
+            onMouseDown={(e) => e.target === e.currentTarget && !loading && onCancel?.()}
         >
             <div
                 className={`

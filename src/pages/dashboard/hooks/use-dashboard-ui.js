@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { useDialogStore } from '@/store/use-dialog-store';
 import { Currency } from '@/utils/enums';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
-export function useDashboardUI(groups = [], settleQuotas) {
+export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     const { user } = useAuth();
 
     const [currency, setCurrency] = useState(null);
@@ -39,15 +40,14 @@ export function useDashboardUI(groups = [], settleQuotas) {
                     const matchType = typeFilter === null || it.type === typeFilter;
                     const matchFixed = fixedFilter === null || it.fixed_expense === fixedFilter;
 
-                    // Los postergados se siguen mostrando aunque haya una sesión de
-                    // cuentas activa: si desaparecieran de la lista no habría forma
-                    // de revertir la postergación sin esperar a que termine la sesión.
                     return matchTitle && matchCurrency && matchType && matchFixed;
                 });
 
                 return { ...g, items };
             })
-            .filter((g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive));
+            .filter(
+                (g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive),
+            );
     }, [groups, currency, query, typeFilter, fixedFilter, settlementActive]);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -90,7 +90,29 @@ export function useDashboardUI(groups = [], settleQuotas) {
         setLoadingPayIds(new Set());
     }
 
+    const requestTogglePostpone = useCallback(
+        (gastoId, postponed) => {
+            const gasto = groups.flatMap((g) => g.items).find((it) => it.id === gastoId);
+            const nombre = gasto?.name ? `"${gasto.name}"` : 'El gasto';
+            const marcado = useSettlementStore.getState().isChecked?.(gastoId);
+
+            return useDialogStore.getState().confirm({
+                title: postponed ? '¿Postergar gasto?' : '¿Reactivar gasto?',
+                message: postponed
+                    ? `${nombre} queda fuera de la sesión de cuentas actual (o de la próxima que abras) hasta que la cierres.${
+                          marcado ? ' Como está marcado en la sesión, se le quita la marca.' : ''
+                      }`
+                    : `${nombre} vuelve a poder marcarse en la sesión de cuentas.`,
+                tone: 'info',
+                confirmLabel: postponed ? 'Postergar' : 'Reactivar',
+                onConfirm: () => postergarGasto(gastoId, postponed),
+            });
+        },
+        [groups, postergarGasto],
+    );
+
     return {
+        requestTogglePostpone,
         currency,
         setCurrency,
         preferredCurrency,

@@ -4,7 +4,8 @@ import { formatMoney } from '@/utils/FormatMoney';
 export default function GroupBalance({ items, preferredCurrency, rates }) {
     const cur = preferredCurrency ?? 'ARS';
     const balance = items.reduce((sum, it) => {
-        const quota = convertCurrency(Number(it.amount_per_quota ?? 0), it.currency_type, cur, rates) ?? 0;
+        const quota =
+            convertCurrency(Number(it.amount_per_quota ?? 0), it.currency_type, cur, rates) ?? 0;
         return sum + (it.type === 'INGRESO' ? quota : -quota);
     }, 0);
 

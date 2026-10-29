@@ -99,7 +99,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El sistema emite un token de sesión y devuelve los datos del usuario.
     4. El cliente guarda el token y los datos, y muestra el dashboard.
 - **Flujos alternativos**
-    - 2a. El email no existe o la contraseña no coincide: el sistema muestra "email o contraseña incorrectos" en el formulario, sin distinguir el motivo.
+    - 2a. El email no existe, la contraseña no coincide o la cuenta se creó con Google y no tiene contraseña: el sistema muestra "email o contraseña incorrectos" en el formulario, sin distinguir el motivo.
     - 1a. El visitante llegó a esta pantalla porque su sesión anterior venció: sobre el formulario se muestra el cartel "Tu sesión venció". Desaparece al iniciar sesión.
 - **Postcondición**: el visitante pasa a ser Usuario con sesión iniciada.
 
@@ -111,11 +111,11 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El visitante elige "Continuar con Google".
     2. Firebase autentica al visitante y devuelve su identidad (nombre, email, foto, identificador).
     3. El sistema busca una cuenta asociada a esa identidad de Google y la encuentra.
-    4. El sistema emite el token; el cliente lo guarda y muestra el dashboard.
+    4. El sistema emite el token y devuelve los datos del usuario, incluida su foto; el cliente los guarda y muestra el dashboard.
 - **Flujos alternativos**
     - 2a. El visitante cancela o Firebase falla: no se inicia sesión.
-    - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email, creada con credenciales. El sistema asocia la identidad de Google a esa cuenta y continúa en 4.
-    - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña y continúa en 4.
+    - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email, creada con credenciales. El sistema asocia la identidad de Google a esa cuenta, guarda la foto de Google si la cuenta no tenía una, y continúa en 4.
+    - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña, con la foto de Google, y continúa en 4.
 - **Postcondición**: sesión iniciada. Nunca quedan dos cuentas con el mismo email.
 
 ### CU-04 — Cerrar sesión
@@ -305,7 +305,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario elige "Crear gasto" (desde el dashboard o desde una entidad).
     2. Indica tipo (egreso o ingreso), nombre, entidad, monto, moneda y modalidad: pago único, en cuotas o gasto fijo.
-    3. Opcionalmente indica cuotas ya pagas, categorías y si queda postergado.
+    3. Opcionalmente indica cuotas ya pagas, categorías y si queda postergado. Si el gasto queda con todas sus cuotas pagas, la opción de postergar se deshabilita.
     4. El sistema verifica que la entidad exista y sea del usuario.
     5. El sistema crea el gasto como activo, registra su creación y un pago por cada cuota indicada como paga.
     6. El sistema registra "gasto creado" en el historial de la entidad y muestra el gasto en pantalla.
@@ -315,6 +315,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
     - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
+    - 2b. Faltan datos obligatorios: el sistema lo informa.
+    - 3a. El gasto llega postergado y con todas sus cuotas pagas: el sistema lo rechaza (`GASTO_PAGADO_NO_POSTERGABLE`) y no crea nada.
 - **Postcondición**: el gasto existe; según el caso, también su espejo y/o la copia de la contraparte.
 
 ### CU-18 — Ver detalle de gasto
@@ -332,14 +334,19 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-19 — Editar gasto
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-CAT-03
+- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-GAS-16, RF-CAT-03
 - **Flujo principal**
     1. En el detalle del gasto, el usuario elige editar.
-    2. Modifica nombre, monto, tipo, condición de gasto fijo y/o categorías.
-    3. El sistema guarda los cambios. Si cambió el nombre, lo registra en el historial de la entidad.
+    2. Modifica nombre, monto, moneda, tipo, modalidad, cuotas, entidad y/o categorías. Los campos bloqueados se ven deshabilitados, con el motivo.
+    3. El sistema valida los datos y guarda los cambios en el historial del gasto. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
     - 2a. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no guarda e indica qué falta, igual que en CU-17 (2b).
     - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole el tipo opuesto.
+    - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole su entidad y el tipo opuesto.
+    - 3b. El usuario intenta cambiar un campo bloqueado (gasto con pagos, finalizado, compartido o marcado en la sesión de cuentas): el sistema rechaza la edición y explica el motivo.
+    - 3c. El gasto tiene pagos y cambió el monto: el sistema avisa que los pagos ya registrados conservan su valor y guarda el cambio.
+    - 3d. Cambió la entidad: el sistema mueve el gasto y lo registra en el historial de ambas entidades. Si alguna de las dos está vinculada a otro usuario, o es la entidad del espejo, lo impide.
+    - 3e. Algún dato es inválido (nombre vacío, monto no positivo, menos cuotas que las ya pagadas o pendientes): el sistema lo rechaza sin guardar nada.
 
 ### CU-20 — Eliminar gasto
 
@@ -394,7 +401,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 
 - **Actor**: Usuario
 - **Requerimientos**: RF-GAS-06, RF-GAS-11, RF-PAG-06
-- **Precondición**: el gasto pertenece a una entidad del usuario.
+- **Precondición**: el gasto pertenece a una entidad del usuario y, si es en cuotas o de pago único, le queda al menos una cuota sin pagar.
 - **Flujo principal**
     1. El usuario activa "postergar" en un gasto.
     2. Si el gasto estaba marcado en la sesión de cuentas, el cliente le quita la marca.
@@ -402,6 +409,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 1a. El usuario quita la postergación: el sistema la revierte y lo registra.
     - 3a. El sistema rechaza el cambio: el cliente lo revierte en pantalla.
+    - 3b. El gasto ya tiene todas sus cuotas pagas: el sistema rechaza la postergación (`GASTO_PAGADO_NO_POSTERGABLE`).
 - **Postcondición**: el gasto sigue visible pero no puede marcarse en la sesión. La postergación termina sola al finalizar la sesión (CU-28) o al pagarlo de forma directa (CU-21).
 
 ### CU-24 — Marcar gasto como favorito
@@ -466,7 +474,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-28 — Finalizar sesión de cuentas
 
 - **Actores**: Usuario; Contraparte (por los gastos compartidos)
-- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07
+- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07, RF-CTA-11
 - **Precondición**: hay una sesión de cuentas abierta.
 - **Flujo principal**
     1. El usuario elige "Terminar" y confirma.
@@ -477,8 +485,11 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. La aplicación sale del modo "Hacer cuentas" y muestra el snapshot generado.
 - **Flujos alternativos**
     - 2a. Un gasto marcado fue eliminado, no es del usuario, está postergado o ya está saldado: el sistema lo quita de la sesión y no lo incluye en el snapshot.
-    - 2b. Falla el pago de un gasto: el sistema lo registra en el log y continúa con el resto.
+    - 2b. Falla cualquier paso del cierre (pagos, snapshot o cierre de la sesión): no se guarda nada, porque todo el cierre es una transacción. El sistema informa el error y la sesión sigue abierta para reintentar.
+    - 1c. Se pide terminar la misma sesión dos veces a la vez (por ejemplo, desde dos dispositivos): el segundo pedido espera al primero y responde que no hay sesión abierta. Los pagos se registran una sola vez.
     - 1a. No hay sesión abierta: el sistema lo informa.
+    - 1b. No hay gastos marcados: la aplicación avisa que hay que marcar al menos uno o descartar la sesión, y no pide confirmación. La sesión sigue abierta.
+    - 2c. Después de 2a no queda ningún gasto marcado: el sistema no genera el snapshot ni cierra la sesión y responde `SETTLEMENT_EMPTY`. La aplicación recarga las marcas y muestra el mismo aviso que en 1b.
 - **Postcondición**: los pagos quedan en el historial de cada gasto, existe un snapshot nuevo y no hay sesión abierta.
 
 ### CU-29 — Descartar sesión
@@ -676,9 +687,14 @@ sequenceDiagram
             A-)X: pago.pendiente (CU-38)
         end
     end
-    A->>A: genera snapshot, cierra sesión, libera postergados
-    A-->>C: snapshot
-    C-->>U: resumen de la sesión
+    alt no quedó ningún gasto marcado (RF-CTA-11)
+        A-->>C: 409 SETTLEMENT_EMPTY, la sesión sigue abierta
+        C-->>U: aviso: marcar al menos un gasto o descartar
+    else hay gastos marcados
+        A->>A: genera snapshot, cierra sesión, libera postergados
+        A-->>C: snapshot
+        C-->>U: resumen de la sesión
+    end
 
     X->>A: confirmar pago (CU-36)
     A-)C: pago.confirmado (CU-38)

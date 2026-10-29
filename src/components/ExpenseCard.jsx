@@ -7,6 +7,7 @@ import AlertModal from '@/components/modals/AlertModal';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { ExpenseStatus } from '@/utils/enums';
 
 export default function ExpenseCard({
     gasto,
@@ -14,32 +15,37 @@ export default function ExpenseCard({
     onSettleClick,
     onTogglePostpone,
     onToggleFavorite,
+    postponeBusy = false,
+    favoriteBusy = false,
     loading = false,
-    // El "modo hacer cuentas" (indicador + pago diferido) solo existe en el
-    // dashboard. En el resto de las pantallas ExpenseCard es una card normal.
     settlementEnabled = false,
+    counterpartyName,
 }) {
     const sessionActive = useSettlementStore((s) => s.active);
-    const settlementChecked = useSettlementStore((s) => Boolean(s.checkedExpenses[String(gasto.id)]));
+    const settlementChecked = useSettlementStore((s) =>
+        Boolean(s.checkedExpenses[String(gasto.id)]),
+    );
     const toggleSettlement = useSettlementStore((s) => s.toggleExpense);
+    const settlementPending = useSettlementStore((s) => Boolean(s.pendingIds[String(gasto.id)]));
     const settlementActive = settlementEnabled && sessionActive;
     const progress = gasto.fixed_expense
         ? 100
         : gasto.number_of_quotas > 0
-            ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
-            : (gasto.progress ?? 0);
+          ? (gasto.payed_quotas / gasto.number_of_quotas) * 100
+          : (gasto.progress ?? 0);
 
     const pendingQuotas = gasto.pending_quotas ?? 0;
     const previewProgress =
         pendingQuotas > 0 && !gasto.fixed_expense && gasto.number_of_quotas > 0
             ? Math.min(100, ((gasto.payed_quotas + pendingQuotas) / gasto.number_of_quotas) * 100)
             : null;
-    // Ya esta todo cubierto entre pagos confirmados y pendientes de
-    // confirmacion (gasto compartido): no queda nada mas para registrar.
     const quotasExhausted =
         !gasto.fixed_expense &&
         gasto.number_of_quotas > 0 &&
         gasto.payed_quotas + pendingQuotas >= gasto.number_of_quotas;
+
+    const counterparty = counterpartyName || 'la otra persona';
+    const awaitingApproval = gasto.status === ExpenseStatus.PENDING_APPROVAL;
 
     const cur = gasto.currency_type;
     const paidTotal = (gasto.payed_quotas ?? 0) * (gasto.amount_per_quota ?? 0);
@@ -54,7 +60,6 @@ export default function ExpenseCard({
                 <div className="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-sm rounded-lg animate-pulse z-10" />
             )}
 
-            {/* Top row */}
             <div className="flex items-start justify-between gap-4">
                 <div
                     className={`flex flex-col gap-1.5 flex-1 ${settlementActive && settlementChecked ? 'opacity-60' : ''}`}
@@ -73,20 +78,27 @@ export default function ExpenseCard({
                                         ? 'Quitar de favoritos'
                                         : 'Marcar como favorito'
                                 }
+                                disabled={favoriteBusy}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onToggleFavorite(gasto);
                                 }}
-                                className={`shrink-0 cursor-pointer transition-colors ${gasto.is_favorite
+                                className={`relative shrink-0 cursor-pointer transition-colors disabled:cursor-wait ${
+                                    gasto.is_favorite
                                         ? 'text-amber-400 hover:text-amber-500'
                                         : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
-                                    }`}
+                                }`}
                             >
                                 <Icon
                                     name="star"
-                                    className="text-base"
+                                    className={`text-base ${favoriteBusy ? 'invisible' : ''}`}
                                     filled={gasto.is_favorite}
                                 />
+                                {favoriteBusy && (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                        <span className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                                    </span>
+                                )}
                             </button>
                         )}
                         <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
@@ -104,15 +116,24 @@ export default function ExpenseCard({
                                 Postergada
                             </span>
                         )}
+                        {awaitingApproval && (
+                            <span
+                                className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
+                                title={`Creaste este gasto en una entidad vinculada: ${counterparty} tiene que aprobarlo para que pase a activos`}
+                            >
+                                <Icon name="hourglass_empty" className="text-xs" />
+                                Esperando que lo apruebe {counterparty}
+                            </span>
+                        )}
                         {pendingQuotas > 0 && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
-                                title="Pago registrado, esperando confirmación de la otra persona"
+                                title={`Registraste ${pendingQuotas === 1 ? 'el pago' : 'los pagos'}: ${counterparty} tiene que confirmar${pendingQuotas === 1 ? 'lo' : 'los'} para que cuente${pendingQuotas === 1 ? '' : 'n'}`}
                             >
                                 <Icon name="hourglass_empty" className="text-xs" />
                                 {pendingQuotas === 1
-                                    ? 'Pago por confirmar'
-                                    : `${pendingQuotas} pagos por confirmar`}
+                                    ? `Esperando que ${counterparty} confirme el pago`
+                                    : `Esperando que ${counterparty} confirme ${pendingQuotas} pagos`}
                             </span>
                         )}
                     </div>
@@ -131,7 +152,6 @@ export default function ExpenseCard({
                     </div>
                 </div>
 
-                {/* Amounts */}
                 <div className="flex flex-col items-end gap-0.5 text-right shrink-0">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                         {formatMoney(gasto.amount_per_quota, cur)}
@@ -155,7 +175,6 @@ export default function ExpenseCard({
                 </div>
             </div>
 
-            {/* Progress row */}
             <div className="flex items-center gap-3">
                 <div className="flex-1">
                     <ProgressBar
@@ -175,8 +194,8 @@ export default function ExpenseCard({
 
                 {onTogglePostpone && (
                     <button
-                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-sky-500/15 text-sky-600 dark:text-sky-400 px-2.5 py-1.5 rounded-md hover:bg-sky-500/25 transition-colors flex items-center gap-1.5 shrink-0"
-                        disabled={loading}
+                        className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-sky-500/15 text-sky-600 dark:text-sky-400 px-2.5 py-1.5 rounded-md hover:bg-sky-500/25 transition-colors flex items-center shrink-0 disabled:cursor-wait"
+                        disabled={loading || postponeBusy}
                         title={
                             gasto.is_postponed
                                 ? 'Volver a incluir en la sesión de cuentas'
@@ -187,28 +206,51 @@ export default function ExpenseCard({
                             onTogglePostpone(gasto);
                         }}
                     >
-                        <Icon name={gasto.is_postponed ? 'undo' : 'schedule'} className="text-sm" />
-                        {gasto.is_postponed ? 'Reactivar' : 'Postergar'}
+                        <span
+                            className={`flex items-center gap-1.5 ${postponeBusy ? 'invisible' : ''}`}
+                        >
+                            <Icon
+                                name={gasto.is_postponed ? 'undo' : 'schedule'}
+                                className="text-sm"
+                            />
+                            {gasto.is_postponed ? 'Reactivar' : 'Postergar'}
+                        </span>
+                        {postponeBusy && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-3 h-3 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                            </span>
+                        )}
                     </button>
                 )}
 
                 {settlementActive && settlementChecked ? (
                     <button
-                        className="text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-1.5 shrink-0"
+                        className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait"
+                        disabled={settlementPending}
                         onClick={(e) => {
                             e.stopPropagation();
                             toggleSettlement(gasto);
                         }}
                     >
-                        <Icon name="undo" className="text-sm" />
-                        Revertir
+                        <span
+                            className={`flex items-center gap-1.5 ${settlementPending ? 'invisible' : ''}`}
+                        >
+                            <Icon name="undo" className="text-sm" />
+                            Revertir
+                        </span>
+                        {settlementPending && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </span>
+                        )}
                     </button>
                 ) : (
                     onSettleClick &&
                     (!gasto.is_postponed || !settlementEnabled) && (
                         <button
-                            className={`text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center gap-2 shrink-0 ${settlementEnabled && !sessionActive ? 'opacity-50' : ''
-                                }`}
+                            className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
+                                settlementEnabled && !sessionActive ? 'opacity-50' : ''
+                            }`}
                             disabled={loading}
                             title={
                                 settlementEnabled && !sessionActive
@@ -224,21 +266,19 @@ export default function ExpenseCard({
                                 onSettleClick(gasto);
                             }}
                         >
-                            {loading ? (
-                                <>
+                            <span className={loading ? 'invisible' : ''}>
+                                {gasto.type === 'INGRESO'
+                                    ? settlementActive
+                                        ? 'Marcar cobro'
+                                        : 'Registrar cobro'
+                                    : settlementActive
+                                      ? 'Marcar pago'
+                                      : 'Pagar cuota'}
+                            </span>
+                            {loading && (
+                                <span className="absolute inset-0 flex items-center justify-center">
                                     <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                    Procesando…
-                                </>
-                            ) : gasto.type === 'INGRESO' ? (
-                                settlementActive ? (
-                                    'Marcar cobro'
-                                ) : (
-                                    'Registrar cobro'
-                                )
-                            ) : settlementActive ? (
-                                'Marcar pago'
-                            ) : (
-                                'Pagar cuota'
+                                </span>
                             )}
                         </button>
                     )
