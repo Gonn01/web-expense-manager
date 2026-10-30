@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
 
 export default function PaymentEntitySection({
@@ -9,11 +10,12 @@ export default function PaymentEntitySection({
     setPaymentEntity,
     excludeId,
     oppositeTypeLabel,
+    error,
 }) {
     const options = entities.filter((e) => String(e.id) !== String(excludeId));
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3" data-field="paymentEntity">
             <label
                 onClick={() => setEnabled((v) => !v)}
                 className="flex items-center gap-3 cursor-pointer select-none"
@@ -31,7 +33,10 @@ export default function PaymentEntitySection({
                 <div className="p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
                     <div className="relative">
                         <Select
-                            className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#111714] px-3 text-white cursor-pointer"
+                            aria-invalid={error ? true : undefined}
+                            className={`h-12 w-full rounded-lg border ${
+                                error ? 'border-red-500' : 'border-[#3d5245]'
+                            } bg-[#111714] px-3 text-white cursor-pointer`}
                             value={paymentEntity}
                             onChange={setPaymentEntity}
                             placeholder="Seleccionar entidad de pago..."
@@ -42,6 +47,8 @@ export default function PaymentEntitySection({
                             }))}
                         />
                     </div>
+
+                    {error && <FieldError message={error} />}
 
                     <p className="flex items-start gap-2 text-xs text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />

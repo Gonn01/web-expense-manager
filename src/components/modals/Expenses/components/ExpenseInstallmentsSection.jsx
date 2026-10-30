@@ -9,19 +9,21 @@ export default function ExpenseInstallmentsSection({
     totalInstallments,
     progressPct,
     setPaidInstallments,
+    error,
     installmentsLock,
     paidLock,
 }) {
     return (
         <>
             <div className="grid grid-cols-2 gap-4 items-start">
-                <div className="space-y-1.5">
+                <div className="space-y-1.5" data-field="installments">
                     <TextInput
                         label="Cantidad de cuotas"
                         type="number"
                         value={installments}
                         disabled={Boolean(installmentsLock)}
                         onChange={(e) => setInstallments(e.target.value)}
+                        error={error}
                     />
                     <LockReason reason={installmentsLock} />
                 </div>

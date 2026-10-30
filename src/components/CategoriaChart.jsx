@@ -1,5 +1,12 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
+import { useExchangeRates } from '@/hooks/use-exchange-rates';
+import { convertCurrency } from '@/utils/convert-currency';
+import { formatMoney } from '@/utils/FormatMoney';
+import { Currency } from '@/utils/enums';
+
+const CURRENCY_VALUES = Object.values(Currency);
 
 const OTROS_COLOR = '#6b7280';
 
@@ -18,11 +25,20 @@ const PALETTE = [
     '#f97316',
 ];
 
-function buildChartData(gastos) {
+function buildChartData(gastos, currency, rates) {
     const totals = new Map();
 
     for (const g of gastos) {
-        const amount = Number(g.amount || 0);
+        if (g.type !== 'EGRESO') continue;
+
+        const amount = convertCurrency(
+            Number(g.amount_per_quota || 0),
+            g.currency_type,
+            currency,
+            rates,
+        );
+        if (amount === null) continue;
+
         const categories = Array.isArray(g.categories) ? g.categories : [];
 
         if (categories.length === 0) {
@@ -50,18 +66,11 @@ function buildChartData(gastos) {
         }));
 }
 
-function formatAmount(value) {
-    return new Intl.NumberFormat('es-AR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(value);
-}
-
 function formatPercent(value) {
     return `${value.toFixed(1)}%`;
 }
 
-const CustomTooltip = ({ active, payload, total }) => {
+const CustomTooltip = ({ active, payload, total, currency }) => {
     if (!active || !payload?.length) return null;
     const item = payload[0];
     const pct = total > 0 ? (item.value / total) * 100 : 0;
@@ -70,16 +79,70 @@ const CustomTooltip = ({ active, payload, total }) => {
             <p className="font-semibold mb-1" style={{ color: item.payload.color }}>
                 {item.name}
             </p>
-            <p className="text-slate-300">{formatAmount(item.value)}</p>
+            <p className="text-slate-300">{formatMoney(item.value, currency)} por mes</p>
             <p className="text-slate-400 text-xs">{formatPercent(pct)} del total</p>
         </div>
     );
 };
 
+function SueldoSummary({ total, hasSueldo, sueldo, currency }) {
+    if (!hasSueldo) {
+        return (
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+                <Link
+                    to="/app/configuracion"
+                    className="text-primary font-semibold hover:underline"
+                >
+                    Cargá tu sueldo
+                </Link>{' '}
+                para ver qué parte de tus ingresos se lleva cada categoría.
+            </p>
+        );
+    }
+
+    if (sueldo === null) return null;
+
+    const pct = (total / sueldo) * 100;
+    const exceeds = total > sueldo;
+
+    return (
+        <div className="flex flex-col gap-1.5">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+                Este mes pagás{' '}
+                <span className="font-bold text-slate-900 dark:text-white">
+                    {formatMoney(total, currency)}
+                </span>
+                , el{' '}
+                <span className={`font-bold ${exceeds ? 'text-red-500' : 'text-primary'}`}>
+                    {formatPercent(pct)}
+                </span>{' '}
+                de tu sueldo ({formatMoney(sueldo, currency)}).
+            </p>
+            <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-white/10 overflow-hidden">
+                <div
+                    className={`h-full rounded-full ${exceeds ? 'bg-red-500' : 'bg-primary'}`}
+                    style={{ width: `${Math.min(pct, 100)}%` }}
+                />
+            </div>
+        </div>
+    );
+}
+
 export default function CategoriaChart({ gastos }) {
     const { user } = useAuth();
-    const sueldo = Number(user?.sueldo || 0);
-    const data = buildChartData(gastos);
+    const { rates } = useExchangeRates();
+
+    const currency = CURRENCY_VALUES.includes(user?.preferred_currency)
+        ? user.preferred_currency
+        : Currency.ARS;
+    const sueldoCurrency = CURRENCY_VALUES.includes(user?.sueldo_currency)
+        ? user.sueldo_currency
+        : Currency.ARS;
+    const sueldoBase = Number(user?.sueldo || 0);
+    const hasSueldo = sueldoBase > 0;
+    const sueldo = hasSueldo ? convertCurrency(sueldoBase, sueldoCurrency, currency, rates) : null;
+
+    const data = buildChartData(gastos, currency, rates);
 
     if (data.length === 0) return null;
 
@@ -87,9 +150,21 @@ export default function CategoriaChart({ gastos }) {
 
     return (
         <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                Gastos por categoría
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Gastos del mes por categoría{' '}
+                <span className="font-normal text-slate-500">({currency})</span>
             </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                Se toma la cuota mensual de cada gasto.
+            </p>
+            <div className="mb-4">
+                <SueldoSummary
+                    total={total}
+                    hasSueldo={hasSueldo}
+                    sueldo={sueldo}
+                    currency={currency}
+                />
+            </div>
             <div className="flex flex-col gap-4">
                 <ResponsiveContainer width="100%" height={280}>
                     <PieChart>
@@ -105,7 +180,7 @@ export default function CategoriaChart({ gastos }) {
                                 <Cell key={entry.id} fill={entry.color} />
                             ))}
                         </Pie>
-                        <Tooltip content={<CustomTooltip total={total} />} />
+                        <Tooltip content={<CustomTooltip total={total} currency={currency} />} />
                     </PieChart>
                 </ResponsiveContainer>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5">
@@ -123,10 +198,11 @@ export default function CategoriaChart({ gastos }) {
                                         {d.name}
                                     </span>
                                     <span className="text-slate-500 dark:text-slate-400">
-                                        {formatAmount(d.value)} · {formatPercent(pct)} del total
+                                        {formatMoney(d.value, currency)} · {formatPercent(pct)} del
+                                        total
                                     </span>
                                     {pctSueldo !== null && (
-                                        <span className="text-slate-400 dark:text-slate-500">
+                                        <span className="text-slate-600 dark:text-slate-300 font-medium">
                                             {formatPercent(pctSueldo)} del sueldo
                                         </span>
                                     )}
