@@ -13,6 +13,8 @@ import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import LockedField, { LockReason } from '../components/LockedField';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import { transferTargets } from '@/utils/expense-transfer';
+import ExpenseFormErrors from '../components/ExpenseFormErrors';
+import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
 export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const { token } = useAuth();
@@ -78,6 +80,15 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const paid = Math.min(paidQuotas, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
 
+    const errors = useMemo(
+        () => validateExpenseForm({ entity, name, amount, isInstallment, installments }),
+        [entity, name, amount, isInstallment, installments],
+    );
+    const [submitted, setSubmitted] = useState(false);
+    const visibleErrors = submitted ? errors : {};
+    const installmentsFieldError =
+        visibleErrors.installments ??
+        (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
     const installmentsError =
         isInstallment && installments !== '' && totalInstallments < committedQuotas
             ? `No puede ser menor que las cuotas ya pagadas o pendientes (${committedQuotas}).`
@@ -88,7 +99,11 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         if (!base) return false;
         if (!isInstallment) return true;
         const total = Number(installments);
-        return Number.isInteger(total) && total >= Math.max(1, committedQuotas);
+        return (
+            Number.isInteger(total) &&
+            total >= Math.max(1, committedQuotas) &&
+            !exceedsMaxInstallments(total)
+        );
     }, [name, entity, amount, currency, isInstallment, installments, committedQuotas]);
 
     const amountNote =
@@ -140,7 +155,12 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     };
 
     const handleSubmit = async () => {
-        if (!canSave || saving) return;
+        if (saving) return;
+        if (Object.keys(errors).length > 0 || !canSave) {
+            setSubmitted(true);
+            focusFirstError(containerRef.current, errors);
+            return;
+        }
 
         const payload = {
             financial_entity_id: entity,
@@ -210,12 +230,15 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         <ExpenseTypeSelector type={type} setType={setType} />
                     </LockedField>
 
-                    <TextInput
-                        label="Nombre del gasto"
-                        placeholder="Ej: Préstamo personal"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
+                    <div data-field="name">
+                        <TextInput
+                            label="Nombre del gasto"
+                            placeholder="Ej: Préstamo personal"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={visibleErrors.name}
+                        />
+                    </div>
 
                     <ExpenseAmountSection
                         amount={amount}
@@ -225,6 +248,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         amountLock={locks.amount}
                         currencyLock={locks.currency_type}
                         amountNote={amountNote}
+                        error={visibleErrors.amount}
                     />
 
                     <LockedField reason={locks.financial_entity_id}>
@@ -237,6 +261,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                             newEntityName={newEntityName}
                             setNewEntityName={setNewEntityName}
                             handleCreateEntity={handleCreateEntity}
+                            error={visibleErrors.entity}
                         />
                     </LockedField>
 
@@ -262,10 +287,13 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                 totalInstallments={totalInstallments}
                                 progressPct={progressPct}
                                 installmentsLock={locks.number_of_quotas}
+                                error={installmentsFieldError}
                                 paidLock={paidLock}
                             />
                             {installmentsError && (
-                                <p className="text-red-400 text-sm">{installmentsError}</p>
+                                <p className="text-red-600 dark:text-red-400 text-sm">
+                                    {installmentsError}
+                                </p>
                             )}
                         </div>
                     )}
@@ -298,7 +326,9 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     )}
                 </div>
 
-                <footer className="sticky bottom-0 z-10 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                <footer className="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                    <ExpenseFormErrors errors={visibleErrors} />
+
                     <button
                         onClick={onClose}
                         disabled={saving}
@@ -308,7 +338,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     </button>
 
                     <button
-                        disabled={!canSave || saving}
+                        disabled={saving}
                         onClick={handleSubmit}
                         className="h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                     >

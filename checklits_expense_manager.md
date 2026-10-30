@@ -67,6 +67,7 @@
 ## Metricas
 
 - [ ] egreso ingreso por categoria y cuanto de el sueldo ingresado representa
+- [ ] [PENDIENTE MOBILE] la app Flutter no tiene gráficos y guarda el sueldo pero no lo usa en ningún cálculo. En la web ya está: "Ver gráficos" en el header del dashboard y gráfico de categorías con cuota mensual (solo egresos, convertido a moneda preferida) + "% del sueldo" total y por categoría. Falta decidir si en mobile va un resumen simple o los gráficos completos.
 
 ## Adicionales
 

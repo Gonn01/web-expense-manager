@@ -49,6 +49,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-USA-07 | Toda carga de datos muestra un indicador de progreso. | Web, App |
 | RNF-USA-08 | Las preferencias de interfaz se recuerdan entre sesiones en el dispositivo: el tema (claro, oscuro o el del sistema) en la web y en la app; la barra lateral colapsada, los balances ocultos y la vista en lista o grilla, solo en la web. | Web, App |
 | RNF-USA-09 | Todas las pantallas se pueden usar en tema claro y oscuro: cada color de fondo, texto y borde tiene su variante para los dos temas, y los colores de acento usados como texto (ingresos, egresos, advertencias) se oscurecen en el tema claro para mantener el contraste. | Web, App |
+| RNF-USA-10 | Un formulario con datos faltantes o inválidos no deshabilita el botón de guardar sin explicación: al intentar guardar marca cada campo con error con un mensaje concreto y muestra un resumen siempre visible, sin necesidad de scrollear. Los avisos globales se muestran por encima de los modales. | Web (formularios de gasto); App: pendiente |
 
 ## REN — Rendimiento
 

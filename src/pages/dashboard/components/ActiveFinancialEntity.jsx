@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import ExpenseCard from '@/components/ExpenseCard';
-import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
+import CopyButton from '@/components/CopyButton';
+import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import GroupBalance from '@/pages/dashboard/components/GroupBalance';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { ExpenseType } from '@/utils/enums';
@@ -176,11 +177,17 @@ export default function ActiveFinancialEntity({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                    <WhatsAppCopyButton
-                        group={groups.find((g) => g.id === group.id) ?? group}
-                        selectedCurrency={currency}
-                        preferredCurrency={preferredCurrency}
-                        rates={rates}
+                    <CopyButton
+                        size="sm"
+                        title={`Copiar resumen de ${group.name}`}
+                        getText={() =>
+                            buildWhatsAppText(
+                                groups.find((g) => g.id === group.id) ?? group,
+                                currency,
+                                preferredCurrency,
+                                rates,
+                            )
+                        }
                     />
                     {entityDone ? (
                         <button

@@ -12,12 +12,16 @@ export default function ExpenseAmountSection({
     amountLock,
     currencyLock,
     amountNote,
+    error,
 }) {
-    const isInvalid = amount !== '' && Number(amount) <= 0;
+    const liveError =
+        amount !== '' && Number(amount) <= 0
+            ? 'El monto debe ser mayor a 0 (no se aceptan números negativos).'
+            : null;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-start">
-            <div className="sm:col-span-3 space-y-1.5">
+            <div className="sm:col-span-3 space-y-1.5" data-field="amount">
                 <TextInput
                     label="Monto total"
                     type="amount"
@@ -25,13 +29,8 @@ export default function ExpenseAmountSection({
                     value={amount}
                     disabled={Boolean(amountLock)}
                     onChange={setAmount}
+                    error={liveError ?? error}
                 />
-
-                {isInvalid && (
-                    <p className="text-red-400 text-sm mt-1">
-                        El monto debe ser mayor a 0 (no se aceptan números negativos).
-                    </p>
-                )}
 
                 <LockReason reason={amountLock} />
 

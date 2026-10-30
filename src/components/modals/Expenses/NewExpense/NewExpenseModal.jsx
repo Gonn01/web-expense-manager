@@ -16,6 +16,8 @@ import ExpenseInstallmentsSection from '../components/ExpenseInstallmentsSection
 import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import PaymentEntitySection from '../components/PaymentEntitySection';
+import ExpenseFormErrors from '../components/ExpenseFormErrors';
+import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
 export default function NewExpenseModal({
     onClose,
@@ -76,15 +78,24 @@ export default function NewExpenseModal({
 
     const containerRef = useRef(null);
 
-    const canSave = useMemo(
+    const errors = useMemo(
         () =>
-            name.trim() &&
-            entity &&
-            Number(amount) > 0 &&
-            currency &&
-            (!payWithEntity || (paymentEntity && String(paymentEntity) !== String(entity))),
-        [name, entity, amount, currency, payWithEntity, paymentEntity],
+            validateExpenseForm({
+                entity,
+                name,
+                amount,
+                isInstallment,
+                installments,
+                payWithEntity,
+                paymentEntity,
+            }),
+        [entity, name, amount, isInstallment, installments, payWithEntity, paymentEntity],
     );
+    const [submitted, setSubmitted] = useState(false);
+    const visibleErrors = submitted ? errors : {};
+    const installmentsFieldError =
+        visibleErrors.installments ??
+        (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
 
     const handleCreateEntity = async () => {
         if (!newEntityName.trim()) return;
@@ -134,7 +145,12 @@ export default function NewExpenseModal({
     }, [onClose]);
 
     function handleSubmit() {
-        if (!canSave) return;
+        if (saving) return;
+        if (Object.keys(errors).length > 0) {
+            setSubmitted(true);
+            focusFirstError(containerRef.current, errors);
+            return;
+        }
 
         const payload = {
             financial_entity_id: entity,
@@ -182,18 +198,22 @@ export default function NewExpenseModal({
                 <div className="p-6 space-y-6">
                     <ExpenseTypeSelector type={type} setType={setType} />
 
-                    <TextInput
-                        label="Nombre del gasto"
-                        placeholder="Ej: Préstamo personal"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
+                    <div data-field="name">
+                        <TextInput
+                            label="Nombre del gasto"
+                            placeholder="Ej: Préstamo personal"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={visibleErrors.name}
+                        />
+                    </div>
 
                     <ExpenseAmountSection
                         amount={amount}
                         setAmount={setAmount}
                         currency={currency}
                         setCurrency={setCurrency}
+                        error={visibleErrors.amount}
                     />
 
                     <EntitySelector
@@ -209,6 +229,7 @@ export default function NewExpenseModal({
                         newEntityEmail={newEntityEmail}
                         setNewEntityEmail={setNewEntityEmail}
                         handleCreateEntity={handleCreateEntity}
+                        error={visibleErrors.entity}
                     />
 
                     <ExpenseModeSelector
@@ -227,6 +248,7 @@ export default function NewExpenseModal({
 
                     {isInstallment && (
                         <ExpenseInstallmentsSection
+                            error={installmentsFieldError}
                             installments={installments}
                             setInstallments={setInstallments}
                             paidInstallments={paidInstallments}
@@ -263,6 +285,7 @@ export default function NewExpenseModal({
                     )}
 
                     <PaymentEntitySection
+                        error={visibleErrors.paymentEntity}
                         enabled={payWithEntity}
                         setEnabled={setPayWithEntity}
                         entities={entities}
@@ -303,8 +326,9 @@ export default function NewExpenseModal({
                         </span>
                     </label>
                 </div>
+                <footer className="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
+                    <ExpenseFormErrors errors={visibleErrors} />
 
-                <footer className="sticky bottom-0 z-10 flex justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-6 py-4 bg-white dark:bg-[#111714]">
                     <button
                         onClick={onClose}
                         className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
@@ -313,7 +337,7 @@ export default function NewExpenseModal({
                     </button>
 
                     <button
-                        disabled={!canSave || saving}
+                        disabled={saving}
                         onClick={handleSubmit}
                         className="
         h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg 

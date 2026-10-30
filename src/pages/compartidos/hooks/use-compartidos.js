@@ -6,6 +6,7 @@ import {
     reintentarCompartido,
     confirmarPago as confirmarPagoApi,
     rechazarPago as rechazarPagoApi,
+    createGasto,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
@@ -157,6 +158,14 @@ export function useCompartidos() {
         [token, load],
     );
 
+    const crearGasto = useCallback(
+        async (payload) => {
+            await createGasto(payload, token);
+            await load();
+        },
+        [token, load],
+    );
+
     return {
         compartidos,
         pagos,
@@ -167,5 +176,6 @@ export function useCompartidos() {
         reintentar,
         confirmarPago,
         rechazarPago,
+        crearGasto,
     };
 }

@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
 import NewEntityInlineForm from './NewEntityInlineForm';
 
@@ -15,9 +16,12 @@ export default function EntitySelector({
     handleCreateEntity,
     loading,
     loadingNewEntity,
+    error,
 }) {
+    const borderClass = error ? 'border-red-500' : 'border-slate-300 dark:border-[#3d5245]';
+
     return (
-        <div className="space-y-2">
+        <div className="space-y-2" data-field="entity">
             <label className="text-slate-900 dark:text-white text-sm font-medium">
                 Entidad financiera
             </label>
@@ -28,14 +32,17 @@ export default function EntitySelector({
                         <div className="h-4 w-32 bg-slate-100 dark:bg-[#29382f] rounded" />
                     </div>
                 ) : entities.length === 0 ? (
-                    <div className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm">
+                    <div
+                        className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm`}
+                    >
                         <Icon name="info" className="text-base" />
                         No tenés entidades creadas aún
                     </div>
                 ) : (
                     <div className="relative">
                         <Select
-                            className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer"
+                            aria-invalid={error ? true : undefined}
+                            className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer`}
                             value={entity}
                             onChange={setEntity}
                             placeholder="Seleccionar..."
@@ -48,6 +55,12 @@ export default function EntitySelector({
                     </div>
                 )}
             </div>
+
+            {error && (
+                <FieldError
+                    message={entities.length === 0 ? `${error} Creá una nueva más abajo.` : error}
+                />
+            )}
 
             {!showNewEntity && (
                 <button

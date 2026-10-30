@@ -7,6 +7,7 @@ import { useUIStore } from '@/store/use-ui-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import Snackbar from './Snackbar';
+import UserAvatar from './UserAvatar';
 import ConfirmDeleteModal from './modals/ConfirmDeleteModal';
 
 export default function Sidebar() {
@@ -27,7 +28,6 @@ export default function Sidebar() {
     const toggleSidebar = useUIStore((s) => s.toggleSidebar);
     const [notification, setNotification] = useState(null);
     const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
-    const [failedAvatar, setFailedAvatar] = useState(null);
 
     useEffect(() => {
         loadPendingCount(token);
@@ -91,7 +91,6 @@ export default function Sidebar() {
     };
 
     const avatar = user?.avatar;
-    const showAvatar = Boolean(avatar) && avatar !== failedAvatar;
     const nombreVisible = user?.name;
     const email = user?.email;
 
@@ -132,23 +131,8 @@ export default function Sidebar() {
                 </button>
 
                 <div className="flex flex-col gap-4 w-full">
-                    <div className="flex items-center gap-3 pl-1 h-12">
-                        {showAvatar ? (
-                            <img
-                                src={avatar}
-                                alt="Foto de perfil"
-                                referrerPolicy="no-referrer"
-                                onError={() => setFailedAvatar(avatar)}
-                                className="aspect-square object-cover rounded-full size-10 shrink-0"
-                            />
-                        ) : (
-                            <div
-                                aria-label="Foto de perfil"
-                                className="flex items-center justify-center rounded-full size-10 shrink-0 bg-primary/20 text-primary"
-                            >
-                                <Icon name="person" className="text-2xl" />
-                            </div>
-                        )}
+                    <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
+                        <UserAvatar src={avatar} name={nombreVisible} className="size-10 text-sm" />
                         {!collapsed && (
                             <div className="flex flex-col min-w-0">
                                 <h1 className="text-slate-900 dark:text-white text-base font-medium leading-normal truncate">

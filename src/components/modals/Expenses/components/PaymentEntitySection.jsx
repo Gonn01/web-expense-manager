@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
 import NewEntityInlineForm from './NewEntityInlineForm';
 
@@ -18,11 +19,12 @@ export default function PaymentEntitySection({
     setNewEntityEmail,
     handleCreateEntity,
     loadingNewEntity,
+    error,
 }) {
     const options = entities.filter((e) => String(e.id) !== String(excludeId));
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3" data-field="paymentEntity">
             <label
                 onClick={() => setEnabled((v) => !v)}
                 className="flex items-center gap-3 cursor-pointer select-none"
@@ -42,7 +44,10 @@ export default function PaymentEntitySection({
                 <div className="p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
                     <div className="relative">
                         <Select
-                            className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-white dark:bg-[#111714] px-3 text-slate-900 dark:text-white cursor-pointer"
+                            aria-invalid={error ? true : undefined}
+                            className={`h-12 w-full rounded-lg border ${
+                                error ? 'border-red-500' : 'border-slate-300 dark:border-[#3d5245]'
+                            } bg-white dark:bg-[#111714] px-3 text-slate-900 dark:text-white cursor-pointer`}
                             value={paymentEntity}
                             onChange={setPaymentEntity}
                             placeholder="Seleccionar entidad de pago..."
@@ -76,6 +81,8 @@ export default function PaymentEntitySection({
                             + Crear nueva entidad
                         </button>
                     )}
+
+                    {error && <FieldError message={error} />}
 
                     <p className="flex items-start gap-2 text-xs text-slate-500 dark:text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />

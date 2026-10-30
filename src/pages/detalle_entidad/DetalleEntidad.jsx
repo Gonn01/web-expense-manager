@@ -20,7 +20,8 @@ import PeligroEliminar from '@/components/PeligroEliminar';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
-import WhatsAppCopyButton from '@/pages/dashboard/components/WhatsAppCopyButton';
+import CopyButton from '@/components/CopyButton';
+import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
 
@@ -111,12 +112,12 @@ export default function EntidadDetalle() {
                         onDesvincular={onDesvincular}
                         loading={loadingVincular}
                     />
-                    <WhatsAppCopyButton
-                        group={whatsappGroup}
-                        selectedCurrency={null}
-                        preferredCurrency={preferredCurrency}
-                        rates={rates}
+                    <CopyButton
                         label="Copiar resumen"
+                        title="Copiar el resumen de la entidad"
+                        getText={() =>
+                            buildWhatsAppText(whatsappGroup, null, preferredCurrency, rates)
+                        }
                     />
                 </div>
             </div>

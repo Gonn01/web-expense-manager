@@ -51,6 +51,13 @@ export default function Dashboard() {
                 <div className="flex items-center gap-3">
                     <SettlementToggle />
                     <button
+                        onClick={() => setShowCharts(true)}
+                        className="cursor-pointer shrink-0 flex items-center h-11 px-5 rounded-lg border border-primary/60 text-primary font-bold hover:bg-primary/10 transition-colors"
+                    >
+                        <Icon name="bar_chart" className="mr-2" />
+                        Ver gráficos
+                    </button>
+                    <button
                         onClick={() => ui.setOpenNewExpense(true)}
                         className="cursor-pointer flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
                     >
@@ -109,13 +116,6 @@ export default function Dashboard() {
                             rates={rates}
                             vertical
                         />
-                        <button
-                            onClick={() => setShowCharts(true)}
-                            className="cursor-pointer flex items-center justify-center gap-2 h-10 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors"
-                        >
-                            <Icon name="bar_chart" />
-                            Ver gráficos
-                        </button>
                     </div>
                 </div>
 

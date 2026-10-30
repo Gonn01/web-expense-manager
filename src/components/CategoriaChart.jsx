@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import Icon from '@/components/Icon';
+import { Link } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import { convertCurrency } from '@/utils/convert-currency';
@@ -180,23 +181,45 @@ export default function CategoriaChart({ gastos }) {
                             />
                         </PieChart>
                     </ResponsiveContainer>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2 rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 text-sm">
-                        <span className="text-slate-700 dark:text-slate-200">
-                            Total del mes:{' '}
-                            <span className="font-semibold">
-                                {formatMoney(total, preferredCurrency)}
+                    <div className="flex flex-col gap-1.5 rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 text-sm">
+                        <div className="flex flex-wrap items-baseline justify-between gap-2">
+                            <span className="text-slate-700 dark:text-slate-200">
+                                Total del mes:{' '}
+                                <span className="font-semibold">
+                                    {formatMoney(total, preferredCurrency)}
+                                </span>
                             </span>
-                        </span>
-                        {sueldo > 0 && (
-                            <span
-                                className={`font-semibold ${
-                                    total > sueldo
-                                        ? 'text-red-600 dark:text-red-400'
-                                        : 'text-slate-700 dark:text-slate-200'
-                                }`}
-                            >
-                                {formatPercent((total / sueldo) * 100)} del sueldo
-                            </span>
+                            {sueldo > 0 && (
+                                <span
+                                    className={`font-semibold ${
+                                        total > sueldo
+                                            ? 'text-red-600 dark:text-red-400'
+                                            : 'text-slate-700 dark:text-slate-200'
+                                    }`}
+                                >
+                                    {formatPercent((total / sueldo) * 100)} del sueldo
+                                </span>
+                            )}
+                        </div>
+                        {sueldo > 0 ? (
+                            <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-white/10 overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full ${
+                                        total > sueldo ? 'bg-red-500' : 'bg-primary'
+                                    }`}
+                                    style={{ width: `${Math.min((total / sueldo) * 100, 100)}%` }}
+                                />
+                            </div>
+                        ) : (
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                <Link
+                                    to="/app/configuracion"
+                                    className="text-primary font-semibold hover:underline"
+                                >
+                                    Cargá tu sueldo
+                                </Link>{' '}
+                                para ver qué parte de tus ingresos se lleva cada categoría.
+                            </p>
                         )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5">
