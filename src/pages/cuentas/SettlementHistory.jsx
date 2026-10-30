@@ -4,7 +4,7 @@ import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
 import DateRangeFilter, { inDateRange } from '@/components/DateRangeFilter';
 import { formatMoney } from '@/utils/FormatMoney';
-import { formatDateShort } from '@/utils/FormatDate';
+import { formatDateTime } from '@/utils/FormatDate';
 import { useSettlementHistoryList, monthLabel } from './hooks/use-settlement-history';
 
 export default function SettlementHistory() {
@@ -86,7 +86,7 @@ function SnapshotCard({ snap, onClick }) {
                         {monthLabel(snap.month)}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {formatDateShort(snap.started_at)} → {formatDateShort(snap.finished_at)}
+                        Del {formatDateTime(snap.started_at)} al {formatDateTime(snap.finished_at)}
                     </p>
                 </div>
                 <Icon name="chevron_right" className="text-slate-400 shrink-0" />

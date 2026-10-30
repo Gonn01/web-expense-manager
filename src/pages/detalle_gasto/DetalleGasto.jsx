@@ -7,7 +7,7 @@ import ProgresoPago from './components/ProgresoPago';
 import CuotasSection from './components/CuotasSection';
 import PagosFijosSection from './components/PagosFijosSection';
 import HistorialSection from './components/HistorialSection';
-import PeligroEliminar from '@/components/PeligroEliminar';
+import DeleteExpenseModal from './components/DeleteExpenseModal';
 import { useGastoUI } from './hooks/use-gasto-ui';
 import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
@@ -38,13 +38,13 @@ export default function DetalleGasto() {
     const [transferOpen, setTransferOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     if (loading) {
         return <Loader />;
     }
 
     if (!gasto) return null;
-    console.log('Gasto en DetalleGasto:', gasto);
     return (
         <div className="min-h-dvh w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
             <div className="px-4 md:px-10 lg:px-20 xl:px-40 py-6 flex justify-center">
@@ -55,6 +55,7 @@ export default function DetalleGasto() {
                             marcarProxima={() => setConfirmOpen(true)}
                             abrirEditar={() => setEditOpen(true)}
                             abrirTransferir={() => setTransferOpen(true)}
+                            abrirEliminar={() => setDeleteOpen(true)}
                             transferLock={transferLock}
                         />
                     ) : null}
@@ -107,16 +108,6 @@ export default function DetalleGasto() {
                     )}
 
                     <HistorialSection gasto={gasto} />
-
-                    <PeligroEliminar
-                        linked={Boolean(gasto.linked_purchase_id)}
-                        linkedEntityName={
-                            getEntityById(gasto.linked_financial_entity_id)?.name ?? ''
-                        }
-                        onDelete={async (deleteLinked) => {
-                            if (await eliminar(deleteLinked)) volverALista();
-                        }}
-                    />
                 </div>
             </div>
 
@@ -133,6 +124,16 @@ export default function DetalleGasto() {
                 items={gasto ? [gasto] : []}
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
                 settlementActive={settlementActive}
+            />
+
+            <DeleteExpenseModal
+                open={deleteOpen}
+                linked={Boolean(gasto.linked_purchase_id)}
+                linkedEntityName={getEntityById(gasto.linked_financial_entity_id)?.name ?? ''}
+                onCancel={() => setDeleteOpen(false)}
+                onDelete={async (deleteLinked) => {
+                    if (await eliminar(deleteLinked)) volverALista();
+                }}
             />
 
             {transferOpen && (

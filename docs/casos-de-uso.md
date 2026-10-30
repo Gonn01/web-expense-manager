@@ -523,6 +523,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El usuario abre "Historial de cuentas".
     2. El sistema lista las sesiones finalizadas con su mes, fecha y totales por moneda.
     3. El usuario abre una; el sistema muestra el detalle agrupado por entidad.
+    4. Opcionalmente, el usuario elige una entidad o un gasto del detalle; el sistema abre el detalle de esa entidad o de ese gasto.
 - **Flujos alternativos**
     - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período.
     - 2b. No hay sesiones finalizadas: el sistema muestra un estado vacío.

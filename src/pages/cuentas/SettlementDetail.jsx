@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
 import CopyButton from '@/components/CopyButton';
 import { formatMoney } from '@/utils/FormatMoney';
-import { formatDate, formatDateShort } from '@/utils/FormatDate';
+import { formatDateTime } from '@/utils/FormatDate';
 import {
     buildSettlementEntityText,
     buildSettlementSnapshotText,
@@ -20,11 +20,17 @@ export default function SettlementDetail() {
         const items = Array.isArray(snapshot?.items) ? snapshot.items : [];
         const map = new Map();
         for (const it of items) {
-            const key = it.entity_name ?? 'Sin entidad';
-            if (!map.has(key)) map.set(key, []);
-            map.get(key).push(it);
+            const key = it.entity_id ?? it.entity_name ?? 'Sin entidad';
+            if (!map.has(key)) {
+                map.set(key, {
+                    entityId: it.entity_id ?? null,
+                    entityName: it.entity_name ?? 'Sin entidad',
+                    items: [],
+                });
+            }
+            map.get(key).items.push(it);
         }
-        return [...map.entries()];
+        return [...map.values()];
     }, [snapshot]);
 
     if (loading) return <Loader />;
@@ -63,9 +69,8 @@ export default function SettlementDetail() {
                         {monthLabel(snapshot.month)}
                     </p>
                     <p className="text-slate-500 dark:text-slate-400 text-sm">
-                        Del {formatDateShort(snapshot.started_at)} al{' '}
-                        {formatDateShort(snapshot.finished_at)} · cerrado el{' '}
-                        {formatDate(snapshot.finished_at)}
+                        Del {formatDateTime(snapshot.started_at)} al{' '}
+                        {formatDateTime(snapshot.finished_at)}
                     </p>
                 </div>
                 <CopyButton
@@ -117,15 +122,29 @@ export default function SettlementDetail() {
             </div>
 
             <div className="flex flex-col gap-4 overflow-y-auto pr-1 flex-1 min-h-0 pb-4">
-                {groups.map(([entityName, items]) => (
+                {groups.map(({ entityId, entityName, items }) => (
                     <div
-                        key={entityName}
+                        key={entityId ?? entityName}
                         className="shrink-0 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/3 overflow-hidden"
                     >
                         <div className="px-4 py-2.5 bg-slate-50 dark:bg-white/4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between gap-3">
-                            <span className="font-bold text-slate-800 dark:text-slate-100 min-w-0 truncate">
-                                {entityName}
-                            </span>
+                            {entityId ? (
+                                <Link
+                                    to={`/app/entidades/${entityId}`}
+                                    title={`Ver ${entityName}`}
+                                    className="group flex items-center gap-1 min-w-0 font-bold text-slate-800 dark:text-slate-100 hover:text-primary dark:hover:text-primary transition-colors"
+                                >
+                                    <span className="truncate">{entityName}</span>
+                                    <Icon
+                                        name="chevron_right"
+                                        className="text-base shrink-0 text-slate-400 group-hover:text-primary"
+                                    />
+                                </Link>
+                            ) : (
+                                <span className="font-bold text-slate-800 dark:text-slate-100 min-w-0 truncate">
+                                    {entityName}
+                                </span>
+                            )}
                             <div className="flex items-center gap-3 shrink-0">
                                 <span className="text-xs text-slate-500 dark:text-slate-400">
                                     {items.length} {items.length === 1 ? 'gasto' : 'gastos'}
@@ -141,37 +160,41 @@ export default function SettlementDetail() {
                             {items.map((it) => {
                                 const cuota = cuotaLabel(it);
                                 return (
-                                    <li
-                                        key={it.purchase_id}
-                                        className="px-4 py-2.5 flex items-center justify-between gap-3"
-                                    >
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
-                                                {it.name}
-                                            </p>
-                                            <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                                                <span
-                                                    className={
-                                                        it.type === 'INGRESO'
-                                                            ? 'text-emerald-500'
-                                                            : 'text-red-400'
-                                                    }
-                                                >
-                                                    {it.type === 'INGRESO' ? 'Ingreso' : 'Egreso'}
+                                    <li key={it.purchase_id}>
+                                        <Link
+                                            to={`/app/gastos/${it.purchase_id}`}
+                                            className="px-4 py-2.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+                                        >
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
+                                                    {it.name}
+                                                </p>
+                                                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                                    <span
+                                                        className={
+                                                            it.type === 'INGRESO'
+                                                                ? 'text-emerald-500'
+                                                                : 'text-red-400'
+                                                        }
+                                                    >
+                                                        {it.type === 'INGRESO'
+                                                            ? 'Ingreso'
+                                                            : 'Egreso'}
+                                                    </span>
+                                                    {it.fixed_expense && <span>· Fijo</span>}
+                                                </p>
+                                            </div>
+
+                                            {cuota && (
+                                                <span className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/15 text-primary whitespace-nowrap">
+                                                    {cuota}
                                                 </span>
-                                                {it.fixed_expense && <span>· Fijo</span>}
-                                            </p>
-                                        </div>
+                                            )}
 
-                                        {cuota && (
-                                            <span className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/15 text-primary whitespace-nowrap">
-                                                {cuota}
+                                            <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap shrink-0">
+                                                {formatMoney(it.amount_per_quota, it.currency)}
                                             </span>
-                                        )}
-
-                                        <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap shrink-0">
-                                            {formatMoney(it.amount_per_quota, it.currency)}
-                                        </span>
+                                        </Link>
                                     </li>
                                 );
                             })}

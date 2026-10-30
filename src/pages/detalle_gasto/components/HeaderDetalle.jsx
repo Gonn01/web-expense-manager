@@ -1,5 +1,5 @@
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
-import Icon from '@/components/Icon';
+import ActionsMenu from '@/components/ActionsMenu';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 export default function HeaderDetalle({
@@ -7,6 +7,7 @@ export default function HeaderDetalle({
     marcarProxima,
     abrirEditar,
     abrirTransferir,
+    abrirEliminar,
     transferLock,
 }) {
     const avisarTransferBloqueado = () =>
@@ -21,7 +22,7 @@ export default function HeaderDetalle({
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-3">
                 {gasto.finalization_date == null ? (
                     <button
                         onClick={marcarProxima}
@@ -33,22 +34,27 @@ export default function HeaderDetalle({
                     </button>
                 ) : null}
 
-                <button
-                    onClick={abrirEditar}
-                    className="cursor-pointer h-10 px-4 rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold hover:bg-opacity-80 transition-all"
-                >
-                    Editar
-                </button>
-
-                <button
-                    onClick={transferLock ? avisarTransferBloqueado : abrirTransferir}
-                    aria-disabled={Boolean(transferLock)}
-                    title={transferLock ?? 'Mover el gasto a otra entidad'}
-                    className={`cursor-pointer h-10 px-4 rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold hover:bg-opacity-80 transition-all flex items-center gap-1.5 ${transferLock ? 'opacity-50' : ''}`}
-                >
-                    <Icon name="swap_horiz" className="text-lg" />
-                    Transferir
-                </button>
+                <ActionsMenu
+                    label="Opciones del gasto"
+                    items={[
+                        {
+                            icon: 'edit',
+                            label: 'Editar gasto',
+                            onClick: abrirEditar,
+                        },
+                        {
+                            icon: transferLock ? 'lock' : 'swap_horiz',
+                            label: 'Transferir a otra entidad',
+                            onClick: transferLock ? avisarTransferBloqueado : abrirTransferir,
+                        },
+                        {
+                            icon: 'delete',
+                            label: 'Eliminar gasto',
+                            tone: 'danger',
+                            onClick: abrirEliminar,
+                        },
+                    ]}
+                />
             </div>
         </div>
     );

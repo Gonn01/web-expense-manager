@@ -30,7 +30,17 @@ export function TabHeader({ tab, setTab, pendingCount = 0 }) {
                         }`}
                         onClick={() => setTab(t)}
                     >
-                        {labelFor(t)}
+                        <span className="grid">
+                            <span
+                                aria-hidden="true"
+                                className="invisible col-start-1 row-start-1 font-bold"
+                            >
+                                {labelFor(t)}
+                            </span>
+                            <span className="col-start-1 row-start-1 text-center">
+                                {labelFor(t)}
+                            </span>
+                        </span>
                         {t === 'pendientes' && (
                             <span className="rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold px-1.5 min-w-5 text-center">
                                 {pendingCount}

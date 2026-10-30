@@ -12,15 +12,16 @@ import { ListContainer } from './components/ListContainer';
 import GastoItem from './components/GastoItem';
 import { StatCard } from './components/StatCard';
 import EditEntityModal from './components/EditEntityModal';
-import LinkUserButton from './components/LinkUserButton';
+import LinkUserDialog from './components/LinkUserDialog';
+import ActionsMenu from '@/components/ActionsMenu';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 import { useEntidadUI } from './hooks/use-entidad-ui';
 import Loader from '@/components/Loader';
-import PeligroEliminar from '@/components/PeligroEliminar';
+import { useDialogStore } from '@/store/use-dialog-store';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
-import CopyButton from '@/components/CopyButton';
 import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
@@ -56,6 +57,7 @@ export default function EntidadDetalle() {
     } = useEntidadUI();
 
     const [showCharts, setShowCharts] = useState(false);
+    const [linkDialog, setLinkDialog] = useState(null);
     const [logRange, setLogRange] = useState({ from: '', to: '' });
 
     const { user } = useAuth();
@@ -88,39 +90,91 @@ export default function EntidadDetalle() {
     }
 
     const counterparty = entity.linked_user_name || entity.linked_user_email || 'la otra persona';
+    const isLinked = !!entity.linked_user_id;
+
+    const confirmDeleteEntity = () =>
+        useDialogStore.getState().confirm({
+            title: 'Eliminar entidad',
+            message:
+                "Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras.",
+            tone: 'error',
+            confirmLabel: 'Eliminar',
+            onConfirm: onDeleteEntity,
+        });
+
+    const copySummary = async () => {
+        try {
+            await navigator.clipboard.writeText(
+                buildWhatsAppText(whatsappGroup, null, preferredCurrency, rates),
+            );
+            useSnackbarStore.getState().show('Resumen copiado al portapapeles.', 'success');
+        } catch {
+            useSnackbarStore.getState().show('No se pudo copiar al portapapeles.', 'error');
+        }
+    };
 
     return (
         <>
             <div className="flex flex-wrap items-center justify-between mb-6">
                 <h1 className="text-3xl sm:text-4xl font-black dark:text-white">{entity.name}</h1>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-3">
                     <button
-                        className="flex items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 py-2 rounded-lg text-primary font-bold cursor-pointer"
+                        className="flex h-10 items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 rounded-lg text-primary font-bold cursor-pointer"
                         onClick={() => setOpenNewExpense(true)}
                     >
                         <Icon name="add" /> Crear Gasto
                     </button>
-                    <button
-                        className="flex items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 py-2 rounded-lg text-primary font-bold cursor-pointer"
-                        onClick={() => setOpenEditEntity(true)}
-                    >
-                        <Icon name="edit" /> Editar Entidad
-                    </button>
-                    <LinkUserButton
-                        entity={entity}
-                        onVincular={onVincular}
-                        onDesvincular={onDesvincular}
-                        loading={loadingVincular}
-                    />
-                    <CopyButton
-                        label="Copiar resumen"
-                        title="Copiar el resumen de la entidad"
-                        getText={() =>
-                            buildWhatsAppText(whatsappGroup, null, preferredCurrency, rates)
-                        }
+                    <ActionsMenu
+                        label="Opciones de la entidad"
+                        items={[
+                            {
+                                icon: 'bar_chart',
+                                label: 'Ver gráficos',
+                                onClick: () => setShowCharts(true),
+                            },
+                            {
+                                icon: 'content_copy',
+                                label: 'Copiar resumen',
+                                onClick: copySummary,
+                            },
+                            {
+                                icon: 'edit',
+                                label: 'Editar entidad',
+                                onClick: () => setOpenEditEntity(true),
+                            },
+                            isLinked
+                                ? {
+                                      icon: 'link_off',
+                                      label: `Desvincular a ${counterparty}`,
+                                      disabled: loadingVincular,
+                                      tone: 'danger',
+                                      onClick: () => setLinkDialog('unlink'),
+                                  }
+                                : {
+                                      icon: 'person_add',
+                                      label: 'Vincular usuario',
+                                      disabled: loadingVincular,
+                                      onClick: () => setLinkDialog('link'),
+                                  },
+                            {
+                                icon: 'delete',
+                                label: 'Eliminar entidad',
+                                tone: 'danger',
+                                onClick: confirmDeleteEntity,
+                            },
+                        ]}
                     />
                 </div>
             </div>
+
+            <LinkUserDialog
+                entity={entity}
+                dialog={linkDialog}
+                onClose={() => setLinkDialog(null)}
+                onVincular={onVincular}
+                onDesvincular={onDesvincular}
+                loading={loadingVincular}
+            />
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                 <StatCard
@@ -157,14 +211,6 @@ export default function EntidadDetalle() {
                     <Icon name="chevron_right" className="text-base" />
                 </button>
             )}
-
-            <button
-                onClick={() => setShowCharts(true)}
-                className="mb-6 cursor-pointer flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors"
-            >
-                <Icon name="bar_chart" />
-                Ver gráficos
-            </button>
 
             <TabHeader tab={tab} setTab={setTab} pendingCount={stats.pending} />
 
@@ -261,7 +307,6 @@ export default function EntidadDetalle() {
                     </ListContainer>
                 </div>
             )}
-            <PeligroEliminar label="Eliminar Entidad" onDelete={onDeleteEntity} restorable={true} />
 
             <ConfirmInstallmentPaymentModal
                 open={settleModalOpen}

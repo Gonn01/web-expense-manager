@@ -123,7 +123,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-CTA-06 | Al finalizar la sesión, el sistema genera un snapshot con: mes, inicio y fin de la sesión, totales por moneda (egresos, ingresos y cantidad), cantidad de entidades y el detalle por gasto (entidad, monto de la cuota, moneda, tipo, número de cuota). | CU-28 |
 | RF-CTA-07 | Al finalizar la sesión, todos los gastos postergados del usuario dejan de estarlo. | CU-28 |
 | RF-CTA-08 | El usuario puede descartar la sesión abierta. Se pierden las marcas y no se registra ningún pago ni snapshot. | CU-29 |
-| RF-CTA-09 | El usuario puede consultar el historial de sesiones finalizadas, filtrarlo por rango de fechas y ver el detalle de cada snapshot agrupado por entidad. | CU-30 |
+| RF-CTA-09 | El usuario puede consultar el historial de sesiones finalizadas, filtrarlo por rango de fechas y ver el detalle de cada snapshot agrupado por entidad. Desde ese detalle, cada entidad lleva a su detalle y cada gasto al detalle del gasto. | CU-30 |
 | RF-CTA-10 | El usuario puede copiar al portapapeles el resumen completo de un snapshot o el de una de sus entidades, con formato apto para WhatsApp. | CU-31 |
 | RF-CTA-11 | No se puede finalizar una sesión sin gastos marcados: no se genera un snapshot vacío. Los clientes lo impiden y avisan con un snackbar; la API también lo rechaza (409 `SETTLEMENT_EMPTY`), incluso cuando la limpieza de RF-CTA-05 descarta todos los marcados. En ese caso no se registra ningún pago y la sesión sigue abierta, para que el usuario marque gastos o la descarte (RF-CTA-08). | CU-28 |
 

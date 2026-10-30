@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Icon from '@/components/Icon';
 
 export default function PasswordInput({ value, onChange, placeholder }) {
     const [show, setShow] = useState(false);
@@ -16,9 +17,10 @@ export default function PasswordInput({ value, onChange, placeholder }) {
             <button
                 type="button"
                 onClick={() => setShow((s) => !s)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                aria-label={show ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
-                {show ? '🙈' : '👁️'}
+                <Icon name={show ? 'visibility_off' : 'visibility'} className="text-xl" />
             </button>
         </div>
     );
