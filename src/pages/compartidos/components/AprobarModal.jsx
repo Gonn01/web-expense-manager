@@ -44,7 +44,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
             onMouseDown={(e) => e.target === e.currentTarget && !loading && onClose()}
         >
             <div
-                className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6"
+                className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md max-h-full overflow-y-auto p-4 sm:p-6"
                 onClick={(e) => e.stopPropagation()}
             >
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">

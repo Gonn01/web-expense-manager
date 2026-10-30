@@ -54,7 +54,7 @@ export default function SettlementDetail() {
     const byCurrency = totals.byCurrency ?? {};
 
     return (
-        <div className="flex flex-col flex-1 min-h-0">
+        <div className="flex flex-col flex-1 lg:min-h-0">
             <button
                 onClick={() => navigate('/app/settlement')}
                 className="shrink-0 flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-primary transition-colors cursor-pointer mb-3 w-fit"
@@ -63,9 +63,9 @@ export default function SettlementDetail() {
                 Historial de cuentas
             </button>
 
-            <div className="shrink-0 mb-5 flex items-start justify-between gap-4">
-                <div>
-                    <p className="text-3xl font-black text-slate-900 dark:text-white capitalize">
+            <div className="shrink-0 mb-5 flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                    <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white capitalize">
                         {monthLabel(snapshot.month)}
                     </p>
                     <p className="text-slate-500 dark:text-slate-400 text-sm">
@@ -121,7 +121,7 @@ export default function SettlementDetail() {
                 ))}
             </div>
 
-            <div className="flex flex-col gap-4 overflow-y-auto pr-1 flex-1 min-h-0 pb-4">
+            <div className="flex flex-col gap-4 lg:overflow-y-auto lg:pr-1 flex-1 lg:min-h-0 pb-4">
                 {groups.map(({ entityId, entityName, items }) => (
                     <div
                         key={entityId ?? entityName}
@@ -182,11 +182,14 @@ export default function SettlementDetail() {
                                                             : 'Egreso'}
                                                     </span>
                                                     {it.fixed_expense && <span>· Fijo</span>}
+                                                    {cuota && (
+                                                        <span className="sm:hidden">· {cuota}</span>
+                                                    )}
                                                 </p>
                                             </div>
 
                                             {cuota && (
-                                                <span className="shrink-0 text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/15 text-primary whitespace-nowrap">
+                                                <span className="hidden sm:inline shrink-0 text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/15 text-primary whitespace-nowrap">
                                                     {cuota}
                                                 </span>
                                             )}

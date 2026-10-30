@@ -18,12 +18,12 @@ export function TabHeader({ tab, setTab, pendingCount = 0 }) {
                     : 'Historial';
 
     return (
-        <div className="border-b border-zinc-200 dark:border-zinc-800 mb-4">
-            <div className="flex gap-6">
+        <div className="border-b border-zinc-200 dark:border-zinc-800 mb-4 -mx-3 px-3 sm:mx-0 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-5 sm:gap-6 w-max">
                 {tabs.map((t) => (
                     <button
                         key={t}
-                        className={`pb-3 pt-2 text-sm flex items-center gap-1.5 ${
+                        className={`pb-3 pt-2 text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                             tab === t
                                 ? 'text-primary font-bold border-b-2 border-b-primary'
                                 : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 cursor-pointer dark:hover:text-zinc-200 border-b-2 border-b-transparent'

@@ -33,7 +33,7 @@ export default function Configuracion() {
     } = useConfiguracionUI();
 
     return (
-        <div className="p-6 flex flex-col gap-6">
+        <div className="sm:p-2 lg:p-6 flex flex-col gap-6">
             {snackbar && (
                 <Snackbar message={snackbar.message} type={snackbar.type} onClose={closeSnackbar} />
             )}

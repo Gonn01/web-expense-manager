@@ -82,7 +82,7 @@ export default function ActiveFinancialEntity({
             }`}
         >
             <div
-                className={`flex items-center justify-between gap-3 px-3 py-2.5 border-b ${
+                className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-3 py-2.5 border-b ${
                     entityDone
                         ? 'border-emerald-500/20 bg-emerald-500/6'
                         : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/4'
@@ -143,7 +143,7 @@ export default function ActiveFinancialEntity({
                         >
                             {group.name}
                         </button>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                             <Icon name="receipt_long" className="text-sm" />
                             <span>
                                 {count} {count === 1 ? 'gasto' : 'gastos'}
@@ -176,7 +176,7 @@ export default function ActiveFinancialEntity({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 ml-auto">
                     <CopyButton
                         size="sm"
                         title={`Copiar resumen de ${group.name}`}
@@ -233,7 +233,7 @@ export default function ActiveFinancialEntity({
                         Sin gastos que coincidan con el filtro.
                     </p>
                 ) : (
-                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-1.5 py-1.5">
+                    <ul className="divide-y divide-slate-100 dark:divide-white/5 px-0.5 sm:px-1.5 py-1.5">
                         {group.items.map((it) => (
                             <li key={it.id} className="py-2 first:pt-0 last:pb-0">
                                 <ExpenseCard

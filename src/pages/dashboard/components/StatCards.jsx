@@ -46,7 +46,7 @@ export default function StatCards({
         },
     ];
 
-    const rowClass = vertical ? 'flex flex-col gap-3' : 'flex flex-row gap-4 flex-wrap';
+    const rowClass = vertical ? 'flex flex-col gap-3' : 'grid grid-cols-1 sm:grid-cols-3 gap-3';
 
     return (
         <div className="flex flex-col gap-3">
@@ -69,7 +69,7 @@ export default function StatCards({
 function StatCard({ label, value, tone, sub = false, vertical = false }) {
     return (
         <div
-            className={`flex ${vertical ? 'w-full' : 'min-w-[180px] flex-1'} flex-col gap-2 rounded-xl p-3 border ${
+            className={`flex ${vertical ? 'w-full' : 'min-w-0'} flex-col gap-2 rounded-xl p-3 border ${
                 sub
                     ? 'border-black/5 dark:border-white/5 bg-zinc-50 dark:bg-white/3'
                     : 'border-black/10 dark:border-white/10 bg-white dark:bg-white/5'
@@ -96,7 +96,7 @@ function BreakdownRow({
     vertical = false,
 }) {
     const currencies = currenciesWithExpenses(summaryByCurrency, preferredCurrency);
-    const rowClass = vertical ? 'flex flex-col gap-3' : 'flex flex-row gap-4 flex-wrap';
+    const rowClass = vertical ? 'flex flex-col gap-3' : 'grid grid-cols-1 sm:grid-cols-3 gap-3';
 
     return (
         <div className={rowClass}>
@@ -110,7 +110,7 @@ function BreakdownRow({
                 return (
                     <div
                         key={card.label}
-                        className={`flex ${vertical ? 'w-full' : 'min-w-[180px] flex-1'} flex-col gap-2 rounded-xl p-4 border ${
+                        className={`flex ${vertical ? 'w-full' : 'min-w-0'} flex-col gap-2 rounded-xl p-3 sm:p-4 border ${
                             sub
                                 ? 'border-black/5 dark:border-white/5 bg-zinc-50 dark:bg-white/3'
                                 : 'border-black/10 dark:border-white/10 bg-white dark:bg-white/5'

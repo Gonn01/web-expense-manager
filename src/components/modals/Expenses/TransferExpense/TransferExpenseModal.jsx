@@ -53,8 +53,8 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                 aria-labelledby="transfer-expense-title"
                 onMouseDown={(e) => e.target === e.currentTarget && close()}
             >
-                <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-white dark:bg-[#18211b] rounded-xl border border-slate-300 dark:border-[#3d5245] shadow-xl">
-                    <div className="flex items-start justify-between p-6">
+                <div className="relative flex flex-col w-full max-w-lg max-h-full overflow-y-auto bg-white dark:bg-[#18211b] rounded-xl border border-slate-300 dark:border-[#3d5245] shadow-xl">
+                    <div className="flex items-start justify-between gap-3 p-4 sm:p-6">
                         <div className="flex flex-col gap-1">
                             <h2
                                 id="transfer-expense-title"

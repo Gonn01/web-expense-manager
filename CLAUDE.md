@@ -67,7 +67,7 @@ No test framework is configured (no vitest/jest, no `*.test.*` files). If adding
 src/
   App.jsx        # central route table (react-router-dom v7)
   guards/        # ProtectedRoute.jsx — redirects to /login if unauthenticated
-  layouts/       # AppLayout.jsx — sidebar + Outlet shell, eager-loads entities/categories/settlement session on mount
+  layouts/       # AppLayout.jsx — sidebar + mobile top bar + Outlet shell, eager-loads entities/categories/settlement session on mount
   pages/<feature>/  # one folder per screen: <Feature>.jsx + components/ + hooks/
   services/      # api.js (single axios instance + all API calls), error-handler.js
   store/         # zustand stores, one per domain
@@ -95,6 +95,8 @@ Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 **"Modo hacer cuentas" (settlement)**: a session-based flow (`store/use-settlement-store.js`, `hooks/use-settlement.js`, `hooks/use-settlements.js`, backend `/settlement/*` endpoints). With a session open, paying only *marks* the expense; the real payments are recorded when the session is finished, which also produces a snapshot. Paying from the dashboard requires an open session (client guard `ensureSettlementActive()`; the backend returns 409 `SETTLEMENT_REQUIRED` for batch payments). From the expense detail a payment is direct when no session is open, and from the entity detail it is always direct (`{ direct: true }`). This is a cross-cutting business rule, not just a UI feature — full rules in `docs/requerimientos-funcionales.md` (PAG and CTA).
 
 **Light/dark theme**: Tailwind's `dark:` variant is class-based (`@custom-variant dark` in `index.css`), driven by `themeMode` (`system`/`light`/`dark`) in `use-ui-store.js` and applied by `utils/theme.js` + `hooks/use-theme-sync.js`. Every background/text/border color needs its light and `dark:` pair; don't add dark-only hex colors.
+
+**Responsive layout**: the web must work from 360px wide. Main breakpoint is `lg` (1024px, `DESKTOP_QUERY` in `hooks/use-media-query.js`): from there up the sidebar is fixed and collapsible; below it `components/MobileTopBar.jsx` opens it as an overlay drawer (`mobileSidebarOpen` in `use-ui-store.js`, not persisted). Internal-scroll pages (dashboard, settlement history) only scroll internally from `lg` up. Write mobile-first Tailwind classes; full conventions in `.claude/guides/arquitectura-web.md` (section 4, "Responsive").
 
 **Path alias `@/*` → `src/*`** must stay in sync across three configs: `vite.config.js` (`resolve.alias`), `jsconfig.json` (`compilerOptions.paths`), `eslint.config.js` (`import/resolver.alias`).
 

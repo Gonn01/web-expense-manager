@@ -115,9 +115,11 @@ export default function EntidadDetalle() {
 
     return (
         <>
-            <div className="flex flex-wrap items-center justify-between mb-6">
-                <h1 className="text-3xl sm:text-4xl font-black dark:text-white">{entity.name}</h1>
-                <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <h1 className="text-3xl sm:text-4xl font-black dark:text-white break-words min-w-0">
+                    {entity.name}
+                </h1>
+                <div className="flex items-center gap-3 ml-auto">
                     <button
                         className="flex h-10 items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 rounded-lg text-primary font-bold cursor-pointer"
                         onClick={() => setOpenNewExpense(true)}
@@ -176,7 +178,7 @@ export default function EntidadDetalle() {
                 loading={loadingVincular}
             />
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                 <StatCard
                     label="Gastos activos"
                     value={stats.debts}
@@ -365,7 +367,7 @@ function MovementRow({ mov }) {
     const meta = MOVEMENT_META[mov.movement_type] ?? { icon: 'history', label: mov.movement_type };
 
     return (
-        <div className="flex items-start justify-between gap-3 py-3">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3 py-3">
             <div className="flex items-start gap-2.5 min-w-0">
                 <Icon
                     name={meta.icon}
@@ -380,7 +382,7 @@ function MovementRow({ mov }) {
                     )}
                 </div>
             </div>
-            <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">
+            <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0 pl-7 sm:pl-0">
                 {new Date(mov.created_at).toLocaleString()}
             </span>
         </div>
@@ -391,7 +393,7 @@ function DeletedGastoRow({ gasto, restoring, onRestore }) {
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     return (
-        <div className="flex items-center justify-between gap-3 py-4 px-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4 px-2">
             <div className="flex items-center gap-3 min-w-0">
                 <ChipTipoGasto fijo={gasto.fixed_expense} tipo={gasto.type} column={true} />
                 <div className="min-w-0">
@@ -409,7 +411,7 @@ function DeletedGastoRow({ gasto, restoring, onRestore }) {
                 type="button"
                 onClick={() => setConfirmOpen(true)}
                 disabled={restoring}
-                className="shrink-0 flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="shrink-0 ml-auto flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
                 <Icon
                     name={restoring ? 'progress_activity' : 'restore_from_trash'}

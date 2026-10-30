@@ -34,7 +34,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
             onMouseDown={(e) => e.target === e.currentTarget && !saving && onClose()}
         >
-            <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 overflow-hidden">
+            <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md max-h-full p-4 sm:p-6 overflow-y-auto">
                 {saving && (
                     <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
                         <Icon

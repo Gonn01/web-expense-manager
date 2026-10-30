@@ -34,6 +34,10 @@ function persist(state) {
 export const useUIStore = create((set) => ({
     ...readPrefs(),
 
+    mobileSidebarOpen: false,
+
+    setMobileSidebarOpen: (open) => set({ mobileSidebarOpen: Boolean(open) }),
+
     toggleSidebar: () =>
         set((s) => {
             const next = { sidebarCollapsed: !s.sidebarCollapsed };

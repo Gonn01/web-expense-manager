@@ -80,14 +80,14 @@ export default function HistorialSection({ gasto }) {
                             return (
                                 <div
                                     key={movimiento.id}
-                                    className="flex items-center gap-4 p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]"
+                                    className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]"
                                 >
                                     <Icon
                                         name={EVENT_ICONS[movimiento.movement_type] ?? 'event'}
                                         className="text-primary"
                                     />
-                                    <div className="flex flex-col">
-                                        <p className="font-medium text-slate-900 dark:text-white whitespace-pre-line">
+                                    <div className="flex flex-col min-w-0">
+                                        <p className="font-medium text-slate-900 dark:text-white whitespace-pre-line break-words">
                                             {getEventTitle(movimiento, gasto)}
                                         </p>
                                         <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">

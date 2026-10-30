@@ -10,13 +10,13 @@ export default function Login() {
     const { loginGoogle, loading: loadingGoogle } = useGoogleAuth();
 
     return (
-        <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-16 font-display">
-            <div className="w-full max-w-lg bg-white/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/40 rounded-2xl p-6 sm:p-8 shadow backdrop-blur-sm">
+        <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-8 sm:py-16 font-display">
+            <div className="w-full max-w-lg bg-white/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/40 rounded-2xl p-4 sm:p-8 shadow backdrop-blur-sm">
                 <BrandHeader title="Expense Manager" subtitle="Controla tus finanzas personales" />
 
                 {sessionExpired && <SessionExpiredNotice />}
 
-                <div className="rounded-xl border border-slate-200 dark:border-gray-700/50 bg-white dark:bg-black/20 p-6 sm:p-8">
+                <div className="rounded-xl border border-slate-200 dark:border-gray-700/50 bg-white dark:bg-black/20 p-4 sm:p-8">
                     <LoginForm
                         loading={loading}
                         error={error}

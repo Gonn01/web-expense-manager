@@ -20,9 +20,9 @@ export default function SettlementHistory() {
     if (loading) return <Loader />;
 
     return (
-        <div className="flex flex-col flex-1 min-h-0">
+        <div className="flex flex-col flex-1 lg:min-h-0">
             <div className="shrink-0 mb-6">
-                <p className="text-4xl font-black text-slate-900 dark:text-white">
+                <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                     Historial de cuentas
                 </p>
                 <p className="text-slate-500 dark:text-slate-400">
@@ -55,7 +55,7 @@ export default function SettlementHistory() {
                     <p>No hay cuentas cerradas en ese rango de fechas.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto pr-1 flex-1 min-h-0 pb-4 content-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:overflow-y-auto lg:pr-1 flex-1 lg:min-h-0 pb-4 content-start">
                     {visibles.map((snap) => (
                         <SnapshotCard
                             key={snap.id}
@@ -108,11 +108,14 @@ function SnapshotCard({ snap, onClick }) {
                 {currencies.map((cur) => {
                     const b = byCurrency[cur];
                     return (
-                        <div key={cur} className="flex items-center justify-between text-sm">
+                        <div
+                            key={cur}
+                            className="flex flex-wrap items-center justify-between gap-x-3 text-sm"
+                        >
                             <span className="font-semibold text-slate-500 dark:text-slate-400">
                                 {cur}
                             </span>
-                            <span className="flex gap-3">
+                            <span className="flex flex-wrap justify-end gap-x-3">
                                 {b.egreso > 0 && (
                                     <span className="text-red-400 font-semibold">
                                         −{formatMoney(b.egreso, cur)}

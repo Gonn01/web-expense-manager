@@ -26,7 +26,7 @@ export function Cuota({
           })
         : null;
     const base =
-        'flex items-center justify-between p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]';
+        'flex items-center justify-between gap-3 p-3 sm:p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]';
     const mods = paid ? 'opacity-60' : next ? 'border border-primary/50' : '';
 
     const canRefund = paid && isLastPaid && refundUnlocked;
@@ -40,14 +40,14 @@ export function Cuota({
     return (
         <>
             <div className={`${base} ${mods}`}>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                     <span
                         className={`material-symbols-outlined ${paid ? 'text-primary' : next ? 'text-primary animate-pulse' : 'text-slate-400 dark:text-gray-600'}`}
                     >
                         {icon}
                     </span>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col min-w-0">
                         <p
                             className={`font-medium ${paid ? 'line-through text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}
                         >
@@ -59,7 +59,7 @@ export function Cuota({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 shrink-0">
                     <div className="flex flex-col items-end">
                         <p
                             className={`font-semibold ${paid ? 'line-through text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`}

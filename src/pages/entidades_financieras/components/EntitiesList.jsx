@@ -18,7 +18,9 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
     };
 
     const containerClass =
-        viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 gap-4' : 'flex flex-col gap-4';
+        viewMode === 'grid'
+            ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'
+            : 'flex flex-col gap-4';
 
     return (
         <>

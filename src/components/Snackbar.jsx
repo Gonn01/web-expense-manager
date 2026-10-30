@@ -12,9 +12,9 @@ export default function Snackbar({ message, icon, type = 'success', onClose, dur
     const iconColor = type === 'error' ? 'text-red-400' : 'text-primary';
 
     return createPortal(
-        <div className="fixed bottom-6 right-6 z-70 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg bg-slate-50 dark:bg-[#1c2620] border border-slate-200 dark:border-[#29382f] text-slate-900 dark:text-white text-sm font-medium animate-slide-in">
+        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:max-w-md z-70 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg bg-slate-50 dark:bg-[#1c2620] border border-slate-200 dark:border-[#29382f] text-slate-900 dark:text-white text-sm font-medium animate-slide-in">
             <Icon name={iconName} className={`${iconColor} text-xl shrink-0`} />
-            <span>{message}</span>
+            <span className="flex-1 min-w-0 break-words">{message}</span>
             <button
                 onClick={onClose}
                 className="ml-2 text-slate-500 dark:text-[#9eb7a8] hover:text-slate-900 dark:hover:text-white cursor-pointer"

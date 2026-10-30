@@ -1,16 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../api-plataformas-desarrollo"
-		},
-		{
-			"path": "../app_expense_manager"
-		}
-	],
-	"settings": {
-		"commentTranslate.targetLanguage": "es"
-	}
+    "folders": [
+        {
+            "path": ".",
+        },
+        {
+            "path": "D:/proyectos_node/api-plataformas-desarrollo",
+        },
+        {
+            "path": "D:/proyectos_flutter/app_expense_manager",
+        },
+    ],
+    "settings": {},
 }

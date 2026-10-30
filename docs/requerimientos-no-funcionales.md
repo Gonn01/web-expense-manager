@@ -110,6 +110,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-POR-02 | La app móvil funciona en Android e iOS. | App |
 | RNF-POR-03 | La URL de la API, y las credenciales de Firebase y Pusher, son configurables por entorno sin modificar código. | Web, App |
 | RNF-POR-04 | La API persiste en PostgreSQL. El esquema se administra fuera del repositorio. | API |
+| RNF-POR-05 | La web se adapta al tamaño de pantalla, desde celulares (360px de ancho) hasta monitores de escritorio: en pantallas de menos de 1024px el menú lateral se abre desde una barra superior y el contenido se reacomoda en una columna, sin scroll horizontal. | Web |
 
 **Servicios externos de los que depende el sistema**
 
