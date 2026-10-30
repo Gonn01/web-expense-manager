@@ -4,7 +4,7 @@ export default function Heading({ onCreate, viewMode, setViewMode, setShowDelete
     return (
         <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-                <h1 className="text-slate-900 dark:text-white text-4xl font-black tracking-tighter">
+                <h1 className="text-slate-900 dark:text-white text-3xl sm:text-4xl font-black tracking-tighter">
                     Mis Entidades
                 </h1>
                 <InfoTooltip
@@ -17,7 +17,7 @@ export default function Heading({ onCreate, viewMode, setViewMode, setShowDelete
                 />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-1 rounded-lg border border-black/10 dark:border-white/10 p-1">
                     <button
                         type="button"

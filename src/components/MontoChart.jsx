@@ -8,6 +8,12 @@ import {
     ResponsiveContainer,
     Legend,
 } from 'recharts';
+import {
+    currentMonthIndex,
+    monthIndexFromDateString,
+    keyFromMonthIndex,
+    labelFromKey,
+} from '@/utils/chart-months';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
 import { convertCurrency } from '@/utils/convert-currency';
@@ -15,34 +21,6 @@ import { formatMoney } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
 
 const CURRENCY_VALUES = Object.values(Currency);
-
-function currentMonthIndex() {
-    const today = new Date();
-    return today.getFullYear() * 12 + today.getMonth();
-}
-
-function monthIndexFromDateString(dateStr) {
-    const match = /^(\d{4})-(\d{2})/.exec(String(dateStr));
-    if (!match) {
-        const d = new Date(dateStr);
-        return d.getFullYear() * 12 + d.getMonth();
-    }
-    return Number(match[1]) * 12 + (Number(match[2]) - 1);
-}
-
-function keyFromMonthIndex(idx) {
-    const year = Math.floor(idx / 12);
-    const month = idx % 12;
-    return `${year}-${String(month + 1).padStart(2, '0')}`;
-}
-
-function labelFromKey(key) {
-    const [year, month] = key.split('-');
-    return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('es-AR', {
-        month: 'short',
-        year: 'numeric',
-    });
-}
 
 function accumulateAmounts(gastos, type, amounts, preferredCurrency, rates) {
     const currentMonth = currentMonthIndex();
@@ -121,8 +99,8 @@ function formatAxis(value) {
 const CustomTooltip = ({ active, payload, label, currency }) => {
     if (!active || !payload?.length) return null;
     return (
-        <div className="rounded-lg border border-white/10 bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
-            <p className="font-semibold text-white mb-1">{label}</p>
+        <div className="rounded-lg border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
+            <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
                     {p.dataKey === 'egreso' ? 'Egresos' : 'Ingresos'}:{' '}
@@ -152,16 +130,16 @@ export default function MontoChart({ gastos }) {
             </p>
             <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={data} margin={{ top: 4, right: 8, left: 8, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                     <XAxis
                         dataKey="label"
-                        tick={{ fill: '#9eb7a8', fontSize: 11 }}
+                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                     />
                     <YAxis
                         allowDecimals={false}
-                        tick={{ fill: '#9eb7a8', fontSize: 11 }}
+                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                         tickFormatter={(v) => formatAxis(v, preferredCurrency)}

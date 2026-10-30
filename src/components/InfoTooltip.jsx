@@ -41,7 +41,7 @@ export default function InfoTooltip({ text, className = '', align = 'center', si
 
             <span
                 role="tooltip"
-                className={`absolute ${alignClass} ${sideClass} w-64 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs leading-relaxed px-3 py-2 shadow-lg z-20 transition-opacity ${
+                className={`absolute ${alignClass} ${sideClass} w-64 max-w-[calc(100vw-2rem)] rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs leading-relaxed px-3 py-2 shadow-lg z-20 transition-opacity ${
                     open
                         ? 'opacity-100 pointer-events-auto'
                         : 'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto'

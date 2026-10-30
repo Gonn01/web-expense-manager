@@ -14,7 +14,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
                     value={from}
                     max={to || undefined}
                     onChange={(e) => set({ from: e.target.value })}
-                    className="rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-2.5 py-1.5 text-sm text-zinc-900 dark:text-white [color-scheme:dark]"
+                    className="rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-2.5 py-1.5 text-sm text-zinc-900 dark:text-white dark:[color-scheme:dark]"
                 />
             </label>
 
@@ -25,7 +25,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
                     value={to}
                     min={from || undefined}
                     onChange={(e) => set({ to: e.target.value })}
-                    className="rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-2.5 py-1.5 text-sm text-zinc-900 dark:text-white [color-scheme:dark]"
+                    className="rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent px-2.5 py-1.5 text-sm text-zinc-900 dark:text-white dark:[color-scheme:dark]"
                 />
             </label>
 

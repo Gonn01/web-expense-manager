@@ -27,7 +27,7 @@ export default function RegisterForm({ loading, error, onErrorClear, onSubmit })
                 label="Nombre"
                 value={form.name}
                 onChange={(e) => onChange('name', e.target.value)}
-                placeholder="Tu nombre"
+                placeholder="Ej: Juan Pérez"
             />
 
             <TextInput
@@ -35,13 +35,13 @@ export default function RegisterForm({ loading, error, onErrorClear, onSubmit })
                 type="email"
                 value={form.email}
                 onChange={(e) => onChange('email', e.target.value)}
-                placeholder="tu@email.com"
+                placeholder="Ej: juan@email.com"
             />
 
             <PasswordInput
                 value={form.password}
                 onChange={(e) => onChange('password', e.target.value)}
-                placeholder="Crea una contraseña"
+                placeholder="Ej: MiClave123"
             />
 
             {error && <ErrorMessage message={error} />}

@@ -64,6 +64,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-36 | Confirmar pago compartido | Contraparte | 05 |
 | CU-37 | Rechazar pago compartido | Contraparte | 05 |
 | CU-38 | Recibir notificaciones en tiempo real | Usuario, Contraparte | 05 |
+| CU-39 | Elegir tema | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -162,6 +163,17 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 2a. El valor no es numérico o es negativo: el sistema lo rechaza.
 - **Postcondición**: las métricas "porcentaje del sueldo" usan el nuevo valor.
 
+### CU-39 — Elegir tema
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-04
+- **Flujo principal**
+    1. En Configuración, el usuario elige Sistema, Claro u Oscuro.
+    2. El cliente aplica el tema al instante y guarda la elección en el dispositivo.
+- **Flujos alternativos**
+    - 1a. El usuario elige Sistema: el cliente sigue el tema del dispositivo y lo vuelve a aplicar cada vez que este cambia.
+- **Postcondición**: el cliente abre con el tema elegido en ese dispositivo; otros dispositivos de la misma cuenta conservan el suyo.
+
 ### CU-08 — Consultar dashboard
 
 - **Actor**: Usuario
@@ -175,7 +187,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.
     - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden.
-    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de las cuotas del mes, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web).
+    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web); el usuario puede pasar a los meses siguientes con cuotas pendientes.
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
 
@@ -301,7 +313,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-17 — Crear gasto
 
 - **Actores**: Usuario; Contraparte (si la entidad está vinculada)
-- **Requerimientos**: RF-GAS-01 a RF-GAS-06, RF-GAS-15, RF-CAT-03, RF-CMP-01
+- **Requerimientos**: RF-GAS-01 a RF-GAS-06, RF-GAS-17, RF-CAT-03, RF-CMP-01
 - **Flujo principal**
     1. El usuario elige "Crear gasto" (desde el dashboard o desde una entidad).
     2. Indica tipo (egreso o ingreso), nombre, entidad, monto, moneda y modalidad: pago único, en cuotas o gasto fijo.
@@ -311,10 +323,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. El sistema registra "gasto creado" en el historial de la entidad y muestra el gasto en pantalla.
 - **Flujos alternativos**
     - 2a. La entidad no existe todavía: el usuario la crea en el mismo formulario (CU-10).
-    - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
+    - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago; si no existe todavía, la crea en el mismo formulario (CU-10) y queda elegida como entidad de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
     - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
-    - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
+    - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-17): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
     - 2b. Faltan datos obligatorios: el sistema lo informa.
     - 3a. El gasto llega postergado y con todas sus cuotas pagas: el sistema lo rechaza (`GASTO_PAGADO_NO_POSTERGABLE`) y no crea nada.
 - **Postcondición**: el gasto existe; según el caso, también su espejo y/o la copia de la contraparte.
@@ -334,14 +346,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-19 — Editar gasto
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-GAS-16, RF-CAT-03
+- **Requerimientos**: RF-GAS-08, RF-GAS-15, RF-GAS-16, RF-GAS-17, RF-CAT-03
 - **Flujo principal**
     1. En el detalle del gasto, el usuario elige editar.
     2. Modifica nombre, monto, moneda, tipo, modalidad, cuotas, entidad y/o categorías. Los campos bloqueados se ven deshabilitados, con el motivo.
     3. El sistema valida los datos y guarda los cambios en el historial del gasto. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
-    - 2a. Faltan datos obligatorios o son inválidos (RF-GAS-15): el sistema no guarda e indica qué falta, igual que en CU-17 (2b).
-    - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole el tipo opuesto.
+    - 1a. El usuario elige **Transferir** en lugar de editar: el sistema le ofrece las entidades a las que se puede mover el gasto; el usuario elige una (en la app móvil, además, confirma) y el sistema cambia solo la entidad, como en 3d, sin tocar el espejo. Si el gasto no se puede mover (bloqueo de RF-GAS-15 o entidad vinculada a otro usuario), la acción aparece atenuada y, al elegirla, el sistema muestra el motivo en un snackbar, por ejemplo que el gasto está compartido con otro usuario.
+    - 2a. Faltan datos obligatorios o son inválidos (RF-GAS-17): el sistema no guarda e indica qué falta, igual que en CU-17 (2b).
     - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole su entidad y el tipo opuesto.
     - 3b. El usuario intenta cambiar un campo bloqueado (gasto con pagos, finalizado, compartido o marcado en la sesión de cuentas): el sistema rechaza la edición y explica el motivo.
     - 3c. El gasto tiene pagos y cambió el monto: el sistema avisa que los pagos ya registrados conservan su valor y guarda el cambio.
@@ -511,6 +523,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El usuario abre "Historial de cuentas".
     2. El sistema lista las sesiones finalizadas con su mes, fecha y totales por moneda.
     3. El usuario abre una; el sistema muestra el detalle agrupado por entidad.
+    4. Opcionalmente, el usuario elige una entidad o un gasto del detalle; el sistema abre el detalle de esa entidad o de ese gasto.
 - **Flujos alternativos**
     - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período.
     - 2b. No hay sesiones finalizadas: el sistema muestra un estado vacío.

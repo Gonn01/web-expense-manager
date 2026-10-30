@@ -36,7 +36,7 @@ export default function NewExpenseModal({
 
     const [installments, setInstallments] = useState('');
 
-    const [showNewEntity, setShowNewEntity] = useState(false);
+    const [newEntityFor, setNewEntityFor] = useState(null);
     const [newEntityName, setNewEntityName] = useState('');
     const [newEntityEmail, setNewEntityEmail] = useState('');
     const [isFixed, setIsFixed] = useState(false);
@@ -65,7 +65,7 @@ export default function NewExpenseModal({
 
     useEffect(() => {
         if (!loading && entities.length === 0) {
-            setShowNewEntity(true);
+            setNewEntityFor('main');
         }
     }, [loading, entities.length]);
     const totalInstallments = Number(installments) || 0;
@@ -102,8 +102,9 @@ export default function NewExpenseModal({
         setLoadingNewEntity(true);
         try {
             const created = await createEntity(newEntityName.trim(), token);
-            setEntity(created.id);
-            setShowNewEntity(false);
+            if (newEntityFor === 'payment') setPaymentEntity(created.id);
+            else setEntity(created.id);
+            setNewEntityFor(null);
             setNewEntityName('');
 
             const email = newEntityEmail.trim();
@@ -176,23 +177,25 @@ export default function NewExpenseModal({
 
             <div
                 ref={containerRef}
-                className="relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]"
+                className="relative z-10 w-[92vw] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl shadow-xl bg-white dark:bg-[#111714] border border-slate-200 dark:border-[#29382f]"
             >
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-4 sm:px-6 py-4 bg-white dark:bg-[#111714]">
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="add_circle" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Nuevo Gasto/Deuda</h2>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold">
+                            Nuevo Gasto/Deuda
+                        </h2>
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
                     </button>
                 </header>
 
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-6">
                     <ExpenseTypeSelector type={type} setType={setType} />
 
                     <div data-field="name">
@@ -219,8 +222,8 @@ export default function NewExpenseModal({
                         loading={loading}
                         loadingNewEntity={loadingNewEntity}
                         entities={entities}
-                        showNewEntity={showNewEntity}
-                        setShowNewEntity={setShowNewEntity}
+                        showNewEntity={newEntityFor === 'main'}
+                        setShowNewEntity={(show) => setNewEntityFor(show ? 'main' : null)}
                         newEntityName={newEntityName}
                         setNewEntityName={setNewEntityName}
                         newEntityEmail={newEntityEmail}
@@ -271,11 +274,13 @@ export default function NewExpenseModal({
                         >
                             <div
                                 className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                    ${isPaid ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                             >
                                 {isPaid && <span className="text-black text-xs font-bold">✓</span>}
                             </div>
-                            <span className="text-white text-sm font-medium">Pagado</span>
+                            <span className="text-slate-900 dark:text-white text-sm font-medium">
+                                Pagado
+                            </span>
                         </label>
                     )}
 
@@ -287,6 +292,14 @@ export default function NewExpenseModal({
                         paymentEntity={paymentEntity}
                         setPaymentEntity={setPaymentEntity}
                         excludeId={entity}
+                        showNewEntity={newEntityFor === 'payment'}
+                        setShowNewEntity={(show) => setNewEntityFor(show ? 'payment' : null)}
+                        newEntityName={newEntityName}
+                        setNewEntityName={setNewEntityName}
+                        newEntityEmail={newEntityEmail}
+                        setNewEntityEmail={setNewEntityEmail}
+                        handleCreateEntity={handleCreateEntity}
+                        loadingNewEntity={loadingNewEntity}
                         oppositeTypeLabel={type === ExpenseType.EGRESO ? 'ingreso' : 'egreso'}
                     />
 
@@ -298,14 +311,14 @@ export default function NewExpenseModal({
                     >
                         <div
                             className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
-                ${fullyPaid ? 'cursor-not-allowed' : 'cursor-pointer'}
-                ${postponed ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
+                                ${fullyPaid ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                ${postponed ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
                         >
                             {postponed && <span className="text-black text-xs font-bold">✓</span>}
                         </div>
-                        <span className="text-white text-sm font-medium">
+                        <span className="text-slate-900 dark:text-white text-sm font-medium">
                             Postergar para la próxima sesión de cuentas
-                            <span className="block text-xs font-normal text-[#9eb7a8]">
+                            <span className="block text-xs font-normal text-slate-500 dark:text-[#9eb7a8]">
                                 {fullyPaid
                                     ? 'No disponible: un gasto pagado no tiene nada para postergar.'
                                     : 'Queda fuera de la sesión de cuentas actual (o de la próxima que abras). Se habilita cuando la cierres.'}
@@ -313,12 +326,12 @@ export default function NewExpenseModal({
                         </span>
                     </label>
                 </div>
-                <footer className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                <footer className="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-4 sm:px-6 py-4 bg-white dark:bg-[#111714]">
                     <ExpenseFormErrors errors={visibleErrors} />
 
                     <button
                         onClick={onClose}
-                        className="h-11 px-4 text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] rounded-lg cursor-pointer"
+                        className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
                     >
                         Cancelar
                     </button>

@@ -9,7 +9,7 @@ export default function SearchBox({ query, setQuery }) {
                 <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Buscar entidad por nombre"
+                    placeholder="Buscar entidad... (ej: Banco Galicia)"
                     className="
                         w-full h-12
                         rounded-xl

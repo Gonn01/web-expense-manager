@@ -26,7 +26,7 @@ export function SettlementToggle() {
                     }
                 }}
                 disabled={starting}
-                className="relative cursor-pointer flex items-center h-11 px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60 disabled:cursor-wait"
+                className="relative cursor-pointer flex items-center h-11 px-4 sm:px-5 rounded-lg border border-black/10 dark:border-white/15 text-slate-700 dark:text-slate-200 font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-60 disabled:cursor-wait"
             >
                 <span className={`flex items-center ${starting ? 'invisible' : ''}`}>
                     <Icon name="playlist_add_check" className="mr-2" />
@@ -102,7 +102,7 @@ export function SettlementBar({ totalItems = 0 }) {
     return (
         <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 px-4 py-3">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <div className="flex items-center gap-2 text-primary font-bold">
+                <div className="flex flex-wrap items-center gap-2 text-primary font-bold">
                     <Icon name="playlist_add_check" />
                     Modo hacer cuentas
                     {startedLabel && (
@@ -120,7 +120,7 @@ export function SettlementBar({ totalItems = 0 }) {
                     />
                 </div>
 
-                <div className="flex items-center gap-2 min-w-[180px] flex-1">
+                <div className="flex items-center gap-2 basis-full sm:basis-auto sm:min-w-[180px] flex-1">
                     <div className="h-2 flex-1 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
                         <div
                             className="h-full bg-primary transition-all"
@@ -133,7 +133,7 @@ export function SettlementBar({ totalItems = 0 }) {
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ml-auto">
                     <button
                         onClick={handleDiscard}
                         className="cursor-pointer text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"

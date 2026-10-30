@@ -53,22 +53,22 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                 aria-labelledby="new-entity-title"
                 onMouseDown={(e) => e.target === e.currentTarget && onClose()}
             >
-                <div className="relative flex flex-col w-full max-w-lg overflow-hidden bg-[#18211b] rounded-xl border border-[#3d5245] shadow-xl">
-                    <div className="flex items-start justify-between p-6">
+                <div className="relative flex flex-col w-full max-w-lg max-h-full overflow-y-auto bg-white dark:bg-[#18211b] rounded-xl border border-slate-300 dark:border-[#3d5245] shadow-xl">
+                    <div className="flex items-start justify-between gap-3 p-4 sm:p-6">
                         <div className="flex flex-col gap-1">
                             <h2
                                 id="new-entity-title"
-                                className="text-white text-xl font-bold tracking-tight"
+                                className="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
                             >
                                 Crear Nueva Entidad
                             </h2>
-                            <p className="text-[#9eb7a8] text-sm">
+                            <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
                                 Añade un nuevo banco, persona o servicio.
                             </p>
                         </div>
                         <button
                             type="button"
-                            className="text-[#9eb7a8] transition-colors duration-200 hover:text-white"
+                            className="text-slate-500 dark:text-[#9eb7a8] transition-colors duration-200 hover:text-slate-900 dark:hover:text-white"
                             onClick={onClose}
                             aria-label="Cerrar"
                         >
@@ -79,11 +79,11 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                     <div className="flex-1 px-6 pb-6">
                         <div className="flex flex-col gap-4">
                             <label className="flex flex-col w-full">
-                                <p className="text-white text-sm font-medium pb-2">
+                                <p className="text-slate-900 dark:text-white text-sm font-medium pb-2">
                                     Nombre de la entidad
                                 </p>
                                 <input
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] h-12 placeholder:text-slate-400 dark:placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
                                     placeholder="Ej: Banco Galicia, Juan Pérez, etc."
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -92,13 +92,13 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                             </label>
 
                             <label className="flex flex-col w-full">
-                                <p className="text-white text-sm font-medium pb-2">
+                                <p className="text-slate-900 dark:text-white text-sm font-medium pb-2">
                                     Vincular a un usuario (opcional)
                                 </p>
                                 <input
                                     type="email"
-                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white border border-[#3d5245] bg-[#1c2620] h-12 placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
-                                    placeholder="Email del usuario a vincular"
+                                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] h-12 placeholder:text-slate-400 dark:placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
+                                    placeholder="Ej: juan@email.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -106,11 +106,11 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                         </div>
                     </div>
 
-                    <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 p-6 bg-[#1c2620]/60 border-t border-[#3d5245]">
+                    <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 p-6 bg-slate-50/60 dark:bg-[#1c2620]/60 border-t border-slate-300 dark:border-[#3d5245]">
                         <button
                             type="button"
                             disabled={saving}
-                            className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-[#29382f] text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-[#34453a] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-slate-200 dark:hover:bg-[#34453a] disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={onClose}
                         >
                             <span className="truncate">Cancelar</span>

@@ -38,8 +38,17 @@ export function useGastoData() {
 
     async function actualizar(payload) {
         if (!gasto) return;
-        await updateGasto(gasto.id, payload, token);
-        await load(true);
+        const updated = await updateGasto(gasto.id, payload, token);
+        setGasto(updated);
+    }
+
+    async function transferir(entityId, entityName) {
+        if (!gasto) return;
+        const updated = await updateGasto(gasto.id, { financial_entity_id: entityId }, token);
+        setGasto(updated);
+        useSnackbarStore
+            .getState()
+            .show(`Gasto transferido a "${entityName}".`, 'success', 'swap_horiz');
     }
 
     async function settleQuota() {
@@ -77,15 +86,22 @@ export function useGastoData() {
     }
 
     async function eliminar(deleteLinked = false) {
-        if (!gasto) return;
+        if (!gasto) return false;
         setLoading(true);
-        await deleteGasto(gasto.id, token, { deleteLinked });
-        setLoading(false);
+        try {
+            await deleteGasto(gasto.id, token, { deleteLinked });
+            return true;
+        } catch {
+            return false;
+        } finally {
+            setLoading(false);
+        }
     }
 
     return {
         gasto,
         actualizar,
+        transferir,
         settleQuota,
         refundCuota,
         eliminar,

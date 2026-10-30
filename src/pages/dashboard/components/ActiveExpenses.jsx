@@ -47,8 +47,8 @@ export default function ActiveExpenses({
     const visibleExpenses = filteredGroups.reduce((sum, g) => sum + g.items.length, 0);
 
     return (
-        <div className="lg:col-span-3 xl:col-span-3 flex flex-col gap-4 rounded-xl border border-black/10 dark:border-white/10 p-4 bg-white dark:bg-white/5 min-h-0 flex-1">
-            <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-4 rounded-xl border border-black/10 dark:border-white/10 p-3 sm:p-4 bg-white dark:bg-white/5 lg:min-h-0 flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="shrink-0">
                     <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
                         Entidades
@@ -59,14 +59,14 @@ export default function ActiveExpenses({
                         {visibleExpenses === 1 ? 'gasto activo' : 'gastos activos'}
                     </p>
                 </div>
-                <div className="relative w-full max-w-xs">
+                <div className="relative w-full sm:max-w-xs">
                     <Icon
                         name="search"
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                     />
                     <input
                         className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
-                        placeholder="Buscar gasto..."
+                        placeholder="Buscar gasto... (ej: Préstamo personal)"
                         type="text"
                         value={query}
                         onChange={(e) => onQueryChange?.(e.target.value)}
@@ -94,7 +94,7 @@ export default function ActiveExpenses({
                     ))}
                 </FilterGroup>
 
-                <div className="w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
+                <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
 
                 <FilterGroup label="Tipo">
                     {[
@@ -112,7 +112,7 @@ export default function ActiveExpenses({
                     ))}
                 </FilterGroup>
 
-                <div className="w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
+                <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
 
                 <FilterGroup label="Frecuencia">
                     {[
@@ -131,7 +131,7 @@ export default function ActiveExpenses({
                 </FilterGroup>
             </div>
 
-            <div className="flex flex-col gap-3 overflow-y-auto pr-2 flex-1 min-h-0">
+            <div className="flex flex-col gap-3 lg:overflow-y-auto lg:pr-2 flex-1 lg:min-h-0">
                 {filteredGroups.map((group) => (
                     <ActiveFinancialEntity
                         key={group.id}
@@ -171,11 +171,11 @@ export default function ActiveExpenses({
 
 function FilterGroup({ label, children }) {
     return (
-        <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-400 dark:text-slate-500 shrink-0">
+        <div className="flex items-center gap-2 max-w-full">
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500 shrink-0 w-16 sm:w-auto">
                 {label}
             </span>
-            <div className="flex gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-white/5">
+            <div className="flex flex-wrap gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-white/5">
                 {children}
             </div>
         </div>

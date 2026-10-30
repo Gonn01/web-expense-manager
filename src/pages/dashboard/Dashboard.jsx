@@ -39,27 +39,29 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            <div className="flex justify-between mb-4">
+        <div className="flex flex-col lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-4">
                 <div>
-                    <p className="text-4xl font-black text-slate-900 dark:text-white">Dashboard</p>
+                    <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                        Dashboard
+                    </p>
                     <p className="text-slate-500 dark:text-slate-400">
                         Un resumen de tus finanzas personales.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <SettlementToggle />
                     <button
                         onClick={() => setShowCharts(true)}
-                        className="cursor-pointer shrink-0 flex items-center h-11 px-5 rounded-lg border border-primary/60 text-primary font-bold hover:bg-primary/10 transition-colors"
+                        className="cursor-pointer shrink-0 flex items-center h-11 px-4 sm:px-5 rounded-lg border border-primary/60 text-primary font-bold hover:bg-primary/10 transition-colors"
                     >
                         <Icon name="bar_chart" className="mr-2" />
                         Ver gráficos
                     </button>
                     <button
                         onClick={() => ui.setOpenNewExpense(true)}
-                        className="cursor-pointer flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
+                        className="cursor-pointer flex items-center justify-center h-11 px-4 sm:px-5 rounded-lg bg-primary text-background-dark font-bold w-full sm:w-auto"
                     >
                         <Icon name="add_circle" className="mr-2" />
                         Crear Gasto / Deuda
@@ -69,9 +71,19 @@ export default function Dashboard() {
 
             <SettlementBar totalItems={allItems.length} />
 
-            <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
+            <div className="lg:hidden mb-4">
+                <StatCards
+                    summary={summary}
+                    currency={ui.currency}
+                    summaryByCurrency={data.summaryByCurrency}
+                    preferredCurrency={ui.preferredCurrency}
+                    rates={rates}
+                />
+            </div>
+
+            <div className="flex flex-col lg:flex-row lg:flex-1 gap-6 lg:min-h-0 lg:overflow-hidden">
                 <div
-                    className={`relative shrink-0 overflow-hidden [interpolate-size:allow-keywords] transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
+                    className={`hidden lg:block relative shrink-0 overflow-hidden [interpolate-size:allow-keywords] transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
                         balancesHidden ? 'w-6' : 'w-max'
                     }`}
                 >
@@ -119,7 +131,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
+                <div className="flex-1 min-w-0 lg:overflow-hidden flex flex-col">
                     <ActiveExpenses
                         query={ui.query}
                         onQueryChange={ui.setQuery}

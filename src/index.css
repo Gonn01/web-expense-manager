@@ -1,5 +1,27 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+    color-scheme: light;
+    --chart-grid: rgba(15, 23, 42, 0.08);
+    --chart-tick: #64748b;
+}
+
+:root.dark {
+    color-scheme: dark;
+    --chart-grid: rgba(255, 255, 255, 0.06);
+    --chart-tick: #9eb7a8;
+}
+
+body {
+    background-color: var(--color-background-light);
+}
+
+:root.dark body {
+    background-color: var(--color-background-dark);
+}
+
 .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
@@ -92,8 +114,14 @@ textarea:focus-visible {
 }
 
 @keyframes slide-in {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .animate-slide-in {
     animation: slide-in 0.2s ease-out forwards;

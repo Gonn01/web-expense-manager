@@ -1,4 +1,5 @@
 import Snackbar from '@/components/Snackbar';
+import { AparienciaCard } from './components/AparienciaCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
 import { SueldoCard } from './components/SueldoCard';
@@ -22,12 +23,17 @@ export default function Configuracion() {
         loadingSueldo,
         onSaveSueldo,
 
+        themeMode,
+
+        setThemeMode,
+
         snackbar,
+
         closeSnackbar,
     } = useConfiguracionUI();
 
     return (
-        <div className="p-6 flex flex-col gap-6">
+        <div className="sm:p-2 lg:p-6 flex flex-col gap-6">
             {snackbar && (
                 <Snackbar message={snackbar.message} type={snackbar.type} onClose={closeSnackbar} />
             )}
@@ -50,6 +56,8 @@ export default function Configuracion() {
                     loading={loadingMoneda}
                     onSave={onSaveMoneda}
                 />
+
+                <AparienciaCard themeMode={themeMode} setThemeMode={setThemeMode} />
 
                 <SueldoCard
                     sueldo={sueldo}

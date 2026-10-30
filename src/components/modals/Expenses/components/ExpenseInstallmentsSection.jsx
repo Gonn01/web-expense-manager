@@ -50,14 +50,14 @@ export default function ExpenseInstallmentsSection({
             </div>
 
             <div>
-                <p className="text-white text-sm font-medium">Progreso</p>
-                <div className="w-full bg-[#29382f] rounded-full h-2.5">
+                <p className="text-slate-900 dark:text-white text-sm font-medium">Progreso</p>
+                <div className="w-full bg-slate-100 dark:bg-[#29382f] rounded-full h-2.5">
                     <div
                         className="bg-primary h-2.5 rounded-full"
                         style={{ width: `${progressPct}%` }}
                     />
                 </div>
-                <p className="text-right text-xs text-[#9eb7a8] mt-1">
+                <p className="text-right text-xs text-slate-500 dark:text-[#9eb7a8] mt-1">
                     {paid} de {totalInstallments} cuotas pagadas
                 </p>
             </div>

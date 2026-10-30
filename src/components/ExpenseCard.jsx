@@ -53,16 +53,16 @@ export default function ExpenseCard({
 
     return (
         <div
-            className={`flex flex-col gap-2 rounded-lg p-3 transition-all cursor-pointer relative hover:bg-black/5 dark:hover:bg-white/5 ${loading ? 'pointer-events-none' : ''} ${settlementActive && settlementChecked ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
+            className={`flex flex-col gap-2 rounded-lg p-2.5 sm:p-3 transition-all cursor-pointer relative hover:bg-black/5 dark:hover:bg-white/5 ${loading ? 'pointer-events-none' : ''} ${settlementActive && settlementChecked ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
             onClick={onClick}
         >
             {loading && (
                 <div className="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-sm rounded-lg animate-pulse z-10" />
             )}
 
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-3 sm:gap-4">
                 <div
-                    className={`flex flex-col gap-1.5 flex-1 ${settlementActive && settlementChecked ? 'opacity-60' : ''}`}
+                    className={`flex flex-col gap-1.5 flex-1 min-w-0 ${settlementActive && settlementChecked ? 'opacity-60' : ''}`}
                 >
                     <div className="flex items-center gap-1.5">
                         {onToggleFavorite && (
@@ -101,7 +101,7 @@ export default function ExpenseCard({
                                 )}
                             </button>
                         )}
-                        <p className="font-semibold text-sm text-slate-800 dark:text-slate-100">
+                        <p className="font-semibold text-sm text-slate-800 dark:text-slate-100 break-words min-w-0">
                             {gasto.name}
                         </p>
                     </div>
@@ -175,22 +175,24 @@ export default function ExpenseCard({
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
-                <div className="flex-1">
-                    <ProgressBar
-                        progress={progress}
-                        previewProgress={previewProgress}
-                        type={gasto.type}
-                        fixed={gasto.fixed_expense}
-                        quotas={gasto.number_of_quotas}
-                    />
-                </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <div className="flex items-center gap-3 flex-1 basis-full sm:basis-0 min-w-0">
+                    <div className="flex-1">
+                        <ProgressBar
+                            progress={progress}
+                            previewProgress={previewProgress}
+                            type={gasto.type}
+                            fixed={gasto.fixed_expense}
+                            quotas={gasto.number_of_quotas}
+                        />
+                    </div>
 
-                {!gasto.fixed_expense && (
-                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 w-9 text-right shrink-0">
-                        {Math.round(progress)}%
-                    </span>
-                )}
+                    {!gasto.fixed_expense && (
+                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 w-9 text-right shrink-0">
+                            {Math.round(progress)}%
+                        </span>
+                    )}
+                </div>
 
                 {onTogglePostpone && (
                     <button

@@ -7,12 +7,13 @@ import ProgresoPago from './components/ProgresoPago';
 import CuotasSection from './components/CuotasSection';
 import PagosFijosSection from './components/PagosFijosSection';
 import HistorialSection from './components/HistorialSection';
-import PeligroEliminar from '@/components/PeligroEliminar';
+import DeleteExpenseModal from './components/DeleteExpenseModal';
 import { useGastoUI } from './hooks/use-gasto-ui';
 import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { formatMoney } from '@/utils/FormatMoney';
 import UpdateExpenseModal from '@/components/modals/Expenses/UpdateExpense/UpdateExpenseModal';
+import TransferExpenseModal from '@/components/modals/Expenses/TransferExpense/TransferExpenseModal';
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
 import { useSettlementStore } from '@/store/use-settlement-store';
@@ -25,6 +26,8 @@ export default function DetalleGasto() {
         settleQuota,
         refundCuota,
         actualizar,
+        transferir,
+        transferLock,
         eliminar,
         loading,
         volverALista,
@@ -32,28 +35,32 @@ export default function DetalleGasto() {
     const { getEntityById } = useEntitiesStore();
     const settlementActive = useSettlementStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
+    const [transferOpen, setTransferOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     if (loading) {
         return <Loader />;
     }
 
     if (!gasto) return null;
-    console.log('Gasto en DetalleGasto:', gasto);
     return (
-        <div className="min-h-dvh w-full bg-background-dark text-white font-display">
-            <div className="px-4 md:px-10 lg:px-20 xl:px-40 py-6 flex justify-center">
-                <div className="w-full max-w-[960px] flex flex-col gap-8">
+        <div className="w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
+            <div className="sm:px-2 md:px-6 lg:px-10 py-2 sm:py-6 flex justify-center">
+                <div className="w-full max-w-[960px] flex flex-col gap-6 sm:gap-8">
                     {!loading ? (
                         <HeaderDetalle
                             gasto={gasto}
                             marcarProxima={() => setConfirmOpen(true)}
                             abrirEditar={() => setEditOpen(true)}
+                            abrirTransferir={() => setTransferOpen(true)}
+                            abrirEliminar={() => setDeleteOpen(true)}
+                            transferLock={transferLock}
                         />
                     ) : null}
-                    <div className="bg-[#111714] rounded-xl p-6 shadow-sm flex flex-col gap-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+                    <div className="bg-white dark:bg-[#111714] rounded-xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem
                                 label="Entidad"
                                 value={getEntityById(gasto.financial_entity_id)?.name}
@@ -101,17 +108,6 @@ export default function DetalleGasto() {
                     )}
 
                     <HistorialSection gasto={gasto} />
-
-                    <PeligroEliminar
-                        linked={Boolean(gasto.linked_purchase_id)}
-                        linkedEntityName={
-                            getEntityById(gasto.linked_financial_entity_id)?.name ?? ''
-                        }
-                        onDelete={(deleteLinked) => {
-                            eliminar(deleteLinked);
-                            volverALista();
-                        }}
-                    />
                 </div>
             </div>
 
@@ -129,6 +125,27 @@ export default function DetalleGasto() {
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
                 settlementActive={settlementActive}
             />
+
+            <DeleteExpenseModal
+                open={deleteOpen}
+                linked={Boolean(gasto.linked_purchase_id)}
+                linkedEntityName={getEntityById(gasto.linked_financial_entity_id)?.name ?? ''}
+                onCancel={() => setDeleteOpen(false)}
+                onDelete={async (deleteLinked) => {
+                    if (await eliminar(deleteLinked)) volverALista();
+                }}
+            />
+
+            {transferOpen && (
+                <TransferExpenseModal
+                    gasto={gasto}
+                    onClose={() => setTransferOpen(false)}
+                    onTransfer={async (entityId, entityName) => {
+                        await transferir(entityId, entityName);
+                        setTransferOpen(false);
+                    }}
+                />
+            )}
 
             {editOpen && (
                 <UpdateExpenseModal

@@ -21,7 +21,7 @@
 <text x="520" y="160.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-01 a CU-04</text>
 <text x="520" y="176.0" text-anchor="middle" fill="#1F2937" font-size="13">Autenticarse</text>
 <ellipse cx="520" cy="252.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
-<text x="520" y="248.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-05 a CU-07</text>
+<text x="520" y="248.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-05 a CU-07, CU-39</text>
 <text x="520" y="264.0" text-anchor="middle" fill="#1F2937" font-size="13">Configurar perfil</text>
 <ellipse cx="520" cy="340.0" rx="128" ry="34" fill="#EAF2FB" stroke="#1F4E79" stroke-width="1.5"/>
 <text x="520" y="336.0" text-anchor="middle" font-weight="bold" fill="#2E75B6" font-size="11">CU-08</text>

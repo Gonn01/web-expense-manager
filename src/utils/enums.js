@@ -26,3 +26,15 @@ export const ExpenseStatus = Object.freeze({
     PENDING_APPROVAL: 'PENDING_APPROVAL',
     REJECTED: 'REJECTED',
 });
+
+export const ThemeMode = Object.freeze({
+    SYSTEM: 'system',
+    LIGHT: 'light',
+    DARK: 'dark',
+});
+
+export const THEME_MODE_LABELS = Object.freeze({
+    [ThemeMode.SYSTEM]: 'Sistema',
+    [ThemeMode.LIGHT]: 'Claro',
+    [ThemeMode.DARK]: 'Oscuro',
+});

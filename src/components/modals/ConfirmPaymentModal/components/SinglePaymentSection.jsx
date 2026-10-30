@@ -5,7 +5,7 @@ import CurrencyBadge from './CurrencyBadge';
 
 export default function SinglePaymentSection({ item }) {
     return (
-        <div className="flex flex-col gap-4 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-4 text-left text-white">
+        <div className="flex flex-col gap-4 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-4 text-left text-slate-900 dark:text-white">
             <div className="flex items-start justify-between gap-4 ">
                 <div className="flex flex-col gap-1">
                     <p className="text-sm font-semibold">{item.name}</p>

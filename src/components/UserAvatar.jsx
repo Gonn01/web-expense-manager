@@ -11,10 +11,6 @@ function getInitials(name) {
     );
 }
 
-/**
- * Foto de perfil del usuario. Si no hay URL o la imagen falla al cargar
- * (p. ej. una URL de Google vencida), muestra las iniciales del nombre.
- */
 export default function UserAvatar({ src, name, className = 'size-10 text-sm' }) {
     const [failedSrc, setFailedSrc] = useState(null);
     const base = `rounded-full shrink-0 ${className}`;

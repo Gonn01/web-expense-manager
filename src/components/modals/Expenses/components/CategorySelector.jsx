@@ -34,15 +34,17 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
 
     return (
         <div className="space-y-2">
-            <label className="text-white text-sm font-medium">Categorías (opcional)</label>
+            <label className="text-slate-900 dark:text-white text-sm font-medium">
+                Categorías (opcional)
+            </label>
 
             <div className="relative" ref={dropdownRef}>
                 {loading ? (
-                    <div className="h-12 w-full rounded-lg bg-[#1c2620] border border-[#3d5245] animate-pulse flex items-center px-3">
-                        <div className="h-4 w-32 bg-[#29382f] rounded" />
+                    <div className="h-12 w-full rounded-lg bg-slate-50 dark:bg-[#1c2620] border border-slate-300 dark:border-[#3d5245] animate-pulse flex items-center px-3">
+                        <div className="h-4 w-32 bg-slate-100 dark:bg-[#29382f] rounded" />
                     </div>
                 ) : categories.length === 0 ? (
-                    <div className="h-12 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] px-3 flex items-center gap-2 text-[#9eb7a8] text-sm">
+                    <div className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm">
                         <Icon name="info" className="text-base" />
                         No tenés categorías creadas aún
                     </div>
@@ -50,12 +52,12 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     <button
                         type="button"
                         onClick={() => setOpen((v) => !v)}
-                        className="w-full min-h-12 rounded-lg border border-[#3d5245] bg-[#1c2620]
+                        className="w-full min-h-12 rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]
                             px-3 pr-10 text-left flex flex-wrap gap-1.5 items-center py-2
                             outline-none focus:outline-none focus-visible:outline-none relative cursor-pointer"
                     >
                         {selected.length === 0 ? (
-                            <span className="text-[#9eb7a8] text-sm">
+                            <span className="text-slate-500 dark:text-[#9eb7a8] text-sm">
                                 Seleccionar categorías...
                             </span>
                         ) : (
@@ -82,14 +84,14 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                 </span>
                             ))
                         )}
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9eb7a8] pointer-events-none">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-[#9eb7a8] pointer-events-none">
                             <Icon name={open ? 'expand_less' : 'expand_more'} />
                         </div>
                     </button>
                 )}
 
                 {open && categories.length > 0 && (
-                    <div className="absolute z-20 mt-1 w-full rounded-lg border border-[#3d5245] bg-[#1c2620] shadow-xl overflow-hidden">
+                    <div className="absolute z-20 mt-1 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] shadow-xl overflow-hidden">
                         <ul className="max-h-48 overflow-y-auto py-1">
                             {categories.map((c) => {
                                 const isSelected = selectedIds.includes(c.id);
@@ -97,11 +99,11 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                     <li
                                         key={c.id}
                                         onClick={() => onToggle(c.id)}
-                                        className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-[#29382f] transition-colors"
+                                        className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-[#29382f] transition-colors"
                                     >
                                         <div
                                             className={`w-4 h-4 rounded flex items-center justify-center border transition-colors shrink-0
-                                            ${isSelected ? 'bg-primary border-primary' : 'border-[#3d5245]'}`}
+                                            ${isSelected ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245]'}`}
                                         >
                                             {isSelected && (
                                                 <Icon
@@ -115,15 +117,17 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                             className="w-2.5 h-2.5 rounded-full shrink-0"
                                             style={{ backgroundColor: c.color ?? '#52b788' }}
                                         />
-                                        <span className="text-sm text-white">{c.name}</span>
+                                        <span className="text-sm text-slate-900 dark:text-white">
+                                            {c.name}
+                                        </span>
                                     </li>
                                 );
                             })}
                         </ul>
 
                         {selected.length > 0 && (
-                            <div className="border-t border-[#29382f] px-3 py-2 flex justify-between items-center">
-                                <span className="text-xs text-[#9eb7a8]">
+                            <div className="border-t border-slate-200 dark:border-[#29382f] px-3 py-2 flex justify-between items-center">
+                                <span className="text-xs text-slate-500 dark:text-[#9eb7a8]">
                                     {selected.length} seleccionada{selected.length !== 1 ? 's' : ''}
                                 </span>
                                 <button
@@ -150,11 +154,11 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     Crear nueva categoría
                 </button>
             ) : (
-                <div className="mt-2 p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
+                <div className="mt-2 p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
                     <input
                         disabled={creating}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245] text-white px-3 disabled:opacity-60"
-                        placeholder="Nombre de la categoría"
+                        className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245] text-slate-900 dark:text-white px-3 disabled:opacity-60"
+                        placeholder="Ej: Supermercado"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -169,7 +173,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                                 setNewName('');
                             }}
                             className={`text-sm px-3 py-1.5 rounded-lg
-                                ${creating ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white cursor-pointer'}`}
+                                ${creating ? 'bg-slate-100/60 dark:bg-[#29382f]/60 cursor-not-allowed text-slate-400 dark:text-white/50' : 'bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer'}`}
                         >
                             Cancelar
                         </button>

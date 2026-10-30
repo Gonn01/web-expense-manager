@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon';
 import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
+import NewEntityInlineForm from './NewEntityInlineForm';
 
 export default function EntitySelector({
     entity,
@@ -17,20 +18,22 @@ export default function EntitySelector({
     loadingNewEntity,
     error,
 }) {
-    const borderClass = error ? 'border-red-500' : 'border-[#3d5245]';
+    const borderClass = error ? 'border-red-500' : 'border-slate-300 dark:border-[#3d5245]';
 
     return (
         <div className="space-y-2" data-field="entity">
-            <label className="text-white text-sm font-medium">Entidad financiera</label>
+            <label className="text-slate-900 dark:text-white text-sm font-medium">
+                Entidad financiera
+            </label>
 
             <div className="relative">
                 {loading ? (
-                    <div className="h-12 w-full rounded-lg bg-[#1c2620] border border-[#3d5245] animate-pulse flex items-center px-3">
-                        <div className="h-4 w-32 bg-[#29382f] rounded" />
+                    <div className="h-12 w-full rounded-lg bg-slate-50 dark:bg-[#1c2620] border border-slate-300 dark:border-[#3d5245] animate-pulse flex items-center px-3">
+                        <div className="h-4 w-32 bg-slate-100 dark:bg-[#29382f] rounded" />
                     </div>
                 ) : entities.length === 0 ? (
                     <div
-                        className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620] px-3 flex items-center gap-2 text-[#9eb7a8] text-sm`}
+                        className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm`}
                     >
                         <Icon name="info" className="text-base" />
                         No tenés entidades creadas aún
@@ -39,7 +42,7 @@ export default function EntitySelector({
                     <div className="relative">
                         <Select
                             aria-invalid={error ? true : undefined}
-                            className={`h-12 w-full rounded-lg border ${borderClass} bg-[#1c2620] px-3 text-white cursor-pointer`}
+                            className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer`}
                             value={entity}
                             onChange={setEntity}
                             placeholder="Seleccionar..."
@@ -74,58 +77,18 @@ export default function EntitySelector({
             )}
 
             {showNewEntity && (
-                <div className="mt-3 p-3 border border-[#29382f] rounded-lg bg-[#1c2620] space-y-3">
-                    <input
-                        disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
-               text-white px-3 disabled:opacity-60"
-                        placeholder="Nombre de la nueva entidad"
-                        value={newEntityName}
-                        onChange={(e) => setNewEntityName(e.target.value)}
-                        autoFocus
-                    />
-
-                    <input
-                        type="email"
-                        disabled={loadingNewEntity}
-                        className="h-11 w-full rounded-lg bg-[#111714] border border-[#3d5245]
-               text-white px-3 disabled:opacity-60"
-                        placeholder="Vincular a un usuario (opcional)"
-                        value={newEntityEmail}
-                        onChange={(e) => setNewEntityEmail(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleCreateEntity()}
-                    />
-
-                    <div className="flex justify-end gap-2">
-                        <button
-                            onClick={() => {
-                                setShowNewEntity(false);
-                                setNewEntityEmail('');
-                            }}
-                            disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg
-                            ${loadingNewEntity ? 'bg-[#29382f]/60 cursor-not-allowed text-white/50' : 'bg-[#29382f] text-white cursor-pointer'}`}
-                        >
-                            Cancelar
-                        </button>
-
-                        <button
-                            onClick={handleCreateEntity}
-                            disabled={loadingNewEntity}
-                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
-                                ${loadingNewEntity ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
-                        >
-                            {loadingNewEntity ? (
-                                <>
-                                    <Icon name="progress_activity" className="animate-spin" />
-                                    Creando...
-                                </>
-                            ) : (
-                                'Crear'
-                            )}
-                        </button>
-                    </div>
-                </div>
+                <NewEntityInlineForm
+                    name={newEntityName}
+                    setName={setNewEntityName}
+                    email={newEntityEmail}
+                    setEmail={setNewEntityEmail}
+                    loading={loadingNewEntity}
+                    onCancel={() => {
+                        setShowNewEntity(false);
+                        setNewEntityEmail?.('');
+                    }}
+                    onCreate={handleCreateEntity}
+                />
             )}
         </div>
     );

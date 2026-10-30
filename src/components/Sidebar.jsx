@@ -5,6 +5,7 @@ import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import Snackbar from './Snackbar';
 import UserAvatar from './UserAvatar';
@@ -24,14 +25,30 @@ export default function Sidebar() {
         setPendingPaymentsCount,
         loadPendingCount,
     } = useCompartidosStore();
-    const collapsed = useUIStore((s) => s.sidebarCollapsed);
+    const isDesktop = useMediaQuery(DESKTOP_QUERY);
+    const collapsedPreference = useUIStore((s) => s.sidebarCollapsed);
+    const collapsed = collapsedPreference && isDesktop;
     const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+    const mobileOpen = useUIStore((s) => s.mobileSidebarOpen);
+    const setMobileOpen = useUIStore((s) => s.setMobileSidebarOpen);
+    const closeMobile = useCallback(() => setMobileOpen(false), [setMobileOpen]);
     const [notification, setNotification] = useState(null);
     const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
 
     useEffect(() => {
         loadPendingCount(token);
     }, [token, loadPendingCount]);
+
+    useEffect(() => {
+        if (isDesktop) closeMobile();
+    }, [isDesktop, closeMobile]);
+
+    useEffect(() => {
+        if (!mobileOpen) return;
+        const onKey = (e) => e.key === 'Escape' && closeMobile();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [mobileOpen, closeMobile]);
 
     const handleNuevo = useCallback(() => {
         setPendingCount((c) => c + 1);
@@ -113,25 +130,46 @@ export default function Sidebar() {
             {notification && (
                 <Snackbar message={notification} onClose={() => setNotification(null)} />
             )}
+            {mobileOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+                    onClick={closeMobile}
+                    aria-hidden="true"
+                />
+            )}
             <aside
-                className={`relative flex flex-col shrink-0 overflow-hidden whitespace-nowrap border-r border-black/10 dark:border-white/10 p-4 bg-white/50 dark:bg-background-dark transition-[width] duration-200 ${
-                    collapsed ? 'w-20' : 'w-64'
-                }`}
+                className={`fixed inset-y-0 left-0 z-50 flex flex-col shrink-0 overflow-y-auto overflow-x-hidden whitespace-nowrap border-r border-black/10 dark:border-white/10 p-4 bg-background-light dark:bg-background-dark transition-[width,translate] duration-200 lg:relative lg:z-auto lg:translate-x-0 lg:bg-white/50 lg:dark:bg-background-dark ${
+                    mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+                } ${collapsed ? 'w-20' : 'w-72 max-w-[85vw] lg:w-64'}`}
             >
-                <button
-                    type="button"
-                    onClick={toggleSidebar}
-                    aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-                    title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-                    className={`mb-5 flex size-7 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer transition-[margin] duration-200 ${
-                        collapsed ? 'mr-2.5' : 'mr-0'
-                    }`}
-                >
-                    <Icon name={collapsed ? 'chevron_right' : 'chevron_left'} className="text-lg" />
-                </button>
+                {isDesktop ? (
+                    <button
+                        type="button"
+                        onClick={toggleSidebar}
+                        aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+                        title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+                        className={`mb-5 flex size-7 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer transition-[margin] duration-200 ${
+                            collapsed ? 'mr-2.5' : 'mr-0'
+                        }`}
+                    >
+                        <Icon
+                            name={collapsed ? 'chevron_right' : 'chevron_left'}
+                            className="text-lg"
+                        />
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={closeMobile}
+                        aria-label="Cerrar menú"
+                        title="Cerrar menú"
+                        className="mb-5 flex size-9 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer"
+                    >
+                        <Icon name="close" className="text-xl" />
+                    </button>
+                )}
 
                 <div className="flex flex-col gap-4 w-full">
-                    {/* Perfil del usuario */}
                     <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
                         <UserAvatar src={avatar} name={nombreVisible} className="size-10 text-sm" />
                         {!collapsed && (
@@ -152,6 +190,7 @@ export default function Sidebar() {
                                 key={to}
                                 to={to}
                                 title={collapsed ? label : undefined}
+                                onClick={closeMobile}
                                 className={({ isActive }) => linkClass(isActive)}
                             >
                                 <Icon name={icon} className="text-2xl" />
@@ -170,17 +209,21 @@ export default function Sidebar() {
                     </nav>
                 </div>
 
-                <div className="mt-auto flex flex-col gap-1 w-full">
+                <div className="mt-auto pt-6 flex flex-col gap-1 w-full">
                     <NavLink
                         to="/app/configuracion"
                         title={collapsed ? 'Configuración' : undefined}
+                        onClick={closeMobile}
                         className={({ isActive }) => linkClass(isActive)}
                     >
                         <Icon name="settings" className="text-2xl" />
                         {!collapsed && <p>Configuración</p>}
                     </NavLink>
                     <button
-                        onClick={() => setConfirmLogoutOpen(true)}
+                        onClick={() => {
+                            closeMobile();
+                            setConfirmLogoutOpen(true);
+                        }}
                         title={collapsed ? 'Cerrar sesión' : undefined}
                         className={`${linkClass(false)} text-left w-full`}
                     >

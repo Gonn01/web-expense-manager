@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useUIStore } from '@/store/use-ui-store';
 import { useConfiguracionData } from './use-configuracion-data';
 
 export function useConfiguracionUI() {
@@ -12,6 +13,9 @@ export function useConfiguracionUI() {
         guardarMoneda,
         guardarSueldo,
     } = useConfiguracionData();
+
+    const themeMode = useUIStore((s) => s.themeMode);
+    const setThemeMode = useUIStore((s) => s.setThemeMode);
 
     const [moneda, setMoneda] = useState(monedaActual);
     const [sueldo, setSueldo] = useState(sueldoActual === '' ? '' : String(sueldoActual));
@@ -83,7 +87,12 @@ export function useConfiguracionUI() {
         loadingSueldo,
         onSaveSueldo,
 
+        themeMode,
+
+        setThemeMode,
+
         snackbar,
+
         closeSnackbar,
     };
 }

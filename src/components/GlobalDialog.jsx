@@ -42,12 +42,14 @@ export default function GlobalDialog() {
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             onMouseDown={(e) => e.target === e.currentTarget && close(false)}
         >
-            <div className="w-[90vw] max-w-sm rounded-xl bg-[#111714] p-6 border border-[#29382f] shadow-lg text-white">
+            <div className="w-[90vw] max-w-sm rounded-xl bg-white dark:bg-[#111714] p-6 border border-slate-200 dark:border-[#29382f] shadow-lg text-slate-900 dark:text-white">
                 <div className="flex items-start gap-3 mb-4">
                     <Icon name={tone.icon} className={`${tone.color} text-2xl shrink-0`} />
                     <div className="min-w-0">
                         <h2 className="text-lg font-bold">{current.title}</h2>
-                        <p className="text-sm text-[#9eb7a8] mt-1 break-words">{current.message}</p>
+                        <p className="text-sm text-slate-500 dark:text-[#9eb7a8] mt-1 break-words">
+                            {current.message}
+                        </p>
                     </div>
                 </div>
 
@@ -56,7 +58,7 @@ export default function GlobalDialog() {
                         <button
                             onClick={() => close(false)}
                             disabled={current.busy}
-                            className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-[#9eb7a8] hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {current.cancelLabel}
                         </button>

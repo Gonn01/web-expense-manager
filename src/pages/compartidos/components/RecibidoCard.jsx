@@ -25,17 +25,6 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                 <StatusBadge status={item.status} />
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                <Icon name="person" className="text-base" />
-                <span>
-                    De{' '}
-                    <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                        {item.sender_name}
-                    </span>
-                    {item.sender_entity_name && <span> · {item.sender_entity_name}</span>}
-                </span>
-            </div>
-
             {item.status === 'ACTIVE' && item.assigned_entity_name && (
                 <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                     <Icon name="account_balance" className="text-base" />

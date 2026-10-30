@@ -25,29 +25,12 @@ export default function EmitidoCard({ item, onReintentar, loadingId }) {
                 <StatusBadge status={item.copy_status} />
             </div>
 
-            <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    <Icon name="account_balance" className="text-base" />
-                    <span>{item.entity_name}</span>
+            {item.copy_status === 'ACTIVE' && item.copy_entity_name && (
+                <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                    <Icon name="check_circle" className="text-base" />
+                    <span>Asignado a: {item.copy_entity_name}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    <Icon name="person" className="text-base" />
-                    <span>
-                        Para{' '}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                            {item.receiver_name}
-                        </span>
-                        <span className="text-xs ml-1">({item.receiver_email})</span>
-                    </span>
-                </div>
-
-                {item.copy_status === 'ACTIVE' && item.copy_entity_name && (
-                    <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                        <Icon name="check_circle" className="text-base" />
-                        <span>Asignado a: {item.copy_entity_name}</span>
-                    </div>
-                )}
-            </div>
+            )}
 
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
                 {new Date(item.created_at).toLocaleDateString('es-AR', {

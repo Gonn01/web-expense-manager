@@ -7,10 +7,6 @@ const SIZES = {
     sm: { button: 'gap-1.5 px-2.5 py-1.5 text-xs shrink-0', icon: 'text-sm' },
 };
 
-/**
- * Botón que copia al portapapeles el texto que devuelve `getText`.
- * `size="sm"` es la versión compacta para filas y encabezados de tarjeta.
- */
 export default function CopyButton({
     getText,
     label = 'Copiar',

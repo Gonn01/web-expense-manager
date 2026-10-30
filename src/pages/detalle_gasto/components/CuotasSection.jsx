@@ -20,7 +20,7 @@ export default function CuotasSection({ gasto, onRefund, settlementActive = fals
                     className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
                         refundUnlocked
                             ? 'border-red-500/60 bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                            : 'border-[#29382f] bg-[#111714] text-[#9eb7a8] hover:bg-[#29382f]'
+                            : 'border-slate-200 dark:border-[#29382f] bg-white dark:bg-[#111714] text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f]'
                     }`}
                 >
                     <span className="material-symbols-outlined text-base">

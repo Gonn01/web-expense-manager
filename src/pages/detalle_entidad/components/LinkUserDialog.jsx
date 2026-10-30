@@ -3,10 +3,15 @@ import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import useAuth from '@/store/use-auth-store';
 
-export default function LinkUserButton({ entity, onVincular, onDesvincular, loading = false }) {
-    const isLinked = !!entity?.linked_user_id;
+export default function LinkUserDialog({
+    entity,
+    dialog,
+    onClose,
+    onVincular,
+    onDesvincular,
+    loading = false,
+}) {
     const currentUserEmail = useAuth((s) => s.user?.email);
-    const [dialog, setDialog] = useState(null);
     const [emailInput, setEmailInput] = useState('');
     const [error, setError] = useState('');
 
@@ -16,9 +21,9 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
 
     const closeDialog = () => {
         if (loading) return;
-        setDialog(null);
         setEmailInput('');
         setError('');
+        onClose();
     };
 
     const handleVincular = async () => {
@@ -44,31 +49,6 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
 
     return (
         <>
-            {isLinked ? (
-                <button
-                    type="button"
-                    onClick={() => setDialog('unlink')}
-                    disabled={loading}
-                    title="Desvincular usuario"
-                    className="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 px-4 py-2 rounded-lg font-bold text-zinc-700 dark:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <Icon name="link" />
-                    <span className="max-w-[12rem] truncate">
-                        {entity.linked_user_name || entity.linked_user_email || 'Usuario vinculado'}
-                    </span>
-                </button>
-            ) : (
-                <button
-                    type="button"
-                    onClick={() => setDialog('link')}
-                    disabled={loading}
-                    className="flex items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 py-2 rounded-lg text-primary font-bold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <Icon name="person_add" />
-                    Vincular usuario
-                </button>
-            )}
-
             {dialog &&
                 createPortal(
                     <div
@@ -88,7 +68,7 @@ export default function LinkUserButton({ entity, onVincular, onDesvincular, load
                                     </p>
                                     <input
                                         type="email"
-                                        placeholder="Email del usuario"
+                                        placeholder="Ej: juan@email.com"
                                         value={emailInput}
                                         disabled={loading}
                                         autoFocus

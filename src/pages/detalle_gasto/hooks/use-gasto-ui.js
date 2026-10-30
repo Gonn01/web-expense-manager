@@ -1,11 +1,17 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGastoData } from './use-gasto-data';
+import { useEntitiesStore } from '@/store/use-entities-store';
+import { transferBlockReason } from '@/utils/expense-transfer';
 
 export function useGastoUI() {
     const nav = useNavigate();
 
-    const { gasto, setGasto, actualizar, settleQuota, refundCuota, eliminar, loading } = useGastoData();
+    const { gasto, setGasto, actualizar, transferir, settleQuota, refundCuota, eliminar, loading } =
+        useGastoData();
+    const entities = useEntitiesStore((s) => s.entities);
+
+    const transferLock = useMemo(() => transferBlockReason(gasto, entities), [gasto, entities]);
 
     const totalPagado = useMemo(() => {
         if (!gasto) return 0;
@@ -39,6 +45,8 @@ export function useGastoUI() {
         porcentaje,
         loading,
         actualizar,
+        transferir,
+        transferLock,
         settleQuota,
         refundCuota,
         eliminar,

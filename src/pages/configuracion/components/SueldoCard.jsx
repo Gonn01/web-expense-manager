@@ -45,8 +45,8 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                     <div className="flex gap-2">
                         <AmountInput
                             id="sueldo"
-                            placeholder="0,00"
-                            className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
+                            placeholder="Ej: 850.000"
+                            className="flex-1 min-w-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
                             value={sueldo}
                             onChange={setSueldo}
                         />
@@ -74,7 +74,7 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                             type="number"
                             step="0.01"
                             placeholder="Ej: 10"
-                            className="flex-1 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
+                            className="flex-1 min-w-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
                             value={aumento}
                             onChange={(e) => setAumento(e.target.value)}
                         />

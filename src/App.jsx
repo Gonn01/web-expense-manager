@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import GlobalFeedback from '@/components/GlobalFeedback';
+import { useThemeSync } from '@/hooks/use-theme-sync';
 import Login from './pages/auth/Login/Login';
 import AppLayout from './layouts/AppLayout';
 import EntidadesFinancieras from './pages/entidades_financieras/EntidadesFinancieras';
@@ -14,6 +15,8 @@ import SettlementHistory from './pages/cuentas/SettlementHistory';
 import SettlementDetail from './pages/cuentas/SettlementDetail';
 
 export default function App() {
+    useThemeSync();
+
     return (
         <>
             <GlobalFeedback />

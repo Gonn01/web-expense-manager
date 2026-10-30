@@ -20,10 +20,10 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-07 | La app móvil guarda el token en almacenamiento seguro del dispositivo. La web lo guarda en `localStorage`. | App, Web |
 | RNF-SEG-08 | Todas las consultas a la base usan parámetros posicionales (`$1, $2…`); no se concatenan valores en el SQL. | API |
 | RNF-SEG-09 | En producción, la comunicación entre clientes y API es por HTTPS, y la conexión con Pusher usa TLS. | Todos |
+| RNF-SEG-10 | La API solo acepta peticiones de navegador (CORS) desde los orígenes de la web: producción y dev en Vercel, y `http://localhost:5173` para desarrollo local. La app móvil no está sujeta a CORS. | API, Web |
 
 **Limitaciones conocidas**
 
-- La API acepta peticiones de cualquier origen (CORS abierto).
 - Los canales de Pusher (`compartidos-<userId>`) son públicos: no hay autenticación de canal. Los eventos solo llevan identificadores y nombres, no montos.
 
 ## CON — Consistencia entre clientes
@@ -47,8 +47,9 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-USA-05 | Toda acción destructiva o irreversible (eliminar, desvincular, cerrar sesión, descartar sesión de cuentas) pide confirmación. | Web, App |
 | RNF-USA-06 | Las acciones de un solo campo (favorito, postergar, marcar en la sesión) se reflejan en pantalla de inmediato y se revierten si el servidor las rechaza. | Web, App |
 | RNF-USA-07 | Toda carga de datos muestra un indicador de progreso. | Web, App |
-| RNF-USA-08 | Las preferencias de interfaz (barra lateral colapsada, balances ocultos, vista en lista o grilla) se recuerdan entre sesiones en el dispositivo. | Web |
-| RNF-USA-09 | Un formulario con datos faltantes o inválidos no deshabilita el botón de guardar sin explicación: al intentar guardar marca cada campo con error con un mensaje concreto y muestra un resumen siempre visible, sin necesidad de scrollear. Los avisos globales se muestran por encima de los modales. | Web (formularios de gasto); App: pendiente |
+| RNF-USA-08 | Las preferencias de interfaz se recuerdan entre sesiones en el dispositivo: el tema (claro, oscuro o el del sistema) en la web y en la app; la barra lateral colapsada, los balances ocultos y la vista en lista o grilla, solo en la web. | Web, App |
+| RNF-USA-09 | Todas las pantallas se pueden usar en tema claro y oscuro: cada color de fondo, texto y borde tiene su variante para los dos temas, y los colores de acento usados como texto (ingresos, egresos, advertencias) se oscurecen en el tema claro para mantener el contraste. | Web, App |
+| RNF-USA-10 | Un formulario con datos faltantes o inválidos no deshabilita el botón de guardar sin explicación: al intentar guardar marca cada campo con error con un mensaje concreto y muestra un resumen siempre visible, sin necesidad de scrollear. Los avisos globales se muestran por encima de los modales. | Web (formularios de gasto); App: pendiente |
 
 ## REN — Rendimiento
 
@@ -109,6 +110,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-POR-02 | La app móvil funciona en Android e iOS. | App |
 | RNF-POR-03 | La URL de la API, y las credenciales de Firebase y Pusher, son configurables por entorno sin modificar código. | Web, App |
 | RNF-POR-04 | La API persiste en PostgreSQL. El esquema se administra fuera del repositorio. | API |
+| RNF-POR-05 | La web se adapta al tamaño de pantalla, desde celulares (360px de ancho) hasta monitores de escritorio: en pantallas de menos de 1024px el menú lateral se abre desde una barra superior y el contenido se reacomoda en una columna, sin scroll horizontal. | Web |
 
 **Servicios externos de los que depende el sistema**
 
