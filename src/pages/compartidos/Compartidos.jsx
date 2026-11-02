@@ -6,6 +6,7 @@ import AprobarModal from './components/AprobarModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import Loader from '@/components/Loader';
 import Icon from '@/components/Icon';
+import Collapse from '@/components/Collapse';
 import InfoTooltip from '@/components/InfoTooltip';
 import { useState } from 'react';
 import useAuth from '@/store/use-auth-store';
@@ -266,18 +267,18 @@ function EntityGroup({ group }) {
                 </span>
                 <Icon
                     name="expand_more"
-                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform ${
+                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform duration-300 ease-snappy ${
                         open ? 'rotate-180' : ''
                     }`}
                 />
             </button>
-            {open && (
+            <Collapse open={open}>
                 <div className="flex flex-col gap-3 px-3 pb-3">
                     {group.items.map((item) => (
                         <div key={item.key}>{item.element}</div>
                     ))}
                 </div>
-            )}
+            </Collapse>
         </div>
     );
 }
