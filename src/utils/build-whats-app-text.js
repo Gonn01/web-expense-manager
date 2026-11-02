@@ -29,11 +29,12 @@ function purchaseText(it, displayCur, rates) {
 }
 
 export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, rates) {
+    const activeItems = group.items.filter((i) => !i.is_postponed);
     const buf = [];
     buf.push(`${group.name}: \n`);
 
     if (selectedCurrency) {
-        const items = group.items.filter((i) => i.currency_type === selectedCurrency);
+        const items = activeItems.filter((i) => i.currency_type === selectedCurrency);
         const egresos = items.filter((i) => i.type !== 'INGRESO');
         const ingresos = items.filter((i) => i.type === 'INGRESO');
         const totalDebtor = egresos.reduce((s, it) => s + Number(it.amount_per_quota ?? 0), 0);
@@ -64,8 +65,8 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
     }
 
     const cur = preferredCurrency ?? 'ARS';
-    const egresos = group.items.filter((i) => i.type !== 'INGRESO');
-    const ingresos = group.items.filter((i) => i.type === 'INGRESO');
+    const egresos = activeItems.filter((i) => i.type !== 'INGRESO');
+    const ingresos = activeItems.filter((i) => i.type === 'INGRESO');
 
     const totalDebtor = egresos.reduce(
         (s, it) =>
@@ -92,7 +93,7 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
     }
 
     for (const [code, name] of Object.entries(RATE_NAMES)) {
-        const used = group.items.some((i) => i.currency_type === code);
+        const used = activeItems.some((i) => i.currency_type === code);
         if (used && rates?.[code]) {
             buf.push(`Valor del ${name} tomado: 1 ${code} = ${rates[code]} ARS\n\n\n`);
         }

@@ -13,6 +13,7 @@ import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import LockedField, { LockReason } from '../components/LockedField';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import { transferTargets } from '@/utils/expense-transfer';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
 import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
@@ -124,24 +125,35 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         }
     };
 
-    const savingRef = useRef(false);
-    savingRef.current = saving;
-    const requestClose = () => {
-        if (!savingRef.current) onClose?.();
-    };
+    const initialCategoryIds = (gasto.categories ?? []).map((c) => c.id);
+    const dirty =
+        type !== gasto.type ||
+        name !== gasto.name ||
+        String(entity) !== String(gasto.financial_entity_id) ||
+        Number(amount) !== Number(gasto.amount) ||
+        currency !== gasto.currency_type ||
+        isFixed !== Boolean(gasto.fixed_expense) ||
+        isInstallment !== (!gasto.fixed_expense && gasto.number_of_quotas > 1) ||
+        installments !== (gasto.number_of_quotas > 1 ? String(gasto.number_of_quotas) : '') ||
+        newEntityName.trim() !== '' ||
+        selectedCategoryIds.length !== initialCategoryIds.length ||
+        selectedCategoryIds.some((id) => !initialCategoryIds.includes(id));
+
+    const requestClose = useDiscardGuard(dirty, onClose, { busy: saving || linkedPrompt });
 
     useEffect(() => {
-        const onKey = (e) => e.key === 'Escape' && !savingRef.current && onClose?.();
+        const onKey = (e) => e.key === 'Escape' && requestClose();
         document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [requestClose]);
 
+    useEffect(() => {
         const prevScroll = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-
         return () => {
-            document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prevScroll;
         };
-    }, [onClose]);
+    }, []);
 
     const doSave = async (payload) => {
         setSaving(true);
@@ -330,7 +342,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     <ExpenseFormErrors errors={visibleErrors} />
 
                     <button
-                        onClick={onClose}
+                        onClick={requestClose}
                         disabled={saving}
                         className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -340,10 +352,10 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     <button
                         disabled={saving}
                         onClick={handleSubmit}
-                        className="h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+                        className="btn-save h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black cursor-pointer"
                     >
                         {saving ? (
-                            <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                            <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                         ) : (
                             <Icon name="save" />
                         )}
@@ -363,7 +375,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                 <button
                                     onClick={() => confirmLinked(true)}
                                     disabled={saving}
-                                    className="h-11 px-4 text-sm font-bold rounded-lg bg-primary text-black cursor-pointer hover:bg-primary/80 disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="btn-save h-11 px-4 text-sm font-bold rounded-lg bg-primary text-black cursor-pointer hover:bg-primary/80 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     Aplicar a ambos
                                 </button>

@@ -181,8 +181,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                             type="button"
                             disabled={creating || !newName.trim()}
                             onClick={handleCreate}
-                            className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
-                                ${creating ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
+                            className="btn-save text-sm px-3 py-1.5 rounded-lg flex items-center gap-2 bg-primary text-black cursor-pointer"
                         >
                             {creating ? (
                                 <>

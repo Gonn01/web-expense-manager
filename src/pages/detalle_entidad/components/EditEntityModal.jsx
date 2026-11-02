@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Icon from '@/components/Icon';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
 
 export default function EditEntityModal({ open, entity, onClose, onSave, saving = false }) {
     const initialName = entity?.name || '';
@@ -27,12 +28,22 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
         return true;
     }, [name, initialName, saving]);
 
+    const dirty = name.trim() !== initialName.trim();
+    const requestClose = useDiscardGuard(dirty, onClose, { busy: saving });
+
+    useEffect(() => {
+        if (!open) return;
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [open, requestClose]);
+
     if (!open) return null;
 
     return (
         <div
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-            onMouseDown={(e) => e.target === e.currentTarget && !saving && onClose()}
+            onMouseDown={(e) => e.target === e.currentTarget && requestClose()}
         >
             <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md max-h-full p-4 sm:p-6 overflow-y-auto">
                 {saving && (
@@ -68,7 +79,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                 <div className="flex justify-between mt-2">
                     <button
                         disabled={saving}
-                        onClick={onClose}
+                        onClick={requestClose}
                         className="px-4 py-2 rounded-lg bg-zinc-300 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancelar
@@ -76,7 +87,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                     <button
                         disabled={!canSave}
                         onClick={handleSaveName}
-                        className="px-4 py-2 rounded-lg bg-primary text-background-dark font-bold flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="btn-save px-4 py-2 rounded-lg bg-primary text-background-dark font-bold flex items-center gap-2"
                     >
                         Guardar
                     </button>

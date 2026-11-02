@@ -71,6 +71,21 @@ body {
     }
 }
 
+.btn-save:disabled {
+    background-color: transparent;
+    color: #94a3b8;
+    outline: 1px dashed #cbd5e1;
+    outline-offset: -1px;
+    box-shadow: none;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+:root.dark .btn-save:disabled {
+    color: #6b8576;
+    outline-color: #3d5245;
+}
+
 [role='combobox']:focus,
 [role='combobox']:focus-visible,
 [role='listbox']:focus,

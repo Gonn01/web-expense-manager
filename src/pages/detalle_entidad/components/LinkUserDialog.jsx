@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import useAuth from '@/store/use-auth-store';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
 
 export default function LinkUserDialog({
     entity,
@@ -19,12 +20,22 @@ export default function LinkUserDialog({
         !!currentUserEmail &&
         emailInput.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
 
-    const closeDialog = () => {
+    const closeDialog = useCallback(() => {
         if (loading) return;
         setEmailInput('');
         setError('');
         onClose();
-    };
+    }, [loading, onClose]);
+
+    const dirty = dialog === 'link' && emailInput.trim() !== '';
+    const requestClose = useDiscardGuard(dirty, closeDialog, { busy: loading });
+
+    useEffect(() => {
+        if (!dialog) return;
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [dialog, requestClose]);
 
     const handleVincular = async () => {
         if (!emailInput.trim() || isSelfEmail) return;
@@ -53,7 +64,7 @@ export default function LinkUserDialog({
                 createPortal(
                     <div
                         className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
-                        onMouseDown={(e) => e.target === e.currentTarget && closeDialog()}
+                        onMouseDown={(e) => e.target === e.currentTarget && requestClose()}
                     >
                         <div className="w-full max-w-sm rounded-xl bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-xl p-6">
                             {dialog === 'link' ? (
@@ -108,7 +119,7 @@ export default function LinkUserDialog({
                             <div className="flex justify-end gap-3 mt-6">
                                 <button
                                     type="button"
-                                    onClick={closeDialog}
+                                    onClick={requestClose}
                                     disabled={loading}
                                     className="px-4 py-2 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white text-sm disabled:opacity-50"
                                 >
@@ -121,9 +132,9 @@ export default function LinkUserDialog({
                                         loading ||
                                         (dialog === 'link' && (!emailInput.trim() || isSelfEmail))
                                     }
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 disabled:opacity-50 ${
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 ${
                                         dialog === 'link'
-                                            ? 'bg-primary text-background-dark font-bold'
+                                            ? 'btn-save bg-primary text-background-dark font-bold'
                                             : 'bg-red-600 hover:bg-red-700 text-white'
                                     }`}
                                 >

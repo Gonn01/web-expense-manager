@@ -6,6 +6,7 @@ import Icon from '@/components/Icon';
 import TextInput from '@/components/TextInput';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
 import { vincularUsuarioEntidad } from '@/services/api';
 import { ExpenseType } from '@/utils/enums';
 import { useCategoriesStore } from '@/store/use-categories-store';
@@ -131,18 +132,39 @@ export default function NewExpenseModal({
         }
     };
 
-    useEffect(() => {
-        const onKey = (e) => e.key === 'Escape' && onClose?.();
-        document.addEventListener('keydown', onKey);
+    const dirty =
+        type !== ExpenseType.EGRESO ||
+        name.trim() !== '' ||
+        String(entity) !== String(defaultEntityId || '') ||
+        amount !== '' ||
+        currency !== 'ARS' ||
+        installments !== '' ||
+        paidInstallments !== '0' ||
+        isFixed ||
+        isInstallment ||
+        isPaid ||
+        isPostponed ||
+        payWithEntity ||
+        paymentEntity !== '' ||
+        newEntityName.trim() !== '' ||
+        newEntityEmail.trim() !== '' ||
+        selectedCategoryIds.length > 0;
 
+    const requestClose = useDiscardGuard(dirty, onClose, { busy: saving });
+
+    useEffect(() => {
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [requestClose]);
+
+    useEffect(() => {
         const prevScroll = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-
         return () => {
-            document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prevScroll;
         };
-    }, [onClose]);
+    }, []);
 
     function handleSubmit() {
         if (saving) return;
@@ -173,7 +195,7 @@ export default function NewExpenseModal({
 
     const modalContent = (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="fixed inset-0 bg-black/60" onMouseDown={() => onClose?.()} />
+            <div className="fixed inset-0 bg-black/60" onMouseDown={requestClose} />
 
             <div
                 ref={containerRef}
@@ -188,7 +210,8 @@ export default function NewExpenseModal({
                     </div>
 
                     <button
-                        onClick={onClose}
+                        onClick={requestClose}
+                        aria-label="Cerrar"
                         className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
@@ -330,7 +353,7 @@ export default function NewExpenseModal({
                     <ExpenseFormErrors errors={visibleErrors} />
 
                     <button
-                        onClick={onClose}
+                        onClick={requestClose}
                         className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
                     >
                         Cancelar
@@ -339,11 +362,7 @@ export default function NewExpenseModal({
                     <button
                         disabled={saving}
                         onClick={handleSubmit}
-                        className="
-        h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg 
-        bg-primary text-black cursor-pointer hover:bg-primary/80
-        disabled:opacity-60 disabled:cursor-not-allowed
-    "
+                        className="btn-save h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black cursor-pointer hover:bg-primary/80"
                     >
                         {saving ? (
                             <>

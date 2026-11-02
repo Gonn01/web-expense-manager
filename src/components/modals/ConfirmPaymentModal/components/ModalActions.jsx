@@ -16,10 +16,10 @@ export default function ModalActions({ onCancel, onConfirm, loading = false, dis
                 type="button"
                 onClick={onConfirm}
                 disabled={loading || disabled}
-                className="h-10 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-save h-10 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-2 cursor-pointer"
             >
                 {loading ? (
-                    <span className="w-4 h-4 border-2 border-background-dark/40 border-t-background-dark rounded-full animate-spin" />
+                    <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
                 ) : (
                     <Icon name="check_circle" className="text-lg" />
                 )}

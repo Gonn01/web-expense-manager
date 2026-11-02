@@ -52,9 +52,8 @@ export default function NewEntityInlineForm({
                 <button
                     type="button"
                     onClick={onCreate}
-                    disabled={loading}
-                    className={`text-sm px-3 py-1.5 rounded-lg flex items-center gap-2
-                        ${loading ? 'bg-primary/60 cursor-not-allowed text-black' : 'bg-primary text-black cursor-pointer'}`}
+                    disabled={loading || !name.trim()}
+                    className="btn-save text-sm px-3 py-1.5 rounded-lg flex items-center gap-2 bg-primary text-black cursor-pointer"
                 >
                     {loading ? (
                         <>
