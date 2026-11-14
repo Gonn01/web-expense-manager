@@ -3,6 +3,7 @@ import Icon from '@/components/Icon';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import useAuth from '@/store/use-auth-store';
 import Select from '@/components/Select';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
 
 export default function AprobarModal({ open, gasto, onClose, onConfirm, loading }) {
     const { token } = useAuth();
@@ -23,6 +24,17 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
         setMode('existing');
     }, [open, gasto?.suggested_entity_id, loadEntities, token]);
 
+    const initialEntityId = gasto?.suggested_entity_id?.toString() || '';
+    const dirty = newEntityName.trim() !== '' || selectedEntityId !== initialEntityId;
+    const requestClose = useDiscardGuard(dirty, onClose, { busy: loading });
+
+    useEffect(() => {
+        if (!open) return;
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [open, requestClose]);
+
     if (!open) return null;
 
     const hasEntities = entities.length > 0;
@@ -41,7 +53,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
     return (
         <div
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-            onMouseDown={(e) => e.target === e.currentTarget && !loading && onClose()}
+            onMouseDown={(e) => e.target === e.currentTarget && requestClose()}
         >
             <div
                 className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md max-h-full overflow-y-auto p-4 sm:p-6"
@@ -114,7 +126,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                 <div className="flex justify-between mt-6">
                     <button
                         disabled={loading}
-                        onClick={onClose}
+                        onClick={requestClose}
                         className="px-4 py-2 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:text-white text-sm"
                     >
                         Cancelar
@@ -122,7 +134,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                     <button
                         disabled={!canConfirm}
                         onClick={handleConfirm}
-                        className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+                        className="btn-save px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium flex items-center gap-2"
                     >
                         {loading ? (
                             <Icon name="progress_activity" className="animate-spin text-sm" />

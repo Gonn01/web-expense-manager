@@ -99,7 +99,7 @@ export function useDashboardData() {
     const { token, user } = useAuth();
     const { handleConfirm } = useSettlements(token);
 
-    const [summaryByCurrency, setSummaryByCurrency] = useState(null);
+    const [loaded, setLoaded] = useState(false);
     const [groups, setGroups] = useState([]);
     const [pendingTotal, setPendingTotal] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -129,7 +129,8 @@ export function useDashboardData() {
         );
     }, []);
 
-    const recalcSummary = useCallback((groupsToUse) => {
+    const summaryByCurrency = useMemo(() => {
+        if (!loaded) return null;
         const totals = Object.fromEntries(
             CURRENCY_VALUES.map((cur) => [
                 cur,
@@ -137,8 +138,9 @@ export function useDashboardData() {
             ]),
         );
 
-        groupsToUse.forEach((group) => {
+        groups.forEach((group) => {
             group.items.forEach((g) => {
+                if (g.is_postponed) return;
                 const curr = g.currency_type;
                 const restante = g.amount - g.payed_quotas * g.amount_per_quota;
                 const cuota = Number(g.amount_per_quota || 0);
@@ -153,7 +155,7 @@ export function useDashboardData() {
             });
         });
 
-        const summary = CURRENCY_VALUES.reduce((acc, cur) => {
+        return CURRENCY_VALUES.reduce((acc, cur) => {
             acc[cur] = {
                 total_egreso: totals[cur].egreso,
                 total_ingreso: totals[cur].ingreso,
@@ -164,9 +166,7 @@ export function useDashboardData() {
             };
             return acc;
         }, {});
-
-        setSummaryByCurrency(summary);
-    }, []);
+    }, [groups, loaded]);
 
     const loadDashboard = useCallback(async () => {
         if (!token) return;
@@ -191,13 +191,13 @@ export function useDashboardData() {
             sortGroups(mappedGroups);
 
             setGroups(mappedGroups);
-            recalcSummary(mappedGroups);
+            setLoaded(true);
         } catch (err) {
             console.error('Error cargando dashboard:', err);
         } finally {
             setLoading(false);
         }
-    }, [token, recalcSummary]);
+    }, [token]);
 
     const updateAfterPayment = useCallback(
         (updatedItems) => {
@@ -234,9 +234,8 @@ export function useDashboardData() {
                 .filter((g) => g.items.length > 0);
 
             setGroups(newGroups);
-            recalcSummary(newGroups);
         },
-        [groups, recalcSummary],
+        [groups],
     );
 
     const settleQuotas = useCallback(

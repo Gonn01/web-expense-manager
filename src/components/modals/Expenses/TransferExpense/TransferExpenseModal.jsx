@@ -120,14 +120,14 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                         <button
                             type="button"
                             disabled={!target || saving}
-                            className="relative flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-primary text-[#111714] text-sm font-bold tracking-wide transition-opacity duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="btn-save relative flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-primary text-[#111714] text-sm font-bold tracking-wide transition-opacity duration-200 hover:opacity-80"
                             onClick={handleTransfer}
                         >
                             <span className={`truncate ${saving ? 'invisible' : ''}`}>
                                 Transferir
                             </span>
                             {saving && (
-                                <span className="absolute w-4 h-4 border-2 border-[#111714]/30 border-t-[#111714] rounded-full animate-spin" />
+                                <span className="absolute w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                             )}
                         </button>
                     </div>

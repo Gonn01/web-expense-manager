@@ -5,6 +5,7 @@ import ExpenseCard from '@/components/ExpenseCard';
 import CopyButton from '@/components/CopyButton';
 import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import GroupBalance from '@/pages/dashboard/components/GroupBalance';
+import Collapse from '@/components/Collapse';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { ExpenseType } from '@/utils/enums';
 
@@ -96,8 +97,10 @@ export default function ActiveFinancialEntity({
                         aria-label={collapsed ? 'Expandir entidad' : 'Colapsar entidad'}
                     >
                         <Icon
-                            name={collapsed ? 'chevron_right' : 'expand_more'}
-                            className="text-xl"
+                            name="expand_more"
+                            className={`text-xl transition-transform duration-300 ease-snappy ${
+                                collapsed ? '-rotate-90' : ''
+                            }`}
                         />
                     </button>
 
@@ -227,8 +230,8 @@ export default function ActiveFinancialEntity({
                 </div>
             </div>
 
-            {!collapsed &&
-                (count === 0 ? (
+            <Collapse open={!collapsed}>
+                {count === 0 ? (
                     <p className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">
                         Sin gastos que coincidan con el filtro.
                     </p>
@@ -258,7 +261,8 @@ export default function ActiveFinancialEntity({
                             </li>
                         ))}
                     </ul>
-                ))}
+                )}
+            </Collapse>
         </div>
     );
 }

@@ -181,7 +181,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario abre el dashboard.
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
-    3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance.
+    3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance, sin contar los gastos postergados.
     4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
     5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, la cantidad de gastos compartidos pendientes.
 - **Flujos alternativos**
@@ -412,7 +412,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-23 — Postergar gasto
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-GAS-06, RF-GAS-11, RF-PAG-06
+- **Requerimientos**: RF-DSH-04, RF-GAS-06, RF-GAS-11, RF-PAG-06
 - **Precondición**: el gasto pertenece a una entidad del usuario y, si es en cuotas o de pago único, le queda al menos una cuota sin pagar.
 - **Flujo principal**
     1. El usuario activa "postergar" en un gasto.
@@ -539,7 +539,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El sistema confirma que se copió; el usuario lo pega donde quiera.
 - **Flujos alternativos**
     - 1a. El usuario elige "Copiar" en una entidad del snapshot: el texto incluye solo esa entidad.
-    - 1b. El usuario elige "Copiar" en una entidad del dashboard o en el detalle de una entidad: el texto resume los gastos activos de esa entidad.
+    - 1b. El usuario elige "Copiar" en una entidad del dashboard o en el detalle de una entidad: el texto resume los gastos activos de esa entidad, sin los postergados.
 - **Nota**: el sistema no envía mensajes; solo deja el texto en el portapapeles.
 
 ---

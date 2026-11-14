@@ -11,6 +11,7 @@ import {
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { useEntitiesStore } from '@/store/use-entities-store';
 import { useParams } from 'react-router-dom';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
@@ -133,6 +134,7 @@ export function useEntidadData() {
     const actualizarEntidad = useCallback(
         async (newName) => {
             const data = await updateFinancialEntity(id, newName, token);
+            useEntitiesStore.getState().updateEntity(id, { name: data.name });
             setEntity((prev) =>
                 prev
                     ? { ...prev, name: data.name, movements: data.movements ?? prev.movements }
@@ -167,6 +169,11 @@ export function useEntidadData() {
     const vincularUsuario = useCallback(
         async (email) => {
             const updated = await vincularUsuarioEntidad(id, email, token);
+            useEntitiesStore.getState().updateEntity(id, {
+                linked_user_id: updated.linked_user_id,
+                linked_user_name: updated.linked_user_name,
+                linked_user_email: updated.linked_user_email,
+            });
             setEntity((prev) => ({
                 ...prev,
                 linked_user_id: updated.linked_user_id,
@@ -179,6 +186,11 @@ export function useEntidadData() {
 
     const desvincularUsuario = useCallback(async () => {
         await desvincularUsuarioEntidad(id, token);
+        useEntitiesStore.getState().updateEntity(id, {
+            linked_user_id: null,
+            linked_user_name: null,
+            linked_user_email: null,
+        });
         setEntity((prev) => ({
             ...prev,
             linked_user_id: null,
