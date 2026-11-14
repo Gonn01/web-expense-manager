@@ -8,7 +8,7 @@ React 19 SPA ("Plataforma de Gestión de Deudas" — personal debt/expense track
 
 It is one of two frontend clients on a shared backend: the sibling repo `d:\proyectos_node\api-plataformas-desarrollo` (Node/Express API). The other client is the Flutter app `d:\proyectos_flutter\app_expense_manager`. Backend contract changes (routes, error codes, response shapes) affect both clients.
 
-The README.md is outdated — it describes an older, purely local/localStorage-only version of the app and doesn't mention the real backend, `compartidos` (shared expenses), or the "hacer cuentas" settlement mode. Don't trust it for current architecture.
+The README.md is the human-facing entry point (setup, env vars, scripts, architecture summary, main libraries) for the web and summarizes the backend; the API and Flutter repos have their own README. Keep it in sync when a command, env var or main dependency changes.
 
 ## Documentation and guides
 

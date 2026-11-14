@@ -124,5 +124,4 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 ## 9. Trampas
 
 - No hay framework de tests configurado. Si se agregan, vitest es lo natural con Vite.
-- El `README.md` de la raíz describe una versión vieja, solo con `localStorage`. No usarlo como referencia de arquitectura.
 - Los textos de interfaz están escritos en los componentes, solo en español: la web no tiene l10n.

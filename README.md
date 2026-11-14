@@ -1,185 +1,164 @@
-# Plataforma de Gestión de Deudas
+# Plataforma de Gestión de Deudas — Web
 
-Este proyecto es una aplicación web desarrollada con React (Vite) para la materia Plataformas de Desarrollo
-La app permite gestionar deudas personales, registrar gastos, administrar cuotas y visualizar tanto lo que debo como lo que me deben.
-El sistema funciona 100% en frontend, utilizando localStorage para almacenar información como deudas, cuotas pagadas y detalles de cada gasto.
+Aplicación web para registrar y saldar deudas, créditos y gastos personales, organizados por persona o institución (**entidades financieras**) y compartidos con otros usuarios de la plataforma. Proyecto de la materia Plataformas de Desarrollo.
 
-✔️ 1. Dashboard
+## Descripción del proyecto
 
-Resumen general de gastos.
+El sistema está formado por tres proyectos sobre un mismo backend:
 
-Acceso rápido al modal para crear un nuevo gasto o deuda.
+| Proyecto | Repositorio | Tecnología | Rol |
+| --- | --- | --- | --- |
+| **Web (este repo)** | [web-plataformas-de-desarrollo](https://github.com/Gonn01/web-plataformas-de-desarrollo) | React 19 + Vite | Cliente para navegador |
+| **API** | [api-plataformas-desarrollo](https://github.com/Gonn01/api-plataformas-desarrollo) | Node.js / Express 5 + PostgreSQL | Backend único: persiste los datos y aplica las reglas de negocio |
+| **App móvil** | [app_expense_manager](https://github.com/Gonn01/app_expense_manager) | Flutter | Cliente para Android e iOS, con la misma funcionalidad que la web |
 
-Visualización de las tarjetas estadísticas del mes.
+Funcionalidades principales:
 
-✔️ 2. Crear gasto / deuda (modal)
+- **Autenticación** con email y contraseña o con Google (Firebase).
+- **Dashboard**: gastos agrupados por entidad, filtros, totales y balance por moneda, equivalencia en la moneda preferida, gráficos y peso de los gastos sobre el sueldo.
+- **Gastos** (egresos o ingresos) de pago único, en cuotas o fijos, en ARS, USD, EUR, BRL, CLP y UYU, con categorías, historial y reversión de pagos.
+- **Entidades financieras** (personas, tarjetas, bancos, comercios), con favoritos y vinculación con otro usuario.
+- **Gastos compartidos**: al vincular una entidad con otro usuario, la contraparte aprueba o rechaza los gastos y confirma los pagos. Los cambios llegan en tiempo real (Pusher).
+- **Modo "hacer cuentas"**: sesión de cierre periódico en la que se marcan los pagos; al finalizarla se registran todos juntos y queda un snapshot inmutable que se puede compartir.
+- **Configuración**: perfil, moneda preferida, sueldo, tema claro/oscuro.
 
-Desde el botón del Dashboard podés:
+La documentación funcional completa del sistema (web + app + API) está en [docs/](docs/). La entrada es [docs/descripcion-general.md](docs/descripcion-general.md).
 
-Cargar un título, monto, moneda, tipo (Debo / Me deben) y entidad.
+## Requisitos previos
 
-La información se guarda en localStorage.
+- **Node.js** 20 o superior y **npm**.
+- La **API** corriendo en local o desplegada (ver [Backend](#backend-api)).
+- Un proyecto de **Firebase** con Authentication y el proveedor Google habilitado (solo para el login con Google).
+- Una app de **Pusher Channels** (solo para las notificaciones en tiempo real).
 
-La deuda se refleja inmediatamente en las secciones correspondientes.
+## Instalar dependencias
 
-✔️ 3. Sección Debo
-
-Lista todas las deudas que el usuario debe pagar.
-
-Se combinan datos mock + lo que el usuario crea.
-
-Cada item muestra:
-
-Título
-
-Monto formateado
-
-Moneda
-
-Botón "Ver detalle" para abrir la vista completa.
-
-✔️ 4. Sección Me deben
-
-Lista las deudas donde otra persona le debe al usuario.
-
-Cada item muestra:
-
-Título
-
-Monto formateado en verde
-
-Moneda
-
-Botón "Ver detalle".
-
-✔️ 5. Detalle de deuda (CompraDetalle)
-
-Muestra información completa:
-
-Título
-
-Estado
-
-Entidad
-
-Tipo (Debo / Me deben)
-
-Moneda
-
-Monto total
-
-Progreso del pago
-
-Generación automática de cuotas según el monto total y cantidad de cuotas.
-
-✔️ Acciones desde esta vista:
-
-Marcar la próxima cuota como pagada
-
-Ver progreso en tiempo real
-
-Editar la deuda:
-
-Cambiar título
-
-Entidad
-
-Monto total
-
-Moneda
-
-Cantidad de cuotas
-
-Eliminar deuda desde “Zona de Peligro”
-
-✔️ Mensajes diferenciados según el tipo:
-
-Si era Debo →
-"¡Felicitaciones! Ya terminaste de pagar 'Título'."
-
-Si era Me deben →
-"¡Genial! Registraste que ya te pagaron 'Título'."
-
-
-✔️ 6. Persistencia en localStorage
-
-Todas las deudas y gastos
-
-Se actualizan automáticamente con:
-
-agregarDeuda
-
-actualizarDeuda
-
-eliminarDeuda
-
-obtenerDeudaPorId
-
-🔧 Tecnologías usadas
-
-React + Vite
-
-React Router
-
-Tailwind / clases utilitarias
-
-localStorage
-
-JavaScript moderno (ES6+)
-
-git clone <URL_DEL_REPO>
+```bash
+git clone https://github.com/Gonn01/web-plataformas-de-desarrollo.git
 cd web-plataformas-de-desarrollo
 npm install
+```
+
+## Variables de entorno
+
+Crear un archivo `.env` en la raíz del proyecto (está en `.gitignore`, no se versiona). Vite solo expone al cliente las variables con prefijo `VITE_`.
+
+```env
+VITE_API_BASE_URL=http://localhost:3000/api
+
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+
+VITE_PUSHER_KEY=
+VITE_PUSHER_CLUSTER=sa1
+```
+
+| Variable | Para qué se usa |
+| --- | --- |
+| `VITE_API_BASE_URL` | URL base de la API, incluido el prefijo `/api`. En local: `http://localhost:3000/api`. |
+| `VITE_FIREBASE_*` | Configuración web de Firebase (consola de Firebase → Configuración del proyecto → Tus apps). Se usa para el inicio de sesión con Google. |
+| `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER` | Key pública y cluster de la app de Pusher; deben ser los mismos que usa la API. |
+
+Después de cambiar el `.env` hay que reiniciar el servidor de desarrollo.
+
+## Correr el proyecto en local
+
+1. Levantar la API (por defecto en `http://localhost:3000`). Su CORS ya permite `http://localhost:5173`.
+2. Levantar la web:
+
+```bash
 npm run dev
+```
 
-👥 Autores
+La app queda en `http://localhost:5173`.
 
-Gonzalo Rigoni
+### Scripts disponibles
 
-Agustin Masa
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` / `npm start` | Servidor de desarrollo de Vite con recarga en caliente |
+| `npm run build` | Build de producción en `dist/` |
+| `npm run preview` | Sirve el build de `dist/` para probarlo |
+| `npm run lint` / `npm run lint:fix` | ESLint (y corrección automática) |
+| `npm run format` | Formatea el código con Prettier |
 
-Romina Herrera
+No hay framework de tests configurado en la web; los tests unitarios del sistema están en la API.
 
+### Despliegue
 
-Video y pdf
+La web se despliega en **Vercel**. [vercel.json](vercel.json) reescribe todas las rutas a `index.html` para que funcione el ruteo del lado del cliente. Las variables de entorno se cargan en el panel del proyecto en Vercel.
 
-https://drive.google.com/drive/folders/1aWYYho0riHqlliThUd-Cn9B_s-Sy-b3Z?usp=sharing
+## Arquitectura técnica
 
-Email: usuario@email.com
-pass: 123456
+```
+Navegador ──► Web (React SPA) ──HTTP/JSON + JWT──► API (Express) ──SQL──► PostgreSQL
+                  ▲                                     │
+                  └──────── Pusher Channels ◄───────────┘  (eventos de compartidos)
+```
 
+### Frontend (este repo)
 
+```
+src/
+  App.jsx          tabla de rutas (react-router-dom)
+  guards/          ProtectedRoute: redirige a /login sin sesión
+  layouts/         AppLayout: sidebar + barra superior móvil + Outlet
+  pages/<feature>/ una carpeta por pantalla: <Feature>.jsx + components/ + hooks/
+  components/      componentes compartidos y modales
+  hooks/           hooks compartidos (Pusher, hacer cuentas, cotizaciones, tema, media queries)
+  services/        api.js (instancia única de axios + todas las llamadas) y error-handler.js
+  store/           stores de zustand, uno por dominio
+  lib/             singletons de clientes de terceros (Pusher)
+  utils/           formateo, enums, catálogo de errores
+```
 
+- **Capas por pantalla**: la página solo compone; `use-<feature>-data.js` pide datos y se conecta a los stores, y `use-<feature>-ui.js` maneja el estado de interfaz (modales, filtros, pestañas).
+- **Capa HTTP centralizada**: todas las llamadas pasan por `src/services/api.js`. Su interceptor normaliza los errores, los muestra como snackbar o diálogo y, ante un 401, cierra la sesión y redirige a `/login`.
+- **Estado global** con zustand (sesión, entidades, categorías, sesión de "hacer cuentas", preferencias de UI, feedback global).
+- **Tiempo real**: suscripción al canal de Pusher `compartidos-<userId>`, con conteo de referencias para compartir el canal entre componentes.
+- **Responsive** desde 360 px de ancho; tema claro, oscuro o del sistema.
 
+Detalle completo en [.claude/guides/arquitectura-web.md](.claude/guides/arquitectura-web.md).
 
+### Backend (API)
 
+API REST en Node.js (ESM) con Express 5 sobre PostgreSQL, sin ORM. Cada recurso tiene cuatro capas: `routes → controller → service → repository`, armadas a mano en `factories/`. Las reglas de negocio viven en los services y el acceso a datos es SQL plano. La autenticación es con JWT (`Authorization: Bearer <token>`), y los eventos de gastos compartidos se publican en Pusher después del commit de la transacción.
 
+Grupos de rutas bajo `/api`: `/auth`, `/health` (públicos), `/user`, `/entidades-financieras`, `/dashboard`, `/gastos`, `/categorias`, `/compartidos`, `/settlement`.
 
+Instalación, variables de entorno y comandos de la API: ver su [README](https://github.com/Gonn01/api-plataformas-desarrollo#readme).
 
+## Librerías principales
 
+| Librería | Uso |
+| --- | --- |
+| [React 19](https://react.dev) | Interfaz de usuario |
+| [Vite](https://vite.dev) (`rolldown-vite`) | Servidor de desarrollo y build |
+| [Tailwind CSS 4](https://tailwindcss.com) | Estilos (tema claro/oscuro con la variante `dark:`) |
+| [react-router-dom 7](https://reactrouter.com) | Ruteo del lado del cliente |
+| [zustand](https://zustand.docs.pmnd.rs) | Estado global |
+| [axios](https://axios-http.com) | Cliente HTTP hacia la API |
+| [Firebase](https://firebase.google.com/docs/auth) | Inicio de sesión con Google |
+| [pusher-js](https://github.com/pusher/pusher-js) | Notificaciones en tiempo real |
+| [recharts](https://recharts.org) | Gráficos del dashboard |
+| ESLint + Prettier | Linting y formato |
 
+En la API: Express 5, postgres.js, jsonwebtoken, bcrypt, Pusher (servidor), dayjs y Vitest para los tests.
 
+## Documentación
 
+- [docs/](docs/): descripción general, misión/visión/valores, requerimientos funcionales y no funcionales, casos de uso y diagramas.
+- [.claude/guides/arquitectura-web.md](.claude/guides/arquitectura-web.md): arquitectura de esta web.
+- [checklist_mis_cuentas.md](checklist_mis_cuentas.md) y [checklits_expense_manager.md](checklits_expense_manager.md): checklists informales de funcionalidades hechas y pendientes.
 
+## Autores
 
+- Gonzalo Rigoni
+- Agustin Masa
+- Romina Herrera
 
-
-
-
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Video y PDF de la entrega: [Google Drive](https://drive.google.com/drive/folders/1aWYYho0riHqlliThUd-Cn9B_s-Sy-b3Z?usp=sharing)

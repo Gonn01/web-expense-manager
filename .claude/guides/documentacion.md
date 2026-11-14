@@ -26,6 +26,7 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había); si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |
 | cambia o renumera un `RF`/`RNF` citado en la tabla de valores, o cambia el comportamiento que esa tabla describe | `docs/mision-vision-valores.md` |
 | cambia la estructura de carpetas, una capa, una convención o un comando | la guía de arquitectura de ese proyecto + su `CLAUDE.md` |
+| cambia un comando, una variable de entorno, un requisito de instalación o una librería principal | el `README.md` de ese repo |
 | introduce un patrón nuevo o deja uno en desuso | la guía de arquitectura de ese proyecto, incluido su checklist |
 | agrega un término de dominio | el glosario de `docs/README.md` |
 | implementa algo de "Pendiente / fuera de alcance", o decide sacar algo del alcance | moverlo de esa lista a un `RF` real (o al revés), revisar la sección "Alcance" de `docs/descripcion-general.md`, y marcarlo en el checklist correspondiente de la raíz de la web |
