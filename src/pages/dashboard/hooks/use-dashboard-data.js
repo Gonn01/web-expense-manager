@@ -344,8 +344,11 @@ export function useDashboardData() {
     const pusherEvents = useMemo(
         () => ({
             'compartido.aprobado': onCompartidoAprobado,
+            'pago.pendiente': loadDashboard,
             'pago.confirmado': loadDashboard,
             'pago.rechazado': loadDashboard,
+            'pago.retirado': loadDashboard,
+            'pago.reversion_aceptada': loadDashboard,
         }),
         [onCompartidoAprobado, loadDashboard],
     );

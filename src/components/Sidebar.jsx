@@ -78,6 +78,49 @@ export default function Sidebar() {
         useSnackbarStore.getState().show(`${quien} rechazó tu pago`, 'error');
     }, []);
 
+    const handlePagoRetirado = useCallback(
+        ({ actorName } = {}) => {
+            const quien = actorName || 'La otra persona';
+            loadPendingCount(token);
+            useSnackbarStore.getState().show(`${quien} retiró un pago que tenías para confirmar`);
+        },
+        [loadPendingCount, token],
+    );
+
+    const handleReversionSolicitada = useCallback(
+        ({ actorName } = {}) => {
+            const quien = actorName || 'La otra persona';
+            setPendingPaymentsCount((c) => c + 1);
+            useSnackbarStore
+                .getState()
+                .show(
+                    `${quien} pidió revertir un pago. Respondé en Compartidos`,
+                    'success',
+                    'undo',
+                );
+        },
+        [setPendingPaymentsCount],
+    );
+
+    const handleReversionCancelada = useCallback(
+        ({ actorName } = {}) => {
+            const quien = actorName || 'La otra persona';
+            loadPendingCount(token);
+            useSnackbarStore.getState().show(`${quien} canceló el pedido de reversión de un pago`);
+        },
+        [loadPendingCount, token],
+    );
+
+    const handleReversionAceptada = useCallback(({ actorName } = {}) => {
+        const quien = actorName || 'La otra persona';
+        useSnackbarStore.getState().show(`${quien} aceptó revertir el pago`, 'success');
+    }, []);
+
+    const handleReversionRechazada = useCallback(({ actorName } = {}) => {
+        const quien = actorName || 'La otra persona';
+        useSnackbarStore.getState().show(`${quien} rechazó revertir el pago`, 'error');
+    }, []);
+
     const pusherEvents = useMemo(
         () => ({
             'compartido.nuevo': handleNuevo,
@@ -85,6 +128,11 @@ export default function Sidebar() {
             'pago.pendiente': handlePagoPendiente,
             'pago.confirmado': handlePagoConfirmado,
             'pago.rechazado': handlePagoRechazado,
+            'pago.retirado': handlePagoRetirado,
+            'pago.reversion_solicitada': handleReversionSolicitada,
+            'pago.reversion_cancelada': handleReversionCancelada,
+            'pago.reversion_aceptada': handleReversionAceptada,
+            'pago.reversion_rechazada': handleReversionRechazada,
         }),
         [
             handleNuevo,
@@ -92,6 +140,11 @@ export default function Sidebar() {
             handlePagoPendiente,
             handlePagoConfirmado,
             handlePagoRechazado,
+            handlePagoRetirado,
+            handleReversionSolicitada,
+            handleReversionCancelada,
+            handleReversionAceptada,
+            handleReversionRechazada,
         ],
     );
 

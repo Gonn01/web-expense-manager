@@ -1,54 +1,70 @@
 import { useState } from 'react';
 import { Cuota } from './Cuota';
+import RefundLockButton from './RefundLockButton';
 import { formatMoney } from '@/utils/FormatMoney';
+import useAuth from '@/store/use-auth-store';
 
-export default function PagosFijosSection({ gasto, onRefund }) {
+function byPaymentDateDesc(a, b) {
+    return new Date(b.payment_date) - new Date(a.payment_date);
+}
+
+export default function PagosFijosSection({
+    gasto,
+    onRevert,
+    onCancelReversion,
+    settlementActive = false,
+}) {
     const [refundUnlocked, setRefundUnlocked] = useState(false);
+    const { user } = useAuth();
 
-    const pagos = (gasto.movements ?? [])
-        .filter((m) => m.movement_type === 'PAYMENT')
-        .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date));
+    const movements = gasto.movements ?? [];
+    const pagos = movements.filter((m) => m.movement_type === 'PAYMENT').sort(byPaymentDateDesc);
+    const pendientes = movements
+        .filter((m) => m.movement_type === 'PENDING_PAYMENT')
+        .sort(byPaymentDateDesc);
+    const shared = Boolean(gasto.shared_counterparty);
+    const counterpartyName = gasto.shared_counterparty?.name ?? null;
+    const total = pagos.length + pendientes.length;
+
+    const filas = [
+        ...pendientes.map((m) => ({ movement: m, pending: true })),
+        ...pagos.map((m) => ({ movement: m, pending: false })),
+    ];
 
     return (
         <section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Pagos</h2>
-                <button
-                    onClick={() => setRefundUnlocked((v) => !v)}
-                    title={refundUnlocked ? 'Bloquear reembolsos' : 'Desbloquear reembolsos'}
-                    className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
-                        refundUnlocked
-                            ? 'border-red-500/60 bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                            : 'border-slate-200 dark:border-[#29382f] bg-white dark:bg-[#111714] text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f]'
-                    }`}
-                >
-                    <span className="material-symbols-outlined text-base">
-                        {refundUnlocked ? 'lock_open' : 'lock'}
-                    </span>
-                    {refundUnlocked ? 'Desbloqueado' : 'Reembolsos'}
-                </button>
+                <RefundLockButton
+                    unlocked={refundUnlocked}
+                    onToggle={() => setRefundUnlocked((v) => !v)}
+                />
             </div>
 
-            {pagos.length === 0 && (
+            {filas.length === 0 && (
                 <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
                     Todavía no registraste ningún pago para este gasto.
                 </p>
             )}
 
-            {pagos.map((movimiento, index) => (
+            {filas.map(({ movement, pending }, index) => (
                 <Cuota
-                    key={movimiento.id ?? index}
+                    key={movement.id ?? index}
                     icon="check_circle"
-                    title={`Pago #${pagos.length - index}`}
-                    monto={formatMoney(movimiento.amount, gasto.currency_type)}
+                    title={`Pago #${total - index}`}
+                    monto={formatMoney(movement.amount, gasto.currency_type)}
                     currency={gasto.currency_type}
-                    paymentDate={movimiento.payment_date}
-                    paid={true}
+                    movement={movement}
+                    paid={!pending}
+                    pending={pending}
                     next={false}
-                    isLastPaid={index === 0}
                     refundUnlocked={refundUnlocked}
-                    onRefund={onRefund}
-                    type={gasto.type}
+                    settlementActive={settlementActive}
+                    shared={shared}
+                    counterpartyName={counterpartyName}
+                    currentUserId={user?.id}
+                    onRevert={onRevert}
+                    onCancelReversion={onCancelReversion}
                 />
             ))}
         </section>

@@ -64,10 +64,10 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
 | ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración (solo web). |
 | GAS — Gastos | Alta (con entidad nueva, gasto espejo o cuotas ya pagas), detalle, edición, baja lógica, postergación, favoritos e historial. |
-| PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión del último pago, pagos pendientes de confirmación en gastos compartidos. |
+| PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión de cualquier pago, pagos pendientes de confirmación en gastos compartidos. |
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
-| CTA — Hacer cuentas | Sesión de cierre persistida en el servidor, marcado de gastos, finalización con registro de pagos y snapshot, descarte, historial de cierres y resumen para WhatsApp. |
-| CMP — Compartidos | Gastos compartidos recibidos y emitidos: aprobar, rechazar y reintentar; confirmar o rechazar pagos pendientes. |
+| CTA — Hacer cuentas | Sesión de cierre persistida en el servidor, marcado de gastos, finalización con registro de pagos y snapshot, descarte, historial de cierres con el estado actual de cada pago compartido, y resumen para WhatsApp. |
+| CMP — Compartidos | Gastos compartidos recibidos y emitidos: aprobar, rechazar y reintentar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
 | NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas. |
 
 **Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idioma**: español rioplatense; la app móvil además en inglés.

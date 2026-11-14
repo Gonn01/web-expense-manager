@@ -45,6 +45,8 @@ export default function ExpenseCard({
         gasto.payed_quotas + pendingQuotas >= gasto.number_of_quotas;
 
     const counterparty = counterpartyName || 'la otra persona';
+    const counterpartyLabel = counterpartyName || 'La otra persona';
+    const counterpartyPendingQuotas = gasto.counterparty_pending_quotas ?? 0;
     const awaitingApproval = gasto.status === ExpenseStatus.PENDING_APPROVAL;
 
     const cur = gasto.currency_type;
@@ -134,6 +136,17 @@ export default function ExpenseCard({
                                 {pendingQuotas === 1
                                     ? `Esperando que ${counterparty} confirme el pago`
                                     : `Esperando que ${counterparty} confirme ${pendingQuotas} pagos`}
+                            </span>
+                        )}
+                        {counterpartyPendingQuotas > 0 && (
+                            <span
+                                className="inline-flex items-center gap-1 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 text-xs font-bold px-2 py-0.5"
+                                title={`${counterpartyLabel} ya registró ${counterpartyPendingQuotas === 1 ? 'un pago' : `${counterpartyPendingQuotas} pagos`} de este gasto. Si lo marcás en tu sesión, se confirma al terminar las cuentas; también podés confirmarlo desde Compartidos.`}
+                            >
+                                <Icon name="pending_actions" className="text-xs" />
+                                {settlementActive
+                                    ? `${counterpartyLabel} ya lo pagó: marcalo para confirmar`
+                                    : `${counterpartyLabel} ya registró el pago`}
                             </span>
                         )}
                     </div>

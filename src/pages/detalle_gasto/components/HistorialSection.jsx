@@ -4,6 +4,9 @@ import Icon from '@/components/Icon';
 const EVENT_ICONS = {
     CREATION: 'add_circle',
     PAYMENT: 'check_circle',
+    PENDING_PAYMENT: 'hourglass_top',
+    PAYMENT_REJECTED: 'cancel',
+    PAYMENT_WITHDRAWN: 'remove_circle',
     REFUND: 'undo',
     EDITED: 'edit',
     DELETE: 'delete',
@@ -24,8 +27,16 @@ function getEventTitle(movement, gasto) {
             if (isFinalization) return 'Finalizado';
             return gasto.type === 'INGRESO' ? 'Cuota cobrada' : 'Cuota pagada';
         }
-        case 'REFUND':
-            return gasto.type === 'INGRESO' ? 'Cobro revertido' : 'Pago revertido';
+        case 'PENDING_PAYMENT':
+            return 'Pago esperando confirmación';
+        case 'PAYMENT_REJECTED':
+            return 'Pago rechazado por la otra persona';
+        case 'PAYMENT_WITHDRAWN':
+            return 'Pago retirado';
+        case 'REFUND': {
+            const base = gasto.type === 'INGRESO' ? 'Cobro revertido' : 'Pago revertido';
+            return movement.detail?.trim() ? `${base}: ${movement.detail}` : base;
+        }
         case 'EDITED':
             return movement.detail?.trim() ? movement.detail : 'Gasto editado';
         case 'DELETE':

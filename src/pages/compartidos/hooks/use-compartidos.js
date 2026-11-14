@@ -6,12 +6,17 @@ import {
     reintentarCompartido,
     confirmarPago as confirmarPagoApi,
     rechazarPago as rechazarPagoApi,
+    retirarPago as retirarPagoApi,
+    aceptarReversion as aceptarReversionApi,
+    rechazarReversion as rechazarReversionApi,
+    cancelarReversion as cancelarReversionApi,
     createGasto,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
 export function useCompartidos() {
@@ -20,6 +25,7 @@ export function useCompartidos() {
 
     const [compartidos, setCompartidos] = useState({ recibidos: [], emitidos: [] });
     const [pagos, setPagos] = useState({ porConfirmar: [], esperando: [] });
+    const [reversiones, setReversiones] = useState({ porConfirmar: [], esperando: [] });
     const [loading, setLoading] = useState(true);
     const [loadingAction, setLoadingAction] = useState(null);
 
@@ -30,13 +36,17 @@ export function useCompartidos() {
                 if (!silent) setLoading(true);
                 const data = await fetchCompartidos(token);
                 const pagosData = data.pagos ?? { porConfirmar: [], esperando: [] };
+                const reversionesData = data.reversiones ?? { porConfirmar: [], esperando: [] };
                 setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
                 setPagos(pagosData);
+                setReversiones(reversionesData);
                 const pending = data.recibidos.filter(
                     (r) => r.status === 'PENDING_APPROVAL',
                 ).length;
                 setPendingCount(pending);
-                setPendingPaymentsCount(pagosData.porConfirmar.length);
+                setPendingPaymentsCount(
+                    pagosData.porConfirmar.length + reversionesData.porConfirmar.length,
+                );
             } catch (err) {
                 console.error('Error cargando compartidos', err);
             } finally {
@@ -58,6 +68,11 @@ export function useCompartidos() {
             'pago.pendiente': () => load(),
             'pago.confirmado': () => load(),
             'pago.rechazado': () => load(),
+            'pago.retirado': () => load(),
+            'pago.reversion_solicitada': () => load(),
+            'pago.reversion_cancelada': () => load(),
+            'pago.reversion_aceptada': () => load(),
+            'pago.reversion_rechazada': () => load(),
         }),
         [load],
     );
@@ -151,7 +166,7 @@ export function useCompartidos() {
             try {
                 await confirmarPagoApi(movementId, token);
                 useSnackbarStore.getState().show('Pago confirmado', 'success');
-                await load();
+                await Promise.all([load(), useSettlementStore.getState().loadSession()]);
             } catch (err) {
                 console.error('Error confirmando pago', err);
             } finally {
@@ -167,7 +182,7 @@ export function useCompartidos() {
             try {
                 await rechazarPagoApi(movementId, token);
                 useSnackbarStore.getState().show('Pago rechazado', 'success');
-                await load();
+                await Promise.all([load(), useSettlementStore.getState().loadSession()]);
             } catch (err) {
                 console.error('Error rechazando pago', err);
             } finally {
@@ -175,6 +190,43 @@ export function useCompartidos() {
             }
         },
         [token, load],
+    );
+
+    const runPagoAction = useCallback(
+        async (movementId, apiCall, successMessage) => {
+            setLoadingAction(movementId);
+            try {
+                await apiCall(movementId, token);
+                useSnackbarStore.getState().show(successMessage, 'success');
+                await load();
+            } catch (err) {
+                console.error(successMessage, err);
+            } finally {
+                setLoadingAction(null);
+            }
+        },
+        [token, load],
+    );
+
+    const retirarPago = useCallback(
+        (movementId) => runPagoAction(movementId, retirarPagoApi, 'Pago retirado'),
+        [runPagoAction],
+    );
+
+    const aceptarReversion = useCallback(
+        (movementId) => runPagoAction(movementId, aceptarReversionApi, 'Pago revertido'),
+        [runPagoAction],
+    );
+
+    const rechazarReversion = useCallback(
+        (movementId) => runPagoAction(movementId, rechazarReversionApi, 'Reversión rechazada'),
+        [runPagoAction],
+    );
+
+    const cancelarReversion = useCallback(
+        (movementId) =>
+            runPagoAction(movementId, cancelarReversionApi, 'Pedido de reversión cancelado'),
+        [runPagoAction],
     );
 
     const crearGasto = useCallback(
@@ -188,6 +240,7 @@ export function useCompartidos() {
     return {
         compartidos,
         pagos,
+        reversiones,
         loading,
         loadingAction,
         aprobar,
@@ -195,6 +248,10 @@ export function useCompartidos() {
         reintentar,
         confirmarPago,
         rechazarPago,
+        retirarPago,
+        aceptarReversion,
+        rechazarReversion,
+        cancelarReversion,
         crearGasto,
     };
 }

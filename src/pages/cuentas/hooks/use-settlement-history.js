@@ -1,34 +1,59 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { fetchSettlementSnapshots, fetchSettlementSnapshotById } from '@/services/api';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
+
+const PAYMENT_STATUS_EVENTS = [
+    'pago.confirmado',
+    'pago.rechazado',
+    'pago.retirado',
+    'pago.reversion_solicitada',
+    'pago.reversion_cancelada',
+    'pago.reversion_aceptada',
+    'pago.reversion_rechazada',
+];
+
+function usePaymentStatusEvents(userId, onEvent) {
+    const events = useMemo(
+        () => Object.fromEntries(PAYMENT_STATUS_EVENTS.map((name) => [name, onEvent])),
+        [onEvent],
+    );
+    usePusherChannel(userId ? `compartidos-${userId}` : null, events);
+}
 
 export function useSettlementHistoryList() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const [snapshots, setSnapshots] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const load = useCallback(async () => {
-        if (!token) return;
-        setLoading(true);
-        try {
-            const data = await fetchSettlementSnapshots(token);
-            setSnapshots(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error('Error cargando snapshots de cuentas:', err);
-        } finally {
-            setLoading(false);
-        }
-    }, [token]);
+    const load = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
+            if (!silent) setLoading(true);
+            try {
+                const data = await fetchSettlementSnapshots(token);
+                setSnapshots(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error('Error cargando snapshots de cuentas:', err);
+            } finally {
+                if (!silent) setLoading(false);
+            }
+        },
+        [token],
+    );
 
     useEffect(() => {
         load();
     }, [load]);
 
+    const reloadSilently = useCallback(() => load({ silent: true }), [load]);
+    usePaymentStatusEvents(user?.id, reloadSilently);
+
     return { snapshots, loading, reload: load };
 }
 
 export function useSettlementDetail(id) {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const [snapshot, setSnapshot] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -49,6 +74,14 @@ export function useSettlementDetail(id) {
             alive = false;
         };
     }, [id, token]);
+
+    const reloadSilently = useCallback(() => {
+        if (!token || !id) return;
+        fetchSettlementSnapshotById(id, token)
+            .then(setSnapshot)
+            .catch((err) => console.error('Error recargando snapshot:', err));
+    }, [id, token]);
+    usePaymentStatusEvents(user?.id, reloadSilently);
 
     return { snapshot, loading, error };
 }

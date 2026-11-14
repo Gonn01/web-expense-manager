@@ -86,6 +86,26 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'Ese pago pendiente ya no existe.',
         variant: 'snackbar',
     },
+    PAGO_NOT_FOUND: {
+        message: 'Ese pago ya no existe.',
+        variant: 'snackbar',
+    },
+    PAGO_REGISTRADO_POR_OTRO: {
+        message: 'Este pago lo registró la otra persona: confirmalo o rechazalo desde Compartidos.',
+        variant: 'snackbar',
+    },
+    GASTO_CUOTAS_CUBIERTAS: {
+        message: 'Las cuotas que quedan ya tienen pagos esperando confirmación.',
+        variant: 'snackbar',
+    },
+    REVERSION_YA_SOLICITADA: {
+        message: 'Ya pediste revertir este pago: falta que la otra persona responda.',
+        variant: 'snackbar',
+    },
+    REVERSION_NOT_FOUND: {
+        message: 'Esa solicitud de reversión ya no está pendiente.',
+        variant: 'snackbar',
+    },
 
     SETTLEMENT_REQUIRED: {
         message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',

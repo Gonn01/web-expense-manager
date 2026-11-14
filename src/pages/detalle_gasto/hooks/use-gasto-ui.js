@@ -7,8 +7,17 @@ import { transferBlockReason } from '@/utils/expense-transfer';
 export function useGastoUI() {
     const nav = useNavigate();
 
-    const { gasto, setGasto, actualizar, transferir, settleQuota, refundCuota, eliminar, loading } =
-        useGastoData();
+    const {
+        gasto,
+        setGasto,
+        actualizar,
+        transferir,
+        settleQuota,
+        revertirPago,
+        cancelarReversion,
+        eliminar,
+        loading,
+    } = useGastoData();
     const entities = useEntitiesStore((s) => s.entities);
 
     const transferLock = useMemo(() => transferBlockReason(gasto, entities), [gasto, entities]);
@@ -48,7 +57,8 @@ export function useGastoUI() {
         transferir,
         transferLock,
         settleQuota,
-        refundCuota,
+        revertirPago,
+        cancelarReversion,
         eliminar,
         onSeleccionAdjuntos,
         volverALista,

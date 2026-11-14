@@ -1,10 +1,28 @@
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
+import { useDialogStore } from '@/store/use-dialog-store';
 import TypeBadge from './TypeBadge';
 
-export default function PagoCompartidoCard({ pago, variant, onConfirmar, onRechazar, loadingId }) {
+export default function PagoCompartidoCard({
+    pago,
+    variant,
+    onConfirmar,
+    onRechazar,
+    onRetirar,
+    loadingId,
+}) {
     const isLoading = loadingId === pago.movement_id;
     const porConfirmar = variant === 'porConfirmar';
+
+    const handleRetirar = async () => {
+        const ok = await useDialogStore.getState().confirm({
+            title: '¿Retirar el pago?',
+            message: `Se retira el pago de "${pago.gasto_name}" que le mandaste a ${pago.counterparty_name ?? 'la otra persona'}. La cuota vuelve a quedar sin pagar.`,
+            tone: 'danger',
+            confirmLabel: 'Retirar',
+        });
+        if (ok) onRetirar?.(pago.movement_id);
+    };
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">
@@ -63,6 +81,22 @@ export default function PagoCompartidoCard({ pago, variant, onConfirmar, onRecha
                         <Icon name="close" className="text-sm" /> Rechazar
                     </button>
                 </div>
+            )}
+
+            {!porConfirmar && onRetirar && (
+                <button
+                    disabled={isLoading}
+                    onClick={handleRetirar}
+                    className="flex items-center justify-center gap-1 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 text-sm font-medium disabled:opacity-50"
+                >
+                    {isLoading ? (
+                        <Icon name="progress_activity" className="animate-spin text-sm" />
+                    ) : (
+                        <>
+                            <Icon name="undo" className="text-sm" /> Retirar pago
+                        </>
+                    )}
+                </button>
             )}
         </div>
     );

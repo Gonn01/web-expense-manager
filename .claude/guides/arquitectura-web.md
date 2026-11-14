@@ -81,7 +81,7 @@ Consecuencias:
 
 `src/hooks/use-pusher-channel.js` lleva un conteo de referencias de las suscripciones en un `Map` a nivel de módulo, para que varios componentes en el mismo canal no provoquen una desuscripción prematura cuando uno se desmonta. No "simplificarlo" sin conservar ese conteo.
 
-Canal: `compartidos-<userId>`. Eventos: `compartido.nuevo`, `compartido.aprobado`, `compartido.rechazado`, `pago.pendiente`, `pago.confirmado`, `pago.rechazado`. El mapa de handlers que se pasa al hook debe estar memoizado (`useMemo`).
+Canal: `compartidos-<userId>`. Eventos: `compartido.nuevo`, `compartido.aprobado`, `compartido.rechazado`, `pago.pendiente`, `pago.confirmado`, `pago.rechazado`, `pago.retirado`, `pago.reversion_solicitada`, `pago.reversion_cancelada`, `pago.reversion_aceptada`, `pago.reversion_rechazada`. El historial y el detalle de un snapshot (`pages/cuentas/hooks/use-settlement-history.js`) también se suscriben, para refrescar el estado de los pagos compartidos. Después de confirmar o rechazar un pago desde Compartidos se vuelve a pedir la sesión de cuentas (`loadSession`), porque la API puede haber desmarcado la copia. El mapa de handlers que se pasa al hook debe estar memoizado (`useMemo`).
 
 ## 6. Modo "hacer cuentas"
 

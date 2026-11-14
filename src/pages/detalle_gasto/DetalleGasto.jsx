@@ -24,7 +24,8 @@ export default function DetalleGasto() {
         porcentaje,
         totalPagado,
         settleQuota,
-        refundCuota,
+        revertirPago,
+        cancelarReversion,
         actualizar,
         transferir,
         transferLock,
@@ -98,13 +99,18 @@ export default function DetalleGasto() {
                     {!gasto.fixed_expense && (
                         <CuotasSection
                             gasto={gasto}
-                            loading={loading}
-                            onRefund={refundCuota}
+                            onRevert={revertirPago}
+                            onCancelReversion={cancelarReversion}
                             settlementActive={settlementActive}
                         />
                     )}
                     {gasto.fixed_expense && (
-                        <PagosFijosSection gasto={gasto} onRefund={refundCuota} />
+                        <PagosFijosSection
+                            gasto={gasto}
+                            onRevert={revertirPago}
+                            onCancelReversion={cancelarReversion}
+                            settlementActive={settlementActive}
+                        />
                     )}
 
                     <HistorialSection gasto={gasto} />

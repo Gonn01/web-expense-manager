@@ -21,7 +21,9 @@ export const useCompartidosStore = create((set) => ({
         try {
             const data = await fetchCompartidos(token);
             const count = data.recibidos.filter((r) => r.status === 'PENDING_APPROVAL').length;
-            const porConfirmar = data.pagos?.porConfirmar.length ?? 0;
+            const porConfirmar =
+                (data.pagos?.porConfirmar.length ?? 0) +
+                (data.reversiones?.porConfirmar.length ?? 0);
             set({ pendingCount: count, pendingPaymentsCount: porConfirmar });
         } catch (err) {
             console.error('Error cargando compartidos pendientes', err);

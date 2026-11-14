@@ -185,15 +185,6 @@ export const restaurarGasto = async (gastoId, token) => {
     return data.data;
 };
 
-export const refundCuota = async (gastoId, token) => {
-    const { data } = await api.post(
-        `/gastos/${gastoId}/refund-cuota`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-    );
-    return data.data;
-};
-
 export const settleQuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
         `/gastos/${gastoId}/settle-quota`,
@@ -351,6 +342,51 @@ export const confirmarPago = async (movementId, token) => {
 export const rechazarPago = async (movementId, token) => {
     const { data } = await api.post(
         `/compartidos/pagos/${movementId}/rechazar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const retirarPago = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/retirar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const aceptarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/aceptar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const rechazarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/rechazar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const cancelarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/cancelar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const revertirPago = async (gastoId, movementId, token) => {
+    const { data } = await api.post(
+        `/gastos/${gastoId}/pagos/${movementId}/revertir`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );

@@ -10,6 +10,7 @@ import {
     buildSettlementSnapshotText,
 } from '@/utils/build-settlement-text';
 import { useSettlementDetail, monthLabel } from './hooks/use-settlement-history';
+import PaymentStatusBadge from './components/PaymentStatusBadge';
 
 export default function SettlementDetail() {
     const { id } = useParams();
@@ -52,6 +53,7 @@ export default function SettlementDetail() {
 
     const totals = snapshot.totals ?? {};
     const byCurrency = totals.byCurrency ?? {};
+    const confirmedByCurrency = totals.confirmed?.byCurrency ?? null;
 
     return (
         <div className="flex flex-col flex-1 lg:min-h-0">
@@ -111,6 +113,17 @@ export default function SettlementDetail() {
                                 value={formatMoney(b.ingreso - b.egreso, cur)}
                                 className="font-bold text-slate-800 dark:text-slate-100 border-t border-black/5 dark:border-white/5 pt-1 mt-1"
                             />
+                            {confirmedByCurrency && (
+                                <Row
+                                    label="Neto confirmado"
+                                    value={formatMoney(
+                                        (confirmedByCurrency[cur]?.ingreso ?? 0) -
+                                            (confirmedByCurrency[cur]?.egreso ?? 0),
+                                        cur,
+                                    )}
+                                    className="font-semibold text-slate-600 dark:text-slate-300"
+                                />
+                            )}
                             <Row
                                 label="Movimientos"
                                 value={b.count}
@@ -159,6 +172,7 @@ export default function SettlementDetail() {
                         <ul className="divide-y divide-slate-100 dark:divide-white/5">
                             {items.map((it) => {
                                 const cuota = cuotaLabel(it);
+                                const sharedLabel = sharedPaymentLabel(it);
                                 return (
                                     <li key={it.purchase_id}>
                                         <Link
@@ -186,7 +200,14 @@ export default function SettlementDetail() {
                                                         <span className="sm:hidden">· {cuota}</span>
                                                     )}
                                                 </p>
+                                                {sharedLabel && (
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                        {sharedLabel}
+                                                    </p>
+                                                )}
                                             </div>
+
+                                            <PaymentStatusBadge status={it.payment_status} />
 
                                             {cuota && (
                                                 <span className="hidden sm:inline shrink-0 text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/15 text-primary whitespace-nowrap">
@@ -207,6 +228,14 @@ export default function SettlementDetail() {
             </div>
         </div>
     );
+}
+
+function sharedPaymentLabel(it) {
+    if (!it.shared) return null;
+    const otra = it.counterparty_name ?? 'la otra persona';
+    return it.payment_role === 'confirmacion'
+        ? `Confirmaste el pago de ${otra}`
+        : `Compartido con ${otra}`;
 }
 
 function cuotaLabel(it) {

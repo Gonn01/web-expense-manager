@@ -36,8 +36,11 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 | **Entidad vinculada** | Entidad asociada a otro usuario de la plataforma (la *contraparte*) mediante su email. |
 | **Gasto compartido** | Gasto creado en una entidad vinculada: genera una copia para la contraparte, que debe aprobarla. |
 | **Pago pendiente** | Pago de un gasto compartido que espera la confirmación de la contraparte. |
+| **Pago vinculado** | Al confirmarse un pago compartido, el pago que se registra en la copia de la contraparte. Los dos se revierten juntos. |
+| **Solicitud de reversión** | Pedido de una de las partes para revertir un pago compartido ya confirmado; la otra parte lo acepta o lo rechaza. |
+| **Retirar un pago** | Anular un pago compartido propio mientras sigue pendiente de confirmación. |
 | **Hacer cuentas** (*settlement*) | Sesión en la que el usuario marca qué gastos paga/cobra; los pagos se registran recién al finalizarla. |
-| **Snapshot** | Foto inmutable de una sesión de cuentas finalizada: totales por moneda y detalle por gasto. |
+| **Snapshot** | Foto de una sesión de cuentas finalizada: totales por moneda y detalle por gasto. Sus datos no cambian; el estado de cada pago compartido se calcula al consultarlo. |
 | **Postergar** | Excluir un gasto de la sesión de cuentas actual; se libera al finalizar esa sesión. |
 
 ## Cómo se mantiene

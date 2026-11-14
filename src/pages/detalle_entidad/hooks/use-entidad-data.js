@@ -51,6 +51,11 @@ export function useEntidadData() {
             'pago.pendiente': reloadSilently,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,
+            'pago.retirado': reloadSilently,
+            'pago.reversion_solicitada': reloadSilently,
+            'pago.reversion_cancelada': reloadSilently,
+            'pago.reversion_aceptada': reloadSilently,
+            'pago.reversion_rechazada': reloadSilently,
         };
     }, [loadEntity]);
 

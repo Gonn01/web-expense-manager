@@ -40,6 +40,13 @@ export function pagoGroup(pago, entities, userId) {
     return groupFor(entityLinkedTo(entities, otherUserId), otherName);
 }
 
+export function reversionGroup(reversion, entities, userId) {
+    const iAmOwner = String(reversion.owner_user_id) === String(userId);
+    const otherUserId = iAmOwner ? reversion.counterparty_user_id : reversion.owner_user_id;
+    const otherName = iAmOwner ? reversion.counterparty_name : reversion.owner_name;
+    return groupFor(entityLinkedTo(entities, otherUserId), otherName);
+}
+
 export function groupByEntity(items) {
     const groups = new Map();
     for (const item of items) {

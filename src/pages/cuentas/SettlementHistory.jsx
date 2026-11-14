@@ -99,6 +99,14 @@ function SnapshotCard({ snap, onClick }) {
                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300">
                     {totals.entities ?? 0} entidades
                 </span>
+                {snap.pending_count > 0 && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold">
+                        <Icon name="hourglass_empty" className="text-xs" />
+                        {snap.pending_count === 1
+                            ? '1 pago sin confirmar'
+                            : `${snap.pending_count} pagos sin confirmar`}
+                    </span>
+                )}
             </div>
 
             <div className="flex flex-col gap-1">

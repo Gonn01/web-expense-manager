@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import {
     settleQuota as settleQuotaApi,
-    refundCuota as refundCuota2,
+    revertirPago as revertirPagoApi,
+    cancelarReversion as cancelarReversionApi,
     fetchGastoById,
     updateGasto,
     deleteGasto,
@@ -72,16 +73,34 @@ export function useGastoData() {
         }
     }
 
-    async function refundCuota() {
-        if (!gasto) return;
+    async function revertirPago(movement) {
+        if (!gasto || !movement) return;
+        const mensajes = {
+            revertido: 'Pago revertido en el historial del gasto.',
+            retirado: 'Pago retirado. La cuota vuelve a quedar sin pagar.',
+            solicitada: 'Le pedimos a la otra persona que confirme la reversión.',
+        };
         try {
-            await refundCuota2(gasto.id, token);
-            await load(true);
-            useSnackbarStore
-                .getState()
-                .show('Pago revertido en el historial del gasto.', 'success', 'undo');
+            const { resultado, gasto: updated } = await revertirPagoApi(
+                gasto.id,
+                movement.id,
+                token,
+            );
+            setGasto(updated);
+            useSnackbarStore.getState().show(mensajes[resultado], 'success', 'undo');
         } catch (err) {
-            console.error('Error revirtiendo cuota', err);
+            console.error('Error revirtiendo pago', err);
+        }
+    }
+
+    async function cancelarReversion(movement) {
+        if (!gasto || !movement) return;
+        try {
+            await cancelarReversionApi(movement.id, token);
+            await load(true);
+            useSnackbarStore.getState().show('Pedido de reversión cancelado.', 'success');
+        } catch (err) {
+            console.error('Error cancelando la reversión', err);
         }
     }
 
@@ -103,7 +122,8 @@ export function useGastoData() {
         actualizar,
         transferir,
         settleQuota,
-        refundCuota,
+        revertirPago,
+        cancelarReversion,
         eliminar,
         load,
         loading,

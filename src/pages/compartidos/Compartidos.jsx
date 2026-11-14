@@ -2,6 +2,7 @@ import { useCompartidos } from './hooks/use-compartidos';
 import RecibidoCard from './components/RecibidoCard';
 import EmitidoCard from './components/EmitidoCard';
 import PagoCompartidoCard from './components/PagoCompartidoCard';
+import ReversionCard from './components/ReversionCard';
 import AprobarModal from './components/AprobarModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import Loader from '@/components/Loader';
@@ -11,12 +12,19 @@ import InfoTooltip from '@/components/InfoTooltip';
 import { useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
-import { emitidoGroup, groupByEntity, pagoGroup, recibidoGroup } from './utils/group-by-entity';
+import {
+    emitidoGroup,
+    groupByEntity,
+    pagoGroup,
+    recibidoGroup,
+    reversionGroup,
+} from './utils/group-by-entity';
 
 export default function Compartidos() {
     const {
         compartidos,
         pagos,
+        reversiones,
         loading,
         loadingAction,
         aprobar,
@@ -24,6 +32,10 @@ export default function Compartidos() {
         reintentar,
         confirmarPago,
         rechazarPago,
+        retirarPago,
+        aceptarReversion,
+        rechazarReversion,
+        cancelarReversion,
         crearGasto,
     } = useCompartidos();
     const [aprobarTarget, setAprobarTarget] = useState(null);
@@ -72,6 +84,19 @@ export default function Compartidos() {
                 />
             ),
         })),
+        ...reversiones.porConfirmar.map((r) => ({
+            key: `reversion-${r.movement_id}`,
+            group: reversionGroup(r, entities, user?.id),
+            element: (
+                <ReversionCard
+                    reversion={r}
+                    variant="porConfirmar"
+                    loadingId={loadingAction}
+                    onAceptar={(id) => aceptarReversion(id)}
+                    onRechazar={(id) => rechazarReversion(id)}
+                />
+            ),
+        })),
         ...recibidosPendientes.map((item) => ({
             key: `recibido-${item.id}`,
             group: recibidoGroup(item, entities),
@@ -112,7 +137,26 @@ export default function Compartidos() {
         ...pagos.esperando.map((p) => ({
             key: `pago-${p.movement_id}`,
             group: pagoGroup(p, entities, user?.id),
-            element: <PagoCompartidoCard pago={p} variant="esperando" loadingId={loadingAction} />,
+            element: (
+                <PagoCompartidoCard
+                    pago={p}
+                    variant="esperando"
+                    loadingId={loadingAction}
+                    onRetirar={(id) => retirarPago(id)}
+                />
+            ),
+        })),
+        ...reversiones.esperando.map((r) => ({
+            key: `reversion-${r.movement_id}`,
+            group: reversionGroup(r, entities, user?.id),
+            element: (
+                <ReversionCard
+                    reversion={r}
+                    variant="esperando"
+                    loadingId={loadingAction}
+                    onCancelar={(id) => cancelarReversion(id)}
+                />
+            ),
         })),
     ];
 
