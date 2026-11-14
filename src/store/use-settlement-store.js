@@ -151,4 +151,13 @@ export const useSettlementStore = create((set, get) => ({
             return { checkedExpenses: next };
         });
     },
+
+    applyUnmarked: (ids) => {
+        if (!ids?.length) return;
+        set((s) => {
+            const next = { ...s.checkedExpenses };
+            for (const id of ids) delete next[String(id)];
+            return { checkedExpenses: next };
+        });
+    },
 }));

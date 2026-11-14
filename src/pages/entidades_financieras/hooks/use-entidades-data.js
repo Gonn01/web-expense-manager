@@ -8,6 +8,7 @@ import {
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 export function useEntidadesData() {
     const { token } = useAuth();
@@ -64,7 +65,8 @@ export function useEntidadesData() {
     }
 
     async function eliminarEntidad(id) {
-        await deleteFinancialEntity(id, token);
+        const deleted = await deleteFinancialEntity(id, token);
+        useSettlementStore.getState().applyUnmarked(deleted?.deleted_purchase_ids);
         setAllEntities((prev) => prev.map((e) => (e.id === id ? { ...e, deleted: true } : e)));
         removeEntity(id);
     }

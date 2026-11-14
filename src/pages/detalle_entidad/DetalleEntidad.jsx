@@ -96,7 +96,11 @@ export default function EntidadDetalle() {
         useDialogStore.getState().confirm({
             title: 'Eliminar entidad',
             message:
-                "Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras.",
+                'También se eliminan todos sus gastos y se quitan de la sesión de cuentas.' +
+                (isLinked
+                    ? ` Los gastos compartidos dejan de estar vinculados con los de ${counterparty}, y los pagos que registró sin confirmar quedan rechazados.`
+                    : '') +
+                " Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras: vuelve con los gastos que se eliminaron con ella.",
             tone: 'error',
             confirmLabel: 'Eliminar',
             onConfirm: onDeleteEntity,

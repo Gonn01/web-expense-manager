@@ -12,6 +12,7 @@ import {
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useParams } from 'react-router-dom';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
@@ -150,7 +151,8 @@ export function useEntidadData() {
     );
 
     const eliminarEntidad = useCallback(async () => {
-        await deleteFinancialEntity(id, token);
+        const deleted = await deleteFinancialEntity(id, token);
+        useSettlementStore.getState().applyUnmarked(deleted?.deleted_purchase_ids);
         useEntitiesStore.getState().removeEntity(id);
     }, [id, token]);
 

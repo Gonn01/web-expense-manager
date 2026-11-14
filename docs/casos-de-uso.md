@@ -248,10 +248,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Precondición**: la entidad pertenece al usuario.
 - **Flujo principal**
     1. En el detalle de la entidad, el usuario elige "Eliminar entidad".
-    2. El sistema pide confirmación.
-    3. El usuario confirma; el sistema da de baja la entidad.
+    2. El sistema pide confirmación y avisa que también se eliminan sus gastos y, si la entidad está vinculada, que los compartidos dejan de estar vinculados con los de la otra persona.
+    3. El usuario confirma; el sistema da de baja la entidad y sus gastos, rechaza los pagos pendientes que la contraparte registró en ellos y los quita de la sesión de cuentas abierta.
     4. El sistema vuelve al listado de entidades.
-- **Postcondición**: la entidad y sus gastos dejan de mostrarse. Los datos se conservan.
+- **Postcondición**: la entidad y sus gastos dejan de mostrarse. Los datos se conservan; al restaurar la entidad vuelven los gastos que se eliminaron con ella.
 
 ### CU-13 — Marcar entidad como favorita
 

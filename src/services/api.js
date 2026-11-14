@@ -116,10 +116,10 @@ export const updateFinancialEntity = async (id, name, token) => {
 };
 
 export const deleteFinancialEntity = async (id, token) => {
-    await api.delete(`/entidades-financieras/${id}`, {
+    const { data } = await api.delete(`/entidades-financieras/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    return true;
+    return data.data;
 };
 
 export const restoreEntity = async (id, token) => {
