@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     fetchDashboardData,
     createGasto,
@@ -101,6 +101,7 @@ export function useDashboardData() {
 
     const [loaded, setLoaded] = useState(false);
     const [groups, setGroups] = useState([]);
+    const groupsRef = useRef(groups);
     const [pendingTotal, setPendingTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [busyKeys, setBusyKeys] = useState(() => new Set());
@@ -168,36 +169,47 @@ export function useDashboardData() {
         }, {});
     }, [groups, loaded]);
 
-    const loadDashboard = useCallback(async () => {
-        if (!token) return;
+    useEffect(() => {
+        groupsRef.current = groups;
+    }, [groups]);
 
-        try {
-            setLoading(true);
-            const entities = await fetchDashboardData(token);
+    const loadDashboard = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
 
-            setPendingTotal(entities.reduce((sum, e) => sum + (Number(e.pending_count) || 0), 0));
+            try {
+                if (!silent) setLoading(true);
+                const entities = await fetchDashboardData(token);
 
-            const mappedGroups = entities
-                .map((entity) => {
-                    const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
+                setPendingTotal(
+                    entities.reduce((sum, e) => sum + (Number(e.pending_count) || 0), 0),
+                );
 
-                    const items = sortItems(gastos.map(withProgress));
+                const mappedGroups = entities
+                    .map((entity) => {
+                        const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
 
-                    if (items.length === 0 && !entity.is_favorite) return null;
+                        const items = sortItems(gastos.map(withProgress));
 
-                    return { ...entity, items };
-                })
-                .filter(Boolean);
-            sortGroups(mappedGroups);
+                        if (items.length === 0 && !entity.is_favorite) return null;
 
-            setGroups(mappedGroups);
-            setLoaded(true);
-        } catch (err) {
-            console.error('Error cargando dashboard:', err);
-        } finally {
-            setLoading(false);
-        }
-    }, [token]);
+                        return { ...entity, items };
+                    })
+                    .filter(Boolean);
+                sortGroups(mappedGroups);
+
+                setGroups(mappedGroups);
+                setLoaded(true);
+            } catch (err) {
+                console.error('Error cargando dashboard:', err);
+            } finally {
+                if (!silent) setLoading(false);
+            }
+        },
+        [token],
+    );
+
+    const reloadSilently = useCallback(() => loadDashboard({ silent: true }), [loadDashboard]);
 
     const updateAfterPayment = useCallback(
         (updatedItems) => {
@@ -260,11 +272,10 @@ export function useDashboardData() {
             }
 
             setGroups(next);
-            recalcSummary(next);
             if (gasto.status === 'PENDING_APPROVAL') setPendingTotal((t) => t + 1);
             return created;
         },
-        [token, groups, recalcSummary, loadDashboard],
+        [token, groups, loadDashboard],
     );
 
     const postergarGasto = useCallback(
@@ -336,21 +347,50 @@ export function useDashboardData() {
                 );
                 setPendingTotal((t) => Math.max(0, t - 1));
             }
-            loadDashboard();
+            reloadSilently();
         },
-        [loadDashboard],
+        [reloadSilently],
+    );
+
+    const onPagoPendiente = useCallback(
+        ({ copyId } = {}) => {
+            const tieneLaCopia =
+                copyId != null &&
+                groupsRef.current.some((g) =>
+                    g.items.some((it) => String(it.id) === String(copyId)),
+                );
+            if (!tieneLaCopia) {
+                reloadSilently();
+                return;
+            }
+            setGroups((prev) =>
+                prev.map((g) => ({
+                    ...g,
+                    items: g.items.map((it) =>
+                        String(it.id) === String(copyId)
+                            ? {
+                                  ...it,
+                                  counterparty_pending_quotas:
+                                      (Number(it.counterparty_pending_quotas) || 0) + 1,
+                              }
+                            : it,
+                    ),
+                })),
+            );
+        },
+        [reloadSilently],
     );
 
     const pusherEvents = useMemo(
         () => ({
             'compartido.aprobado': onCompartidoAprobado,
-            'pago.pendiente': loadDashboard,
-            'pago.confirmado': loadDashboard,
-            'pago.rechazado': loadDashboard,
-            'pago.retirado': loadDashboard,
-            'pago.reversion_aceptada': loadDashboard,
+            'pago.pendiente': onPagoPendiente,
+            'pago.confirmado': reloadSilently,
+            'pago.rechazado': reloadSilently,
+            'pago.retirado': reloadSilently,
+            'pago.reversion_aceptada': reloadSilently,
         }),
-        [onCompartidoAprobado, loadDashboard],
+        [onCompartidoAprobado, onPagoPendiente, reloadSilently],
     );
 
     usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);

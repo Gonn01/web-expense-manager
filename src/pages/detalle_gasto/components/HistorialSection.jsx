@@ -1,59 +1,23 @@
-import { useState } from 'react';
-import Icon from '@/components/Icon';
+import { useMemo, useState } from 'react';
+import useAuth from '@/store/use-auth-store';
+import HistorialEvento from './HistorialEvento';
+import { paymentNumbers } from '../utils/historial-eventos';
 
-const EVENT_ICONS = {
-    CREATION: 'add_circle',
-    PAYMENT: 'check_circle',
-    PENDING_PAYMENT: 'hourglass_top',
-    PAYMENT_REJECTED: 'cancel',
-    PAYMENT_WITHDRAWN: 'remove_circle',
-    REFUND: 'undo',
-    EDITED: 'edit',
-    DELETE: 'delete',
-    RESTORE: 'restore',
-};
+export default function HistorialSection({
+    gasto,
+    settlementActive = false,
+    onRevert,
+    onCancelReversion,
+}) {
+    const [expanded, setExpanded] = useState(true);
+    const { user } = useAuth();
 
-function getEventTitle(movement, gasto) {
-    switch (movement.movement_type) {
-        case 'CREATION':
-            return 'Gasto creado';
-        case 'PAYMENT': {
-            const isFinalization =
-                gasto.finalization_date &&
-                movement.payment_date &&
-                new Date(movement.payment_date).getTime() ===
-                    new Date(gasto.finalization_date).getTime();
-
-            if (isFinalization) return 'Finalizado';
-            return gasto.type === 'INGRESO' ? 'Cuota cobrada' : 'Cuota pagada';
-        }
-        case 'PENDING_PAYMENT':
-            return 'Pago esperando confirmación';
-        case 'PAYMENT_REJECTED':
-            return 'Pago rechazado por la otra persona';
-        case 'PAYMENT_WITHDRAWN':
-            return 'Pago retirado';
-        case 'REFUND': {
-            const base = gasto.type === 'INGRESO' ? 'Cobro revertido' : 'Pago revertido';
-            return movement.detail?.trim() ? `${base}: ${movement.detail}` : base;
-        }
-        case 'EDITED':
-            return movement.detail?.trim() ? movement.detail : 'Gasto editado';
-        case 'DELETE':
-            return 'Gasto eliminado';
-        case 'RESTORE':
-            return 'Gasto restaurado';
-        default:
-            return movement.movement_type;
-    }
-}
-
-export default function HistorialSection({ gasto }) {
-    const [expanded, setExpanded] = useState(false);
-
-    const eventos = [...(gasto.movements ?? [])].sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at),
+    const movements = useMemo(() => gasto.movements ?? [], [gasto.movements]);
+    const eventos = useMemo(
+        () => [...movements].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+        [movements],
     );
+    const numbers = useMemo(() => paymentNumbers(movements), [movements]);
 
     return (
         <section className="flex flex-col gap-4">
@@ -77,37 +41,18 @@ export default function HistorialSection({ gasto }) {
                     </p>
                 ) : (
                     <div className="flex flex-col gap-2">
-                        {eventos.map((movimiento) => {
-                            const formattedDate = movimiento.created_at
-                                ? new Date(movimiento.created_at).toLocaleString('es-AR', {
-                                      day: '2-digit',
-                                      month: '2-digit',
-                                      year: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                  })
-                                : null;
-
-                            return (
-                                <div
-                                    key={movimiento.id}
-                                    className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg shadow-sm bg-white dark:bg-[#111714]"
-                                >
-                                    <Icon
-                                        name={EVENT_ICONS[movimiento.movement_type] ?? 'event'}
-                                        className="text-primary"
-                                    />
-                                    <div className="flex flex-col min-w-0">
-                                        <p className="font-medium text-slate-900 dark:text-white whitespace-pre-line break-words">
-                                            {getEventTitle(movimiento, gasto)}
-                                        </p>
-                                        <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
-                                            {formattedDate}
-                                        </p>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {eventos.map((movement) => (
+                            <HistorialEvento
+                                key={movement.id}
+                                movement={movement}
+                                gasto={gasto}
+                                number={numbers.get(movement.id)}
+                                currentUserId={user?.id}
+                                settlementActive={settlementActive}
+                                onRevert={onRevert}
+                                onCancelReversion={onCancelReversion}
+                            />
+                        ))}
                     </div>
                 ))}
         </section>

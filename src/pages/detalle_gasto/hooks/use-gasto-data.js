@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import {
@@ -10,12 +10,13 @@ import {
     deleteGasto,
 } from '@/services/api';
 import { isSettlementActive } from '@/hooks/use-settlements';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 export function useGastoData() {
     const { id } = useParams();
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const navigate = useNavigate();
     const [gasto, setGasto] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -23,6 +24,35 @@ export function useGastoData() {
     useEffect(() => {
         load();
     }, [id, token]);
+
+    const sharedRef = useRef(false);
+
+    useEffect(() => {
+        sharedRef.current = Boolean(gasto?.shared_counterparty);
+    }, [gasto]);
+
+    const pusherEvents = useMemo(() => {
+        const refreshIfShared = async () => {
+            if (!sharedRef.current) return;
+            try {
+                setGasto(await fetchGastoById(id, token));
+            } catch (err) {
+                console.error('Error actualizando gasto', err);
+            }
+        };
+        return {
+            'pago.pendiente': refreshIfShared,
+            'pago.confirmado': refreshIfShared,
+            'pago.rechazado': refreshIfShared,
+            'pago.retirado': refreshIfShared,
+            'pago.reversion_solicitada': refreshIfShared,
+            'pago.reversion_cancelada': refreshIfShared,
+            'pago.reversion_aceptada': refreshIfShared,
+            'pago.reversion_rechazada': refreshIfShared,
+        };
+    }, [id, token]);
+
+    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
 
     async function load(silent = false) {
         try {
@@ -56,9 +86,9 @@ export function useGastoData() {
         if (!gasto) return;
         const deferred = isSettlementActive();
         try {
-            await settleQuotaApi(gasto.id, token);
+            const updated = await settleQuotaApi(gasto.id, token);
             if (deferred) useSettlementStore.getState().applyMarked([gasto.id]);
-            await load(true);
+            setGasto(updated);
             useSnackbarStore
                 .getState()
                 .show(

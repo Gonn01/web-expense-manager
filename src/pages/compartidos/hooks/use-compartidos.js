@@ -60,28 +60,28 @@ export function useCompartidos() {
         load();
     }, [load]);
 
-    const pusherEvents = useMemo(
-        () => ({
-            'compartido.nuevo': () => load(),
-            'compartido.aprobado': () => load(),
-            'compartido.rechazado': () => load(),
-            'pago.pendiente': () => load(),
-            'pago.confirmado': () => load(),
-            'pago.rechazado': () => load(),
-            'pago.retirado': () => load(),
-            'pago.reversion_solicitada': () => load(),
-            'pago.reversion_cancelada': () => load(),
-            'pago.reversion_aceptada': () => load(),
-            'pago.reversion_rechazada': () => load(),
-        }),
-        [load],
-    );
+    const pusherEvents = useMemo(() => {
+        const reloadSilently = () => load({ silent: true });
+        return {
+            'compartido.nuevo': reloadSilently,
+            'compartido.aprobado': reloadSilently,
+            'compartido.rechazado': reloadSilently,
+            'pago.pendiente': reloadSilently,
+            'pago.confirmado': reloadSilently,
+            'pago.rechazado': reloadSilently,
+            'pago.retirado': reloadSilently,
+            'pago.reversion_solicitada': reloadSilently,
+            'pago.reversion_cancelada': reloadSilently,
+            'pago.reversion_aceptada': reloadSilently,
+            'pago.reversion_rechazada': reloadSilently,
+        };
+    }, [load]);
 
     usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
 
     const aprobar = useCallback(
         async (gastoId, financialEntityId, newEntityName) => {
-            setLoadingAction(gastoId);
+            setLoadingAction({ id: gastoId, kind: 'aprobar' });
             try {
                 const approved = await aprobarCompartido(
                     gastoId,
@@ -120,7 +120,7 @@ export function useCompartidos() {
                 ) {
                     updateEntity(entityId, senderLink);
                 }
-                await load();
+                await load({ silent: true });
             } finally {
                 setLoadingAction(null);
             }
@@ -130,7 +130,7 @@ export function useCompartidos() {
 
     const rechazar = useCallback(
         async (gastoId) => {
-            setLoadingAction(gastoId);
+            setLoadingAction({ id: gastoId, kind: 'rechazar' });
             try {
                 await rechazarCompartido(gastoId, token);
                 setCompartidos((prev) => ({
@@ -149,10 +149,31 @@ export function useCompartidos() {
 
     const reintentar = useCallback(
         async (gastoId) => {
-            setLoadingAction(gastoId);
+            setLoadingAction({ id: gastoId, kind: 'reintentar' });
             try {
                 await reintentarCompartido(gastoId, token);
-                await load();
+                await load({ silent: true });
+            } finally {
+                setLoadingAction(null);
+            }
+        },
+        [token, load],
+    );
+
+    const responderPago = useCallback(
+        async (movementId, kind, apiCall, successMessage) => {
+            setLoadingAction({ id: movementId, kind });
+            try {
+                await apiCall(movementId, token);
+                setPagos((prev) => ({
+                    ...prev,
+                    porConfirmar: prev.porConfirmar.filter((p) => p.movement_id !== movementId),
+                }));
+                useSnackbarStore.getState().show(successMessage, 'success');
+                load({ silent: true });
+                useSettlementStore.getState().loadSession();
+            } catch (err) {
+                console.error(successMessage, err);
             } finally {
                 setLoadingAction(null);
             }
@@ -161,44 +182,22 @@ export function useCompartidos() {
     );
 
     const confirmarPago = useCallback(
-        async (movementId) => {
-            setLoadingAction(movementId);
-            try {
-                await confirmarPagoApi(movementId, token);
-                useSnackbarStore.getState().show('Pago confirmado', 'success');
-                await Promise.all([load(), useSettlementStore.getState().loadSession()]);
-            } catch (err) {
-                console.error('Error confirmando pago', err);
-            } finally {
-                setLoadingAction(null);
-            }
-        },
-        [token, load],
+        (movementId) => responderPago(movementId, 'confirmar', confirmarPagoApi, 'Pago confirmado'),
+        [responderPago],
     );
 
     const rechazarPago = useCallback(
-        async (movementId) => {
-            setLoadingAction(movementId);
-            try {
-                await rechazarPagoApi(movementId, token);
-                useSnackbarStore.getState().show('Pago rechazado', 'success');
-                await Promise.all([load(), useSettlementStore.getState().loadSession()]);
-            } catch (err) {
-                console.error('Error rechazando pago', err);
-            } finally {
-                setLoadingAction(null);
-            }
-        },
-        [token, load],
+        (movementId) => responderPago(movementId, 'rechazar', rechazarPagoApi, 'Pago rechazado'),
+        [responderPago],
     );
 
     const runPagoAction = useCallback(
-        async (movementId, apiCall, successMessage) => {
-            setLoadingAction(movementId);
+        async (movementId, kind, apiCall, successMessage) => {
+            setLoadingAction({ id: movementId, kind });
             try {
                 await apiCall(movementId, token);
                 useSnackbarStore.getState().show(successMessage, 'success');
-                await load();
+                await load({ silent: true });
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
@@ -209,23 +208,29 @@ export function useCompartidos() {
     );
 
     const retirarPago = useCallback(
-        (movementId) => runPagoAction(movementId, retirarPagoApi, 'Pago retirado'),
+        (movementId) => runPagoAction(movementId, 'retirar', retirarPagoApi, 'Pago retirado'),
         [runPagoAction],
     );
 
     const aceptarReversion = useCallback(
-        (movementId) => runPagoAction(movementId, aceptarReversionApi, 'Pago revertido'),
+        (movementId) => runPagoAction(movementId, 'aceptar', aceptarReversionApi, 'Pago revertido'),
         [runPagoAction],
     );
 
     const rechazarReversion = useCallback(
-        (movementId) => runPagoAction(movementId, rechazarReversionApi, 'Reversión rechazada'),
+        (movementId) =>
+            runPagoAction(movementId, 'rechazar', rechazarReversionApi, 'Reversión rechazada'),
         [runPagoAction],
     );
 
     const cancelarReversion = useCallback(
         (movementId) =>
-            runPagoAction(movementId, cancelarReversionApi, 'Pedido de reversión cancelado'),
+            runPagoAction(
+                movementId,
+                'cancelar',
+                cancelarReversionApi,
+                'Pedido de reversión cancelado',
+            ),
         [runPagoAction],
     );
 

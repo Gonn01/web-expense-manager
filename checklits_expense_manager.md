@@ -78,6 +78,7 @@
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
 - [x] dEFINIR TEMA MARKETING
 - [ ] Notificaciones de cuando tenes que pagar cosas
+- [ ] [PENDIENTE MOBILE] avisos de los eventos en tiempo real: la app Flutter no muestra ningún aviso cuando llega un evento de Pusher (compartido nuevo/aprobado/rechazado, pagos y reversiones), solo recarga los datos. En la web cada evento muestra un snackbar con quién hizo la acción (`Sidebar.jsx`). Para hacerlo, `PusherService` tiene que pasar también los datos del evento (`actorName`, `receiverName`, `gastoName`), porque hoy solo emite el nombre. Encararlo junto con las notificaciones push.
 - [ ] como hacemos para explicarle al usuario como usar el sistema
 - [ ] [REVISAR]el grafico del dashboard debe tener en cuenta si el usuario ya hizo las cuentas este mes, para saber en que mes empieza el grafico
 

@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import HeaderDetalle from './components/HeaderDetalle';
 import InfoItem from './components/InfoItem';
 import ProgresoPago from './components/ProgresoPago';
-import CuotasSection from './components/CuotasSection';
-import PagosFijosSection from './components/PagosFijosSection';
 import HistorialSection from './components/HistorialSection';
 import DeleteExpenseModal from './components/DeleteExpenseModal';
 import { useGastoUI } from './hooks/use-gasto-ui';
@@ -64,7 +62,17 @@ export default function DetalleGasto() {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem
                                 label="Entidad"
-                                value={getEntityById(gasto.financial_entity_id)?.name}
+                                value={
+                                    gasto.financial_entity_id ? (
+                                        <Link
+                                            to={`/app/entidades/${gasto.financial_entity_id}`}
+                                            className="text-primary hover:underline"
+                                        >
+                                            {getEntityById(gasto.financial_entity_id)?.name ??
+                                                'Ver entidad'}
+                                        </Link>
+                                    ) : null
+                                }
                             />
                             <InfoItem
                                 label="Monto Total"
@@ -96,24 +104,12 @@ export default function DetalleGasto() {
                             loading={loading}
                         />
                     </div>
-                    {!gasto.fixed_expense && (
-                        <CuotasSection
-                            gasto={gasto}
-                            onRevert={revertirPago}
-                            onCancelReversion={cancelarReversion}
-                            settlementActive={settlementActive}
-                        />
-                    )}
-                    {gasto.fixed_expense && (
-                        <PagosFijosSection
-                            gasto={gasto}
-                            onRevert={revertirPago}
-                            onCancelReversion={cancelarReversion}
-                            settlementActive={settlementActive}
-                        />
-                    )}
-
-                    <HistorialSection gasto={gasto} />
+                    <HistorialSection
+                        gasto={gasto}
+                        settlementActive={settlementActive}
+                        onRevert={revertirPago}
+                        onCancelReversion={cancelarReversion}
+                    />
                 </div>
             </div>
 

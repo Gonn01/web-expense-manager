@@ -2,8 +2,8 @@ import Icon from '@/components/Icon';
 import StatusBadge from './StatusBadge';
 import TypeBadge from './TypeBadge';
 
-export default function EmitidoCard({ item, onReintentar, loadingId }) {
-    const isLoading = loadingId === item.id;
+export default function EmitidoCard({ item, onReintentar, loading }) {
+    const isLoading = loading?.id === item.id;
     const isRejected = item.copy_status === 'REJECTED';
 
     return (

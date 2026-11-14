@@ -9,9 +9,10 @@ export default function ReversionCard({
     onAceptar,
     onRechazar,
     onCancelar,
-    loadingId,
+    loading,
 }) {
-    const isLoading = loadingId === reversion.movement_id;
+    const isLoading = loading?.id === reversion.movement_id;
+    const loadingKind = isLoading ? loading.kind : null;
     const porConfirmar = variant === 'porConfirmar';
     const requester = reversion.requester_name ?? 'La otra persona';
 
@@ -65,7 +66,7 @@ export default function ReversionCard({
                         onClick={handleAceptar}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium disabled:opacity-50"
                     >
-                        {isLoading ? (
+                        {loadingKind === 'aceptar' ? (
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
@@ -78,7 +79,13 @@ export default function ReversionCard({
                         onClick={() => onRechazar(reversion.movement_id)}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 text-sm font-medium disabled:opacity-50"
                     >
-                        <Icon name="close" className="text-sm" /> Rechazar
+                        {loadingKind === 'rechazar' ? (
+                            <Icon name="progress_activity" className="animate-spin text-sm" />
+                        ) : (
+                            <>
+                                <Icon name="close" className="text-sm" /> Rechazar
+                            </>
+                        )}
                     </button>
                 </div>
             ) : (

@@ -343,7 +343,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El usuario abre un gasto.
     2. El sistema muestra nombre, entidad, tipo, monto, moneda, categorías, progreso de pago (cuotas pagas, pendientes de confirmación y restantes) e historial de movimientos.
 - **Flujos alternativos**
-    - 2a. El gasto es fijo: en lugar del progreso se muestran los pagos realizados.
+    - 2a. El gasto es fijo: el progreso muestra cuántas veces se pagó.
     - 1a. El gasto no existe o fue eliminado: el sistema lo informa.
     - 1b. El gasto no es del usuario: el sistema lo impide.
 
@@ -409,7 +409,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-PAG-09
 - **Precondición**: el gasto tiene al menos un pago.
 - **Flujo principal**
-    1. En el detalle del gasto, el usuario elige revertir un pago cualquiera, o el último.
+    1. En el historial del detalle del gasto, el usuario elige revertir uno de los pagos.
     2. El sistema pide confirmación.
     3. El usuario confirma; el sistema elimina ese pago y registra un reembolso en el historial.
     4. El sistema actualiza el progreso; si el gasto estaba finalizado, vuelve a estar activo.

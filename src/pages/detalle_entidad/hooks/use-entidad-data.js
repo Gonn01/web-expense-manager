@@ -151,6 +151,7 @@ export function useEntidadData() {
 
     const eliminarEntidad = useCallback(async () => {
         await deleteFinancialEntity(id, token);
+        useEntitiesStore.getState().removeEntity(id);
     }, [id, token]);
 
     const restaurarGasto = useCallback(

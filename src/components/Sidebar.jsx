@@ -61,12 +61,22 @@ export default function Sidebar() {
         useSnackbarStore.getState().show(`${quien} ha aceptado tu gasto${que}`, 'success');
     }, []);
 
-    const handlePagoPendiente = useCallback(() => {
-        setPendingPaymentsCount((c) => c + 1);
-        useSnackbarStore
-            .getState()
-            .show('Tenés un pago para confirmar en Compartidos', 'success', 'pending_actions');
-    }, [setPendingPaymentsCount]);
+    const handleRechazado = useCallback(({ receiverName, gastoName } = {}) => {
+        const quien = receiverName || 'Un usuario';
+        const que = gastoName ? ` "${gastoName}"` : '';
+        useSnackbarStore.getState().show(`${quien} rechazó tu gasto${que}`, 'error');
+    }, []);
+
+    const handlePagoPendiente = useCallback(
+        ({ actorName } = {}) => {
+            setPendingPaymentsCount((c) => c + 1);
+            const mensaje = actorName
+                ? `${actorName} registró un pago. Confirmalo en Compartidos`
+                : 'Tenés un pago para confirmar en Compartidos';
+            useSnackbarStore.getState().show(mensaje, 'success', 'pending_actions');
+        },
+        [setPendingPaymentsCount],
+    );
 
     const handlePagoConfirmado = useCallback(({ actorName } = {}) => {
         const quien = actorName || 'La otra persona';
@@ -125,6 +135,7 @@ export default function Sidebar() {
         () => ({
             'compartido.nuevo': handleNuevo,
             'compartido.aprobado': handleAprobado,
+            'compartido.rechazado': handleRechazado,
             'pago.pendiente': handlePagoPendiente,
             'pago.confirmado': handlePagoConfirmado,
             'pago.rechazado': handlePagoRechazado,
@@ -137,6 +148,7 @@ export default function Sidebar() {
         [
             handleNuevo,
             handleAprobado,
+            handleRechazado,
             handlePagoPendiente,
             handlePagoConfirmado,
             handlePagoRechazado,

@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import TypeBadge from './TypeBadge';
 
 export default function PagoCompartidoCard({
@@ -9,10 +10,17 @@ export default function PagoCompartidoCard({
     onConfirmar,
     onRechazar,
     onRetirar,
-    loadingId,
+    loading,
 }) {
-    const isLoading = loadingId === pago.movement_id;
+    const isLoading = loading?.id === pago.movement_id;
+    const loadingKind = isLoading ? loading.kind : null;
     const porConfirmar = variant === 'porConfirmar';
+    const marcadoEnSesion = useSettlementStore(
+        (s) =>
+            porConfirmar &&
+            pago.sibling_purchase_id != null &&
+            Boolean(s.checkedExpenses[String(pago.sibling_purchase_id)]),
+    );
 
     const handleRetirar = async () => {
         const ok = await useDialogStore.getState().confirm({
@@ -50,6 +58,16 @@ export default function PagoCompartidoCard({
                 </span>
             </div>
 
+            {marcadoEnSesion && (
+                <div className="flex items-start gap-2 rounded-lg bg-primary/10 text-primary px-3 py-2 text-xs">
+                    <Icon name="playlist_add_check" className="text-base shrink-0" />
+                    <span>
+                        <span className="font-bold">Marcado en tu sesión de cuentas.</span> Se
+                        confirma solo al terminar las cuentas.
+                    </span>
+                </div>
+            )}
+
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
                 {new Date(pago.created_at).toLocaleDateString('es-AR', {
                     day: '2-digit',
@@ -65,7 +83,7 @@ export default function PagoCompartidoCard({
                         onClick={() => onConfirmar(pago.movement_id)}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium disabled:opacity-50"
                     >
-                        {isLoading ? (
+                        {loadingKind === 'confirmar' ? (
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
@@ -78,7 +96,13 @@ export default function PagoCompartidoCard({
                         onClick={() => onRechazar(pago.movement_id)}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 text-sm font-medium disabled:opacity-50"
                     >
-                        <Icon name="close" className="text-sm" /> Rechazar
+                        {loadingKind === 'rechazar' ? (
+                            <Icon name="progress_activity" className="animate-spin text-sm" />
+                        ) : (
+                            <>
+                                <Icon name="close" className="text-sm" /> Rechazar
+                            </>
+                        )}
                     </button>
                 </div>
             )}

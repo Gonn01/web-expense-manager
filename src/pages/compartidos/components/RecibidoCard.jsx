@@ -2,8 +2,9 @@ import Icon from '@/components/Icon';
 import StatusBadge from './StatusBadge';
 import TypeBadge from './TypeBadge';
 
-export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId }) {
-    const isLoading = loadingId === item.id;
+export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
+    const isLoading = loading?.id === item.id;
+    const loadingKind = isLoading ? loading.kind : null;
     const isPending = item.status === 'PENDING_APPROVAL';
 
     return (
@@ -47,7 +48,7 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                         onClick={() => onAprobar(item)}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm font-medium disabled:opacity-50"
                     >
-                        {isLoading ? (
+                        {loadingKind === 'aprobar' ? (
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
@@ -60,7 +61,13 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loadingId })
                         onClick={() => onRechazar(item.id)}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 text-sm font-medium disabled:opacity-50"
                     >
-                        <Icon name="close" className="text-sm" /> Rechazar
+                        {loadingKind === 'rechazar' ? (
+                            <Icon name="progress_activity" className="animate-spin text-sm" />
+                        ) : (
+                            <>
+                                <Icon name="close" className="text-sm" /> Rechazar
+                            </>
+                        )}
                     </button>
                 </div>
             )}

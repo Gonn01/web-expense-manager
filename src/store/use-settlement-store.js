@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { useCompartidosStore } from '@/store/use-compartidos-store';
 import {
     fetchSettlementSession,
     startSettlementSession,
@@ -83,6 +84,14 @@ export const useSettlementStore = create((set, get) => ({
         try {
             const snapshot = await finishSettlementSession(token());
             set({ active: false, session: null, checkedExpenses: {} });
+            const confirmados = (snapshot?.items ?? []).filter(
+                (it) => it.payment_role === 'confirmacion',
+            ).length;
+            if (confirmados > 0) {
+                useCompartidosStore
+                    .getState()
+                    .setPendingPaymentsCount((c) => Math.max(0, c - confirmados));
+            }
             return snapshot;
         } catch (err) {
             console.error('Error cerrando sesión de cuentas:', err);

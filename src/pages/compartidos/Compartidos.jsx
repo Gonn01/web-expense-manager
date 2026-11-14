@@ -78,7 +78,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="porConfirmar"
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onConfirmar={(id) => confirmarPago(id)}
                     onRechazar={(id) => rechazarPago(id)}
                 />
@@ -91,7 +91,7 @@ export default function Compartidos() {
                 <ReversionCard
                     reversion={r}
                     variant="porConfirmar"
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onAceptar={(id) => aceptarReversion(id)}
                     onRechazar={(id) => rechazarReversion(id)}
                 />
@@ -103,7 +103,7 @@ export default function Compartidos() {
             element: (
                 <RecibidoCard
                     item={item}
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onAprobar={(g) => setAprobarTarget(g)}
                     onRechazar={(id) => rechazar(id)}
                 />
@@ -115,7 +115,7 @@ export default function Compartidos() {
             element: (
                 <EmitidoCard
                     item={item}
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onReintentar={(id) => reintentar(id)}
                 />
             ),
@@ -129,7 +129,7 @@ export default function Compartidos() {
             element: (
                 <EmitidoCard
                     item={item}
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onReintentar={(id) => reintentar(id)}
                 />
             ),
@@ -141,7 +141,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="esperando"
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onRetirar={(id) => retirarPago(id)}
                 />
             ),
@@ -153,7 +153,7 @@ export default function Compartidos() {
                 <ReversionCard
                     reversion={r}
                     variant="esperando"
-                    loadingId={loadingAction}
+                    loading={loadingAction}
                     onCancelar={(id) => cancelarReversion(id)}
                 />
             ),
@@ -166,7 +166,7 @@ export default function Compartidos() {
         element: (
             <RecibidoCard
                 item={item}
-                loadingId={loadingAction}
+                loading={loadingAction}
                 onAprobar={(g) => setAprobarTarget(g)}
                 onRechazar={(id) => rechazar(id)}
             />
@@ -232,7 +232,9 @@ export default function Compartidos() {
                 <AprobarModal
                     open={true}
                     gasto={aprobarTarget}
-                    loading={loadingAction === aprobarTarget.id}
+                    loading={
+                        loadingAction?.id === aprobarTarget.id && loadingAction?.kind === 'aprobar'
+                    }
                     onClose={() => setAprobarTarget(null)}
                     onConfirm={handleAprobar}
                 />
