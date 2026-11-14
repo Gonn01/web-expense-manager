@@ -18,7 +18,7 @@ export function TabHeader({ tab, setTab, pendingCount = 0 }) {
                     : 'Historial';
 
     return (
-        <div className="border-b border-zinc-200 dark:border-zinc-800 mb-4 -mx-3 px-3 sm:mx-0 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="shrink-0 border-b border-zinc-200 dark:border-zinc-800 mb-4 -mx-3 px-3 sm:mx-0 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex gap-5 sm:gap-6 w-max">
                 {tabs.map((t) => (
                     <button

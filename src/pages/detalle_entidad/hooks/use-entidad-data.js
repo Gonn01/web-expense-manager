@@ -12,31 +12,48 @@ import {
 import useAuth from '@/store/use-auth-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useParams } from 'react-router-dom';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
 export function useEntidadData() {
     const { id } = useParams();
-    const { token } = useAuth();
+    const { token, user } = useAuth();
 
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!token) return;
-
-        const load = async () => {
+    const loadEntity = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
             try {
-                setLoading(true);
+                if (!silent) setLoading(true);
                 const data = await fetchFinancialEntityById(id, token);
                 setEntity(data);
             } catch (err) {
                 console.error('Error cargando entidad', err);
             } finally {
-                setLoading(false);
+                if (!silent) setLoading(false);
             }
-        };
+        },
+        [id, token],
+    );
 
-        load();
-    }, [id, token]);
+    useEffect(() => {
+        loadEntity();
+    }, [loadEntity]);
+
+    const pusherEvents = useMemo(() => {
+        const reloadSilently = () => loadEntity({ silent: true });
+        return {
+            'compartido.nuevo': reloadSilently,
+            'compartido.aprobado': reloadSilently,
+            'compartido.rechazado': reloadSilently,
+            'pago.pendiente': reloadSilently,
+            'pago.confirmado': reloadSilently,
+            'pago.rechazado': reloadSilently,
+        };
+    }, [loadEntity]);
+
+    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
 
     const stats = useMemo(() => {
         if (!entity) return { amount: 0, debts: 0, fixed: 0, finalized: 0, pending: 0 };

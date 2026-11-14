@@ -570,6 +570,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     5. El sistema registra el gasto en el historial de la entidad del receptor y notifica al emisor (CU-38).
 - **Flujos alternativos**
     - 3a. El receptor indica el nombre de una entidad nueva: el sistema la crea, la vincula al emisor y continúa en 4.
+    - 4a. La entidad existente elegida no está vinculada a nadie y el receptor no tiene otra entidad vinculada al emisor: el sistema la vincula al emisor y lo registra en su historial. Los demás gastos pendientes de ese emisor pasan a sugerir esta entidad.
     - 3b. No elige entidad ni indica nombre: el sistema lo informa.
     - 3c. La entidad elegida no existe o no es suya: el sistema lo informa.
     - 1a. El actor no es el receptor: el sistema lo impide.
@@ -608,12 +609,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. La contraparte elige confirmar un pago de la lista "por confirmar".
     2. El sistema convierte el pago pendiente en un pago efectivo.
-    3. Si el gasto queda saldado, deja de ser favorito.
-    4. El sistema notifica a quien registró el pago (CU-38).
+    3. El sistema registra el mismo pago en la copia del gasto de la contraparte.
+    4. Si alguno de los dos gastos queda saldado, deja de ser favorito.
+    5. El sistema notifica a quien registró el pago (CU-38).
 - **Flujos alternativos**
     - 1a. El actor es quien registró el pago, o no es la contraparte del gasto: el sistema lo impide.
     - 2a. El pago pendiente ya no existe: el sistema lo informa.
-- **Postcondición**: la cuota cuenta como paga.
+    - 3a. La copia de la contraparte ya está saldada: no se le registra el pago.
+- **Postcondición**: la cuota cuenta como paga en los dos gastos.
 
 ### CU-37 — Rechazar pago compartido
 

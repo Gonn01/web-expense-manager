@@ -23,23 +23,28 @@ export function useCompartidos() {
     const [loading, setLoading] = useState(true);
     const [loadingAction, setLoadingAction] = useState(null);
 
-    const load = useCallback(async () => {
-        if (!token) return;
-        try {
-            setLoading(true);
-            const data = await fetchCompartidos(token);
-            const pagosData = data.pagos ?? { porConfirmar: [], esperando: [] };
-            setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
-            setPagos(pagosData);
-            const pending = data.recibidos.filter((r) => r.status === 'PENDING_APPROVAL').length;
-            setPendingCount(pending);
-            setPendingPaymentsCount(pagosData.porConfirmar.length);
-        } catch (err) {
-            console.error('Error cargando compartidos', err);
-        } finally {
-            setLoading(false);
-        }
-    }, [token, setPendingCount, setPendingPaymentsCount]);
+    const load = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
+            try {
+                if (!silent) setLoading(true);
+                const data = await fetchCompartidos(token);
+                const pagosData = data.pagos ?? { porConfirmar: [], esperando: [] };
+                setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
+                setPagos(pagosData);
+                const pending = data.recibidos.filter(
+                    (r) => r.status === 'PENDING_APPROVAL',
+                ).length;
+                setPendingCount(pending);
+                setPendingPaymentsCount(pagosData.porConfirmar.length);
+            } catch (err) {
+                console.error('Error cargando compartidos', err);
+            } finally {
+                if (!silent) setLoading(false);
+            }
+        },
+        [token, setPendingCount, setPendingPaymentsCount],
+    );
 
     useEffect(() => {
         load();
@@ -47,12 +52,12 @@ export function useCompartidos() {
 
     const pusherEvents = useMemo(
         () => ({
-            'compartido.nuevo': load,
-            'compartido.aprobado': load,
-            'compartido.rechazado': load,
-            'pago.pendiente': load,
-            'pago.confirmado': load,
-            'pago.rechazado': load,
+            'compartido.nuevo': () => load(),
+            'compartido.aprobado': () => load(),
+            'compartido.rechazado': () => load(),
+            'pago.pendiente': () => load(),
+            'pago.confirmado': () => load(),
+            'pago.rechazado': () => load(),
         }),
         [load],
     );
@@ -72,19 +77,33 @@ export function useCompartidos() {
                     token,
                 );
                 const entityId = approved?.financial_entity_id;
-                const { getEntityById, addEntity } = useEntitiesStore.getState();
-                if (newEntityName && entityId && !getEntityById(entityId)) {
-                    const gasto = compartidos.recibidos.find((r) => r.id === gastoId);
+                const gasto = compartidos.recibidos.find((r) => r.id === gastoId);
+                const senderLink = {
+                    linked_user_id: gasto?.sender_id ?? null,
+                    linked_user_name: gasto?.sender_name ?? null,
+                    linked_user_email: gasto?.sender_email ?? null,
+                };
+                const { entities, getEntityById, addEntity, updateEntity } =
+                    useEntitiesStore.getState();
+                const existing = entityId ? getEntityById(entityId) : null;
+                if (newEntityName && entityId && !existing) {
                     addEntity({
                         id: entityId,
                         name: newEntityName,
                         is_favorite: false,
-                        linked_user_id: gasto?.sender_id ?? null,
-                        linked_user_name: gasto?.sender_name ?? null,
-                        linked_user_email: gasto?.sender_email ?? null,
+                        ...senderLink,
                         cantidad: 1,
                         pending_count: 0,
                     });
+                } else if (
+                    existing &&
+                    !existing.linked_user_id &&
+                    senderLink.linked_user_id != null &&
+                    !entities.some(
+                        (e) => String(e.linked_user_id) === String(senderLink.linked_user_id),
+                    )
+                ) {
+                    updateEntity(entityId, senderLink);
                 }
                 await load();
             } finally {
@@ -161,7 +180,7 @@ export function useCompartidos() {
     const crearGasto = useCallback(
         async (payload) => {
             await createGasto(payload, token);
-            await load();
+            await load({ silent: true });
         },
         [token, load],
     );

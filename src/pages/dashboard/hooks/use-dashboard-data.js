@@ -7,15 +7,91 @@ import {
     favoritoEntidad as favoritoEntidadApi,
 } from '@/services/api';
 
-const byFavThenDate = (aFav, bFav, aDate, bDate) => {
-    if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
-    return new Date(bDate) - new Date(aDate);
-};
 import useAuth from '@/store/use-auth-store';
 import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { Currency } from '@/utils/enums';
+import { useEntitiesStore } from '@/store/use-entities-store';
+
+const byFavThenDate = (aFav, bFav, aDate, bDate) => {
+    if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
+    return new Date(bDate) - new Date(aDate);
+};
+
+const withProgress = (g) => {
+    const paid = Number(g.payed_quotas) || 0;
+    const total = Number(g.number_of_quotas) || 0;
+    return {
+        ...g,
+        amount: Number(g.amount),
+        amount_per_quota: Number(g.amount_per_quota),
+        payed_quotas: paid,
+        progress: g.fixed_expense
+            ? 100
+            : total > 0
+              ? Math.min((paid / total) * 100, 100)
+              : paid === 0
+                ? 0
+                : 100,
+    };
+};
+
+const sortItems = (items) =>
+    items.sort((a, b) => byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at));
+
+const sortGroups = (groups) =>
+    groups.sort((a, b) =>
+        byFavThenDate(
+            a.is_favorite,
+            b.is_favorite,
+            a.items[0]?.created_at ?? a.created_at,
+            b.items[0]?.created_at ?? b.created_at,
+        ),
+    );
+
+const isActiveOnDashboard = (g) =>
+    g.status === 'ACTIVE' &&
+    !g.deleted &&
+    (g.fixed_expense || (Number(g.payed_quotas) || 0) < Number(g.number_of_quotas));
+
+function addCreatedToGroups(groups, gasto) {
+    const entityId = String(gasto.financial_entity_id);
+    const index = groups.findIndex((g) => String(g.id) === entityId);
+
+    if (gasto.status === 'PENDING_APPROVAL') {
+        if (index < 0) return groups;
+        return groups.map((g, i) =>
+            i === index ? { ...g, pending_count: (Number(g.pending_count) || 0) + 1 } : g,
+        );
+    }
+
+    if (!isActiveOnDashboard(gasto)) return groups;
+
+    const item = withProgress(gasto);
+    if (index >= 0) {
+        return sortGroups(
+            groups.map((g, i) =>
+                i === index ? { ...g, items: sortItems([...g.items, item]) } : g,
+            ),
+        );
+    }
+
+    const entity = useEntitiesStore.getState().getEntityById(gasto.financial_entity_id);
+    if (!entity) return null;
+
+    return sortGroups([
+        ...groups,
+        {
+            id: entity.id,
+            name: entity.name,
+            is_favorite: entity.is_favorite,
+            created_at: entity.created_at,
+            pending_count: Number(entity.pending_count) || 0,
+            items: [item],
+        },
+    ]);
+}
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -105,34 +181,14 @@ export function useDashboardData() {
                 .map((entity) => {
                     const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
 
-                    const items = gastos
-                        .map((g) => ({
-                            ...g,
-                            progress: g.fixed_expense
-                                ? 100
-                                : g.number_of_quotas > 0
-                                  ? Math.min((g.payed_quotas / g.number_of_quotas) * 100, 100)
-                                  : g.payed_quotas === 0
-                                    ? 0
-                                    : 100,
-                        }))
-                        .sort((a, b) =>
-                            byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at),
-                        );
+                    const items = sortItems(gastos.map(withProgress));
 
                     if (items.length === 0 && !entity.is_favorite) return null;
 
                     return { ...entity, items };
                 })
-                .filter(Boolean)
-                .sort((a, b) =>
-                    byFavThenDate(
-                        a.is_favorite,
-                        b.is_favorite,
-                        a.items[0]?.created_at ?? a.created_at,
-                        b.items[0]?.created_at ?? b.created_at,
-                    ),
-                );
+                .filter(Boolean);
+            sortGroups(mappedGroups);
 
             setGroups(mappedGroups);
             recalcSummary(mappedGroups);
@@ -194,10 +250,22 @@ export function useDashboardData() {
 
     const crearGasto = useCallback(
         async (payload) => {
-            await createGasto(payload, token);
-            await loadDashboard();
+            const created = await createGasto(payload, token);
+            const { mirror, ...gasto } = created;
+
+            let next = addCreatedToGroups(groups, gasto);
+            if (next && mirror) next = addCreatedToGroups(next, mirror);
+            if (!next) {
+                await loadDashboard();
+                return created;
+            }
+
+            setGroups(next);
+            recalcSummary(next);
+            if (gasto.status === 'PENDING_APPROVAL') setPendingTotal((t) => t + 1);
+            return created;
         },
-        [token, loadDashboard],
+        [token, groups, recalcSummary, loadDashboard],
     );
 
     const postergarGasto = useCallback(

@@ -266,9 +266,8 @@ function EntityGroup({ group }) {
                 </span>
                 <Icon
                     name="expand_more"
-                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform ${
-                        open ? 'rotate-180' : ''
-                    }`}
+                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform ${open ? 'rotate-180' : ''
+                        }`}
                 />
             </button>
             {open && (

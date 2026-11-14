@@ -33,12 +33,13 @@ export default function ExpenseInstallmentsSection({
                         label="Cuotas pagadas"
                         type="number"
                         value={paidInstallments}
+                        placeholder="0"
                         disabled={Boolean(paidLock)}
                         onChange={(e) => {
                             const value = Number(e.target.value);
                             const max = Number(installments) || 0;
 
-                            if (value < 0) return setPaidInstallments('0');
+                            if (value < 0) return setPaidInstallments('');
 
                             if (value > max) return setPaidInstallments(String(max));
 

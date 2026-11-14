@@ -134,11 +134,11 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-CMP-01 | Cuando un usuario (emisor) crea un gasto en una entidad vinculada, el gasto queda `PENDING_APPROVAL` y se crea una copia para el usuario vinculado (receptor), también pendiente. | CU-17 |
 | RF-CMP-02 | El usuario puede ver sus gastos compartidos **recibidos** y **emitidos** con su estado (pendiente, aprobado, rechazado), y los pagos compartidos separados en "por confirmar" (los registró la contraparte) y "esperando" (los registró él). | CU-32 |
 | RF-CMP-03 | El receptor puede aprobar un gasto recibido asignándolo a una entidad propia existente o creando una nueva. Al aprobar, el gasto original y la copia pasan a `ACTIVE`. | CU-33 |
-| RF-CMP-04 | Si al aprobar se crea una entidad nueva, queda vinculada automáticamente al emisor. | CU-33 |
+| RF-CMP-04 | Al aprobar, la entidad elegida queda vinculada automáticamente al emisor: siempre si se crea nueva, y si es una existente, cuando no está vinculada a nadie y el receptor no tiene otra entidad vinculada a ese emisor (RF-ENT-09). La vinculación queda en el historial de la entidad. Así, los demás gastos pendientes del mismo emisor pasan a sugerir esa entidad y se agrupan bajo ella. | CU-33 |
 | RF-CMP-05 | El receptor puede rechazar un gasto recibido. El original y la copia pasan a `REJECTED`. | CU-34 |
 | RF-CMP-06 | El emisor puede reintentar un gasto rechazado. El original y la copia vuelven a `PENDING_APPROVAL`. | CU-35 |
 | RF-CMP-07 | Solo el receptor puede aprobar o rechazar, y solo mientras el gasto está pendiente (`NO_AUTORIZADO`, `GASTO_NO_PENDIENTE_APROBACION`). Solo el emisor puede reintentar, y solo si el gasto está rechazado (`GASTO_COMPARTIDO_NO_RECHAZADO`). | CU-33, CU-34, CU-35 |
-| RF-CMP-08 | La contraparte puede confirmar un pago pendiente: pasa a ser un pago efectivo. | CU-36 |
+| RF-CMP-08 | La contraparte puede confirmar un pago pendiente: pasa a ser un pago efectivo y, en la misma operación, se registra el pago en la copia del gasto de la contraparte, con el monto por cuota de la copia y la misma fecha de pago, salvo que la copia ya esté saldada. Así las dos partes ven la misma cuota paga. *Limitaciones conocidas*: la confirmación se aplica al instante aunque la contraparte tenga una sesión de cuentas abierta, y no integra su snapshot; si la contraparte también registró un pago por esa cuota en su copia, se cuenta dos veces; revertir un pago (RF-PAG-09) solo afecta al gasto propio, no a la copia. | CU-36 |
 | RF-CMP-09 | La contraparte puede rechazar un pago pendiente: el pago se elimina. | CU-37 |
 | RF-CMP-10 | Quien registró un pago no puede confirmarlo ni rechazarlo; solo la contraparte del gasto compartido (`NO_AUTORIZADO`). | CU-36, CU-37 |
 | RF-CMP-11 | La aplicación muestra un contador de gastos recibidos pendientes de aprobación y de pagos por confirmar. | CU-32 |
@@ -148,7 +148,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | ID | Requerimiento | CU |
 | --- | --- | --- |
 | RF-NOT-01 | El sistema notifica en tiempo real al usuario afectado cuando: recibe un gasto compartido nuevo o reintentado, le aprueban o rechazan un gasto que emitió, le registran un pago pendiente de confirmación, o le confirman o rechazan un pago que registró. | CU-38 |
-| RF-NOT-02 | Al recibir una notificación, las pantallas afectadas (compartidos, dashboard) actualizan sus datos sin que el usuario recargue. | CU-38 |
+| RF-NOT-02 | Al recibir una notificación, las pantallas afectadas (compartidos, dashboard, detalle de entidad) actualizan sus datos sin que el usuario recargue. El detalle de entidad (incluida la pestaña de pendientes) se actualiza con todos los eventos del canal. | CU-38 |
 | RF-NOT-03 | Cada usuario recibe únicamente las notificaciones de su propio canal. | CU-38 |
 
 ## Pendiente / fuera de alcance

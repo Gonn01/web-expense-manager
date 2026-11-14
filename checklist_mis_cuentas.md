@@ -62,7 +62,7 @@ restaurar). Quedan pendientes de evaluar (afectan datos agregados de otras panta
 un reload puede ser intencional):
 
 - [ ] `CompartidosCubit` (Flutter, `packages/em_services/lib/src/services/compartidos/compartidos_cubit.dart`) y las acciones de compartidos en la web: aprobar/rechazar/reintentar/confirmar pago/rechazar pago recargan todo `/compartidos` después de cada una. Puede afectar el badge de pendientes en otras pantallas (dashboard, shell) — evaluar si conviene parchear local + revalidar ese badge aparte.
-- [ ] `crearGasto` del dashboard (Flutter `DashboardCubit.crearGasto` y web `use-dashboard-data.js`): crea un gasto y recarga todo el dashboard. El gasto nuevo puede afectar orden de grupos/favoritos — evaluar insertarlo directamente en el grupo de su entidad sin recargar.
+- [x] `crearGasto` del dashboard y del detalle de entidad (web y Flutter): el gasto creado (y su espejo, que `POST /gastos` devuelve en `mirror`) se inserta en el grupo/lista que corresponde. Solo si su entidad todavía no tiene grupo en el dashboard se vuelve a pedir, en segundo plano.
 - [ ] `onCompartidoAprobado` (web, `use-dashboard-data.js`, evento de Pusher): recarga todo el dashboard cuando el otro usuario aprueba un gasto compartido. Es la única fuente que trae ese gasto nuevo al estado local, así que un reload es más justificable acá — revisar si alcanza con traer solo esa entidad/gasto en vez del dashboard entero.
 
 ## EXTRAS

@@ -61,7 +61,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-04 | Varios componentes suscritos al mismo canal de tiempo real comparten una única suscripción. | Web |
 | RNF-REN-05 | Las operaciones sobre varios gastos de una sesión de cuentas (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones en tiempo real que generan se envían en paralelo. | API |
 
-*Limitación conocida*: las acciones de compartidos y la creación de un gasto desde el dashboard todavía recargan la pantalla completa (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
+*Limitación conocida*: las acciones de compartidos todavía recargan la pantalla completa (crear un gasto desde compartidos la vuelve a pedir en segundo plano, sin el loader) (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 
 ## DIS — Disponibilidad y tolerancia a fallos
 

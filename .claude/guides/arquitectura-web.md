@@ -73,7 +73,7 @@ Consecuencias:
 - **Sin actualizaciones optimistas**: ningún cambio se aplica en pantalla antes de que responda el servidor. El botón muestra un spinner mientras el pedido está en curso, sin cambiar de tamaño (el contenido queda `invisible` y el spinner va encima), y la pantalla se actualiza con la respuesta, sin recargar todo. Si falla, no hay nada que revertir.
     - Favorito y postergar en el dashboard: `busyKeys` de `use-dashboard-data.js` (claves `postpone:<id>`, `favGasto:<id>`, `favEntidad:<id>`).
     - Marcar y desmarcar en la sesión de cuentas: `pendingIds` de `use-settlement-store.js`, o `loadingSettleIds` del dashboard para el diálogo de pago. Después del diálogo, las marcas se toman de la respuesta del POST (`applyMarked`), sin volver a pedir la sesión.
-- **Evitar recargas completas**: tras una mutación puntual, aplicar la respuesta del endpoint al estado local en lugar de volver a pedir toda la pantalla.
+- **Evitar recargas completas**: tras una mutación puntual, aplicar la respuesta del endpoint al estado local en lugar de volver a pedir toda la pantalla. Al crear un gasto, `POST /gastos` devuelve sus cuotas pagas reales y, si tiene entidad de pago, el espejo en `mirror`: el dashboard (`addCreatedToGroups` en `use-dashboard-data.js`) y el detalle de entidad los insertan donde corresponde. Si hace falta volver a pedir, hacerlo sin el loader de pantalla completa (`{ silent: true }`).
 
 ## 5. Tiempo real
 

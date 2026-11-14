@@ -43,7 +43,7 @@ export default function NewExpenseModal({
     const [isInstallment, setIsInstallment] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [isPostponed, setIsPostponed] = useState(false);
-    const [paidInstallments, setPaidInstallments] = useState('0');
+    const [paidInstallments, setPaidInstallments] = useState('');
     const [payWithEntity, setPayWithEntity] = useState(false);
     const [paymentEntity, setPaymentEntity] = useState('');
     const { entities, loading, createEntity, updateEntity } = useEntitiesStore();
@@ -162,7 +162,7 @@ export default function NewExpenseModal({
             fixed_expense: isFixed,
             image: null,
             type,
-            payed_quotas: isInstallment ? Number(paidInstallments) : isPaid ? 1 : 0,
+            payed_quotas: isInstallment ? Number(paidInstallments) || 0 : isPaid ? 1 : 0,
             category_ids: selectedCategoryIds,
             payment_entity_id: payWithEntity ? paymentEntity : null,
             postponed,
@@ -240,7 +240,7 @@ export default function NewExpenseModal({
                             setIsFixed(f);
                             if (!i) {
                                 setInstallments('');
-                                setPaidInstallments('0');
+                                setPaidInstallments('');
                             }
                             setIsPaid(false);
                         }}
