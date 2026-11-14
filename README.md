@@ -4,13 +4,7 @@ Aplicación web para registrar y saldar deudas, créditos y gastos personales, o
 
 ## Descripción del proyecto
 
-El sistema está formado por tres proyectos sobre un mismo backend:
-
-| Proyecto | Repositorio | Tecnología | Rol |
-| --- | --- | --- | --- |
-| **Web (este repo)** | [web-plataformas-de-desarrollo](https://github.com/Gonn01/web-plataformas-de-desarrollo) | React 19 + Vite | Cliente para navegador |
-| **API** | [api-plataformas-desarrollo](https://github.com/Gonn01/api-plataformas-desarrollo) | Node.js / Express 5 + PostgreSQL | Backend único: persiste los datos y aplica las reglas de negocio |
-| **App móvil** | [app_expense_manager](https://github.com/Gonn01/app_expense_manager) | Flutter | Cliente para Android e iOS, con la misma funcionalidad que la web |
+Single Page Application en React 19 + Vite que consume una API REST, la cual persiste los datos y aplica las reglas de negocio.
 
 Funcionalidades principales:
 
@@ -22,12 +16,10 @@ Funcionalidades principales:
 - **Modo "hacer cuentas"**: sesión de cierre periódico en la que se marcan los pagos; al finalizarla se registran todos juntos y queda un snapshot inmutable que se puede compartir.
 - **Configuración**: perfil, moneda preferida, sueldo, tema claro/oscuro.
 
-La documentación funcional completa del sistema (web + app + API) está en [docs/](docs/). La entrada es [docs/descripcion-general.md](docs/descripcion-general.md).
-
 ## Requisitos previos
 
 - **Node.js** 20 o superior y **npm**.
-- La **API** corriendo en local o desplegada (ver [Backend](#backend-api)).
+- La **API REST** de la plataforma corriendo en local o desplegada.
 - Un proyecto de **Firebase** con Authentication y el proveedor Google habilitado (solo para el login con Google).
 - Una app de **Pusher Channels** (solo para las notificaciones en tiempo real).
 
@@ -61,13 +53,13 @@ VITE_PUSHER_CLUSTER=sa1
 | --- | --- |
 | `VITE_API_BASE_URL` | URL base de la API, incluido el prefijo `/api`. En local: `http://localhost:3000/api`. |
 | `VITE_FIREBASE_*` | Configuración web de Firebase (consola de Firebase → Configuración del proyecto → Tus apps). Se usa para el inicio de sesión con Google. |
-| `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER` | Key pública y cluster de la app de Pusher; deben ser los mismos que usa la API. |
+| `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER` | Key pública y cluster de la app de Pusher Channels. |
 
 Después de cambiar el `.env` hay que reiniciar el servidor de desarrollo.
 
 ## Correr el proyecto en local
 
-1. Levantar la API (por defecto en `http://localhost:3000`). Su CORS ya permite `http://localhost:5173`.
+1. Tener la API disponible en la URL configurada en `VITE_API_BASE_URL`, con `http://localhost:5173` entre sus orígenes permitidos por CORS.
 2. Levantar la web:
 
 ```bash
@@ -86,7 +78,7 @@ La app queda en `http://localhost:5173`.
 | `npm run lint` / `npm run lint:fix` | ESLint (y corrección automática) |
 | `npm run format` | Formatea el código con Prettier |
 
-No hay framework de tests configurado en la web; los tests unitarios del sistema están en la API.
+No hay framework de tests configurado.
 
 ### Despliegue
 
@@ -95,12 +87,10 @@ La web se despliega en **Vercel**. [vercel.json](vercel.json) reescribe todas la
 ## Arquitectura técnica
 
 ```
-Navegador ──► Web (React SPA) ──HTTP/JSON + JWT──► API (Express) ──SQL──► PostgreSQL
-                  ▲                                     │
-                  └──────── Pusher Channels ◄───────────┘  (eventos de compartidos)
+Navegador ──► Web (React SPA) ──HTTP/JSON + JWT──► API REST
+                  ▲                                  │
+                  └────── Pusher Channels ◄──────────┘  (eventos de compartidos)
 ```
-
-### Frontend (este repo)
 
 ```
 src/
@@ -122,16 +112,6 @@ src/
 - **Tiempo real**: suscripción al canal de Pusher `compartidos-<userId>`, con conteo de referencias para compartir el canal entre componentes.
 - **Responsive** desde 360 px de ancho; tema claro, oscuro o del sistema.
 
-Detalle completo en [.claude/guides/arquitectura-web.md](.claude/guides/arquitectura-web.md).
-
-### Backend (API)
-
-API REST en Node.js (ESM) con Express 5 sobre PostgreSQL, sin ORM. Cada recurso tiene cuatro capas: `routes → controller → service → repository`, armadas a mano en `factories/`. Las reglas de negocio viven en los services y el acceso a datos es SQL plano. La autenticación es con JWT (`Authorization: Bearer <token>`), y los eventos de gastos compartidos se publican en Pusher después del commit de la transacción.
-
-Grupos de rutas bajo `/api`: `/auth`, `/health` (públicos), `/user`, `/entidades-financieras`, `/dashboard`, `/gastos`, `/categorias`, `/compartidos`, `/settlement`.
-
-Instalación, variables de entorno y comandos de la API: ver su [README](https://github.com/Gonn01/api-plataformas-desarrollo#readme).
-
 ## Librerías principales
 
 | Librería | Uso |
@@ -147,18 +127,13 @@ Instalación, variables de entorno y comandos de la API: ver su [README](https:/
 | [recharts](https://recharts.org) | Gráficos del dashboard |
 | ESLint + Prettier | Linting y formato |
 
-En la API: Express 5, postgres.js, jsonwebtoken, bcrypt, Pusher (servidor), dayjs y Vitest para los tests.
+## Seguimiento
 
-## Documentación
-
-- [docs/](docs/): descripción general, misión/visión/valores, requerimientos funcionales y no funcionales, casos de uso y diagramas.
-- [.claude/guides/arquitectura-web.md](.claude/guides/arquitectura-web.md): arquitectura de esta web.
 - [checklist_mis_cuentas.md](checklist_mis_cuentas.md) y [checklits_expense_manager.md](checklits_expense_manager.md): checklists informales de funcionalidades hechas y pendientes.
 
 ## Autores
 
 - Gonzalo Rigoni
-- Agustin Masa
 - Romina Herrera
 
 Video y PDF de la entrega: [Google Drive](https://drive.google.com/drive/folders/1aWYYho0riHqlliThUd-Cn9B_s-Sy-b3Z?usp=sharing)
