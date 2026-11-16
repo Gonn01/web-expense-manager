@@ -2,7 +2,7 @@ import { useState } from 'react';
 import EntityCard from '@/pages/entidades_financieras/components/EntityCard';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
 
-export default function EntitiesList({ filtered, query, navigate, onDelete, showEmpty }) {
+export default function EntitiesList({ filtered, query, navigate, onDelete, showEmpty, viewMode }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selected, setSelected] = useState(null);
 
@@ -17,9 +17,14 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
         setSelected(null);
     };
 
+    const containerClass =
+        viewMode === 'grid'
+            ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'
+            : 'flex flex-col gap-4';
+
     return (
         <>
-            <div className="flex flex-col gap-4">
+            <div className={containerClass}>
                 {filtered.map((e) => (
                     <EntityCard
                         key={e.id}
@@ -36,11 +41,10 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
                 )}
             </div>
 
-            {/* MODAL */}
             <ConfirmDeleteModal
                 open={modalOpen}
                 title="Eliminar entidad"
-                message={`¿Seguro que querés eliminar "${selected?.name}"? Esta acción no se puede deshacer.`}
+                message={`¿Seguro que querés eliminar "${selected?.name}"? También se eliminan todos sus gastos; si alguno es compartido, deja de estar vinculado con el de la otra persona. Podés restaurarla más tarde desde "Ver eliminadas" y vuelve con esos gastos.`}
                 confirmLabel="Eliminar entidad"
                 onCancel={() => setModalOpen(false)}
                 onConfirm={confirmDelete}

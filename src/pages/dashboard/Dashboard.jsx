@@ -1,20 +1,22 @@
-import { createPortal } from 'react-dom';
+import ChartsModal from '@/components/modals/ChartsModal';
 import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
 import StatCards from './components/StatCards';
 import ActiveExpenses from './components/ActiveExpenses';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
-import CuotasChart from '@/components/CuotasChart';
-import MontoChart from '@/components/MontoChart';
+import { SettlementToggle, SettlementBar } from './components/SettlementBar';
 import { useDashboardUI } from './hooks/use-dashboard-ui';
 import { useDashboardData } from './hooks/use-dashboard-data';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
+import { useUIStore } from '@/store/use-ui-store';
 import Loader from '@/components/Loader';
 
 export default function Dashboard() {
     const data = useDashboardData();
-    const ui = useDashboardUI(data.groups, data.pagarCuotas);
+    const ui = useDashboardUI(data.groups, data.settleQuotas, data.postergarGasto);
     const { rates } = useExchangeRates();
+    const balancesHidden = useUIStore((s) => s.balancesHidden);
+    const toggleBalances = useUIStore((s) => s.toggleBalances);
 
     const handleCreateExpense = async (payload) => {
         ui.setLoadingCreatingExpense(true);
@@ -23,7 +25,6 @@ export default function Dashboard() {
             ui.setOpenNewExpense(false);
         } catch (err) {
             console.error('Error creando gasto:', err);
-            alert('No se pudo crear el gasto.');
         } finally {
             ui.setLoadingCreatingExpense(false);
         }
@@ -38,48 +39,99 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-            {/* HEADER */}
-            <div className="flex justify-between mb-4">
+        <div className="flex flex-col lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-4">
                 <div>
-                    <p className="text-4xl font-black text-slate-900 dark:text-white">Dashboard</p>
+                    <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                        Dashboard
+                    </p>
                     <p className="text-slate-500 dark:text-slate-400">
                         Un resumen de tus finanzas personales.
                     </p>
                 </div>
 
-                <button
-                    onClick={() => ui.setOpenNewExpense(true)}
-                    className="cursor-pointer flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
-                >
-                    <Icon name="add_circle" className="mr-2" />
-                    Crear Gasto / Deuda
-                </button>
-            </div>
-
-            {/* MAIN LAYOUT */}
-            <div className="flex flex-row flex-1 gap-6 min-h-0 overflow-hidden">
-                {/* LEFT: StatCards + botón gráficos */}
-                <div className="flex flex-col gap-4 w-52 shrink-0 overflow-y-auto">
-                    <StatCards
-                        summary={summary}
-                        currency={ui.currency}
-                        summaryByCurrency={data.summaryByCurrency}
-                        preferredCurrency={ui.preferredCurrency}
-                        rates={rates}
-                        vertical
-                    />
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <SettlementToggle />
                     <button
                         onClick={() => setShowCharts(true)}
-                        className="cursor-pointer flex items-center justify-center gap-2 h-10 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors"
+                        className="cursor-pointer shrink-0 flex items-center h-11 px-4 sm:px-5 rounded-lg border border-primary/60 text-primary font-bold hover:bg-primary/10 transition-colors"
                     >
-                        <Icon name="bar_chart" />
+                        <Icon name="bar_chart" className="mr-2" />
                         Ver gráficos
                     </button>
+                    <button
+                        onClick={() => ui.setOpenNewExpense(true)}
+                        className="cursor-pointer flex items-center justify-center h-11 px-4 sm:px-5 rounded-lg bg-primary text-background-dark font-bold w-full sm:w-auto"
+                    >
+                        <Icon name="add_circle" className="mr-2" />
+                        Crear Gasto / Deuda
+                    </button>
+                </div>
+            </div>
+
+            <SettlementBar totalItems={allItems.length} />
+
+            <div className="lg:hidden mb-4">
+                <StatCards
+                    summary={summary}
+                    currency={ui.currency}
+                    summaryByCurrency={data.summaryByCurrency}
+                    preferredCurrency={ui.preferredCurrency}
+                    rates={rates}
+                />
+            </div>
+
+            <div className="flex flex-col lg:flex-row lg:flex-1 gap-6 lg:min-h-0 lg:overflow-hidden">
+                <div
+                    className={`hidden lg:block relative shrink-0 overflow-hidden [interpolate-size:allow-keywords] transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${
+                        balancesHidden ? 'w-6' : 'w-max'
+                    }`}
+                >
+                    <button
+                        onClick={toggleBalances}
+                        aria-label="Mostrar balances"
+                        title="Mostrar balances"
+                        tabIndex={balancesHidden ? 0 : -1}
+                        className={`cursor-pointer absolute inset-y-0 left-0 z-10 flex items-start justify-center pt-2 w-6 text-slate-400 hover:text-primary transition-opacity duration-200 motion-reduce:transition-none ${
+                            balancesHidden
+                                ? 'opacity-100 delay-150'
+                                : 'opacity-0 pointer-events-none'
+                        }`}
+                    >
+                        <Icon name="chevron_right" />
+                    </button>
+                    <div
+                        inert={balancesHidden}
+                        aria-hidden={balancesHidden}
+                        className={`flex flex-col gap-4 w-max min-w-52 h-full overflow-y-auto transition-opacity duration-200 motion-reduce:transition-none ${
+                            balancesHidden ? 'opacity-0' : 'opacity-100 delay-100'
+                        }`}
+                    >
+                        <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                Balances
+                            </p>
+                            <button
+                                onClick={toggleBalances}
+                                aria-label="Ocultar balances"
+                                title="Ocultar balances"
+                                className="cursor-pointer text-slate-400 hover:text-primary transition-colors"
+                            >
+                                <Icon name="chevron_left" />
+                            </button>
+                        </div>
+                        <StatCards
+                            summary={summary}
+                            currency={ui.currency}
+                            summaryByCurrency={data.summaryByCurrency}
+                            preferredCurrency={ui.preferredCurrency}
+                            rates={rates}
+                            vertical
+                        />
+                    </div>
                 </div>
 
-                {/* RIGHT: Active Expenses */}
-                <div className="flex-1 min-w-0 overflow-hidden flex flex-col">
+                <div className="flex-1 min-w-0 lg:overflow-hidden flex flex-col">
                     <ActiveExpenses
                         query={ui.query}
                         onQueryChange={ui.setQuery}
@@ -93,14 +145,17 @@ export default function Dashboard() {
                         onFixedFilterChange={ui.setFixedFilter}
                         preferredCurrency={ui.preferredCurrency}
                         rates={rates}
-                        payModal={ui.payModal}
-                        loadingPayIds={ui.loadingPayIds}
-                        onConfirmPay={ui.onConfirmPay}
+                        settleModal={ui.settleModal}
+                        loadingSettleIds={ui.loadingSettleIds}
+                        onConfirmSettle={ui.onConfirmSettle}
+                        onTogglePostpone={ui.requestTogglePostpone}
+                        onToggleFavoriteGasto={data.favoritoGasto}
+                        onToggleFavoriteEntity={data.favoritoEntidad}
+                        busyKeys={data.busyKeys}
                     />
                 </div>
             </div>
 
-            {/* MODAL: Nuevo gasto */}
             {ui.openNewExpense && (
                 <NewExpenseModal
                     onClose={() => ui.setOpenNewExpense(false)}
@@ -109,38 +164,7 @@ export default function Dashboard() {
                 />
             )}
 
-            {/* MODAL: Gráficos */}
             {showCharts && <ChartsModal gastos={allItems} onClose={() => setShowCharts(false)} />}
         </div>
-    );
-}
-
-function ChartsModal({ gastos, onClose }) {
-    return createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && onClose()}
-        >
-            <div className="fixed inset-0 bg-black/60" />
-            <div className="relative z-10 w-[92vw] max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]">
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
-                        <Icon name="bar_chart" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Gráficos</h2>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="cursor-pointer text-slate-400 hover:text-white transition-colors"
-                    >
-                        <Icon name="close" />
-                    </button>
-                </header>
-                <div className="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">
-                    <CuotasChart gastos={gastos} />
-                    <MontoChart gastos={gastos} />
-                </div>
-            </div>
-        </div>,
-        document.body,
     );
 }

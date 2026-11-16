@@ -1,93 +1,215 @@
-import { useCallback, useEffect, useState } from 'react';
-import { fetchDashboardData, createGasto } from '@/services/api';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    fetchDashboardData,
+    createGasto,
+    postergarGasto as postergarGastoApi,
+    favoritoGasto as favoritoGastoApi,
+    favoritoEntidad as favoritoEntidadApi,
+} from '@/services/api';
+
 import useAuth from '@/store/use-auth-store';
-import { usePayments } from '@/hooks/use-payments';
+import { useSettlements } from '@/hooks/use-settlements';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useSettlementStore } from '@/store/use-settlement-store';
+import { Currency } from '@/utils/enums';
+import { useEntitiesStore } from '@/store/use-entities-store';
+
+const byFavThenDate = (aFav, bFav, aDate, bDate) => {
+    if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
+    return new Date(bDate) - new Date(aDate);
+};
+
+const withProgress = (g) => {
+    const paid = Number(g.payed_quotas) || 0;
+    const total = Number(g.number_of_quotas) || 0;
+    return {
+        ...g,
+        amount: Number(g.amount),
+        amount_per_quota: Number(g.amount_per_quota),
+        payed_quotas: paid,
+        progress: g.fixed_expense
+            ? 100
+            : total > 0
+              ? Math.min((paid / total) * 100, 100)
+              : paid === 0
+                ? 0
+                : 100,
+    };
+};
+
+const sortItems = (items) =>
+    items.sort((a, b) => byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at));
+
+const sortGroups = (groups) =>
+    groups.sort((a, b) =>
+        byFavThenDate(
+            a.is_favorite,
+            b.is_favorite,
+            a.items[0]?.created_at ?? a.created_at,
+            b.items[0]?.created_at ?? b.created_at,
+        ),
+    );
+
+const isActiveOnDashboard = (g) =>
+    g.status === 'ACTIVE' &&
+    !g.deleted &&
+    (g.fixed_expense || (Number(g.payed_quotas) || 0) < Number(g.number_of_quotas));
+
+function addCreatedToGroups(groups, gasto) {
+    const entityId = String(gasto.financial_entity_id);
+    const index = groups.findIndex((g) => String(g.id) === entityId);
+
+    if (gasto.status === 'PENDING_APPROVAL') {
+        if (index < 0) return groups;
+        return groups.map((g, i) =>
+            i === index ? { ...g, pending_count: (Number(g.pending_count) || 0) + 1 } : g,
+        );
+    }
+
+    if (!isActiveOnDashboard(gasto)) return groups;
+
+    const item = withProgress(gasto);
+    if (index >= 0) {
+        return sortGroups(
+            groups.map((g, i) =>
+                i === index ? { ...g, items: sortItems([...g.items, item]) } : g,
+            ),
+        );
+    }
+
+    const entity = useEntitiesStore.getState().getEntityById(gasto.financial_entity_id);
+    if (!entity) return null;
+
+    return sortGroups([
+        ...groups,
+        {
+            id: entity.id,
+            name: entity.name,
+            is_favorite: entity.is_favorite,
+            created_at: entity.created_at,
+            pending_count: Number(entity.pending_count) || 0,
+            items: [item],
+        },
+    ]);
+}
+
+const CURRENCY_VALUES = Object.values(Currency);
 
 export function useDashboardData() {
-    const { token } = useAuth();
-    const { handleConfirm } = usePayments(token);
+    const { token, user } = useAuth();
+    const { handleConfirm } = useSettlements(token);
 
-    const [summaryByCurrency, setSummaryByCurrency] = useState(null);
+    const [loaded, setLoaded] = useState(false);
     const [groups, setGroups] = useState([]);
+    const groupsRef = useRef(groups);
+    const [pendingTotal, setPendingTotal] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [busyKeys, setBusyKeys] = useState(() => new Set());
 
-    const recalcSummary = useCallback((groupsToUse) => {
-        const totals = {
-            ARS: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            USD: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-            EUR: { debo: 0, meDeben: 0, cuotaDebo: 0, cuotaMeDeben: 0 },
-        };
+    const runBusy = useCallback(async (key, fn) => {
+        setBusyKeys((prev) => new Set(prev).add(key));
+        try {
+            return await fn();
+        } finally {
+            setBusyKeys((prev) => {
+                const next = new Set(prev);
+                next.delete(key);
+                return next;
+            });
+        }
+    }, []);
 
-        groupsToUse.forEach((group) => {
+    const patchGasto = useCallback((gastoId, patch) => {
+        setGroups((prev) =>
+            prev.map((g) => ({
+                ...g,
+                items: g.items.map((it) =>
+                    String(it.id) === String(gastoId) ? { ...it, ...patch } : it,
+                ),
+            })),
+        );
+    }, []);
+
+    const summaryByCurrency = useMemo(() => {
+        if (!loaded) return null;
+        const totals = Object.fromEntries(
+            CURRENCY_VALUES.map((cur) => [
+                cur,
+                { egreso: 0, ingreso: 0, cuotaEgreso: 0, cuotaIngreso: 0 },
+            ]),
+        );
+
+        groups.forEach((group) => {
             group.items.forEach((g) => {
+                if (g.is_postponed) return;
                 const curr = g.currency_type;
                 const restante = g.amount - g.payed_quotas * g.amount_per_quota;
                 const cuota = Number(g.amount_per_quota || 0);
 
                 if (g.type === 'INGRESO') {
-                    totals[curr].meDeben += restante;
-                    totals[curr].cuotaMeDeben += cuota;
+                    totals[curr].ingreso += restante;
+                    totals[curr].cuotaIngreso += cuota;
                 } else {
-                    totals[curr].debo += restante;
-                    totals[curr].cuotaDebo += cuota;
+                    totals[curr].egreso += restante;
+                    totals[curr].cuotaEgreso += cuota;
                 }
             });
         });
 
-        const summary = ['ARS', 'USD', 'EUR'].reduce((acc, cur) => {
+        return CURRENCY_VALUES.reduce((acc, cur) => {
             acc[cur] = {
-                total_debo: totals[cur].debo,
-                total_me_deben: totals[cur].meDeben,
-                total_balance: totals[cur].meDeben - totals[cur].debo,
-                cuota_debo: totals[cur].cuotaDebo,
-                cuota_me_deben: totals[cur].cuotaMeDeben,
-                cuota_balance: totals[cur].cuotaMeDeben - totals[cur].cuotaDebo,
+                total_egreso: totals[cur].egreso,
+                total_ingreso: totals[cur].ingreso,
+                total_balance: totals[cur].ingreso - totals[cur].egreso,
+                cuota_egreso: totals[cur].cuotaEgreso,
+                cuota_ingreso: totals[cur].cuotaIngreso,
+                cuota_balance: totals[cur].cuotaIngreso - totals[cur].cuotaEgreso,
             };
             return acc;
         }, {});
+    }, [groups, loaded]);
 
-        setSummaryByCurrency(summary);
-    }, []);
+    useEffect(() => {
+        groupsRef.current = groups;
+    }, [groups]);
 
-    const loadDashboard = useCallback(async () => {
-        if (!token) return;
+    const loadDashboard = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
 
-        try {
-            setLoading(true);
-            const entities = await fetchDashboardData(token);
+            try {
+                if (!silent) setLoading(true);
+                const entities = await fetchDashboardData(token);
 
-            const mappedGroups = entities
-                .map((entity) => {
-                    const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
+                setPendingTotal(
+                    entities.reduce((sum, e) => sum + (Number(e.pending_count) || 0), 0),
+                );
 
-                    const items = gastos
-                        .map((g) => ({
-                            ...g,
-                            progress: g.fixed_expense
-                                ? 100
-                                : g.number_of_quotas > 0
-                                    ? Math.min((g.payed_quotas / g.number_of_quotas) * 100, 100)
-                                    : g.payed_quotas === 0
-                                        ? 0
-                                        : 100,
-                        }))
-                        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                const mappedGroups = entities
+                    .map((entity) => {
+                        const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
 
-                    if (items.length === 0) return null;
+                        const items = sortItems(gastos.map(withProgress));
 
-                    return { ...entity, items };
-                })
-                .filter(Boolean)
-                .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+                        if (items.length === 0 && !entity.is_favorite) return null;
 
-            setGroups(mappedGroups);
-            recalcSummary(mappedGroups);
-        } catch (err) {
-            console.error('Error cargando dashboard:', err);
-        } finally {
-            setLoading(false);
-        }
-    }, [token, recalcSummary]);
+                        return { ...entity, items };
+                    })
+                    .filter(Boolean);
+                sortGroups(mappedGroups);
+
+                setGroups(mappedGroups);
+                setLoaded(true);
+            } catch (err) {
+                console.error('Error cargando dashboard:', err);
+            } finally {
+                if (!silent) setLoading(false);
+            }
+        },
+        [token],
+    );
+
+    const reloadSilently = useCallback(() => loadDashboard({ silent: true }), [loadDashboard]);
 
     const updateAfterPayment = useCallback(
         (updatedItems) => {
@@ -105,7 +227,10 @@ export function useDashboardData() {
                                 ...server,
                                 progress: server.fixed_expense
                                     ? 100
-                                    : Math.min((server.payed_quotas / server.number_of_quotas) * 100, 100),
+                                    : Math.min(
+                                          (server.payed_quotas / server.number_of_quotas) * 100,
+                                          100,
+                                      ),
                             };
 
                             if (server.fixed_expense) return updated;
@@ -121,12 +246,11 @@ export function useDashboardData() {
                 .filter((g) => g.items.length > 0);
 
             setGroups(newGroups);
-            recalcSummary(newGroups);
         },
-        [groups, recalcSummary],
+        [groups],
     );
 
-    const pagarCuotas = useCallback(
+    const settleQuotas = useCallback(
         async (items) => {
             const updatedItems = await handleConfirm(items);
             updateAfterPayment(updatedItems);
@@ -137,24 +261,153 @@ export function useDashboardData() {
 
     const crearGasto = useCallback(
         async (payload) => {
-            await createGasto(payload, token);
-            await loadDashboard();
+            const created = await createGasto(payload, token);
+            const { mirror, ...gasto } = created;
+
+            let next = addCreatedToGroups(groups, gasto);
+            if (next && mirror) next = addCreatedToGroups(next, mirror);
+            if (!next) {
+                await loadDashboard();
+                return created;
+            }
+
+            setGroups(next);
+            if (gasto.status === 'PENDING_APPROVAL') setPendingTotal((t) => t + 1);
+            return created;
         },
-        [token, loadDashboard],
+        [token, groups, loadDashboard],
+    );
+
+    const postergarGasto = useCallback(
+        (gastoId, postponed) =>
+            runBusy(`postpone:${gastoId}`, async () => {
+                const settlement = useSettlementStore.getState();
+                if (postponed && settlement.session && settlement.isChecked(gastoId)) {
+                    await settlement.toggleExpense({ id: gastoId });
+                }
+
+                try {
+                    await postergarGastoApi(gastoId, postponed, token);
+                    patchGasto(gastoId, { is_postponed: postponed });
+                } catch (err) {
+                    console.error('Error postergando gasto:', err);
+                }
+            }),
+        [token, runBusy, patchGasto],
+    );
+
+    const favoritoGasto = useCallback(
+        (gastoId, favorite) =>
+            runBusy(`favGasto:${gastoId}`, async () => {
+                try {
+                    await favoritoGastoApi(gastoId, favorite, token);
+                    patchGasto(gastoId, { is_favorite: favorite });
+                } catch (err) {
+                    console.error('Error marcando favorito:', err);
+                }
+            }),
+        [token, runBusy, patchGasto],
+    );
+
+    const favoritoEntidad = useCallback(
+        (entidadId, favorite) =>
+            runBusy(`favEntidad:${entidadId}`, async () => {
+                try {
+                    await favoritoEntidadApi(entidadId, favorite, token);
+                    setGroups((prev) =>
+                        prev.map((g) =>
+                            String(g.id) === String(entidadId)
+                                ? { ...g, is_favorite: favorite }
+                                : g,
+                        ),
+                    );
+                } catch (err) {
+                    console.error('Error marcando favorito de entidad:', err);
+                }
+            }),
+        [token, runBusy],
     );
 
     useEffect(() => {
         loadDashboard();
     }, [loadDashboard]);
 
+    const onCompartidoAprobado = useCallback(
+        ({ entityId } = {}) => {
+            if (entityId != null) {
+                setGroups((prev) =>
+                    prev.map((g) =>
+                        String(g.id) === String(entityId)
+                            ? {
+                                  ...g,
+                                  pending_count: Math.max(0, (Number(g.pending_count) || 0) - 1),
+                              }
+                            : g,
+                    ),
+                );
+                setPendingTotal((t) => Math.max(0, t - 1));
+            }
+            reloadSilently();
+        },
+        [reloadSilently],
+    );
+
+    const onPagoPendiente = useCallback(
+        ({ copyId } = {}) => {
+            const tieneLaCopia =
+                copyId != null &&
+                groupsRef.current.some((g) =>
+                    g.items.some((it) => String(it.id) === String(copyId)),
+                );
+            if (!tieneLaCopia) {
+                reloadSilently();
+                return;
+            }
+            setGroups((prev) =>
+                prev.map((g) => ({
+                    ...g,
+                    items: g.items.map((it) =>
+                        String(it.id) === String(copyId)
+                            ? {
+                                  ...it,
+                                  counterparty_pending_quotas:
+                                      (Number(it.counterparty_pending_quotas) || 0) + 1,
+                              }
+                            : it,
+                    ),
+                })),
+            );
+        },
+        [reloadSilently],
+    );
+
+    const pusherEvents = useMemo(
+        () => ({
+            'compartido.aprobado': onCompartidoAprobado,
+            'pago.pendiente': onPagoPendiente,
+            'pago.confirmado': reloadSilently,
+            'pago.rechazado': reloadSilently,
+            'pago.retirado': reloadSilently,
+            'pago.reversion_aceptada': reloadSilently,
+        }),
+        [onCompartidoAprobado, onPagoPendiente, reloadSilently],
+    );
+
+    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
+
     return {
         groups,
         setGroups,
+        pendingTotal,
         summaryByCurrency,
         loadDashboard,
         getSummaryForCurrency: (currency) => summaryByCurrency?.[currency] ?? null,
-        pagarCuotas,
+        settleQuotas,
         crearGasto,
+        postergarGasto,
+        favoritoGasto,
+        favoritoEntidad,
+        busyKeys,
         loading,
     };
 }

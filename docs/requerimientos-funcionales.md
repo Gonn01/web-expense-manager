@@ -1,0 +1,168 @@
+# Requerimientos funcionales
+
+Describen **qué hace** el sistema. Aplican por igual a la web y a la app móvil salvo que se indique lo contrario; la API es quien hace cumplir las reglas de negocio.
+
+- Identificador: `RF-<módulo>-NN`.
+- Columna **CU**: casos de uso que lo realizan (ver [casos-de-uso.md](casos-de-uso.md)).
+- Términos del dominio: ver el glosario en [README.md](README.md).
+
+Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario) · [DSH](#dsh--dashboard) · [ENT](#ent--entidades-financieras) · [GAS](#gas--gastos) · [PAG](#pag--pagos-y-cobros) · [CAT](#cat--categorías) · [CTA](#cta--hacer-cuentas) · [CMP](#cmp--gastos-compartidos) · [NOT](#not--notificaciones-en-tiempo-real)
+
+## AUT — Autenticación
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-AUT-01 | El sistema permite registrarse con nombre (mínimo 2 caracteres), email y contraseña (mínimo 6 caracteres). | CU-01 |
+| RF-AUT-02 | El sistema rechaza el registro si el email ya pertenece a una cuenta (`EMAIL_YA_REGISTRADO`). | CU-01 |
+| RF-AUT-03 | El sistema permite iniciar sesión con email y contraseña. Ante email inexistente, contraseña incorrecta o una cuenta creada con Google que no tiene contraseña responde el mismo error (`CREDENCIALES_INVALIDAS`), sin revelar el motivo. | CU-02 |
+| RF-AUT-04 | El sistema permite iniciar sesión con una cuenta de Google (Firebase Authentication). Si no existe una cuenta para esa identidad, la crea. | CU-03 |
+| RF-AUT-05 | Si se inicia sesión con Google y ya existe una cuenta creada con credenciales para el mismo email, el sistema vincula la identidad de Google a esa cuenta en lugar de crear una duplicada. | CU-03 |
+| RF-AUT-06 | Al autenticarse, por cualquier vía, el sistema entrega un token de sesión y los mismos datos del usuario (id, nombre, email, foto, moneda preferida y sueldo); el cliente los conserva para mantener la sesión entre reinicios. | CU-02, CU-03 |
+| RF-AUT-07 | Todas las pantallas y operaciones, salvo registro e inicio de sesión, requieren una sesión válida. Sin sesión, el cliente redirige al inicio de sesión. | — |
+| RF-AUT-08 | El usuario puede cerrar sesión, previa confirmación. Al hacerlo se eliminan el token y los datos de usuario guardados en el dispositivo. | CU-04 |
+| RF-AUT-09 | Cuando la API informa que la sesión no es válida o venció (401), el cliente cierra la sesión y lleva al usuario al inicio de sesión, donde un cartel le informa que su sesión venció. El cartel no aparece cuando el usuario cerró la sesión por su cuenta. | CU-02 |
+
+## CFG — Configuración del usuario
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-CFG-01 | El usuario puede ver su perfil: nombre, email y foto. | CU-05 |
+| RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD, EUR, BRL, CLP y UYU. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
+| RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos del mes (ver RF-DSH-07). Limitación conocida: la app móvil guarda el sueldo pero todavía no lo usa en ningún cálculo. | CU-07 |
+| RF-CFG-04 | El usuario puede elegir el tema de la interfaz: Sistema (sigue la preferencia del dispositivo y cambia cuando esta cambia), Claro u Oscuro. Por defecto es Sistema. La elección se guarda solo en el dispositivo o navegador (no en la cuenta) y se aplica al instante, también en las pantallas de inicio de sesión y registro. | CU-39 |
+
+## DSH — Dashboard
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-DSH-01 | El dashboard muestra los gastos **activos** del usuario agrupados por entidad. Un gasto es activo si no está eliminado, está aprobado (`ACTIVE`) y es fijo o le quedan cuotas por pagar. | CU-08 |
+| RF-DSH-02 | Las entidades favoritas se muestran primero; a igualdad, primero la que tiene el gasto más reciente. Dentro de cada entidad, primero los gastos favoritos y luego los más recientes. | CU-08 |
+| RF-DSH-03 | Una entidad sin gastos activos no se muestra, salvo que sea favorita, no haya filtros aplicados y no haya una sesión de cuentas abierta. | CU-08 |
+| RF-DSH-04 | El dashboard muestra, por moneda, los totales de egreso, de ingreso y el balance, tanto del saldo restante como de la cuota del período. Los gastos postergados no cuentan en esos totales ni en el balance de cada entidad del dashboard; se recalculan al postergar o quitar la postergación. | CU-08, CU-23 |
+| RF-DSH-05 | El usuario puede filtrar los gastos por texto (coincide con el nombre del gasto o de la entidad), por moneda, por tipo (egreso/ingreso) y por gasto fijo / no fijo. Por defecto no hay filtro de moneda. | CU-08 |
+| RF-DSH-06 | El sistema muestra los montos convertidos a la moneda preferida usando la cotización vigente de USD, EUR, BRL, CLP y UYU frente a ARS, obtenida de un servicio externo. | CU-08 |
+| RF-DSH-07 | El usuario puede ver gráficos de sus gastos activos: evolución de cuotas, evolución de montos y distribución por categoría. La distribución por categoría es mensual: muestra los egresos a pagar en un mes (por defecto, el actual; se puede avanzar hasta el último mes con cuotas pendientes), contando la cuota de cada gasto en cuotas que cae en ese mes y el monto de cada gasto fijo, convertidos a la moneda preferida, con el porcentaje del total del mes y del sueldo (convertido a la misma moneda) que representa cada categoría, y el total del mes con el porcentaje del sueldo que suma (resaltado si lo supera); si no lo cargó, invita a cargarlo. Los gastos sin categoría se agrupan en "Otros". Los gráficos existen solo en la web; la app Flutter no los tiene. | CU-08 |
+| RF-DSH-08 | El dashboard indica cuántos gastos compartidos están pendientes de aprobación por cada entidad. | CU-08, CU-32 |
+| RF-DSH-09 | El usuario puede copiar al portapapeles un resumen en texto de los gastos de una entidad, con formato apto para WhatsApp. El resumen no incluye los gastos postergados, ni en el listado ni en los totales. | CU-31 |
+| RF-DSH-10 | Desde el dashboard se puede crear un gasto, postergarlo, marcarlo como favorito y marcar entidades como favoritas. | CU-13, CU-17, CU-23, CU-24 |
+
+## ENT — Entidades financieras
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-ENT-01 | El usuario puede listar sus entidades activas, con la cantidad de gastos y de pendientes de cada una, y buscarlas por nombre. El orden es el mismo que en el dashboard. | CU-09 |
+| RF-ENT-02 | El usuario puede crear una entidad indicando su nombre. No puede haber dos entidades activas con el mismo nombre para un mismo usuario (`ENTIDAD_YA_EXISTE`). | CU-10 |
+| RF-ENT-03 | Al crear una entidad se puede indicar el email de otro usuario para dejarla vinculada en el mismo paso. | CU-10, CU-15 |
+| RF-ENT-04 | El usuario puede renombrar una entidad, respetando la unicidad de nombre. El cambio queda en el historial de la entidad. | CU-11 |
+| RF-ENT-05 | El usuario puede eliminar una entidad, previa confirmación que avisa qué se elimina con ella. La baja es lógica y alcanza a sus gastos no eliminados, en una sola operación: cada gasto se da de baja con las mismas reglas que al eliminarlo solo (RF-GAS-09), es decir, se rechazan los pagos pendientes que la contraparte registró en los compartidos, la copia de la otra persona deja de estar vinculada (no se elimina, es de ella) y los espejos se desenlazan. Los gastos eliminados se quitan de la sesión de cuentas abierta y quedan en su historial. Al restaurar la entidad (RF-ENT-13) vuelven solo los gastos que se eliminaron con ella, no los que ya estaban eliminados. *Limitación conocida*: al restaurar, los pagos rechazados siguen rechazados y los espejos no se vuelven a enlazar. | CU-12 |
+| RF-ENT-06 | El usuario puede marcar y desmarcar una entidad como favorita. | CU-13 |
+| RF-ENT-07 | El detalle de una entidad muestra sus gastos activos, finalizados y pendientes de aprobación, sus totales y su historial de movimientos. | CU-14 |
+| RF-ENT-08 | El historial de una entidad registra: creación, cambio de nombre, vinculación y desvinculación (con quién), y la creación, renombrado, eliminación, restauración y postergación de sus gastos. Se puede filtrar por rango de fechas. | CU-14 |
+| RF-ENT-09 | El usuario puede vincular una entidad a otro usuario por su email. El email debe corresponder a un usuario registrado (`USUARIO_EMAIL_NOT_FOUND`), no puede ser el propio (`VINCULAR_CUENTA_PROPIA`) y un mismo usuario no puede estar vinculado a más de una entidad (`ENTIDAD_YA_VINCULADA`). | CU-15 |
+| RF-ENT-10 | El usuario puede desvincular una entidad, previa confirmación. La entidad muestra en todo momento a quién está vinculada. | CU-15 |
+| RF-ENT-11 | El usuario puede ver los gastos eliminados de una entidad y restaurarlos. | CU-16 |
+| RF-ENT-12 | Un usuario solo puede ver y operar sobre sus propias entidades. | — |
+| RF-ENT-13 | El listado de entidades muestra solo las activas; un botón permite ver las eliminadas y restaurarlas, previa confirmación. El listado se obtiene en una sola consulta que trae activas y eliminadas (campo `deleted`) y el cliente las separa. *Cumplimiento parcial*: la vista de eliminadas existe solo en la web; la app Flutter descarta las eliminadas del listado y todavía no ofrece restaurarlas. | CU-09 |
+
+## GAS — Gastos
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-GAS-01 | El usuario puede crear un gasto indicando: entidad, nombre, monto, moneda (ARS/USD/EUR/BRL/CLP/UYU), tipo (egreso/ingreso) y modalidad: pago único, en cuotas (cantidad de cuotas) o gasto fijo. | CU-17 |
+| RF-GAS-02 | Al crear un gasto se puede indicar cuántas cuotas ya están pagas; el sistema registra un pago por cada una. | CU-17 |
+| RF-GAS-03 | Al crear un gasto se puede crear en el mismo paso la entidad a la que pertenece y, si eligió pagar con otra entidad (RF-GAS-04), también la entidad de pago; la entidad creada queda seleccionada en el campo desde el que se creó. | CU-10, CU-17 |
+| RF-GAS-04 | Al crear un gasto se puede elegir "pagar con otra entidad" propia. El sistema crea un **gasto espejo** en esa entidad: mismos datos, cuotas y categorías, con el tipo opuesto, y deja ambos gastos enlazados. | CU-17 |
+| RF-GAS-05 | Si la entidad del gasto está vinculada a otro usuario, el gasto nace pendiente de aprobación y el sistema genera una copia para la contraparte (ver [CMP](#cmp--gastos-compartidos)). | CU-17 |
+| RF-GAS-06 | Al crear un gasto se lo puede marcar como postergado, salvo que se cree con todas sus cuotas pagas (pago único marcado como pagado, o en cuotas con todas pagas): en ese caso los clientes deshabilitan la opción y el sistema lo rechaza (`GASTO_PAGADO_NO_POSTERGABLE`). | CU-17, CU-23 |
+| RF-GAS-07 | El detalle de un gasto muestra sus datos, la entidad, sus categorías, el progreso de pago y su historial de movimientos. | CU-18 |
+| RF-GAS-08 | El usuario puede editar nombre, monto, moneda, tipo, modalidad (pago único, en cuotas o fijo), cantidad de cuotas, entidad y categorías de un gasto, salvo los campos bloqueados por RF-GAS-15. Los campos que el cliente no envía quedan como estaban (la imagen incluida). Cada cambio queda en el historial del gasto. Si el gasto tiene espejo, puede elegir aplicar los cambios también al espejo, que conserva su entidad y el tipo opuesto; valen también los bloqueos del espejo. *Limitación conocida*: en la app Flutter los cambios se aplican siempre a ambos, sin preguntar. | CU-19 |
+| RF-GAS-09 | El usuario puede eliminar un gasto, previa confirmación. La baja es lógica. Si el gasto tiene espejo, puede elegir eliminarlo también; si no, el enlace entre ambos se rompe. Si el gasto es compartido con otro usuario, antes de darlo de baja el sistema rechaza los pagos pendientes que la contraparte registró en su gasto (quedan como rechazados, RF-CMP-09) y se lo notifica, para que no queden pagos que nadie puede confirmar. | CU-20 |
+| RF-GAS-10 | El usuario puede restaurar un gasto eliminado de una entidad propia. | CU-16 |
+| RF-GAS-11 | El usuario puede postergar un gasto y quitar la postergación. Un gasto postergado queda fuera de la sesión de cuentas en curso. Si se posterga un gasto ya marcado en la sesión, la marca se quita. Un gasto con todas sus cuotas pagas no se puede postergar (`GASTO_PAGADO_NO_POSTERGABLE`), pero sí se le puede quitar la postergación; los gastos fijos no tienen esta restricción. | CU-23 |
+| RF-GAS-12 | El usuario puede marcar y desmarcar un gasto como favorito. Cuando el gasto se finaliza, deja de ser favorito automáticamente. | CU-24 |
+| RF-GAS-13 | Cada gasto conserva un historial de movimientos: creación, pagos, pagos pendientes, pagos rechazados por la contraparte, pagos retirados, reembolsos (con el motivo cuando se revierte un pago compartido), postergación y fin de postergación. | CU-18 |
+| RF-GAS-14 | Un usuario solo puede ver y operar sobre gastos de sus propias entidades (`NO_AUTORIZADO`). La copia de un gasto compartido que todavía no fue asignada a una entidad solo puede verla quien la recibió. | — |
+| RF-GAS-15 | Al editar, la API bloquea campos según el estado del gasto y rechaza un cambio en un campo bloqueado (409 `GASTO_CAMPO_NO_EDITABLE`, con el campo y el motivo). Las reglas, en orden: (1) las cuotas pagadas nunca se editan: se registran con pagar (RF-PAG-01) y se deshacen con revertir (RF-PAG-09); (2) un gasto finalizado solo admite cambiar nombre y categorías; (3) un gasto compartido con otro usuario también, porque la edición no llega a la copia de la otra persona; (4) un gasto marcado en la sesión de cuentas abierta no admite cambiar monto, moneda ni tipo hasta desmarcarlo o cerrar la sesión; (5) un gasto con pagos, confirmados o pendientes, no admite cambiar moneda, tipo ni modalidad. La cantidad de cuotas nunca puede quedar por debajo de las cuotas pagadas más las pendientes (`VALIDATION_ERROR`). El detalle del gasto devuelve los bloqueos (`edit_locks`) y los clientes muestran esos campos deshabilitados con el motivo. Si el gasto tiene pagos y se cambia el monto, los clientes avisan que los pagos hechos conservan su valor. | CU-19 |
+| RF-GAS-16 | Un gasto se puede mover a otra entidad propia, y queda registrado en el historial de ambas. No se puede mover desde ni hacia una entidad vinculada a otro usuario, ni a la entidad de su espejo (409 `GASTO_ENTIDAD_NO_EDITABLE`); tampoco cuando la edición tiene bloqueada la entidad (RF-GAS-15). Además del campo entidad al editar, el detalle del gasto tiene la acción **Transferir**, que cambia solo la entidad (`PUT /gastos/:id` con `financial_entity_id`): cuando el gasto no se puede mover (por ejemplo, porque está compartido con otro usuario) los clientes la muestran atenuada y, al elegirla, avisan el motivo con un snackbar sin abrir la transferencia; y ofrecen como destino solo las entidades propias, activas y no vinculadas a otro usuario, distintas de la actual y de la del espejo. La transferencia mueve solo este gasto, no su espejo, y conserva sus pagos e historial. La API valida nombre no vacío, monto mayor a 0, tipo, moneda y cantidades enteras (`VALIDATION_ERROR`). | CU-19 |
+| RF-GAS-17 | Al crear o editar un gasto son obligatorios: entidad, nombre y monto mayor a 0; si la modalidad es en cuotas, una cantidad de cuotas entera mayor a 0 y de como máximo 360; y si se paga con otra entidad, una entidad de pago distinta de la del gasto. Si falta algo, el formulario no se envía e indica qué campo falta y por qué. Si la cantidad de cuotas supera 360, el campo se marca en rojo apenas se escribe, con el mensaje "El máximo es de 360 cuotas.", y no se puede guardar. **Cumplimiento parcial**: la web lo cumple completo; la app Flutter aplica el máximo de 360 cuotas con su mensaje, pero en lo demás impide guardar sin indicar qué falta y no valida la cantidad de cuotas mínima (si queda vacía usa 1). La API exige entidad, nombre, monto y moneda (`Faltan campos obligatorios`) y rechaza más de 360 cuotas en un gasto no fijo, al crear y al editar (400 `VALIDATION_ERROR`, campo `number_of_quotas`, "El máximo es de 360 cuotas."); al crear no valida monto positivo ni la cantidad de cuotas mínima. | CU-17, CU-19 |
+
+## PAG — Pagos y cobros
+
+"Pagar" aplica a egresos y "registrar cobro" a ingresos; la regla es la misma.
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-PAG-01 | El usuario puede registrar el pago de una cuota de un gasto. Hay dos modalidades: **directo** (el pago se registra en el momento) y **diferido** (el gasto solo queda marcado en la sesión de cuentas y el pago se registra al finalizarla). | CU-21 |
+| RF-PAG-02 | Desde el **dashboard** solo se puede pagar con una sesión de cuentas abierta, y siempre de forma diferida. Sin sesión, el sistema lo impide y avisa (`SETTLEMENT_REQUIRED`). | CU-21, CU-27 |
+| RF-PAG-03 | Desde el **detalle de un gasto**, el pago es diferido si hay una sesión abierta y directo si no la hay. | CU-21 |
+| RF-PAG-04 | Desde el **detalle de una entidad**, el pago es siempre directo, haya o no una sesión abierta. | CU-21 |
+| RF-PAG-05 | Un pago directo no forma parte de ninguna sesión ni snapshot de cuentas: solo queda en el historial del gasto. | CU-21 |
+| RF-PAG-06 | Un gasto postergado no puede marcarse en la sesión de cuentas (`GASTO_POSTERGADO`). Si se le registra un pago directo, la postergación se quita automáticamente y queda asentado en el historial. | CU-21, CU-23 |
+| RF-PAG-07 | Un gasto no fijo no admite más pagos que su cantidad de cuotas: con todas las cuotas pagas no puede pagarse ni marcarse en la sesión (`GASTO_YA_SALDADO`). Tampoco puede pagarse ni marcarse si las cuotas que quedan ya están cubiertas por pagos propios pendientes de confirmación (`GASTO_CUOTAS_CUBIERTAS`); al marcar un lote, esos gastos se omiten sin impedir el resto. Un gasto fijo admite pagos indefinidamente. | CU-21, CU-27 |
+| RF-PAG-08 | Si el gasto es compartido con otro usuario, el pago queda como **pendiente de confirmación** hasta que la contraparte lo confirme, y se le notifica. No se generan más pendientes que las cuotas restantes. Cada uno marca y paga su copia por su cuenta: si al registrar el pago (directo, o al finalizar la sesión en el diferido) la contraparte ya tiene un pago pendiente sobre ese gasto, el pago no crea otro pendiente sino que **confirma** el pendiente más antiguo de la contraparte (RF-CMP-08). El dashboard indica en cada gasto compartido si la otra persona ya registró un pago, y que marcarlo en la sesión lo confirma al terminar. Mientras un usuario cierra su sesión, los gastos involucrados y sus copias quedan bloqueados, así dos cierres simultáneos no generan pendientes cruzados. | CU-21, CU-27, CU-28, CU-36 |
+| RF-PAG-09 | Desde el detalle de un gasto, el usuario puede revertir **cualquiera** de los pagos de un gasto, en cuotas o fijo. En un gasto no compartido la reversión es directa: el sistema elimina ese pago y registra un reembolso en el historial. En un gasto compartido con otro usuario: un pago confirmado no se elimina, sino que genera una solicitud de reversión para la otra persona (RF-CMP-13); un pago propio pendiente de confirmación se retira (RF-CMP-12); un pago pendiente que registró la contraparte no se puede revertir desde ahí (`PAGO_REGISTRADO_POR_OTRO`). Un pago que no existe o es de otro gasto se rechaza (`PAGO_NOT_FOUND`). La acción "revertir último pago" aplica las mismas reglas al último pago; si no hay pagos, lo impide (`SIN_CUOTAS_PARA_REVERTIR`). La reversión nunca pasa por la sesión de cuentas. | CU-22, CU-40, CU-41 |
+| RF-PAG-10 | El usuario puede pagar en lote todos los gastos de una entidad. Los que no se pueden pagar (inexistentes, postergados o ya saldados) se informan sin impedir el resto. | CU-27 |
+
+## CAT — Categorías
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-CAT-01 | El usuario puede listar sus categorías. Cada categoría tiene nombre y color y pertenece a un único usuario. | CU-25 |
+| RF-CAT-02 | El usuario puede crear una categoría, incluso mientras crea o edita un gasto. | CU-25 |
+| RF-CAT-03 | Un gasto puede tener cero o más categorías, que se asignan al crearlo o al editarlo. | CU-17, CU-19 |
+
+## CTA — Hacer cuentas
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-CTA-01 | El usuario puede iniciar una sesión de cuentas. Solo puede haber una sesión abierta por usuario; iniciar con una ya abierta devuelve la existente. | CU-26 |
+| RF-CTA-02 | La sesión y sus marcas se guardan en el servidor: no tiene límite de tiempo y el usuario puede retomarla más tarde y desde otro dispositivo. | CU-26 |
+| RF-CTA-03 | Con una sesión abierta, el usuario puede marcar y desmarcar gastos, de a uno o todos los de una entidad a la vez. Marcar un gasto **no** registra el pago. Solo se pueden marcar gastos de entidades propias (`NO_AUTORIZADO`); si un lote incluye uno ajeno, no se marca ninguno. | CU-27 |
+| RF-CTA-04 | La aplicación muestra en todo momento que hay una sesión abierta, desde cuándo y cuántos gastos hay marcados. | CU-26, CU-27 |
+| RF-CTA-05 | Al finalizar la sesión, el sistema registra el pago de una cuota por cada gasto marcado, todos con la misma fecha; en un gasto compartido, el pago confirma el pendiente de la contraparte si lo hay, o queda pendiente de confirmación (RF-PAG-08). Los gastos marcados que ya no se pueden pagar (eliminados, postergados, saldados, o compartidos con las cuotas restantes cubiertas por pagos propios pendientes) se descartan de la sesión. | CU-28 |
+| RF-CTA-06 | Al finalizar la sesión, el sistema genera un snapshot con: mes, inicio y fin de la sesión, totales por moneda (egresos, ingresos y cantidad), cantidad de entidades y el detalle por gasto (entidad, monto de la cuota, moneda, tipo, número de cuota, el pago que se registró, si es compartido, con quién y si el ítem es un pago propio o la confirmación del pago de la otra persona). El número de cuota cuenta los pagos y los pendientes. | CU-28 |
+| RF-CTA-07 | Al finalizar la sesión, todos los gastos postergados del usuario dejan de estarlo. | CU-28 |
+| RF-CTA-08 | El usuario puede descartar la sesión abierta. Se pierden las marcas y no se registra ningún pago ni snapshot. | CU-29 |
+| RF-CTA-09 | El usuario puede consultar el historial de sesiones finalizadas, filtrarlo por rango de fechas y ver el detalle de cada snapshot agrupado por entidad. Desde ese detalle, cada entidad lleva a su detalle y cada gasto al detalle del gasto. | CU-30 |
+| RF-CTA-10 | El usuario puede copiar al portapapeles el resumen completo de un snapshot o el de una de sus entidades, con formato apto para WhatsApp. | CU-31 |
+| RF-CTA-11 | No se puede finalizar una sesión sin gastos marcados: no se genera un snapshot vacío. Los clientes lo impiden y avisan con un snackbar; la API también lo rechaza (409 `SETTLEMENT_EMPTY`), incluso cuando la limpieza de RF-CTA-05 descarta todos los marcados. En ese caso no se registra ningún pago y la sesión sigue abierta, para que el usuario marque gastos o la descarte (RF-CTA-08). | CU-28 |
+| RF-CTA-12 | La sesión es personal: refleja lo que el usuario dice que pagó. El detalle de un snapshot muestra en cada pago compartido su estado **actual**, calculado al consultarlo: pendiente, aprobado, rechazado, retirado, reversión pendiente o revertido; un pago no compartido que se revirtió después se muestra como revertido. Además de los totales marcados, el detalle muestra por moneda el **neto confirmado**, que excluye los pagos pendientes, rechazados, retirados y revertidos. El historial indica cuántos pagos de cada snapshot siguen sin confirmar. Las dos pantallas se actualizan en tiempo real cuando la otra persona responde. Un ítem que no guardó su pago en el snapshot no muestra estado y cuenta como confirmado. | CU-30 |
+
+## CMP — Gastos compartidos
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-CMP-01 | Cuando un usuario (emisor) crea un gasto en una entidad vinculada, el gasto queda `PENDING_APPROVAL` y se crea una copia para el usuario vinculado (receptor), también pendiente. | CU-17 |
+| RF-CMP-02 | El usuario puede ver sus gastos compartidos **recibidos** y **emitidos** con su estado (pendiente, aprobado, rechazado), los pagos compartidos separados en "por confirmar" (los registró la contraparte) y "esperando" (los registró él), y las solicitudes de reversión separadas igual: las que pidió la otra persona y las que pidió él. | CU-32 |
+| RF-CMP-03 | El receptor puede aprobar un gasto recibido asignándolo a una entidad propia existente o creando una nueva. Al aprobar, el gasto original y la copia pasan a `ACTIVE`. | CU-33 |
+| RF-CMP-04 | Al aprobar, la entidad elegida queda vinculada automáticamente al emisor: siempre si se crea nueva, y si es una existente, cuando no está vinculada a nadie y el receptor no tiene otra entidad vinculada a ese emisor (RF-ENT-09). La vinculación queda en el historial de la entidad. Así, los demás gastos pendientes del mismo emisor pasan a sugerir esa entidad y se agrupan bajo ella. | CU-33 |
+| RF-CMP-05 | El receptor puede rechazar un gasto recibido. El original y la copia pasan a `REJECTED`. | CU-34 |
+| RF-CMP-06 | El emisor puede reintentar un gasto rechazado. El original y la copia vuelven a `PENDING_APPROVAL`. | CU-35 |
+| RF-CMP-07 | Solo el receptor puede aprobar o rechazar, y solo mientras el gasto está pendiente (`NO_AUTORIZADO`, `GASTO_NO_PENDIENTE_APROBACION`). Solo el emisor puede reintentar, y solo si el gasto está rechazado (`GASTO_COMPARTIDO_NO_RECHAZADO`). | CU-33, CU-34, CU-35 |
+| RF-CMP-08 | La contraparte puede confirmar un pago pendiente: pasa a ser un pago efectivo y, en la misma operación, se registra el pago en la copia del gasto de la contraparte, con el monto por cuota de la copia y la misma fecha de pago, salvo que la copia ya esté saldada; los dos pagos quedan vinculados entre sí. Así las dos partes ven la misma cuota paga. Se confirma de dos formas: desde Compartidos, al instante, o marcando la copia en la sesión de cuentas, que la confirma al finalizarla (RF-PAG-08). Si quien confirma desde Compartidos tenía la copia marcada en su sesión abierta, la marca se quita para no registrar otro pago al cerrarla. Mientras la copia está marcada en la sesión abierta, el pago por confirmar lo indica en Compartidos («se confirma al terminar las cuentas»). Al finalizar la sesión, el contador de pagos por confirmar descuenta los que la sesión confirmó. | CU-28, CU-36 |
+| RF-CMP-09 | La contraparte puede rechazar un pago pendiente: el pago queda como rechazado (no se borra, para que el snapshot de quien lo registró lo muestre así) y la cuota vuelve a quedar sin pagar. Si quien rechaza tenía la copia marcada en su sesión abierta, la marca se quita. | CU-37 |
+| RF-CMP-10 | Quien registró un pago no puede confirmarlo ni rechazarlo; solo la contraparte del gasto compartido (`NO_AUTORIZADO`). | CU-36, CU-37 |
+| RF-CMP-11 | La aplicación muestra un contador de gastos recibidos pendientes de aprobación, de pagos por confirmar y de solicitudes de reversión por responder. | CU-32 |
+| RF-CMP-12 | Quien registró un pago compartido puede retirarlo mientras siga pendiente, desde Compartidos ("esperando") o desde el detalle del gasto, previa confirmación. El pago queda como retirado, la cuota vuelve a quedar sin pagar y se notifica a la contraparte. Solo puede retirarlo quien lo registró (`NO_AUTORIZADO`). | CU-22, CU-40 |
+| RF-CMP-13 | Cualquiera de las dos partes puede pedir la reversión de un pago confirmado de un gasto compartido, desde el detalle de su gasto (RF-PAG-09), previa confirmación. La solicitud queda en los dos pagos vinculados y se notifica a la otra parte. No se puede pedir dos veces la reversión del mismo pago (`REVERSION_YA_SOLICITADA`). Mientras está pendiente, el pago sigue contando como pago y no se puede volver a pedir su reversión. | CU-22, CU-41 |
+| RF-CMP-14 | La otra parte responde la solicitud desde Compartidos. Si la acepta, previa confirmación, el sistema elimina los dos pagos vinculados y registra un reembolso en el historial de cada gasto; si la rechaza, el pago se mantiene. Quien pidió la reversión no puede responderla (`NO_AUTORIZADO`), y una solicitud ya resuelta no se puede responder (`REVERSION_NOT_FOUND`). Se notifica a quien la pidió. *Limitación conocida*: un pago confirmado que no tiene un pago vinculado en la copia se revierte solo en el gasto donde está. | CU-42 |
+| RF-CMP-15 | Quien pidió la reversión puede cancelarla mientras esté pendiente, desde Compartidos o desde el detalle del gasto. El pago queda como estaba y se notifica a la otra parte. | CU-43 |
+
+## NOT — Notificaciones en tiempo real
+
+| ID | Requerimiento | CU |
+| --- | --- | --- |
+| RF-NOT-01 | El sistema notifica en tiempo real al usuario afectado cuando: recibe un gasto compartido nuevo o reintentado, le aprueban o rechazan un gasto que emitió, le registran un pago pendiente de confirmación, le confirman o rechazan un pago que registró, le retiran un pago que tenía para confirmar, le piden o le cancelan una reversión, o le aceptan o rechazan una reversión que pidió. En la web cada evento muestra un aviso (snackbar) con quién hizo la acción. *Cumplimiento parcial*: la app Flutter no muestra avisos; solo actualiza los datos (RF-NOT-02). | CU-38 |
+| RF-NOT-02 | Al recibir una notificación, las pantallas afectadas (compartidos, dashboard, detalle de entidad, detalle de un gasto, historial y detalle de un snapshot) actualizan sus datos sin que el usuario recargue. El detalle de entidad (incluida la pestaña de pendientes) se actualiza con todos los eventos del canal. El detalle de un gasto compartido se actualiza con los eventos de pagos; el de un gasto no compartido no escucha eventos, porque nadie más puede cambiarlo. *Cumplimiento parcial*: en la app Flutter el dashboard no se actualiza con las notificaciones. | CU-38 |
+| RF-NOT-03 | Cada usuario recibe únicamente las notificaciones de su propio canal. | CU-38 |
+
+## Pendiente / fuera de alcance
+
+Funcionalidad conversada pero **no implementada**. No son requerimientos vigentes; se listan para no confundirlos con comportamiento existente. Detalle en `checklist_mis_cuentas.md` y `checklits_expense_manager.md`.
+
+- Imágenes adjuntas para gastos y entidades.
+- Historial ampliado del gasto (ediciones, "finalizado").
+- Confirmación especial para eliminar un gasto compartido y opciones para deshacer esa eliminación.
+- Métricas de ingresos/egresos por categoría.
+- Avisos de los eventos en tiempo real en la app Flutter (hoy solo actualiza los datos; ver RF-NOT-01).
+- Notificaciones de vencimientos, integración con Mercado Pago, entidades privadas con contraseña, modo daltonismo, modo simple/avanzado.

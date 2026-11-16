@@ -1,0 +1,156 @@
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import Icon from '@/components/Icon';
+import useAuth from '@/store/use-auth-store';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
+
+export default function LinkUserDialog({
+    entity,
+    dialog,
+    onClose,
+    onVincular,
+    onDesvincular,
+    loading = false,
+}) {
+    const currentUserEmail = useAuth((s) => s.user?.email);
+    const [emailInput, setEmailInput] = useState('');
+    const [error, setError] = useState('');
+
+    const isSelfEmail =
+        !!currentUserEmail &&
+        emailInput.trim().toLowerCase() === currentUserEmail.trim().toLowerCase();
+
+    const closeDialog = useCallback(() => {
+        if (loading) return;
+        setEmailInput('');
+        setError('');
+        onClose();
+    }, [loading, onClose]);
+
+    const dirty = dialog === 'link' && emailInput.trim() !== '';
+    const requestClose = useDiscardGuard(dirty, closeDialog, { busy: loading });
+
+    useEffect(() => {
+        if (!dialog) return;
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [dialog, requestClose]);
+
+    const handleVincular = async () => {
+        if (!emailInput.trim() || isSelfEmail) return;
+        setError('');
+        try {
+            await onVincular(emailInput.trim());
+            closeDialog();
+        } catch (err) {
+            setError(err?.response?.data?.error || 'Error al vincular usuario');
+        }
+    };
+
+    const handleDesvincular = async () => {
+        setError('');
+        try {
+            await onDesvincular();
+            closeDialog();
+        } catch (err) {
+            setError(err?.response?.data?.error || 'Error al desvincular usuario');
+        }
+    };
+
+    return (
+        <>
+            {dialog &&
+                createPortal(
+                    <div
+                        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+                        onMouseDown={(e) => e.target === e.currentTarget && requestClose()}
+                    >
+                        <div className="w-full max-w-sm rounded-xl bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-xl p-6">
+                            {dialog === 'link' ? (
+                                <>
+                                    <h3 className="text-lg font-bold mb-2 dark:text-white flex items-center gap-2">
+                                        <Icon name="link" className="text-base" />
+                                        Vincular usuario
+                                    </h3>
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+                                        Ingresá el email del usuario. Los gastos de esta entidad se
+                                        compartirán automáticamente con él.
+                                    </p>
+                                    <input
+                                        type="email"
+                                        placeholder="Ej: juan@email.com"
+                                        value={emailInput}
+                                        disabled={loading}
+                                        autoFocus
+                                        onChange={(e) => {
+                                            setEmailInput(e.target.value);
+                                            setError('');
+                                        }}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleVincular()}
+                                        className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-transparent dark:text-white text-sm disabled:opacity-60"
+                                    />
+                                    {isSelfEmail && (
+                                        <p className="text-xs text-red-500 mt-2">
+                                            No podés vincular tu propia cuenta.
+                                        </p>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <h3 className="text-lg font-bold mb-2 dark:text-white flex items-center gap-2">
+                                        <Icon name="link_off" className="text-base text-red-500" />
+                                        Desvincular usuario
+                                    </h3>
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+                                        ¿Seguro que querés desvincular a{' '}
+                                        <span className="font-medium text-zinc-700 dark:text-zinc-200">
+                                            {entity.linked_user_name ||
+                                                entity.linked_user_email ||
+                                                'este usuario'}
+                                        </span>
+                                        ? Los nuevos gastos dejarán de compartirse automáticamente.
+                                    </p>
+                                </>
+                            )}
+
+                            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={requestClose}
+                                    disabled={loading}
+                                    className="px-4 py-2 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white text-sm disabled:opacity-50"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={dialog === 'link' ? handleVincular : handleDesvincular}
+                                    disabled={
+                                        loading ||
+                                        (dialog === 'link' && (!emailInput.trim() || isSelfEmail))
+                                    }
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 ${
+                                        dialog === 'link'
+                                            ? 'btn-save bg-primary text-background-dark font-bold'
+                                            : 'bg-red-600 hover:bg-red-700 text-white'
+                                    }`}
+                                >
+                                    {loading && (
+                                        <Icon
+                                            name="progress_activity"
+                                            className="animate-spin text-sm"
+                                        />
+                                    )}
+                                    {dialog === 'link' ? 'Vincular' : 'Desvincular'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>,
+                    document.body,
+                )}
+        </>
+    );
+}

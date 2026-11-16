@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+const TONE = {
+    danger: 'bg-red-600 hover:bg-red-700',
+    primary: 'bg-primary text-background-dark hover:bg-primary/90',
+};
+
 export default function ConfirmDeleteModal({
     open,
     title = '¿Eliminar?',
     message = 'Esta acción no se puede deshacer.',
     confirmLabel = 'Eliminar',
     cancelLabel = 'Cancelar',
+    tone = 'danger',
+    loading = false,
+    loadingLabel = 'Procesando...',
     onConfirm,
     onCancel,
 }) {
@@ -31,31 +39,36 @@ export default function ConfirmDeleteModal({
                 transition-opacity duration-150
                 ${open ? 'opacity-100' : 'opacity-0'}
             `}
+            onMouseDown={(e) => e.target === e.currentTarget && !loading && onCancel?.()}
         >
             <div
                 className={`
-                    w-[90vw] max-w-sm rounded-xl bg-[#111714] p-6 border border-[#29382f]
-                    shadow-lg text-white transition-all duration-150
+                    w-[90vw] max-w-sm rounded-xl bg-white dark:bg-[#111714] p-6 border border-slate-200 dark:border-[#29382f]
+                    shadow-lg text-slate-900 dark:text-white transition-all duration-150
                     ${open ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
                 `}
             >
                 <h2 className="text-lg font-bold mb-2">{title}</h2>
 
-                <p className="text-sm text-[#9eb7a8] mb-6">{message}</p>
+                <p className="text-sm text-slate-500 dark:text-[#9eb7a8] mb-6">{message}</p>
 
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onCancel}
-                        className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] transition-colors"
+                        disabled={loading}
+                        className="cursor-pointer h-10 px-4 rounded-lg text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {cancelLabel}
                     </button>
 
                     <button
                         onClick={onConfirm}
-                        className="cursor-pointer h-10 px-4 rounded-lg bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors"
+                        disabled={loading}
+                        className={`cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                            TONE[tone] ?? TONE.danger
+                        }`}
                     >
-                        {confirmLabel}
+                        {loading ? loadingLabel : confirmLabel}
                     </button>
                 </div>
             </div>

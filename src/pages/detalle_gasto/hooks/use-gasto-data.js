@@ -1,11 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
-import { pagarCuota as pagarCuota2, refundCuota as refundCuota2, fetchGastoById, updateGasto, deleteGasto } from '@/services/api';
+import {
+    settleQuota as settleQuotaApi,
+    revertirPago as revertirPagoApi,
+    cancelarReversion as cancelarReversionApi,
+    fetchGastoById,
+    updateGasto,
+    deleteGasto,
+} from '@/services/api';
+import { isSettlementActive } from '@/hooks/use-settlements';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useSettlementStore } from '@/store/use-settlement-store';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 export function useGastoData() {
     const { id } = useParams();
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const navigate = useNavigate();
     const [gasto, setGasto] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -13,6 +24,35 @@ export function useGastoData() {
     useEffect(() => {
         load();
     }, [id, token]);
+
+    const sharedRef = useRef(false);
+
+    useEffect(() => {
+        sharedRef.current = Boolean(gasto?.shared_counterparty);
+    }, [gasto]);
+
+    const pusherEvents = useMemo(() => {
+        const refreshIfShared = async () => {
+            if (!sharedRef.current) return;
+            try {
+                setGasto(await fetchGastoById(id, token));
+            } catch (err) {
+                console.error('Error actualizando gasto', err);
+            }
+        };
+        return {
+            'pago.pendiente': refreshIfShared,
+            'pago.confirmado': refreshIfShared,
+            'pago.rechazado': refreshIfShared,
+            'pago.retirado': refreshIfShared,
+            'pago.reversion_solicitada': refreshIfShared,
+            'pago.reversion_cancelada': refreshIfShared,
+            'pago.reversion_aceptada': refreshIfShared,
+            'pago.reversion_rechazada': refreshIfShared,
+        };
+    }, [id, token]);
+
+    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
 
     async function load(silent = false) {
         try {
@@ -29,34 +69,91 @@ export function useGastoData() {
 
     async function actualizar(payload) {
         if (!gasto) return;
-        await updateGasto(gasto.id, payload, token);
-        await load(true);
+        const updated = await updateGasto(gasto.id, payload, token);
+        setGasto(updated);
     }
 
-    async function pagarCuota() {
+    async function transferir(entityId, entityName) {
         if (!gasto) return;
-        await pagarCuota2(gasto.id, token);
-        await load(true);
+        const updated = await updateGasto(gasto.id, { financial_entity_id: entityId }, token);
+        setGasto(updated);
+        useSnackbarStore
+            .getState()
+            .show(`Gasto transferido a "${entityName}".`, 'success', 'swap_horiz');
     }
 
-    async function refundCuota() {
+    async function settleQuota() {
         if (!gasto) return;
-        await refundCuota2(gasto.id, token);
-        await load(true);
+        const deferred = isSettlementActive();
+        try {
+            const updated = await settleQuotaApi(gasto.id, token);
+            if (deferred) useSettlementStore.getState().applyMarked([gasto.id]);
+            setGasto(updated);
+            useSnackbarStore
+                .getState()
+                .show(
+                    deferred
+                        ? 'Gasto marcado. Se registra al terminar las cuentas.'
+                        : 'Pago registrado en el historial del gasto.',
+                    'success',
+                    deferred ? 'playlist_add_check' : 'check_circle',
+                );
+        } catch (err) {
+            console.error('Error registrando pago', err);
+        }
     }
 
-    async function eliminar() {
-        if (!gasto) return;
+    async function revertirPago(movement) {
+        if (!gasto || !movement) return;
+        const mensajes = {
+            revertido: 'Pago revertido en el historial del gasto.',
+            retirado: 'Pago retirado. La cuota vuelve a quedar sin pagar.',
+            solicitada: 'Le pedimos a la otra persona que confirme la reversión.',
+        };
+        try {
+            const { resultado, gasto: updated } = await revertirPagoApi(
+                gasto.id,
+                movement.id,
+                token,
+            );
+            setGasto(updated);
+            useSnackbarStore.getState().show(mensajes[resultado], 'success', 'undo');
+        } catch (err) {
+            console.error('Error revirtiendo pago', err);
+        }
+    }
+
+    async function cancelarReversion(movement) {
+        if (!gasto || !movement) return;
+        try {
+            await cancelarReversionApi(movement.id, token);
+            await load(true);
+            useSnackbarStore.getState().show('Pedido de reversión cancelado.', 'success');
+        } catch (err) {
+            console.error('Error cancelando la reversión', err);
+        }
+    }
+
+    async function eliminar(deleteLinked = false) {
+        if (!gasto) return false;
         setLoading(true);
-        await deleteGasto(gasto.id, token);
-        setLoading(false);
+        try {
+            await deleteGasto(gasto.id, token, { deleteLinked });
+            return true;
+        } catch {
+            return false;
+        } finally {
+            setLoading(false);
+        }
     }
 
     return {
         gasto,
         actualizar,
-        pagarCuota,
-        refundCuota,
+        transferir,
+        settleQuota,
+        revertirPago,
+        cancelarReversion,
         eliminar,
         load,
         loading,

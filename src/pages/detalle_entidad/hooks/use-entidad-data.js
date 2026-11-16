@@ -6,39 +6,64 @@ import {
     deleteFinancialEntity,
     vincularUsuarioEntidad,
     desvincularUsuarioEntidad,
+    restaurarGasto as restaurarGastoApi,
+    settleQuota as settleQuotaApi,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
-import { usePayments } from '@/hooks/use-payments';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { useEntitiesStore } from '@/store/use-entities-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
 import { useParams } from 'react-router-dom';
+import { usePusherChannel } from '@/hooks/use-pusher-channel';
 
 export function useEntidadData() {
     const { id } = useParams();
-    const { token } = useAuth();
-    const { handleConfirm } = usePayments(token);
+    const { token, user } = useAuth();
 
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!token) return;
-
-        const load = async () => {
+    const loadEntity = useCallback(
+        async ({ silent = false } = {}) => {
+            if (!token) return;
             try {
-                setLoading(true);
+                if (!silent) setLoading(true);
                 const data = await fetchFinancialEntityById(id, token);
                 setEntity(data);
             } catch (err) {
                 console.error('Error cargando entidad', err);
             } finally {
-                setLoading(false);
+                if (!silent) setLoading(false);
             }
-        };
+        },
+        [id, token],
+    );
 
-        load();
-    }, [id, token]);
+    useEffect(() => {
+        loadEntity();
+    }, [loadEntity]);
+
+    const pusherEvents = useMemo(() => {
+        const reloadSilently = () => loadEntity({ silent: true });
+        return {
+            'compartido.nuevo': reloadSilently,
+            'compartido.aprobado': reloadSilently,
+            'compartido.rechazado': reloadSilently,
+            'pago.pendiente': reloadSilently,
+            'pago.confirmado': reloadSilently,
+            'pago.rechazado': reloadSilently,
+            'pago.retirado': reloadSilently,
+            'pago.reversion_solicitada': reloadSilently,
+            'pago.reversion_cancelada': reloadSilently,
+            'pago.reversion_aceptada': reloadSilently,
+            'pago.reversion_rechazada': reloadSilently,
+        };
+    }, [loadEntity]);
+
+    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
 
     const stats = useMemo(() => {
-        if (!entity) return { amount: 0, debts: 0, fixed: 0, finalized: 0 };
+        if (!entity) return { amount: 0, debts: 0, fixed: 0, finalized: 0, pending: 0 };
 
         let totalAmount = 0;
         let fixedCount = 0;
@@ -60,6 +85,7 @@ export function useEntidadData() {
             debts: entity.gastos_activos.length,
             fixed: fixedCount,
             finalized: entity.gastos_inactivos.length,
+            pending: entity.gastos_pendientes?.length ?? 0,
         };
     }, [entity]);
 
@@ -71,6 +97,13 @@ export function useEntidadData() {
             const total = Number(nuevo.number_of_quotas || 0);
 
             setEntity((prev) => {
+                if (nuevo.status === 'PENDING_APPROVAL') {
+                    return {
+                        ...prev,
+                        gastos_pendientes: [...(prev.gastos_pendientes ?? []), nuevo],
+                    };
+                }
+
                 if (isFixed) {
                     return {
                         ...prev,
@@ -106,20 +139,49 @@ export function useEntidadData() {
 
     const actualizarEntidad = useCallback(
         async (newName) => {
-            await updateFinancialEntity(id, newName, token);
-            const data = await fetchFinancialEntityById(id, token);
-            setEntity(data);
+            const data = await updateFinancialEntity(id, newName, token);
+            useEntitiesStore.getState().updateEntity(id, { name: data.name });
+            setEntity((prev) =>
+                prev
+                    ? { ...prev, name: data.name, movements: data.movements ?? prev.movements }
+                    : prev,
+            );
         },
         [id, token],
     );
 
     const eliminarEntidad = useCallback(async () => {
-        await deleteFinancialEntity(id, token);
+        const deleted = await deleteFinancialEntity(id, token);
+        useSettlementStore.getState().applyUnmarked(deleted?.deleted_purchase_ids);
+        useEntitiesStore.getState().removeEntity(id);
     }, [id, token]);
+
+    const restaurarGasto = useCallback(
+        async (gastoId) => {
+            const restored = await restaurarGastoApi(gastoId, token);
+            setEntity((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          gastos_eliminados: (prev.gastos_eliminados ?? []).filter(
+                              (g) => g.id !== gastoId,
+                          ),
+                          gastos_activos: [restored, ...prev.gastos_activos],
+                      }
+                    : prev,
+            );
+        },
+        [token],
+    );
 
     const vincularUsuario = useCallback(
         async (email) => {
             const updated = await vincularUsuarioEntidad(id, email, token);
+            useEntitiesStore.getState().updateEntity(id, {
+                linked_user_id: updated.linked_user_id,
+                linked_user_name: updated.linked_user_name,
+                linked_user_email: updated.linked_user_email,
+            });
             setEntity((prev) => ({
                 ...prev,
                 linked_user_id: updated.linked_user_id,
@@ -132,6 +194,11 @@ export function useEntidadData() {
 
     const desvincularUsuario = useCallback(async () => {
         await desvincularUsuarioEntidad(id, token);
+        useEntitiesStore.getState().updateEntity(id, {
+            linked_user_id: null,
+            linked_user_name: null,
+            linked_user_email: null,
+        });
         setEntity((prev) => ({
             ...prev,
             linked_user_id: null,
@@ -140,22 +207,44 @@ export function useEntidadData() {
         }));
     }, [id, token]);
 
-    const pagarCuota = useCallback(
+    const settleQuota = useCallback(
         async (gasto) => {
-            const [updated] = await handleConfirm([gasto]);
+            try {
+                const updated = await settleQuotaApi(gasto.id, token, { direct: true });
+                const isFinished =
+                    !updated.fixed_expense &&
+                    Number(updated.payed_quotas) >= Number(updated.number_of_quotas);
 
-            if (updated) {
                 setEntity((prev) => {
                     if (!prev) return prev;
-                    const update = (list) =>
-                        list.map((g) => (String(g.id) === String(updated.id) ? { ...g, ...updated } : g));
-                    return { ...prev, gastos_activos: update(prev.gastos_activos) };
+                    let movedToInactive = false;
+                    const activos = prev.gastos_activos.reduce((acc, g) => {
+                        if (g.id !== updated.id) {
+                            acc.push(g);
+                        } else if (!isFinished) {
+                            acc.push(updated);
+                        } else {
+                            movedToInactive = true;
+                        }
+                        return acc;
+                    }, []);
+                    return {
+                        ...prev,
+                        gastos_activos: activos,
+                        gastos_inactivos: movedToInactive
+                            ? [updated, ...prev.gastos_inactivos]
+                            : prev.gastos_inactivos,
+                    };
                 });
-            }
 
-            return updated;
+                useSnackbarStore
+                    .getState()
+                    .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
+            } catch (err) {
+                console.error('Error registrando pago', err);
+            }
         },
-        [handleConfirm],
+        [token],
     );
 
     return {
@@ -167,7 +256,9 @@ export function useEntidadData() {
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
-        pagarCuota,
+        settleQuota,
         setEntity,
+        gastosEliminados: entity?.gastos_eliminados ?? [],
+        restaurarGasto,
     };
 }

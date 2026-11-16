@@ -1,64 +1,98 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import HeaderDetalle from './components/HeaderDetalle';
 import InfoItem from './components/InfoItem';
 import ProgresoPago from './components/ProgresoPago';
-import CuotasSection from './components/CuotasSection';
-import PeligroEliminar from '@/components/PeligroEliminar';
+import HistorialSection from './components/HistorialSection';
+import DeleteExpenseModal from './components/DeleteExpenseModal';
 import { useGastoUI } from './hooks/use-gasto-ui';
 import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { formatMoney } from '@/utils/FormatMoney';
 import UpdateExpenseModal from '@/components/modals/Expenses/UpdateExpense/UpdateExpenseModal';
+import TransferExpenseModal from '@/components/modals/Expenses/TransferExpense/TransferExpenseModal';
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
+import { useSettlementStore } from '@/store/use-settlement-store';
 
 export default function DetalleGasto() {
     const {
         gasto,
         porcentaje,
         totalPagado,
-        pagarCuota,
-        refundCuota,
+        settleQuota,
+        revertirPago,
+        cancelarReversion,
         actualizar,
+        transferir,
+        transferLock,
         eliminar,
         loading,
         volverALista,
-        // onSeleccionAdjuntos,
     } = useGastoUI();
     const { getEntityById } = useEntitiesStore();
+    const settlementActive = useSettlementStore((s) => s.active);
     const [editOpen, setEditOpen] = useState(false);
+    const [transferOpen, setTransferOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     if (loading) {
         return <Loader />;
     }
 
     if (!gasto) return null;
-    console.log('Gasto en DetalleGasto:', gasto);
     return (
-        <div className="min-h-dvh w-full bg-background-dark text-white font-display">
-            <div className="px-4 md:px-10 lg:px-20 xl:px-40 py-6 flex justify-center">
-                <div className="w-full max-w-[960px] flex flex-col gap-8">
+        <div className="w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
+            <div className="sm:px-2 md:px-6 lg:px-10 py-2 sm:py-6 flex justify-center">
+                <div className="w-full max-w-[960px] flex flex-col gap-6 sm:gap-8">
                     {!loading ? (
                         <HeaderDetalle
                             gasto={gasto}
                             marcarProxima={() => setConfirmOpen(true)}
                             abrirEditar={() => setEditOpen(true)}
+                            abrirTransferir={() => setTransferOpen(true)}
+                            abrirEliminar={() => setDeleteOpen(true)}
+                            transferLock={transferLock}
                         />
                     ) : null}
-                    <div className="bg-[#111714] rounded-xl p-6 shadow-sm flex flex-col gap-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
+                    <div className="bg-white dark:bg-[#111714] rounded-xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem
                                 label="Entidad"
-                                value={getEntityById(gasto.financial_entity_id)?.name}
+                                value={
+                                    gasto.financial_entity_id ? (
+                                        <Link
+                                            to={`/app/entidades/${gasto.financial_entity_id}`}
+                                            className="text-primary hover:underline"
+                                        >
+                                            {getEntityById(gasto.financial_entity_id)?.name ??
+                                                'Ver entidad'}
+                                        </Link>
+                                    ) : null
+                                }
                             />
                             <InfoItem
                                 label="Monto Total"
                                 value={formatMoney(gasto.amount, gasto.currency_type)}
                             />
                             <InfoItem label="Moneda" value={gasto.currency_type} />
+                            {gasto.linked_purchase_id && (
+                                <InfoItem
+                                    label="Pagado con"
+                                    value={
+                                        <Link
+                                            to={`/app/gastos/${gasto.linked_purchase_id}`}
+                                            className="text-primary hover:underline"
+                                        >
+                                            {getEntityById(gasto.linked_financial_entity_id)
+                                                ?.name ?? 'Otra entidad'}
+                                        </Link>
+                                    }
+                                />
+                            )}
                         </div>
 
                         <CategoryBadges categories={gasto.categories} />
@@ -70,40 +104,51 @@ export default function DetalleGasto() {
                             loading={loading}
                         />
                     </div>
-                    {!gasto.fixed_expense && (
-                        <CuotasSection gasto={gasto} loading={loading} onRefund={refundCuota} />
-                    )}
-
-                    {/* <AdjuntosSection
-                        adjuntos={detalle.adjuntos}
-                        onSeleccionAdjuntos={onSeleccionAdjuntos}
-                    /> */}
-
-                    <PeligroEliminar
-                        onDelete={() => {
-                            eliminar();
-                            volverALista();
-                        }}
+                    <HistorialSection
+                        gasto={gasto}
+                        settlementActive={settlementActive}
+                        onRevert={revertirPago}
+                        onCancelReversion={cancelarReversion}
                     />
                 </div>
             </div>
 
-            {/* MODAL CONFIRMAR PAGO */}
             <ConfirmInstallmentPaymentModal
                 open={confirmOpen}
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={async () => {
                     setConfirmLoading(true);
-                    await pagarCuota();
+                    await settleQuota();
                     setConfirmLoading(false);
                     setConfirmOpen(false);
                 }}
                 loading={confirmLoading}
                 items={gasto ? [gasto] : []}
                 entityName={getEntityById(gasto?.financial_entity_id)?.name ?? ''}
+                settlementActive={settlementActive}
             />
 
-            {/* MODAL EDITAR */}
+            <DeleteExpenseModal
+                open={deleteOpen}
+                linked={Boolean(gasto.linked_purchase_id)}
+                linkedEntityName={getEntityById(gasto.linked_financial_entity_id)?.name ?? ''}
+                onCancel={() => setDeleteOpen(false)}
+                onDelete={async (deleteLinked) => {
+                    if (await eliminar(deleteLinked)) volverALista();
+                }}
+            />
+
+            {transferOpen && (
+                <TransferExpenseModal
+                    gasto={gasto}
+                    onClose={() => setTransferOpen(false)}
+                    onTransfer={async (entityId, entityName) => {
+                        await transferir(entityId, entityName);
+                        setTransferOpen(false);
+                    }}
+                />
+            )}
+
             {editOpen && (
                 <UpdateExpenseModal
                     gasto={gasto}

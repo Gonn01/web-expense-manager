@@ -21,7 +21,7 @@ export default function ProgresoPago({ gasto, porcentaje, totalPagado }) {
                 height="h-2"
             />
 
-            <p className="text-sm text-[#9eb7a8]">
+            <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
                 {gasto.fixed_expense
                     ? `Veces pagado ${gasto.payed_quotas}`
                     : `${gasto.payed_quotas} de ${gasto.number_of_quotas} cuotas pagadas (${formatMoney(totalPagado, gasto.currency_type)} / ${formatMoney(gasto.amount, gasto.currency_type)})`}

@@ -27,13 +27,13 @@ export default function LoginForm({ loading, error, onErrorClear, onSubmit }) {
                 type="email"
                 value={form.email}
                 onChange={(e) => onChange('email', e.target.value)}
-                placeholder="tu@email.com"
+                placeholder="Ej: juan@email.com"
             />
 
             <PasswordInput
                 value={form.password}
                 onChange={(e) => onChange('password', e.target.value)}
-                placeholder="Tu contraseña"
+                placeholder="Ej: MiClave123"
             />
 
             {error && <ErrorMessage message={error} />}

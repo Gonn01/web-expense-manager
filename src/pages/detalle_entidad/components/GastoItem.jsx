@@ -35,16 +35,18 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
             onClick={onClick}
             className="flex flex-col gap-2 py-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 rounded-lg px-2 transition-colors"
         >
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                     <ChipTipoGasto fijo={gasto.fixed_expense} tipo={gasto.type} column={true} />
-                    <div>
-                        <p className="font-medium text-zinc-900 dark:text-white">{gasto.name}</p>
+                    <div className="min-w-0">
+                        <p className="font-medium text-zinc-900 dark:text-white break-words">
+                            {gasto.name}
+                        </p>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400">{subtitle}</p>
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-0.5">
+                <div className="flex flex-col items-end gap-0.5 shrink-0 text-right">
                     <p className="font-semibold text-primary">
                         {variant === 'finalizado'
                             ? formatDate(gasto.finalization_date)
@@ -63,7 +65,7 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
                         quotas={gasto.number_of_quotas}
                         height="h-1"
                     />
-                    <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
                         <span>
                             {formatMoney(paidTotal, currency)} pagado de{' '}
                             {formatMoney(gasto.amount, currency)}
@@ -73,7 +75,7 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
                                 <span>c/u {formatMoney(gasto.amount_per_quota, currency)}</span>
                             )}
                             {percentageLabel && (
-                                <span className="font-semibold text-zinc-300">
+                                <span className="font-semibold text-zinc-600 dark:text-zinc-300">
                                     {percentageLabel}
                                 </span>
                             )}

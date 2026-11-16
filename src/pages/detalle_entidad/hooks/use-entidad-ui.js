@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEntidadData } from './use-entidad-data';
 
@@ -14,36 +14,54 @@ export function useEntidadUI() {
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
-        pagarCuota,
+        settleQuota,
+        gastosEliminados,
+        restaurarGasto,
     } = useEntidadData();
 
     const [tab, setTab] = useState('activos');
+    const [restoringIds, setRestoringIds] = useState(new Set());
+
+    const onRestaurarGasto = useCallback(
+        async (gastoId) => {
+            setRestoringIds((prev) => new Set([...prev, gastoId]));
+            try {
+                await restaurarGasto(gastoId);
+            } finally {
+                setRestoringIds((prev) => {
+                    const nextSet = new Set(prev);
+                    nextSet.delete(gastoId);
+                    return nextSet;
+                });
+            }
+        },
+        [restaurarGasto],
+    );
     const [openNewExpense, setOpenNewExpense] = useState(false);
     const [openEditEntity, setOpenEditEntity] = useState(false);
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
     const [loadingUpdatingEntity, setLoadingUpdatingEntity] = useState(false);
     const [loadingVincular, setLoadingVincular] = useState(false);
 
-    // Payment modal
-    const [payModalOpen, setPayModalOpen] = useState(false);
-    const [payModalItem, setPayModalItem] = useState(null);
-    const [loadingPayIds, setLoadingPayIds] = useState(new Set());
+    const [settleModalOpen, setSettleModalOpen] = useState(false);
+    const [settleModalItem, setPayModalItem] = useState(null);
+    const [loadingSettleIds, setLoadingPayIds] = useState(new Set());
 
-    function openPayModal(gasto) {
+    function openSettleModal(gasto) {
         setPayModalItem(gasto);
-        setPayModalOpen(true);
+        setSettleModalOpen(true);
     }
 
-    async function onConfirmPay() {
-        if (!payModalItem) return;
-        setPayModalOpen(false);
-        setLoadingPayIds((prev) => new Set([...prev, payModalItem.id]));
+    async function onConfirmSettle() {
+        if (!settleModalItem) return;
+        setSettleModalOpen(false);
+        setLoadingPayIds((prev) => new Set([...prev, settleModalItem.id]));
 
-        await pagarCuota(payModalItem);
+        await settleQuota(settleModalItem);
 
         setLoadingPayIds((prev) => {
             const next = new Set(prev);
-            next.delete(payModalItem.id);
+            next.delete(settleModalItem.id);
             return next;
         });
         setPayModalItem(null);
@@ -51,16 +69,24 @@ export function useEntidadUI() {
 
     async function onCreateExpense(payload) {
         setLoadingCreatingExpense(true);
-        await crearGastoEntidad(payload);
-        setLoadingCreatingExpense(false);
-        setOpenNewExpense(false);
+        try {
+            await crearGastoEntidad(payload);
+            setOpenNewExpense(false);
+        } catch (err) {
+            console.error('Error creando gasto', err);
+        } finally {
+            setLoadingCreatingExpense(false);
+        }
     }
 
     async function onUpdateEntity(newName) {
         setLoadingUpdatingEntity(true);
-        await actualizarEntidad(newName);
-        setLoadingUpdatingEntity(false);
-        setOpenEditEntity(false);
+        try {
+            await actualizarEntidad(newName);
+            setOpenEditEntity(false);
+        } finally {
+            setLoadingUpdatingEntity(false);
+        }
     }
 
     async function onDeleteEntity() {
@@ -111,12 +137,16 @@ export function useEntidadUI() {
 
         onDeleteEntity,
 
-        payModalOpen,
-        payModalItem,
-        openPayModal,
-        onConfirmPay,
-        setPayModalOpen,
-        loadingPayIds,
+        settleModalOpen,
+        settleModalItem,
+        openSettleModal,
+        onConfirmSettle,
+        setSettleModalOpen,
+        loadingSettleIds,
+
+        gastosEliminados,
+        onRestaurarGasto,
+        restoringIds,
 
         navigate,
     };

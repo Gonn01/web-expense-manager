@@ -9,7 +9,7 @@ export const useEntitiesStore = create((set, get) => ({
         set({ loading: true });
         try {
             const data = await fetchFinancialEntities(token);
-            set({ entities: data });
+            set({ entities: data.filter((e) => !e.deleted) });
         } catch (err) {
             console.error('Error loading entities', err);
         } finally {

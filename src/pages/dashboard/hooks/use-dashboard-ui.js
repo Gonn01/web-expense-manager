@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
+import { useSettlementStore } from '@/store/use-settlement-store';
+import { useDialogStore } from '@/store/use-dialog-store';
 import { Currency } from '@/utils/enums';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
-export function useDashboardUI(groups = [], pagarCuotas) {
+export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     const { user } = useAuth();
 
     const [currency, setCurrency] = useState(null);
@@ -13,15 +15,18 @@ export function useDashboardUI(groups = [], pagarCuotas) {
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
     const [typeFilter, setTypeFilter] = useState(null);
     const [fixedFilter, setFixedFilter] = useState(null);
-    const [loadingPayIds, setLoadingPayIds] = useState(new Set());
+    const [loadingSettleIds, setLoadingPayIds] = useState(new Set());
+
+    const settlementActive = useSettlementStore((s) => s.active);
 
     const preferredCurrency = (() => {
-        const pref = user?.preferred_currency ?? user?.monedaPreferida;
+        const pref = user?.preferred_currency;
         return CURRENCY_VALUES.includes(pref) ? pref : Currency.ARS;
     })();
 
     const filteredGroups = useMemo(() => {
         const q = query.trim().toLowerCase();
+        const sinFiltros = !q && currency === null && typeFilter === null && fixedFilter === null;
 
         return groups
             .map((g) => {
@@ -40,8 +45,10 @@ export function useDashboardUI(groups = [], pagarCuotas) {
 
                 return { ...g, items };
             })
-            .filter((g) => g.items.length > 0);
-    }, [groups, currency, query, typeFilter, fixedFilter]);
+            .filter(
+                (g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive),
+            );
+    }, [groups, currency, query, typeFilter, fixedFilter, settlementActive]);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalEntity, setModalEntity] = useState('');
@@ -59,7 +66,7 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         setModalOpen(true);
     }, []);
 
-    const payModal = {
+    const settleModal = {
         modalOpen,
         modalItems,
         modalEntity,
@@ -68,18 +75,44 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         openItem,
     };
 
-    async function onConfirmPay() {
-        payModal.setModalOpen(false);
+    async function onConfirmSettle(itemsOverride) {
+        settleModal.setModalOpen(false);
 
-        const ids = payModal.modalItems.map((i) => i.id);
+        const itemsToPay =
+            Array.isArray(itemsOverride) && itemsOverride.length
+                ? itemsOverride
+                : settleModal.modalItems;
+        const ids = itemsToPay.map((i) => i.id);
         setLoadingPayIds((prev) => new Set([...prev, ...ids]));
 
-        await pagarCuotas(payModal.modalItems);
+        await settleQuotas(itemsToPay);
 
         setLoadingPayIds(new Set());
     }
 
+    const requestTogglePostpone = useCallback(
+        (gastoId, postponed) => {
+            const gasto = groups.flatMap((g) => g.items).find((it) => it.id === gastoId);
+            const nombre = gasto?.name ? `"${gasto.name}"` : 'El gasto';
+            const marcado = useSettlementStore.getState().isChecked?.(gastoId);
+
+            return useDialogStore.getState().confirm({
+                title: postponed ? '¿Postergar gasto?' : '¿Reactivar gasto?',
+                message: postponed
+                    ? `${nombre} queda fuera de la sesión de cuentas actual (o de la próxima que abras) hasta que la cierres.${
+                          marcado ? ' Como está marcado en la sesión, se le quita la marca.' : ''
+                      }`
+                    : `${nombre} vuelve a poder marcarse en la sesión de cuentas.`,
+                tone: 'info',
+                confirmLabel: postponed ? 'Postergar' : 'Reactivar',
+                onConfirm: () => postergarGasto(gastoId, postponed),
+            });
+        },
+        [groups, postergarGasto],
+    );
+
     return {
+        requestTogglePostpone,
         currency,
         setCurrency,
         preferredCurrency,
@@ -96,8 +129,8 @@ export function useDashboardUI(groups = [], pagarCuotas) {
         setFixedFilter,
         filteredGroups,
 
-        payModal,
-        loadingPayIds,
-        onConfirmPay,
+        settleModal,
+        loadingSettleIds,
+        onConfirmSettle,
     };
 }

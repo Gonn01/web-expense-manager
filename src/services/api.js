@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { normalizeApiError, notifyError } from '@/services/error-handler';
+import { useDialogStore } from '@/store/use-dialog-store';
+import useAuth from '@/store/use-auth-store';
+import { markSessionExpired } from '@/utils/session-expired';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -7,9 +11,39 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-/* ===============================
-   AUTH
-=============================== */
+const SILENT_PATHS = ['/auth/login', '/auth/register'];
+
+let sessionExpiredHandled = false;
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const normalized = normalizeApiError(error);
+        const url = error.config?.url ?? '';
+        const silent = error.config?.meta?.silent || SILENT_PATHS.some((p) => url.startsWith(p));
+
+        if (normalized.status === 401 && !silent) {
+            if (!sessionExpiredHandled) {
+                sessionExpiredHandled = true;
+                useAuth.getState().logout();
+                if (window.location.pathname.startsWith('/login')) {
+                    useDialogStore.getState().alert({
+                        title: normalized.title,
+                        message: normalized.message,
+                        tone: normalized.tone,
+                    });
+                } else {
+                    markSessionExpired();
+                    window.location.assign('/login');
+                }
+            }
+            return Promise.reject(normalized);
+        }
+
+        if (!silent) notifyError(normalized);
+        return Promise.reject(normalized);
+    },
+);
 
 export const register = async (userInfo) => {
     const { data } = await api.post('/auth/register', userInfo);
@@ -26,18 +60,23 @@ export const loginWithFirebase = async (firebaseData) => {
     return data.data;
 };
 
-export const updatePreferredCurrency = async (userId, preferredCurrency, token) => {
+export const updatePreferredCurrency = async (preferredCurrency, token) => {
     const { data } = await api.put(
-        '/auth/preferred-currency',
-        { user_id: userId, preferred_currency: preferredCurrency },
+        '/user/preferred-currency',
+        { preferred_currency: preferredCurrency },
         { headers: { Authorization: `Bearer ${token}` } },
     );
-    return data.data[0];
+    return data.data;
 };
 
-/* ===============================
-   DASHBOARD (solo lectura)
-=============================== */
+export const updateSueldo = async (sueldo, sueldoCurrency, token) => {
+    const { data } = await api.put(
+        '/user/sueldo',
+        { sueldo, sueldo_currency: sueldoCurrency },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
 
 export const fetchDashboardData = async (token) => {
     const { data } = await api.get('/dashboard', {
@@ -45,10 +84,6 @@ export const fetchDashboardData = async (token) => {
     });
     return data.data;
 };
-
-/* ===============================
-   ENTIDADES FINANCIERAS
-=============================== */
 
 export const fetchFinancialEntities = async (token) => {
     const { data } = await api.get('/entidades-financieras', {
@@ -81,10 +116,19 @@ export const updateFinancialEntity = async (id, name, token) => {
 };
 
 export const deleteFinancialEntity = async (id, token) => {
-    await api.delete(`/entidades-financieras/${id}`, {
+    const { data } = await api.delete(`/entidades-financieras/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    return true;
+    return data.data;
+};
+
+export const restoreEntity = async (id, token) => {
+    const { data } = await api.put(
+        `/entidades-financieras/${id}/restaurar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
 };
 
 export const vincularUsuarioEntidad = async (entityId, email, token) => {
@@ -102,10 +146,6 @@ export const desvincularUsuarioEntidad = async (entityId, token) => {
     });
     return data.data;
 };
-
-/* ===============================
-   GASTOS
-=============================== */
 
 export const createGasto = async (payload, token) => {
     const { data } = await api.post('/gastos', payload, {
@@ -128,34 +168,58 @@ export const updateGasto = async (gastoId, payload, token) => {
     return data.data;
 };
 
-export const deleteGasto = async (gastoId, token) => {
+export const deleteGasto = async (gastoId, token, { deleteLinked = false } = {}) => {
     await api.delete(`/gastos/${gastoId}`, {
         headers: { Authorization: `Bearer ${token}` },
+        data: { delete_linked: deleteLinked },
     });
     return true;
 };
 
-export const refundCuota = async (gastoId, token) => {
+export const restaurarGasto = async (gastoId, token) => {
     const { data } = await api.post(
-        `/gastos/${gastoId}/refund-cuota`,
+        `/gastos/${gastoId}/restaurar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data;
 };
 
-export const pagarCuota = async (gastoId, token) => {
+export const settleQuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
-        `/gastos/${gastoId}/pagar-cuota`,
-        {},
+        `/gastos/${gastoId}/settle-quota`,
+        direct ? { direct: true } : {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data;
 };
 
-/* ===============================
-   CATEGORIAS
-=============================== */
+export const postergarGasto = async (gastoId, postponed, token) => {
+    const { data } = await api.put(
+        `/gastos/${gastoId}/postergar`,
+        { postponed },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const favoritoGasto = async (gastoId, favorite, token) => {
+    const { data } = await api.put(
+        `/gastos/${gastoId}/favorito`,
+        { favorite },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const favoritoEntidad = async (entidadId, favorite, token) => {
+    const { data } = await api.put(
+        `/entidades-financieras/${entidadId}/favorito`,
+        { favorite },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
 
 export const fetchCategories = async (token) => {
     const { data } = await api.get('/categorias', {
@@ -171,18 +235,68 @@ export const createCategory = async (payload, token) => {
     return data.data;
 };
 
-export const pagarCuotasLote = async (ids, token) => {
+export const settleQuotasLote = async (ids, token) => {
     const { data } = await api.post(
-        `/gastos/pagar-lote`,
+        `/gastos/settle-lote`,
         { purchase_ids: ids },
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data;
 };
 
-/* ===============================
-   COMPARTIDOS
-=============================== */
+export const fetchSettlementSession = async (token) => {
+    const { data } = await api.get('/settlement/session', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const startSettlementSession = async (token) => {
+    const { data } = await api.post(
+        '/settlement/session',
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const setSettlementItem = async ({ purchase_id, purchase_ids, checked }, token) => {
+    const body = purchase_ids ? { purchase_ids, checked } : { purchase_id, checked };
+    const { data } = await api.put('/settlement/session/items', body, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const finishSettlementSession = async (token) => {
+    const { data } = await api.post(
+        '/settlement/session/finish',
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const discardSettlementSession = async (token) => {
+    const { data } = await api.delete('/settlement/session', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const fetchSettlementSnapshots = async (token) => {
+    const { data } = await api.get('/settlement/snapshots', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const fetchSettlementSnapshotById = async (id, token) => {
+    const { data } = await api.get(`/settlement/snapshots/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
 
 export const fetchCompartidos = async (token) => {
     const { data } = await api.get('/compartidos', {
@@ -210,6 +324,69 @@ export const rechazarCompartido = async (gastoId, token) => {
 export const reintentarCompartido = async (gastoId, token) => {
     const { data } = await api.post(
         `/compartidos/${gastoId}/reintentar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const confirmarPago = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/confirmar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const rechazarPago = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/rechazar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const retirarPago = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/retirar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const aceptarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/aceptar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const rechazarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/rechazar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const cancelarReversion = async (movementId, token) => {
+    const { data } = await api.post(
+        `/compartidos/pagos/${movementId}/reversion/cancelar`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const revertirPago = async (gastoId, movementId, token) => {
+    const { data } = await api.post(
+        `/gastos/${gastoId}/pagos/${movementId}/revertir`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );

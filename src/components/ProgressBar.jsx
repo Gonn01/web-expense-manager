@@ -11,8 +11,8 @@ export default function ProgressBar({
     const previewColor = fixed
         ? 'bg-yellow-300/50'
         : type === 'INGRESO'
-            ? 'bg-green-400/40'
-            : 'bg-red-400/40';
+          ? 'bg-green-400/40'
+          : 'bg-red-400/40';
 
     const dividers =
         fixed || quotas <= 1
@@ -23,19 +23,16 @@ export default function ProgressBar({
         <div
             className={`relative w-full ${height} rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden`}
         >
-            {/* Preview segment (behind the real fill) */}
             {previewProgress !== null && previewProgress > progress && (
                 <div
                     className={`absolute inset-y-0 left-0 ${height} ${previewColor} transition-all duration-500`}
                     style={{ width: `${previewProgress}%` }}
                 />
             )}
-            {/* Real fill */}
             <div
                 className={`absolute inset-y-0 left-0 ${height} rounded-full transition-all duration-500 ${color}`}
                 style={{ width: `${progress}%` }}
             />
-            {/* Dividers */}
             {dividers.map((pos) => (
                 <div
                     key={pos}

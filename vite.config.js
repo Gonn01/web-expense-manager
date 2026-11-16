@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         eslint({
-            cache: false, // para que avise siempre
+            cache: false,
             include: ['src/**/*.js', 'src/**/*.jsx', 'eslint.config.js'],
         }),
         react(),

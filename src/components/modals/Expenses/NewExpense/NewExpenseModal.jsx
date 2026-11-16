@@ -5,6 +5,9 @@ import useAuth from '@/store/use-auth-store';
 import Icon from '@/components/Icon';
 import TextInput from '@/components/TextInput';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { useDialogStore } from '@/store/use-dialog-store';
+import { useDiscardGuard } from '@/hooks/use-discard-guard';
+import { vincularUsuarioEntidad } from '@/services/api';
 import { ExpenseType } from '@/utils/enums';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import ExpenseTypeSelector from '../components/ExpenseTypeSelector';
@@ -13,6 +16,9 @@ import ExpenseAmountSection from '../components/ExpenseAmountSection';
 import ExpenseInstallmentsSection from '../components/ExpenseInstallmentsSection';
 import CategorySelector from '../components/CategorySelector';
 import ExpenseModeSelector from '../components/ExpenseModeSelector';
+import PaymentEntitySection from '../components/PaymentEntitySection';
+import ExpenseFormErrors from '../components/ExpenseFormErrors';
+import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 
 export default function NewExpenseModal({
     onClose,
@@ -31,13 +37,17 @@ export default function NewExpenseModal({
 
     const [installments, setInstallments] = useState('');
 
-    const [showNewEntity, setShowNewEntity] = useState(false);
+    const [newEntityFor, setNewEntityFor] = useState(null);
     const [newEntityName, setNewEntityName] = useState('');
+    const [newEntityEmail, setNewEntityEmail] = useState('');
     const [isFixed, setIsFixed] = useState(false);
     const [isInstallment, setIsInstallment] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
-    const [paidInstallments, setPaidInstallments] = useState('0');
-    const { entities, loading, createEntity } = useEntitiesStore();
+    const [isPostponed, setIsPostponed] = useState(false);
+    const [paidInstallments, setPaidInstallments] = useState('');
+    const [payWithEntity, setPayWithEntity] = useState(false);
+    const [paymentEntity, setPaymentEntity] = useState('');
+    const { entities, loading, createEntity, updateEntity } = useEntitiesStore();
     const [loadingNewEntity, setLoadingNewEntity] = useState(false);
 
     const { categories, loading: loadingCategories, createCategory } = useCategoriesStore();
@@ -45,7 +55,7 @@ export default function NewExpenseModal({
 
     const handleToggleCategory = (id) => {
         setSelectedCategoryIds((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
         );
     };
 
@@ -56,28 +66,65 @@ export default function NewExpenseModal({
 
     useEffect(() => {
         if (!loading && entities.length === 0) {
-            setShowNewEntity(true);
+            setNewEntityFor('main');
         }
     }, [loading, entities.length]);
     const totalInstallments = Number(installments) || 0;
     const paid = Math.min(Number(paidInstallments) || 0, totalInstallments);
     const progressPct = totalInstallments > 0 ? Math.min(100, (paid / totalInstallments) * 100) : 0;
+    const fullyPaid = isInstallment
+        ? totalInstallments > 0 && paid >= totalInstallments
+        : !isFixed && isPaid;
+    const postponed = isPostponed && !fullyPaid;
 
     const containerRef = useRef(null);
 
-    const canSave = useMemo(
-        () => name.trim() && entity && Number(amount) > 0 && currency,
-        [name, entity, amount, currency],
+    const errors = useMemo(
+        () =>
+            validateExpenseForm({
+                entity,
+                name,
+                amount,
+                isInstallment,
+                installments,
+                payWithEntity,
+                paymentEntity,
+            }),
+        [entity, name, amount, isInstallment, installments, payWithEntity, paymentEntity],
     );
+    const [submitted, setSubmitted] = useState(false);
+    const visibleErrors = submitted ? errors : {};
+    const installmentsFieldError =
+        visibleErrors.installments ??
+        (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
 
     const handleCreateEntity = async () => {
         if (!newEntityName.trim()) return;
         setLoadingNewEntity(true);
         try {
             const created = await createEntity(newEntityName.trim(), token);
-            setEntity(created.id);
-            setShowNewEntity(false);
+            if (newEntityFor === 'payment') setPaymentEntity(created.id);
+            else setEntity(created.id);
+            setNewEntityFor(null);
             setNewEntityName('');
+
+            const email = newEntityEmail.trim();
+            setNewEntityEmail('');
+            if (email) {
+                try {
+                    const linked = await vincularUsuarioEntidad(created.id, email, token);
+                    updateEntity(created.id, linked);
+                } catch (linkErr) {
+                    console.error('Error vinculando usuario:', linkErr);
+                    useDialogStore.getState().alert({
+                        title: 'Entidad creada',
+                        tone: 'warning',
+                        message: `Se creó la entidad, pero no se pudo vincular el usuario: ${
+                            linkErr.message ?? 'revisá el email.'
+                        }`,
+                    });
+                }
+            }
         } catch (err) {
             console.error('Error creando entidad', err);
         } finally {
@@ -85,21 +132,47 @@ export default function NewExpenseModal({
         }
     };
 
-    useEffect(() => {
-        const onKey = (e) => e.key === 'Escape' && onClose?.();
-        document.addEventListener('keydown', onKey);
+    const dirty =
+        type !== ExpenseType.EGRESO ||
+        name.trim() !== '' ||
+        String(entity) !== String(defaultEntityId || '') ||
+        amount !== '' ||
+        currency !== 'ARS' ||
+        installments !== '' ||
+        paidInstallments !== '0' ||
+        isFixed ||
+        isInstallment ||
+        isPaid ||
+        isPostponed ||
+        payWithEntity ||
+        paymentEntity !== '' ||
+        newEntityName.trim() !== '' ||
+        newEntityEmail.trim() !== '' ||
+        selectedCategoryIds.length > 0;
 
+    const requestClose = useDiscardGuard(dirty, onClose, { busy: saving });
+
+    useEffect(() => {
+        const onKey = (e) => e.key === 'Escape' && requestClose();
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [requestClose]);
+
+    useEffect(() => {
         const prevScroll = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-
         return () => {
-            document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prevScroll;
         };
-    }, [onClose]);
+    }, []);
 
     function handleSubmit() {
-        if (!canSave) return;
+        if (saving) return;
+        if (Object.keys(errors).length > 0) {
+            setSubmitted(true);
+            focusFirstError(containerRef.current, errors);
+            return;
+        }
 
         const payload = {
             financial_entity_id: entity,
@@ -111,67 +184,60 @@ export default function NewExpenseModal({
             fixed_expense: isFixed,
             image: null,
             type,
-            payed_quotas: isInstallment ? Number(paidInstallments) : isPaid ? 1 : 0,
+            payed_quotas: isInstallment ? Number(paidInstallments) || 0 : isPaid ? 1 : 0,
             category_ids: selectedCategoryIds,
+            payment_entity_id: payWithEntity ? paymentEntity : null,
+            postponed,
         };
 
         onSave?.(payload);
     }
 
     const modalContent = (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
-        >
-            {/* Background */}
-            <div className="fixed inset-0 bg-black/60" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black/60" onMouseDown={requestClose} />
 
             <div
                 ref={containerRef}
-                className="relative z-10 w-[92vw] max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl shadow-xl bg-[#111714] border border-[#29382f]"
+                className="relative z-10 w-[92vw] max-w-2xl max-h-[90dvh] overflow-y-auto rounded-2xl shadow-xl bg-white dark:bg-[#111714] border border-slate-200 dark:border-[#29382f]"
             >
-                {/* HEADER */}
-                <header className="sticky top-0 flex items-center justify-between border-b border-[#29382f] px-6 py-4 bg-[#111714]">
-                    <div className="flex items-center gap-3 text-white">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 dark:border-[#29382f] px-4 sm:px-6 py-4 bg-white dark:bg-[#111714]">
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="add_circle" className="text-primary" />
-                        <h2 className="text-white text-lg font-bold">Nuevo Gasto</h2>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold">
+                            Nuevo Gasto/Deuda
+                        </h2>
                     </div>
 
                     <button
-                        onClick={onClose}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#29382f] text-white hover:bg-[#3d5245] cursor-pointer"
+                        onClick={requestClose}
+                        aria-label="Cerrar"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
                     </button>
                 </header>
 
-                {/* BODY */}
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-6">
                     <ExpenseTypeSelector type={type} setType={setType} />
 
-                    <ExpenseModeSelector
-                        isInstallment={isInstallment}
-                        isFixed={isFixed}
-                        onChange={({ isInstallment: i, isFixed: f }) => {
-                            setIsInstallment(i);
-                            setIsFixed(f);
-                            if (!i) { setInstallments(''); setPaidInstallments('0'); }
-                            setIsPaid(false);
-                        }}
-                    />
+                    <div data-field="name">
+                        <TextInput
+                            label="Nombre del gasto"
+                            placeholder="Ej: Préstamo personal"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={visibleErrors.name}
+                        />
+                    </div>
 
-                    {!isInstallment && !isFixed && (
-                        <label className="flex items-center gap-3 cursor-pointer select-none">
-                            <div
-                                onClick={() => setIsPaid((v) => !v)}
-                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
-                                    ${isPaid ? 'bg-primary border-primary' : 'border-[#3d5245] bg-[#1c2620]'}`}
-                            >
-                                {isPaid && <span className="text-black text-xs font-bold">✓</span>}
-                            </div>
-                            <span className="text-white text-sm font-medium">Pagado</span>
-                        </label>
-                    )}
+                    <ExpenseAmountSection
+                        amount={amount}
+                        setAmount={setAmount}
+                        currency={currency}
+                        setCurrency={setCurrency}
+                        error={visibleErrors.amount}
+                    />
 
                     <EntitySelector
                         entity={entity}
@@ -179,37 +245,33 @@ export default function NewExpenseModal({
                         loading={loading}
                         loadingNewEntity={loadingNewEntity}
                         entities={entities}
-                        showNewEntity={showNewEntity}
-                        setShowNewEntity={setShowNewEntity}
+                        showNewEntity={newEntityFor === 'main'}
+                        setShowNewEntity={(show) => setNewEntityFor(show ? 'main' : null)}
                         newEntityName={newEntityName}
                         setNewEntityName={setNewEntityName}
+                        newEntityEmail={newEntityEmail}
+                        setNewEntityEmail={setNewEntityEmail}
                         handleCreateEntity={handleCreateEntity}
+                        error={visibleErrors.entity}
                     />
 
-                    <CategorySelector
-                        categories={categories}
-                        selectedIds={selectedCategoryIds}
-                        onToggle={handleToggleCategory}
-                        onCreate={handleCreateCategory}
-                        loading={loadingCategories}
-                    />
-
-                    <TextInput
-                        label="Nombre del gasto"
-                        placeholder="Ej: Préstamo personal"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-
-                    <ExpenseAmountSection
-                        amount={amount}
-                        setAmount={setAmount}
-                        currency={currency}
-                        setCurrency={setCurrency}
+                    <ExpenseModeSelector
+                        isInstallment={isInstallment}
+                        isFixed={isFixed}
+                        onChange={({ isInstallment: i, isFixed: f }) => {
+                            setIsInstallment(i);
+                            setIsFixed(f);
+                            if (!i) {
+                                setInstallments('');
+                                setPaidInstallments('');
+                            }
+                            setIsPaid(false);
+                        }}
                     />
 
                     {isInstallment && (
                         <ExpenseInstallmentsSection
+                            error={installmentsFieldError}
                             installments={installments}
                             setInstallments={setInstallments}
                             paidInstallments={paidInstallments}
@@ -219,25 +281,88 @@ export default function NewExpenseModal({
                             progressPct={progressPct}
                         />
                     )}
-                </div>
 
-                {/* FOOTER */}
-                <footer className="sticky bottom-0 flex justify-end gap-3 border-t border-[#29382f] px-6 py-4 bg-[#111714]">
+                    <CategorySelector
+                        categories={categories}
+                        selectedIds={selectedCategoryIds}
+                        onToggle={handleToggleCategory}
+                        onCreate={handleCreateCategory}
+                        loading={loadingCategories}
+                    />
+
+                    {!isInstallment && !isFixed && (
+                        <label
+                            onClick={() => setIsPaid((v) => !v)}
+                            className="flex items-center gap-3 cursor-pointer select-none"
+                        >
+                            <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 cursor-pointer
+                                    ${isPaid ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
+                            >
+                                {isPaid && <span className="text-black text-xs font-bold">✓</span>}
+                            </div>
+                            <span className="text-slate-900 dark:text-white text-sm font-medium">
+                                Pagado
+                            </span>
+                        </label>
+                    )}
+
+                    <PaymentEntitySection
+                        error={visibleErrors.paymentEntity}
+                        enabled={payWithEntity}
+                        setEnabled={setPayWithEntity}
+                        entities={entities}
+                        paymentEntity={paymentEntity}
+                        setPaymentEntity={setPaymentEntity}
+                        excludeId={entity}
+                        showNewEntity={newEntityFor === 'payment'}
+                        setShowNewEntity={(show) => setNewEntityFor(show ? 'payment' : null)}
+                        newEntityName={newEntityName}
+                        setNewEntityName={setNewEntityName}
+                        newEntityEmail={newEntityEmail}
+                        setNewEntityEmail={setNewEntityEmail}
+                        handleCreateEntity={handleCreateEntity}
+                        loadingNewEntity={loadingNewEntity}
+                        oppositeTypeLabel={type === ExpenseType.EGRESO ? 'ingreso' : 'egreso'}
+                    />
+
+                    <label
+                        onClick={() => !fullyPaid && setIsPostponed((v) => !v)}
+                        className={`flex items-start gap-3 select-none ${
+                            fullyPaid ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                        }`}
+                    >
+                        <div
+                            className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
+                                ${fullyPaid ? 'cursor-not-allowed' : 'cursor-pointer'}
+                                ${postponed ? 'bg-primary border-primary' : 'border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620]'}`}
+                        >
+                            {postponed && <span className="text-black text-xs font-bold">✓</span>}
+                        </div>
+                        <span className="text-slate-900 dark:text-white text-sm font-medium">
+                            Postergar para la próxima sesión de cuentas
+                            <span className="block text-xs font-normal text-slate-500 dark:text-[#9eb7a8]">
+                                {fullyPaid
+                                    ? 'No disponible: un gasto pagado no tiene nada para postergar.'
+                                    : 'Queda fuera de la sesión de cuentas actual (o de la próxima que abras). Se habilita cuando la cierres.'}
+                            </span>
+                        </span>
+                    </label>
+                </div>
+                <footer className="sticky bottom-0 z-10 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-[#29382f] px-4 sm:px-6 py-4 bg-white dark:bg-[#111714]">
+                    <ExpenseFormErrors errors={visibleErrors} />
+
                     <button
-                        onClick={onClose}
-                        className="h-11 px-4 text-sm font-bold text-[#9eb7a8] hover:bg-[#29382f] rounded-lg cursor-pointer"
+                        onClick={requestClose}
+                        className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
                     >
                         Cancelar
                     </button>
 
                     <button
-                        disabled={!canSave || saving}
+                        disabled={saving}
                         onClick={handleSubmit}
-                        className="
-        h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg 
-        bg-primary text-black cursor-pointer hover:bg-primary/80
-        disabled:opacity-60 disabled:cursor-not-allowed
-    "
+                        className="btn-save h-11 px-4 text-sm font-bold flex items-center gap-2 rounded-lg bg-primary text-black cursor-pointer hover:bg-primary/80"
                     >
                         {saving ? (
                             <>
@@ -245,10 +370,7 @@ export default function NewExpenseModal({
                                 Guardando...
                             </>
                         ) : (
-                            <>
-                                <Icon name="save" />
-                                Guardar gasto
-                            </>
+                            'Guardar gasto'
                         )}
                     </button>
                 </footer>

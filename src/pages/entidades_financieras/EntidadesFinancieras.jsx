@@ -2,6 +2,7 @@ import Heading from './components/Heading';
 import SearchBox from './components/SearchBox';
 import EntitiesList from './components/EntitiesList';
 import EmptyState from './components/EmptyState';
+import DeletedEntitiesModal from './components/DeletedEntitiesModal';
 import NewEntityModal from '@/components/modals/NewEntityModal';
 import Loader from '@/components/Loader';
 
@@ -12,12 +13,18 @@ export default function EntidadesFinancieras() {
         query,
         setQuery,
         filtered,
+        deletedEntities,
         openNew,
         setOpenNew,
+        showDeletedModal,
+        setShowDeletedModal,
+        viewMode,
+        setViewMode,
         showEmpty,
         loading,
         handleSaveNew,
         handleDelete,
+        restaurarEntidad,
         navigate,
     } = useEntidadesUI();
 
@@ -27,7 +34,12 @@ export default function EntidadesFinancieras() {
 
     return (
         <>
-            <Heading onCreate={() => setOpenNew(true)} />
+            <Heading
+                onCreate={() => setOpenNew(true)}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                setShowDeletedModal={setShowDeletedModal}
+            />
 
             <SearchBox query={query} setQuery={setQuery} />
 
@@ -37,6 +49,7 @@ export default function EntidadesFinancieras() {
                 navigate={navigate}
                 onDelete={handleDelete}
                 showEmpty={showEmpty}
+                viewMode={viewMode}
             />
 
             {showEmpty && <EmptyState onCreate={() => setOpenNew(true)} />}
@@ -45,6 +58,13 @@ export default function EntidadesFinancieras() {
                 open={openNew}
                 onClose={() => setOpenNew(false)}
                 onSave={handleSaveNew}
+            />
+
+            <DeletedEntitiesModal
+                isOpen={showDeletedModal}
+                deletedEntities={deletedEntities}
+                onClose={() => setShowDeletedModal(false)}
+                onRestore={restaurarEntidad}
             />
         </>
     );

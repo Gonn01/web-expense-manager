@@ -9,27 +9,28 @@ export default function EntityCard({ entity, onClick, onDelete }) {
                        transition-all cursor-pointer"
             onClick={() => onClick?.(entity)}
         >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 min-w-0 pr-8">
                 <EntityIcon type={entity.type} />
 
-                <div className="flex flex-1 flex-col justify-center">
-                    <p className="text-slate-900 dark:text-white text-base font-bold leading-normal">
+                <div className="flex flex-1 flex-col justify-center min-w-0">
+                    <p className="text-slate-900 dark:text-white text-base font-bold leading-normal break-words">
                         {entity.name}
                     </p>
 
                     <p className="mt-1 text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">
-                        {entity.cantidad == undefined ? 0 : entity.cantidad} gasto{entity.cantidad === 1 ? ' activo' : 's activos'}
+                        {entity.cantidad == undefined ? 0 : entity.cantidad} gasto
+                        {entity.cantidad === 1 ? ' activo' : 's activos'}
                     </p>
+
+                    {entity.linked_user_name && (
+                        <p className="mt-1 flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">
+                            <span className="material-symbols-outlined text-sm">person</span>
+                            Vinculada a: {entity.linked_user_name}
+                        </p>
+                    )}
                 </div>
             </div>
 
-            <div className="shrink-0 transition-opacity group-hover:opacity-0">
-                <span className="material-symbols-outlined text-2xl text-slate-400 dark:text-slate-500">
-                    chevron_right
-                </span>
-            </div>
-
-            {/* Tacho de basura */}
             <button
                 onClick={(e) => {
                     e.stopPropagation();
@@ -37,8 +38,8 @@ export default function EntityCard({ entity, onClick, onDelete }) {
                 }}
                 className="cursor-pointer
                     absolute right-3 top-1/2 -translate-y-1/2
-                    opacity-0 translate-x-2
-                    group-hover:opacity-100 group-hover:translate-x-0
+                    [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:translate-x-2
+                    [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-hover:translate-x-0
                     transition-all duration-200
                     text-red-500 hover:text-red-600
                 "
