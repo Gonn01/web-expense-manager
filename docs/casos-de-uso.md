@@ -69,6 +69,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-41 | Pedir reversión de un pago compartido | Usuario | 05 |
 | CU-42 | Responder reversión de un pago | Contraparte | 05 |
 | CU-43 | Cancelar pedido de reversión | Usuario | 05 |
+| CU-44 | Ver tutorial de bienvenida | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -177,6 +178,21 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 1a. El usuario elige Sistema: el cliente sigue el tema del dispositivo y lo vuelve a aplicar cada vez que este cambia.
 - **Postcondición**: el cliente abre con el tema elegido en ese dispositivo; otros dispositivos de la misma cuenta conservan el suyo.
+
+### CU-44 — Ver tutorial de bienvenida
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-05
+- **Flujo principal**
+    1. El usuario inicia sesión y entra a la app por primera vez en ese dispositivo.
+    2. El cliente muestra el tutorial en el primer paso.
+    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca ¡Empezar!.
+    4. El cliente cierra el tutorial y guarda en el dispositivo que ese usuario ya lo vio.
+- **Flujos alternativos**
+    - 3a. El usuario toca Saltar (o Escape en la web, o atrás en la app): el tutorial se cierra y se da por visto.
+    - 3b. El usuario toca Atrás o un punto del indicador: el cliente muestra ese paso.
+    - 1a. El usuario toca "Ver tutorial de nuevo" en Configuración: el cliente muestra el tutorial desde el primer paso, aunque ya lo haya visto.
+- **Postcondición**: el tutorial no vuelve a abrirse solo para ese usuario en ese dispositivo.
 
 ### CU-08 — Consultar dashboard
 

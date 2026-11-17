@@ -30,6 +30,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-CFG-02 | El usuario puede elegir su moneda preferida entre ARS, USD, EUR, BRL, CLP y UYU. Se usa como moneda de referencia para mostrar equivalencias. | CU-06 |
 | RF-CFG-03 | El usuario puede registrar su sueldo y la moneda en la que lo cobra. Se usa para calcular qué proporción del sueldo representan sus gastos del mes (ver RF-DSH-07). Limitación conocida: la app móvil guarda el sueldo pero todavía no lo usa en ningún cálculo. | CU-07 |
 | RF-CFG-04 | El usuario puede elegir el tema de la interfaz: Sistema (sigue la preferencia del dispositivo y cambia cuando esta cambia), Claro u Oscuro. Por defecto es Sistema. La elección se guarda solo en el dispositivo o navegador (no en la cuenta) y se aplica al instante, también en las pantallas de inicio de sesión y registro. | CU-39 |
+| RF-CFG-05 | La primera vez que un usuario entra a la app después de iniciar sesión se muestra un tutorial de bienvenida de 5 pasos (bienvenida, cargar gastos, cuánto se debe, personas y compartidos, postergar pagos), con indicador de progreso y botones Saltar, Atrás y Siguiente. Saltarlo o terminarlo lo da por visto. Se puede volver a ver desde Configuración ("Ver tutorial de nuevo"). Que ya lo vio se guarda solo en el dispositivo o navegador y por usuario (no en la cuenta): otro usuario en el mismo dispositivo, o el mismo usuario en otro dispositivo, lo ve de nuevo. | CU-44 |
 
 ## DSH — Dashboard
 
