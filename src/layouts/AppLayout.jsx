@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import MobileTopBar from '@/components/MobileTopBar';
+import OnboardingDialog from '@/components/onboarding/OnboardingDialog';
+import { useOnboardingAutoOpen } from '@/hooks/use-onboarding';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useCategoriesStore } from '@/store/use-categories-store';
@@ -12,6 +14,8 @@ export default function AppLayout() {
     const { loadEntities } = useEntitiesStore();
     const { loadCategories } = useCategoriesStore();
     const loadSettlementSession = useSettlementStore((s) => s.loadSession);
+
+    useOnboardingAutoOpen();
 
     useEffect(() => {
         if (token) {
@@ -36,6 +40,8 @@ export default function AppLayout() {
                     </main>
                 </div>
             </div>
+
+            <OnboardingDialog />
         </div>
     );
 }

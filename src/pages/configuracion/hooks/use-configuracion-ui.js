@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useUIStore } from '@/store/use-ui-store';
+import { useOnboardingStore } from '@/store/use-onboarding-store';
 import { useConfiguracionData } from './use-configuracion-data';
 
 export function useConfiguracionUI() {
@@ -16,6 +17,9 @@ export function useConfiguracionUI() {
 
     const themeMode = useUIStore((s) => s.themeMode);
     const setThemeMode = useUIStore((s) => s.setThemeMode);
+    const openOnboarding = useOnboardingStore((s) => s.openOnboarding);
+
+    const onOpenTutorial = () => openOnboarding(user?.id);
 
     const [moneda, setMoneda] = useState(monedaActual);
     const [sueldo, setSueldo] = useState(sueldoActual === '' ? '' : String(sueldoActual));
@@ -90,6 +94,8 @@ export function useConfiguracionUI() {
         themeMode,
 
         setThemeMode,
+
+        onOpenTutorial,
 
         snackbar,
 
