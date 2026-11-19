@@ -16,6 +16,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [mision-vision-valores.md](mision-vision-valores.md) | Misión, visión y valores centrales de la organización, y cómo se reflejan en el sistema |
 | [requerimientos-funcionales.md](requerimientos-funcionales.md) | Qué hace el sistema, por módulo (`RF-<módulo>-NN`) |
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
+| [plan-de-pruebas.md](plan-de-pruebas.md) | Verificación y validación: plan de pruebas unitarias del módulo de Pagos y Hacer cuentas, con su matriz de trazabilidad a los `RF` |
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-38` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 

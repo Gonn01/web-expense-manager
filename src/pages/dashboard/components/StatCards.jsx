@@ -78,11 +78,7 @@ function StatCard({ label, value, tone, sub = false, vertical = false }) {
             <p className="whitespace-nowrap text-slate-600 dark:text-slate-300 text-sm font-medium leading-normal">
                 {label}
             </p>
-            <p
-                className={`${tone} tracking-tight ${sub ? 'text-lg' : 'text-lg'} font-bold leading-tight`}
-            >
-                {value}
-            </p>
+            <p className={`${tone} tracking-tight text-lg font-bold leading-tight`}>{value}</p>
         </div>
     );
 }

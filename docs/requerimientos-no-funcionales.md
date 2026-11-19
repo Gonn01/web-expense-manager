@@ -21,6 +21,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-08 | Todas las consultas a la base usan parámetros posicionales (`$1, $2…`); no se concatenan valores en el SQL. | API |
 | RNF-SEG-09 | En producción, la comunicación entre clientes y API es por HTTPS, y la conexión con Pusher usa TLS. | Todos |
 | RNF-SEG-10 | La API solo acepta peticiones de navegador (CORS) desde los orígenes de la web: producción y dev en Vercel, y `http://localhost:5173` para desarrollo local. La app móvil no está sujeta a CORS. | API, Web |
+| RNF-SEG-11 | La API no expone la tecnología del servidor: las respuestas no llevan el encabezado `X-Powered-By`. | API |
 
 **Limitaciones conocidas**
 
@@ -61,6 +62,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-03 | Una mutación puntual actualiza el estado local con la respuesta del servidor; se evita recargar la pantalla completa. | Web, App |
 | RNF-REN-04 | Varios componentes suscritos al mismo canal de tiempo real comparten una única suscripción. | Web |
 | RNF-REN-05 | Las operaciones sobre varios gastos de una sesión de cuentas (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones en tiempo real que generan se envían en paralelo. | API |
+| RNF-REN-06 | La web descarga el código de cada pantalla de la aplicación recién cuando se navega a ella: las pantallas de inicio de sesión y registro no cargan el código del dashboard, los gráficos ni el resto de las pantallas privadas. | Web |
 
 *Limitación conocida*: las acciones de compartidos todavía recargan la pantalla completa (crear un gasto desde compartidos la vuelve a pedir en segundo plano, sin el loader) (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 
@@ -76,6 +78,8 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-DIS-06 | La app móvil arranca y funciona aunque Firebase no esté configurado: el inicio con Google queda deshabilitado y la analítica no hace nada. | App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
 | RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. | API |
+
+*Limitación conocida* (RNF-DIS-04): en la web, si falta la variable `VITE_PUSHER_KEY`, el cliente de Pusher falla al cargarse y la aplicación entera queda en blanco, incluido el inicio de sesión. En producción la variable está configurada; afecta a entornos locales o de prueba sin ella.
 
 ## INT — Integridad y auditoría
 
@@ -101,7 +105,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la web y la app móvil no tienen pruebas automatizadas. En la API, los services de compartidos, categorías y entidades tampoco (sí los de gastos, settlement y auth, y los helpers de transacciones de `db.js`).
+*Limitación conocida*: la app móvil no tiene pruebas automatizadas, y la web solo tiene pruebas unitarias (Vitest) de funciones puras de `src/utils/` (conversión de moneda y transferencia de gastos), no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte. El plan de pruebas del módulo de Pagos y Hacer cuentas, con sus metas de cobertura y los casos que faltan, está en [plan-de-pruebas.md](plan-de-pruebas.md).
 
 ## POR — Portabilidad y entorno
 

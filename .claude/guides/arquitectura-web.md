@@ -20,7 +20,7 @@ src/
   utils/           formateo, enums, catálogo de errores, armado de textos
 ```
 
-Rutas (`App.jsx`): `/login`, `/register` y, bajo `/app` con `ProtectedRoute`: `dashboard`, `entidades`, `entidades/:id`, `gastos/:id`, `compartidos`, `settlement`, `settlement/:id`, `configuracion`.
+Rutas (`App.jsx`): `/login`, `/register` y, bajo `/app` con `ProtectedRoute`: `dashboard`, `entidades`, `entidades/:id`, `gastos/:id`, `compartidos`, `settlement`, `settlement/:id`, `configuracion`. `Login` y `Register` se importan directo; `AppLayout` y todas las pantallas de `/app` se cargan con `lazy()` (un chunk por pantalla), con `Loader` como fallback de `Suspense` en `App.jsx` y alrededor del `Outlet` de `AppLayout`, así la barra lateral no desaparece mientras carga una pantalla.
 
 ## 2. Capas
 
@@ -106,6 +106,8 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - Desplegables con `components/Select.jsx`, nunca con `<select>` nativo: recibe `options` (`{ value, label }`), `value`, `onChange(valor)` (siempre string, como el `<select>`) y un `placeholder` opcional que funciona como opción vacía. Con más de 10 opciones muestra un buscador (sin distinguir mayúsculas ni tildes). La lista se abre en un portal, así que no la recorta el `overflow` de un modal, y se cierra si se hace scroll fuera de ella (si no, quedaría flotando sobre el encabezado del modal). Los encabezados y pies `sticky` de los modales llevan `z-10`, para que los campos con posición propia no se dibujen encima al hacer scroll.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.
+- Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/` y reglas de negocio sin red ni DOM; no hay entorno `jsdom` configurado.
+- `npm test` antes de dar por terminado un cambio que toque lógica cubierta por pruebas.
 
 ## 8. Checklist: feature nueva de punta a punta
 
@@ -113,15 +115,16 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - [ ] Códigos de error nuevos en `utils/error-catalog.js`.
 - [ ] Store en `store/` solo si el estado lo comparten varias pantallas.
 - [ ] `pages/<feature>/<Feature>.jsx` + `hooks/use-<feature>-data.js` + `hooks/use-<feature>-ui.js` + `components/`.
-- [ ] Ruta en `App.jsx`, dentro de `/app` si requiere sesión; entrada en `components/Sidebar.jsx` si es navegable.
+- [ ] Ruta en `App.jsx`, dentro de `/app` si requiere sesión, con la pantalla importada con `lazy()`; entrada en `components/Sidebar.jsx` si es navegable.
 - [ ] Componentes reutilizados por más de una pantalla en `src/components/`.
 - [ ] Sin manejo de errores ad hoc: los muestra el interceptor.
 - [ ] Suscripción a Pusher con `usePusherChannel` si la pantalla depende de acciones de otro usuario.
-- [ ] `npm run lint` sin errores.
+- [ ] `npm run lint` sin errores y `npm test` en verde.
+- [ ] Pruebas unitarias para las reglas nuevas que sean funciones puras.
 - [ ] **Paridad**: el mismo cambio funcional hecho en la app Flutter.
 - [ ] **Documentación**: ver [documentacion.md](documentacion.md).
 
 ## 9. Trampas
 
-- No hay framework de tests configurado. Si se agregan, vitest es lo natural con Vite.
+- Las pruebas solo cubren funciones puras de `utils/`: componentes, hooks y stores no tienen pruebas (haría falta `jsdom` y Testing Library).
 - Los textos de interfaz están escritos en los componentes, solo en español: la web no tiene l10n.

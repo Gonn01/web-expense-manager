@@ -77,8 +77,9 @@ La app queda en `http://localhost:5173`.
 | `npm run preview` | Sirve el build de `dist/` para probarlo |
 | `npm run lint` / `npm run lint:fix` | ESLint (y corrección automática) |
 | `npm run format` | Formatea el código con Prettier |
+| `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
 
-No hay framework de tests configurado.
+Las pruebas unitarias viven junto al archivo que prueban (`src/utils/convert-currency.test.js`).
 
 ### Despliegue
 
@@ -125,6 +126,7 @@ src/
 | [Firebase](https://firebase.google.com/docs/auth) | Inicio de sesión con Google |
 | [pusher-js](https://github.com/pusher/pusher-js) | Notificaciones en tiempo real |
 | [recharts](https://recharts.org) | Gráficos del dashboard |
+| [Vitest](https://vitest.dev) | Pruebas unitarias |
 | ESLint + Prettier | Linting y formato |
 
 ## Seguimiento
