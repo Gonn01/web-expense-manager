@@ -142,7 +142,7 @@ export default function MontoChart({ gastos }) {
                         tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
-                        tickFormatter={(v) => formatAxis(v, preferredCurrency)}
+                        tickFormatter={formatAxis}
                     />
                     <Tooltip content={<CustomTooltip currency={preferredCurrency} />} />
                     <Legend

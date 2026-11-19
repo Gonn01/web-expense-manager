@@ -7,7 +7,8 @@ import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
+import Loader from '@/components/Loader';
 
 export default function AppLayout() {
     const { token } = useAuth();
@@ -35,7 +36,9 @@ export default function AppLayout() {
 
                     <main className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] flex flex-col px-3 py-4 sm:p-4 lg:p-5">
                         <div className="mx-auto max-w-7xl w-full flex-1 min-h-0 flex flex-col">
-                            <Outlet />
+                            <Suspense fallback={<Loader />}>
+                                <Outlet />
+                            </Suspense>
                         </div>
                     </main>
                 </div>

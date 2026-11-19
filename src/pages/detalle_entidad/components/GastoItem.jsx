@@ -16,9 +16,6 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
         case 'finalizado':
             subtitle = 'Finalizado';
             break;
-
-        default:
-            subtitle = '';
     }
 
     const currency = gasto.currency_type;

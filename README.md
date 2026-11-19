@@ -77,9 +77,9 @@ La app queda en `http://localhost:5173`.
 | `npm run preview` | Sirve el build de `dist/` para probarlo |
 | `npm run lint` / `npm run lint:fix` | ESLint (y corrección automática) |
 | `npm run format` | Formatea el código con Prettier |
-| `npm test` | Corre las pruebas con Vitest (una sola vez) |
+| `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
 
-Las pruebas usan [Vitest](https://vitest.dev) y viven junto al código que prueban, como `*.test.js`. Por ahora cubren funciones puras de `utils/` (no hay pruebas de componentes).
+Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Por ahora cubren funciones puras de `utils/` (no hay pruebas de componentes).
 
 ### Despliegue
 
@@ -126,8 +126,8 @@ src/
 | [Firebase](https://firebase.google.com/docs/auth) | Inicio de sesión con Google |
 | [pusher-js](https://github.com/pusher/pusher-js) | Notificaciones en tiempo real |
 | [recharts](https://recharts.org) | Gráficos del dashboard |
+| [Vitest](https://vitest.dev) | Pruebas unitarias |
 | ESLint + Prettier | Linting y formato |
-| [Vitest](https://vitest.dev) | Pruebas |
 
 ## Seguimiento
 

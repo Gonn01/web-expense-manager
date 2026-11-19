@@ -55,10 +55,11 @@ npm run preview     # vite preview
 npm run lint        # eslint .
 npm run lint:fix     # eslint . --fix
 npm run format       # prettier --write .
-npm test             # vitest run
+npm test             # vitest run (unit tests)
+npm run test:watch   # vitest in watch mode
 ```
 
-Tests use Vitest and live next to the code as `*.test.js`. They only cover pure functions (no DOM environment or Testing Library installed): to test screen logic, extract it to a `utils/` function first.
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first.
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
 
@@ -66,7 +67,7 @@ Tests use Vitest and live next to the code as `*.test.js`. They only cover pure 
 
 ```
 src/
-  App.jsx        # central route table (react-router-dom v7)
+  App.jsx        # central route table (react-router-dom v7); every /app page is lazy()-loaded
   guards/        # ProtectedRoute.jsx — redirects to /login if unauthenticated
   layouts/       # AppLayout.jsx — sidebar + mobile top bar + Outlet shell, eager-loads entities/categories/settlement session on mount
   pages/<feature>/  # one folder per screen: <Feature>.jsx + components/ + hooks/
