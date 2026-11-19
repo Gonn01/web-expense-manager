@@ -3,6 +3,7 @@ import useAuth from '@/store/use-auth-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { Currency } from '@/utils/enums';
+import { filterDashboardGroups } from '../utils/dashboard-groups';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -24,31 +25,17 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
         return CURRENCY_VALUES.includes(pref) ? pref : Currency.ARS;
     })();
 
-    const filteredGroups = useMemo(() => {
-        const q = query.trim().toLowerCase();
-        const sinFiltros = !q && currency === null && typeFilter === null && fixedFilter === null;
-
-        return groups
-            .map((g) => {
-                const matchEntityName = q ? g.name.toLowerCase().includes(q) : false;
-
-                const items = g.items.filter((it) => {
-                    const matchTitle = q
-                        ? matchEntityName || it.name.toLowerCase().includes(q)
-                        : true;
-                    const matchCurrency = currency === null || it.currency_type === currency;
-                    const matchType = typeFilter === null || it.type === typeFilter;
-                    const matchFixed = fixedFilter === null || it.fixed_expense === fixedFilter;
-
-                    return matchTitle && matchCurrency && matchType && matchFixed;
-                });
-
-                return { ...g, items };
-            })
-            .filter(
-                (g) => g.items.length > 0 || (g.is_favorite && sinFiltros && !settlementActive),
-            );
-    }, [groups, currency, query, typeFilter, fixedFilter, settlementActive]);
+    const filteredGroups = useMemo(
+        () =>
+            filterDashboardGroups(groups, {
+                query,
+                currency,
+                typeFilter,
+                fixedFilter,
+                settlementActive,
+            }),
+        [groups, currency, query, typeFilter, fixedFilter, settlementActive],
+    );
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalEntity, setModalEntity] = useState('');

@@ -203,10 +203,12 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
     3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance, sin contar los gastos postergados.
     4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
-    5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, la cantidad de gastos compartidos pendientes.
+    5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, cuántos gastos compartidos esperan respuesta en cada entidad. Esos gastos no cuentan en balances, totales ni contadores.
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.
-    - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden.
+    - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden. Una entidad con gastos esperando respuesta sigue visible con cualquier filtro de moneda, tipo o frecuencia; con el filtro por texto, solo si coincide su nombre.
+    - 5e. Una entidad solo tiene gastos esperando respuesta: el sistema la muestra con una tarjeta que lo indica, sin balance ni acciones de pago.
+    - 5f. La otra persona aprueba o rechaza un gasto compartido mientras el dashboard está abierto: el sistema actualiza el contador y los gastos sin recargar (CU-38).
     - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web); el usuario puede pasar a los meses siguientes con cuotas pendientes.
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
