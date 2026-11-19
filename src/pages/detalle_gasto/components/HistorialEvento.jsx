@@ -2,9 +2,10 @@ import { useState } from 'react';
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { TONES } from '@/utils/movement-styles';
 import {
-    TONES,
     eventConfig,
+    eventDate,
     eventTitle,
     formatEventDate,
     isFinalizationPayment,
@@ -42,11 +43,7 @@ export default function HistorialEvento({
 
     const closed = type === 'PAYMENT_REJECTED' || type === 'PAYMENT_WITHDRAWN';
     const showAmount = isPaymentEvent(movement) && movement.amount != null;
-    const date = formatEventDate(
-        isPaymentEvent(movement)
-            ? (movement.payment_date ?? movement.created_at)
-            : movement.created_at,
-    );
+    const date = formatEventDate(eventDate(movement));
 
     const handleRevert = () => {
         const dialog = revertDialog({

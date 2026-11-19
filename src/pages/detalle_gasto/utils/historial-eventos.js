@@ -1,46 +1,18 @@
-export const TONES = {
-    success: {
-        border: 'border-l-emerald-500',
-        badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-    },
-    warning: {
-        border: 'border-l-amber-500',
-        badge: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-    },
-    danger: {
-        border: 'border-l-red-500',
-        badge: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
-    },
-    revert: {
-        border: 'border-l-orange-500',
-        badge: 'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
-    },
-    info: {
-        border: 'border-l-sky-500',
-        badge: 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400',
-    },
-    postpone: {
-        border: 'border-l-violet-500',
-        badge: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-400',
-    },
-    neutral: {
-        border: 'border-l-slate-400 dark:border-l-slate-500',
-        badge: 'bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300',
-    },
-};
+import { inDateRange } from '@/utils/date-range';
+import { movementStyle } from '@/utils/movement-styles';
 
-const EVENTS = {
-    CREATION: { icon: 'add_circle', tone: 'info', label: 'Creación' },
-    PAYMENT: { icon: 'check_circle', tone: 'success', label: 'Pago' },
-    PENDING_PAYMENT: { icon: 'hourglass_top', tone: 'warning', label: 'Pendiente' },
-    PAYMENT_REJECTED: { icon: 'cancel', tone: 'danger', label: 'Rechazado' },
-    PAYMENT_WITHDRAWN: { icon: 'remove_circle', tone: 'neutral', label: 'Retirado' },
-    REFUND: { icon: 'undo', tone: 'revert', label: 'Reversión' },
-    EDITED: { icon: 'edit', tone: 'info', label: 'Edición' },
-    POSTPONED: { icon: 'schedule', tone: 'postpone', label: 'Postergado' },
-    UNPOSTPONED: { icon: 'event_available', tone: 'postpone', label: 'Reactivado' },
-    DELETE: { icon: 'delete', tone: 'danger', label: 'Eliminado' },
-    RESTORE: { icon: 'restore', tone: 'success', label: 'Restaurado' },
+const LABELS = {
+    CREATION: 'Creación',
+    PAYMENT: 'Pago',
+    PENDING_PAYMENT: 'Pendiente',
+    PAYMENT_REJECTED: 'Rechazado',
+    PAYMENT_WITHDRAWN: 'Retirado',
+    REFUND: 'Reversión',
+    EDITED: 'Edición',
+    POSTPONED: 'Postergado',
+    UNPOSTPONED: 'Reactivado',
+    DELETE: 'Eliminado',
+    RESTORE: 'Restaurado',
 };
 
 const PAYMENT_TYPES = new Set([
@@ -52,19 +24,24 @@ const PAYMENT_TYPES = new Set([
 ]);
 
 export function eventConfig(movement, gasto) {
-    const config = EVENTS[movement.movement_type] ?? {
-        icon: 'event',
-        tone: 'neutral',
-        label: movement.movement_type,
-    };
-    if (movement.movement_type === 'PAYMENT' && gasto.type === 'INGRESO') {
-        return { ...config, label: 'Cobro' };
-    }
-    return config;
+    const type = movement.movement_type;
+    const label = type === 'PAYMENT' && gasto.type === 'INGRESO' ? 'Cobro' : (LABELS[type] ?? type);
+    return { ...movementStyle(type), label };
 }
 
 export function isPaymentEvent(movement) {
     return PAYMENT_TYPES.has(movement.movement_type);
+}
+
+export function eventDate(movement) {
+    return isPaymentEvent(movement)
+        ? (movement.payment_date ?? movement.created_at)
+        : movement.created_at;
+}
+
+export function filterEventsByDate(movements, { from = '', to = '' } = {}) {
+    if (!from && !to) return movements;
+    return movements.filter((movement) => inDateRange(eventDate(movement), from, to));
 }
 
 function byPaymentDate(a, b) {
@@ -128,10 +105,9 @@ export function eventTitle(movement, gasto, { number, counterpartyName }) {
 export function isFinalizationPayment(movement, gasto) {
     return Boolean(
         movement.movement_type === 'PAYMENT' &&
-            gasto.finalization_date &&
-            movement.payment_date &&
-            new Date(movement.payment_date).getTime() ===
-                new Date(gasto.finalization_date).getTime(),
+        gasto.finalization_date &&
+        movement.payment_date &&
+        new Date(movement.payment_date).getTime() === new Date(gasto.finalization_date).getTime(),
     );
 }
 

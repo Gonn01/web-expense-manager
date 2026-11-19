@@ -101,7 +101,8 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - Alias `@/*` → `src/*`. Debe coincidir en tres archivos: `vite.config.js` (`resolve.alias`), `jsconfig.json` (`compilerOptions.paths`) y `eslint.config.js` (`import/resolver.alias`).
 - Archivos de componentes en `PascalCase.jsx`; hooks, stores y utilidades en `kebab-case.js`.
 - Carpetas de `pages/` y términos del dominio en español, igual que la API.
-- Enums de dominio en `utils/enums.js`; no comparar contra strings sueltos.
+- Enums de dominio en `utils/enums.js`; no comparar contra strings sueltos. `MovementType` copia el enum de la API: un tipo de movimiento nuevo se agrega ahí y en `utils/movement-styles.js`.
+- **Historiales**: el del gasto y el de la entidad comparten ícono y tono por tipo de movimiento (`movementStyle()` y `TONES` de `utils/movement-styles.js`); cada pantalla pone solo sus etiquetas. Los filtros de fecha usan `components/DateRangeFilter.jsx` + `inDateRange()` de `utils/date-range.js`, que incluye todo el día de «Hasta» e invierte el rango si «Desde» es posterior.
 - Campos de monto con `components/AmountInput.jsx` (o `TextInput` con `type="amount"`): muestra los puntos de miles y la coma decimal mientras se escribe, pero el valor del estado sigue siendo el número crudo (`"1234.5"`), listo para `Number(...)`. No usar `type="number"` para montos.
 - **Colores en los dos temas**: la variante `dark:` de Tailwind depende de la clase `dark` (`@custom-variant` en `index.css`), no del sistema operativo. Todo color de fondo, texto o borde lleva su par: `bg-white dark:bg-[#111714]`, `text-slate-900 dark:text-white`, `text-slate-500 dark:text-[#9eb7a8]`, `border-slate-200 dark:border-[#29382f]`. Un color sin `dark:` solo vale si sirve en los dos temas (texto blanco sobre un botón rojo o verde, overlays `bg-black/60`). Lo que no se pinta con clases (ejes y grilla de recharts) usa las variables `--chart-grid` y `--chart-tick` de `index.css`.
 - Desplegables con `components/Select.jsx`, nunca con `<select>` nativo: recibe `options` (`{ value, label }`), `value`, `onChange(valor)` (siempre string, como el `<select>`) y un `placeholder` opcional que funciona como opción vacía. Con más de 10 opciones muestra un buscador (sin distinguir mayúsculas ni tildes). La lista se abre en un portal, así que no la recorta el `overflow` de un modal, y se cierra si se hace scroll fuera de ella (si no, quedaría flotando sobre el encabezado del modal). Los encabezados y pies `sticky` de los modales llevan `z-10`, para que los campos con posición propia no se dibujen encima al hacer scroll.
@@ -118,11 +119,11 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - [ ] Componentes reutilizados por más de una pantalla en `src/components/`.
 - [ ] Sin manejo de errores ad hoc: los muestra el interceptor.
 - [ ] Suscripción a Pusher con `usePusherChannel` si la pantalla depende de acciones de otro usuario.
-- [ ] `npm run lint` sin errores.
+- [ ] `npm run lint` sin errores y `npm test` en verde.
 - [ ] **Paridad**: el mismo cambio funcional hecho en la app Flutter.
 - [ ] **Documentación**: ver [documentacion.md](documentacion.md).
 
 ## 9. Trampas
 
-- No hay framework de tests configurado. Si se agregan, vitest es lo natural con Vite.
+- Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código. Solo cubren funciones puras: para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función. No hay entorno DOM ni Testing Library instalados.
 - Los textos de interfaz están escritos en los componentes, solo en español: la web no tiene l10n.

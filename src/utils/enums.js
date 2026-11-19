@@ -38,3 +38,20 @@ export const THEME_MODE_LABELS = Object.freeze({
     [ThemeMode.LIGHT]: 'Claro',
     [ThemeMode.DARK]: 'Oscuro',
 });
+
+export const MovementType = Object.freeze({
+    CREATION: 'CREATION',
+    PAYMENT: 'PAYMENT',
+    PENDING_PAYMENT: 'PENDING_PAYMENT',
+    PAYMENT_REJECTED: 'PAYMENT_REJECTED',
+    PAYMENT_WITHDRAWN: 'PAYMENT_WITHDRAWN',
+    REFUND: 'REFUND',
+    DELETE: 'DELETE',
+    RESTORE: 'RESTORE',
+    EDITED: 'EDITED',
+    POSTPONED: 'POSTPONED',
+    UNPOSTPONED: 'UNPOSTPONED',
+    LINK: 'LINK',
+    UNLINK: 'UNLINK',
+    PURCHASE_CREATED: 'PURCHASE_CREATED',
+});

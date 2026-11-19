@@ -55,9 +55,10 @@ npm run preview     # vite preview
 npm run lint        # eslint .
 npm run lint:fix     # eslint . --fix
 npm run format       # prettier --write .
+npm test             # vitest run
 ```
 
-No test framework is configured (no vitest/jest, no `*.test.*` files). If adding tests, vitest is the natural fit given the Vite toolchain.
+Tests use Vitest and live next to the code as `*.test.js`. They only cover pure functions (no DOM environment or Testing Library installed): to test screen logic, extract it to a `utils/` function first.
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
 

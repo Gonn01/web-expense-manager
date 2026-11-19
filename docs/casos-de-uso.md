@@ -360,6 +360,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema muestra nombre, entidad, tipo, monto, moneda, categorías, progreso de pago (cuotas pagas, pendientes de confirmación y restantes) e historial de movimientos.
 - **Flujos alternativos**
     - 2a. El gasto es fijo: el progreso muestra cuántas veces se pagó.
+    - 2b. El usuario filtra el historial por rango de fechas: el sistema muestra solo los movimientos de ese rango, incluido todo el día final; si la fecha inicial es posterior a la final, lo avisa y usa el rango entre las dos. Si no hay movimientos, informa que no hay actividad en ese rango.
     - 1a. El gasto no existe o fue eliminado: el sistema lo informa.
     - 1b. El gasto no es del usuario: el sistema lo impide.
 
@@ -558,7 +559,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El usuario abre una; el sistema muestra el detalle agrupado por entidad, con el estado actual de cada pago compartido (pendiente, aprobado, rechazado, retirado, reversión pendiente o revertido) y, por moneda, el neto marcado y el neto confirmado.
     4. Opcionalmente, el usuario elige una entidad o un gasto del detalle; el sistema abre el detalle de esa entidad o de ese gasto.
 - **Flujos alternativos**
-    - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período.
+    - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período, incluido todo el día final; si la fecha inicial es posterior a la final, lo avisa y usa el rango entre las dos. Si no hay ninguna, informa que no hay cuentas cerradas en ese rango.
     - 2b. No hay sesiones finalizadas: el sistema muestra un estado vacío.
     - 2c. Un snapshot tiene pagos compartidos sin confirmar: el listado lo indica con la cantidad.
     - 3a. El snapshot no existe o no es del usuario: el sistema lo informa.
