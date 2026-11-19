@@ -9,7 +9,7 @@ import Collapse from '@/components/Collapse';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { ExpenseType } from '@/utils/enums';
 import PendingApprovalNotice from './PendingApprovalNotice';
-import { pendingCountOf } from '../utils/dashboard-groups';
+import { ENTITY_STARTS_COLLAPSED, pendingCountOf } from '../utils/dashboard-groups';
 import { pendingApprovalLabel } from '../utils/pending-approval-text';
 
 function EntityAvatar({ name, done }) {
@@ -60,7 +60,7 @@ export default function ActiveFinancialEntity({
     busyKeys,
 }) {
     const navigate = useNavigate();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(ENTITY_STARTS_COLLAPSED);
 
     const settlementActive = useSettlementStore((s) => s.active);
     const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);

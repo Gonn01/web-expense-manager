@@ -1,5 +1,7 @@
 import { ExpenseStatus } from '@/utils/enums';
 
+export const ENTITY_STARTS_COLLAPSED = true;
+
 const byFavThenDate = (aFav, bFav, aDate, bDate) => {
     if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
     return new Date(bDate) - new Date(aDate);

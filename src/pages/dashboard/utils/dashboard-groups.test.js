@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    ENTITY_STARTS_COLLAPSED,
     addCreatedToGroups,
     buildDashboardGroups,
     changePendingCount,
@@ -138,5 +139,11 @@ describe('pendingApprovalLabel', () => {
     it('usa singular y plural', () => {
         expect(pendingApprovalLabel(1)).toBe('1 gasto esperando respuesta');
         expect(pendingApprovalLabel(3)).toBe('3 gastos esperando respuesta');
+    });
+});
+
+describe('estado inicial de las entidades del dashboard', () => {
+    it('arrancan cerradas al entrar', () => {
+        expect(ENTITY_STARTS_COLLAPSED).toBe(true);
     });
 });
