@@ -10,9 +10,9 @@ import {
 } from 'recharts';
 import {
     currentMonthIndex,
-    monthIndexFromDateString,
     keyFromMonthIndex,
     labelFromKey,
+    pendingQuotaMonths,
 } from '@/utils/chart-months';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
@@ -26,12 +26,10 @@ function accumulateAmounts(gastos, type, amounts, preferredCurrency, rates) {
     const currentMonth = currentMonthIndex();
 
     for (const g of gastos) {
-        if (g.fixed_expense || g.type !== type) continue;
+        if (g.type !== type) continue;
 
-        const total = Number(g.number_of_quotas || 0);
-        const paid = Number(g.payed_quotas || 0);
-        const remaining = total - paid;
-        if (remaining <= 0 || total === 0) continue;
+        const range = pendingQuotaMonths(g, currentMonth);
+        if (!range) continue;
 
         const amountPerQuota = Number(g.amount_per_quota || 0);
         const converted = convertCurrency(
@@ -42,16 +40,8 @@ function accumulateAmounts(gastos, type, amounts, preferredCurrency, rates) {
         );
         if (converted === null) continue;
 
-        let nextMonth;
-        if (g.first_quota_date) {
-            nextMonth = monthIndexFromDateString(g.first_quota_date) + paid;
-            if (nextMonth < currentMonth) nextMonth = currentMonth;
-        } else {
-            nextMonth = currentMonth;
-        }
-
-        for (let i = 0; i < remaining; i++) {
-            const key = keyFromMonthIndex(nextMonth + i);
+        for (let month = range.start; month <= range.end; month++) {
+            const key = keyFromMonthIndex(month);
             amounts[key] = (amounts[key] || 0) + converted;
         }
     }
