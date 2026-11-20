@@ -4,11 +4,13 @@
             "path": ".",
         },
         {
-            "path": "D:/proyectos_node/api-plataformas-desarrollo",
+            "path": "../api-expense-manager",
         },
         {
-            "path": "D:/proyectos_flutter/app_expense_manager",
+            "path": "../app_expense_manager",
         },
     ],
-    "settings": {},
+    "settings": {
+        "scm.alwaysShowRepositories": true,
+    },
 }

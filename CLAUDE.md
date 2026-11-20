@@ -30,6 +30,10 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 
 At the end of every task, state which documentation files were updated, or say explicitly that none needed updating and why.
 
+## Git read-only rule
+
+**Only read-only git operations are allowed** — in any of the three projects (this web app, the Flutter app, the API). Allowed: `git status`, `git log`, `git show`, `git diff`, `git blame`, `git branch` (listing only), `git ls-files`, `git remote -v` and similar commands that do not change the repository, the index or the remote. Not allowed, even if asked mid-task: `git add`, `git rm`, `git mv`, `git commit`, `git push`, `git pull`, `git fetch`, `git merge`, `git rebase`, `git reset`, `git restore`, `git checkout`/`git switch`, `git stash`, `git tag`, `git cherry-pick`, `git revert`, `git clean`, creating/deleting branches, or any `gh` command that creates or modifies PRs, issues or comments. Make the changes in the working tree and leave staging, committing and pushing to the user.
+
 ## Feature parity rule
 
 Any functional/business-logic change made here (new feature, changed behavior, new field, new validation, new endpoint usage) **must also be implemented in the Flutter app** (`d:\proyectos_flutter\app_expense_manager`), and vice versa. The two clients are meant to mirror each other on top of the same API.

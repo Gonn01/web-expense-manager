@@ -24,7 +24,6 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` (repo de la API) si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
 | cambia seguridad, rendimiento, tolerancia a fallos, dependencias externas o entornos | `docs/requerimientos-no-funcionales.md` |
 | corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había); si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |
-| cambia o renumera un `RF` de PAG o CTA, agrega o quita pruebas de ese módulo, o cambia su cobertura | la matriz de trazabilidad y la línea base de `docs/plan-de-pruebas.md` |
 | cambia o renumera un `RF`/`RNF` citado en la tabla de valores, o cambia el comportamiento que esa tabla describe | `docs/mision-vision-valores.md` |
 | cambia la estructura de carpetas, una capa, una convención o un comando | la guía de arquitectura de ese proyecto + su `CLAUDE.md` |
 | cambia un comando, una variable de entorno, un requisito de instalación o una librería principal | el `README.md` de ese repo |

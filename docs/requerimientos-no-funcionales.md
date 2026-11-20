@@ -105,7 +105,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la app móvil no tiene pruebas automatizadas, y la web solo tiene pruebas unitarias (Vitest) de funciones puras de `src/utils/` (conversión de moneda y transferencia de gastos), no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte. El plan de pruebas del módulo de Pagos y Hacer cuentas, con sus metas de cobertura y los casos que faltan, está en [plan-de-pruebas.md](plan-de-pruebas.md).
+*Limitación conocida*: la app móvil no tiene pruebas automatizadas, y la web solo tiene pruebas unitarias (Vitest) de funciones puras de `src/utils/` (conversión de moneda y transferencia de gastos), no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte.
 
 ## POR — Portabilidad y entorno
 
