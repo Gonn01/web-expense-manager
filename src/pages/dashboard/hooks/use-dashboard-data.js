@@ -11,87 +11,16 @@ import useAuth from '@/store/use-auth-store';
 import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
-import { Currency } from '@/utils/enums';
+import { Currency, ExpenseStatus } from '@/utils/enums';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import {
+    addCreatedToGroups,
+    buildDashboardGroups,
+    changePendingCount,
+    keepsGroupOnDashboard,
+} from '../utils/dashboard-groups';
 
-const byFavThenDate = (aFav, bFav, aDate, bDate) => {
-    if (Boolean(bFav) !== Boolean(aFav)) return bFav ? 1 : -1;
-    return new Date(bDate) - new Date(aDate);
-};
-
-const withProgress = (g) => {
-    const paid = Number(g.payed_quotas) || 0;
-    const total = Number(g.number_of_quotas) || 0;
-    return {
-        ...g,
-        amount: Number(g.amount),
-        amount_per_quota: Number(g.amount_per_quota),
-        payed_quotas: paid,
-        progress: g.fixed_expense
-            ? 100
-            : total > 0
-              ? Math.min((paid / total) * 100, 100)
-              : paid === 0
-                ? 0
-                : 100,
-    };
-};
-
-const sortItems = (items) =>
-    items.sort((a, b) => byFavThenDate(a.is_favorite, b.is_favorite, a.created_at, b.created_at));
-
-const sortGroups = (groups) =>
-    groups.sort((a, b) =>
-        byFavThenDate(
-            a.is_favorite,
-            b.is_favorite,
-            a.items[0]?.created_at ?? a.created_at,
-            b.items[0]?.created_at ?? b.created_at,
-        ),
-    );
-
-const isActiveOnDashboard = (g) =>
-    g.status === 'ACTIVE' &&
-    !g.deleted &&
-    (g.fixed_expense || (Number(g.payed_quotas) || 0) < Number(g.number_of_quotas));
-
-function addCreatedToGroups(groups, gasto) {
-    const entityId = String(gasto.financial_entity_id);
-    const index = groups.findIndex((g) => String(g.id) === entityId);
-
-    if (gasto.status === 'PENDING_APPROVAL') {
-        if (index < 0) return groups;
-        return groups.map((g, i) =>
-            i === index ? { ...g, pending_count: (Number(g.pending_count) || 0) + 1 } : g,
-        );
-    }
-
-    if (!isActiveOnDashboard(gasto)) return groups;
-
-    const item = withProgress(gasto);
-    if (index >= 0) {
-        return sortGroups(
-            groups.map((g, i) =>
-                i === index ? { ...g, items: sortItems([...g.items, item]) } : g,
-            ),
-        );
-    }
-
-    const entity = useEntitiesStore.getState().getEntityById(gasto.financial_entity_id);
-    if (!entity) return null;
-
-    return sortGroups([
-        ...groups,
-        {
-            id: entity.id,
-            name: entity.name,
-            is_favorite: entity.is_favorite,
-            created_at: entity.created_at,
-            pending_count: Number(entity.pending_count) || 0,
-            items: [item],
-        },
-    ]);
-}
+const getEntityById = (id) => useEntitiesStore.getState().getEntityById(id);
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -185,20 +114,7 @@ export function useDashboardData() {
                     entities.reduce((sum, e) => sum + (Number(e.pending_count) || 0), 0),
                 );
 
-                const mappedGroups = entities
-                    .map((entity) => {
-                        const gastos = Array.isArray(entity.gastos) ? entity.gastos : [];
-
-                        const items = sortItems(gastos.map(withProgress));
-
-                        if (items.length === 0 && !entity.is_favorite) return null;
-
-                        return { ...entity, items };
-                    })
-                    .filter(Boolean);
-                sortGroups(mappedGroups);
-
-                setGroups(mappedGroups);
+                setGroups(buildDashboardGroups(entities));
                 setLoaded(true);
             } catch (err) {
                 console.error('Error cargando dashboard:', err);
@@ -243,7 +159,7 @@ export function useDashboardData() {
 
                     return { ...group, items: newItems };
                 })
-                .filter((g) => g.items.length > 0);
+                .filter(keepsGroupOnDashboard);
 
             setGroups(newGroups);
         },
@@ -264,15 +180,15 @@ export function useDashboardData() {
             const created = await createGasto(payload, token);
             const { mirror, ...gasto } = created;
 
-            let next = addCreatedToGroups(groups, gasto);
-            if (next && mirror) next = addCreatedToGroups(next, mirror);
+            let next = addCreatedToGroups(groups, gasto, getEntityById);
+            if (next && mirror) next = addCreatedToGroups(next, mirror, getEntityById);
             if (!next) {
-                await loadDashboard();
+                await loadDashboard({ silent: true });
                 return created;
             }
 
             setGroups(next);
-            if (gasto.status === 'PENDING_APPROVAL') setPendingTotal((t) => t + 1);
+            if (gasto.status === ExpenseStatus.PENDING_APPROVAL) setPendingTotal((t) => t + 1);
             return created;
         },
         [token, groups, loadDashboard],
@@ -332,19 +248,10 @@ export function useDashboardData() {
         loadDashboard();
     }, [loadDashboard]);
 
-    const onCompartidoAprobado = useCallback(
+    const onCompartidoRespondido = useCallback(
         ({ entityId } = {}) => {
             if (entityId != null) {
-                setGroups((prev) =>
-                    prev.map((g) =>
-                        String(g.id) === String(entityId)
-                            ? {
-                                  ...g,
-                                  pending_count: Math.max(0, (Number(g.pending_count) || 0) - 1),
-                              }
-                            : g,
-                    ),
-                );
+                setGroups((prev) => changePendingCount(prev, entityId, -1));
                 setPendingTotal((t) => Math.max(0, t - 1));
             }
             reloadSilently();
@@ -383,14 +290,15 @@ export function useDashboardData() {
 
     const pusherEvents = useMemo(
         () => ({
-            'compartido.aprobado': onCompartidoAprobado,
+            'compartido.aprobado': onCompartidoRespondido,
+            'compartido.rechazado': onCompartidoRespondido,
             'pago.pendiente': onPagoPendiente,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,
             'pago.retirado': reloadSilently,
             'pago.reversion_aceptada': reloadSilently,
         }),
-        [onCompartidoAprobado, onPagoPendiente, reloadSilently],
+        [onCompartidoRespondido, onPagoPendiente, reloadSilently],
     );
 
     usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);

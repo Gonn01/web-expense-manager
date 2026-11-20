@@ -1,7 +1,9 @@
 import ChartsModal from '@/components/modals/ChartsModal';
 import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
-import DateRangeFilter, { inDateRange } from '@/components/DateRangeFilter';
+import { TONES, movementStyle } from '@/utils/movement-styles';
+import DateRangeFilter from '@/components/DateRangeFilter';
+import { inDateRange } from '@/utils/date-range';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
@@ -21,7 +23,7 @@ import Loader from '@/components/Loader';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
-import { Currency } from '@/utils/enums';
+import { Currency, MovementType } from '@/utils/enums';
 import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
@@ -352,32 +354,37 @@ export default function EntidadDetalle() {
     );
 }
 
-const MOVEMENT_META = {
-    CREATION: { icon: 'add_circle', label: 'Entidad creada' },
-    PURCHASE_CREATED: { icon: 'shopping_cart', label: 'Gasto creado' },
-    EDITED: { icon: 'edit', label: 'Editado' },
-    DELETE: { icon: 'delete', label: 'Gasto eliminado' },
-    RESTORE: { icon: 'restore_from_trash', label: 'Gasto restaurado' },
-    LINK: { icon: 'link', label: 'Usuario vinculado' },
-    UNLINK: { icon: 'link_off', label: 'Usuario desvinculado' },
-    POSTPONED: { icon: 'schedule', label: 'Postergación agregada' },
-    UNPOSTPONED: { icon: 'event_available', label: 'Postergación quitada' },
-    PAYMENT: { icon: 'payments', label: 'Pago' },
-    REFUND: { icon: 'undo', label: 'Reembolso' },
-    PENDING_PAYMENT: { icon: 'hourglass_empty', label: 'Pago pendiente' },
+const MOVEMENT_LABELS = {
+    [MovementType.CREATION]: 'Entidad creada',
+    [MovementType.PURCHASE_CREATED]: 'Gasto creado',
+    [MovementType.EDITED]: 'Editado',
+    [MovementType.DELETE]: 'Gasto eliminado',
+    [MovementType.RESTORE]: 'Gasto restaurado',
+    [MovementType.LINK]: 'Usuario vinculado',
+    [MovementType.UNLINK]: 'Usuario desvinculado',
+    [MovementType.POSTPONED]: 'Postergación agregada',
+    [MovementType.UNPOSTPONED]: 'Postergación quitada',
+    [MovementType.PAYMENT]: 'Pago',
+    [MovementType.REFUND]: 'Reembolso',
+    [MovementType.PENDING_PAYMENT]: 'Pago pendiente',
+    [MovementType.PAYMENT_REJECTED]: 'Pago rechazado',
+    [MovementType.PAYMENT_WITHDRAWN]: 'Pago retirado',
 };
 
 function MovementRow({ mov }) {
-    const meta = MOVEMENT_META[mov.movement_type] ?? { icon: 'history', label: mov.movement_type };
+    const style = movementStyle(mov.movement_type);
+    const meta = { ...style, label: MOVEMENT_LABELS[mov.movement_type] ?? mov.movement_type };
+    const tone = TONES[style.tone];
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3 py-3">
-            <div className="flex items-start gap-2.5 min-w-0">
-                <Icon
-                    name={meta.icon}
-                    className="text-base text-zinc-400 dark:text-zinc-500 mt-0.5 shrink-0"
-                />
-                <div className="min-w-0">
+            <div className="flex items-start gap-3 min-w-0">
+                <span
+                    className={`shrink-0 flex items-center justify-center size-8 rounded-full ${tone.badge}`}
+                >
+                    <Icon name={meta.icon} className="text-lg" />
+                </span>
+                <div className="min-w-0 pt-0.5">
                     <p className="text-sm text-zinc-700 dark:text-zinc-200">{meta.label}</p>
                     {mov.detail && (
                         <p className="text-xs text-zinc-500 dark:text-zinc-400 break-words">
@@ -386,7 +393,7 @@ function MovementRow({ mov }) {
                     )}
                 </div>
             </div>
-            <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0 pl-7 sm:pl-0">
+            <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0 pl-11 sm:pl-0">
                 {new Date(mov.created_at).toLocaleString()}
             </span>
         </div>

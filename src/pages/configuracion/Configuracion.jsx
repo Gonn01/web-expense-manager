@@ -3,6 +3,7 @@ import { AparienciaCard } from './components/AparienciaCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
 import { SueldoCard } from './components/SueldoCard';
+import { TutorialCard } from './components/TutorialCard';
 import { useConfiguracionUI } from './hooks/use-configuracion-ui';
 
 export default function Configuracion() {
@@ -26,6 +27,8 @@ export default function Configuracion() {
         themeMode,
 
         setThemeMode,
+
+        onOpenTutorial,
 
         snackbar,
 
@@ -67,6 +70,8 @@ export default function Configuracion() {
                     loading={loadingSueldo}
                     onSave={onSaveSueldo}
                 />
+
+                <TutorialCard onOpenTutorial={onOpenTutorial} />
             </section>
         </div>
     );

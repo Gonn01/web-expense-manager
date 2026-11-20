@@ -59,7 +59,7 @@ npm test             # vitest run (unit tests)
 npm run test:watch   # vitest in watch mode
 ```
 
-Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment for components/hooks.
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first.
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
 

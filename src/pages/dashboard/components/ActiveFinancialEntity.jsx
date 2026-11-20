@@ -8,6 +8,9 @@ import GroupBalance from '@/pages/dashboard/components/GroupBalance';
 import Collapse from '@/components/Collapse';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { ExpenseType } from '@/utils/enums';
+import PendingApprovalNotice from './PendingApprovalNotice';
+import { ENTITY_STARTS_COLLAPSED, pendingCountOf } from '../utils/dashboard-groups';
+import { pendingApprovalLabel } from '../utils/pending-approval-text';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -57,7 +60,7 @@ export default function ActiveFinancialEntity({
     busyKeys,
 }) {
     const navigate = useNavigate();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(ENTITY_STARTS_COLLAPSED);
 
     const settlementActive = useSettlementStore((s) => s.active);
     const checkedExpenses = useSettlementStore((s) => s.checkedExpenses);
@@ -73,6 +76,7 @@ export default function ActiveFinancialEntity({
     const groupBusy = group.items.some((it) => loadingIds?.has(it.id) || pendingIds[String(it.id)]);
 
     const count = group.items.length;
+    const pendingCount = pendingCountOf(group);
 
     return (
         <div
@@ -149,24 +153,27 @@ export default function ActiveFinancialEntity({
                         <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                             <Icon name="receipt_long" className="text-sm" />
                             <span>
-                                {count} {count === 1 ? 'gasto' : 'gastos'}
+                                {count} {count === 1 ? 'gasto activo' : 'gastos activos'}
                             </span>
-                            {group.pending_count > 0 && (
+                            {pendingCount > 0 && (
                                 <>
                                     <span className="text-slate-300 dark:text-slate-600">·</span>
                                     <span className="flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400">
-                                        <Icon name="hourglass_empty" className="text-sm" />
-                                        {group.pending_count}{' '}
-                                        {group.pending_count === 1 ? 'pendiente' : 'pendientes'}
+                                        <Icon name="hourglass_top" className="text-sm" />
+                                        {pendingApprovalLabel(pendingCount)}
                                     </span>
                                 </>
                             )}
-                            <span className="text-slate-300 dark:text-slate-600">·</span>
-                            <GroupBalance
-                                items={group.items}
-                                preferredCurrency={preferredCurrency}
-                                rates={rates}
-                            />
+                            {count > 0 && (
+                                <>
+                                    <span className="text-slate-300 dark:text-slate-600">·</span>
+                                    <GroupBalance
+                                        items={group.items}
+                                        preferredCurrency={preferredCurrency}
+                                        rates={rates}
+                                    />
+                                </>
+                            )}
                             {entityDone && (
                                 <>
                                     <span className="text-slate-300 dark:text-slate-600">·</span>
@@ -179,59 +186,63 @@ export default function ActiveFinancialEntity({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0 ml-auto">
-                    <CopyButton
-                        size="sm"
-                        title={`Copiar resumen de ${group.name}`}
-                        getText={() =>
-                            buildWhatsAppText(
-                                groups.find((g) => g.id === group.id) ?? group,
-                                currency,
-                                preferredCurrency,
-                                rates,
-                            )
-                        }
-                    />
-                    {entityDone ? (
-                        <button
-                            className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center disabled:cursor-wait"
-                            disabled={groupBusy}
-                            onClick={() => setExpensesChecked(group.items, group.name, false)}
-                            type="button"
-                        >
-                            <span
-                                className={`flex items-center gap-1.5 ${groupBusy ? 'invisible' : ''}`}
-                            >
-                                <Icon name="undo" className="text-sm" />
-                                Revertir
-                            </span>
-                            {groupBusy && <ButtonSpinner />}
-                        </button>
-                    ) : (
-                        <button
-                            className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
-                                settlementActive ? '' : 'opacity-50'
-                            }`}
-                            disabled={groupBusy}
-                            title={
-                                settlementActive
-                                    ? undefined
-                                    : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                {count > 0 && (
+                    <div className="flex items-center gap-2 shrink-0 ml-auto">
+                        <CopyButton
+                            size="sm"
+                            title={`Copiar resumen de ${group.name}`}
+                            getText={() =>
+                                buildWhatsAppText(
+                                    groups.find((g) => g.id === group.id) ?? group,
+                                    currency,
+                                    preferredCurrency,
+                                    rates,
+                                )
                             }
-                            onClick={() => onOpenGroup?.(group)}
-                            type="button"
-                        >
-                            <span className={groupBusy ? 'invisible' : ''}>
-                                {groupSettleLabel(group.items, settlementActive)}
-                            </span>
-                            {groupBusy && <ButtonSpinner />}
-                        </button>
-                    )}
-                </div>
+                        />
+                        {entityDone ? (
+                            <button
+                                className="relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-2.5 py-1.5 rounded-lg hover:bg-primary/30 transition-colors flex items-center disabled:cursor-wait"
+                                disabled={groupBusy}
+                                onClick={() => setExpensesChecked(group.items, group.name, false)}
+                                type="button"
+                            >
+                                <span
+                                    className={`flex items-center gap-1.5 ${groupBusy ? 'invisible' : ''}`}
+                                >
+                                    <Icon name="undo" className="text-sm" />
+                                    Revertir
+                                </span>
+                                {groupBusy && <ButtonSpinner />}
+                            </button>
+                        ) : (
+                            <button
+                                className={`relative text-xs cursor-pointer font-bold leading-normal tracking-wide bg-primary/20 text-primary px-3 py-1.5 rounded-md hover:bg-primary/30 transition-colors flex items-center shrink-0 disabled:cursor-wait ${
+                                    settlementActive ? '' : 'opacity-50'
+                                }`}
+                                disabled={groupBusy}
+                                title={
+                                    settlementActive
+                                        ? undefined
+                                        : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                                }
+                                onClick={() => onOpenGroup?.(group)}
+                                type="button"
+                            >
+                                <span className={groupBusy ? 'invisible' : ''}>
+                                    {groupSettleLabel(group.items, settlementActive)}
+                                </span>
+                                {groupBusy && <ButtonSpinner />}
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
             <Collapse open={!collapsed}>
-                {count === 0 ? (
+                {count === 0 && pendingCount > 0 ? (
+                    <PendingApprovalNotice count={pendingCount} />
+                ) : count === 0 ? (
                     <p className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">
                         Sin gastos que coincidan con el filtro.
                     </p>

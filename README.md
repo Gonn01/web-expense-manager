@@ -79,7 +79,7 @@ La app queda en `http://localhost:5173`.
 | `npm run format` | Formatea el código con Prettier |
 | `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
 
-Las pruebas unitarias viven junto al archivo que prueban (`src/utils/convert-currency.test.js`).
+Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Por ahora cubren funciones puras de `utils/` (no hay pruebas de componentes).
 
 ### Despliegue
 

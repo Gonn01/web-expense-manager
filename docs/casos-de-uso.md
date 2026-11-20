@@ -69,6 +69,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-41 | Pedir reversión de un pago compartido | Usuario | 05 |
 | CU-42 | Responder reversión de un pago | Contraparte | 05 |
 | CU-43 | Cancelar pedido de reversión | Usuario | 05 |
+| CU-44 | Ver tutorial de bienvenida | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -178,6 +179,21 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1a. El usuario elige Sistema: el cliente sigue el tema del dispositivo y lo vuelve a aplicar cada vez que este cambia.
 - **Postcondición**: el cliente abre con el tema elegido en ese dispositivo; otros dispositivos de la misma cuenta conservan el suyo.
 
+### CU-44 — Ver tutorial de bienvenida
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-05
+- **Flujo principal**
+    1. El usuario inicia sesión y entra a la app por primera vez en ese dispositivo.
+    2. El cliente muestra el tutorial en el primer paso.
+    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca ¡Empezar!.
+    4. El cliente cierra el tutorial y guarda en el dispositivo que ese usuario ya lo vio.
+- **Flujos alternativos**
+    - 3a. El usuario toca Saltar (o Escape en la web, o atrás en la app): el tutorial se cierra y se da por visto.
+    - 3b. El usuario toca Atrás o un punto del indicador: el cliente muestra ese paso.
+    - 1a. El usuario toca "Ver tutorial de nuevo" en Configuración: el cliente muestra el tutorial desde el primer paso, aunque ya lo haya visto.
+- **Postcondición**: el tutorial no vuelve a abrirse solo para ese usuario en ese dispositivo.
+
 ### CU-08 — Consultar dashboard
 
 - **Actor**: Usuario
@@ -187,10 +203,12 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
     3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance, sin contar los gastos postergados.
     4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
-    5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, la cantidad de gastos compartidos pendientes.
+    5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, cuántos gastos compartidos esperan respuesta en cada entidad. Esos gastos no cuentan en balances, totales ni contadores.
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.
-    - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden.
+    - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden. Una entidad con gastos esperando respuesta sigue visible con cualquier filtro de moneda, tipo o frecuencia; con el filtro por texto, solo si coincide su nombre.
+    - 5e. Una entidad solo tiene gastos esperando respuesta: el sistema la muestra con una tarjeta que lo indica, sin balance ni acciones de pago.
+    - 5f. La otra persona aprueba o rechaza un gasto compartido mientras el dashboard está abierto: el sistema actualiza el contador y los gastos sin recargar (CU-38).
     - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web); el usuario puede pasar a los meses siguientes con cuotas pendientes.
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
@@ -344,6 +362,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema muestra nombre, entidad, tipo, monto, moneda, categorías, progreso de pago (cuotas pagas, pendientes de confirmación y restantes) e historial de movimientos.
 - **Flujos alternativos**
     - 2a. El gasto es fijo: el progreso muestra cuántas veces se pagó.
+    - 2b. El usuario filtra el historial por rango de fechas: el sistema muestra solo los movimientos de ese rango, incluido todo el día final; si la fecha inicial es posterior a la final, lo avisa y usa el rango entre las dos. Si no hay movimientos, informa que no hay actividad en ese rango.
     - 1a. El gasto no existe o fue eliminado: el sistema lo informa.
     - 1b. El gasto no es del usuario: el sistema lo impide.
 
@@ -542,7 +561,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El usuario abre una; el sistema muestra el detalle agrupado por entidad, con el estado actual de cada pago compartido (pendiente, aprobado, rechazado, retirado, reversión pendiente o revertido) y, por moneda, el neto marcado y el neto confirmado.
     4. Opcionalmente, el usuario elige una entidad o un gasto del detalle; el sistema abre el detalle de esa entidad o de ese gasto.
 - **Flujos alternativos**
-    - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período.
+    - 2a. *Filtrar por rango de fechas* («extend»): el sistema muestra solo las sesiones finalizadas en ese período, incluido todo el día final; si la fecha inicial es posterior a la final, lo avisa y usa el rango entre las dos. Si no hay ninguna, informa que no hay cuentas cerradas en ese rango.
     - 2b. No hay sesiones finalizadas: el sistema muestra un estado vacío.
     - 2c. Un snapshot tiene pagos compartidos sin confirmar: el listado lo indica con la cantidad.
     - 3a. El snapshot no existe o no es del usuario: el sistema lo informa.

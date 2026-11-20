@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
+import DateRangeFilter from '@/components/DateRangeFilter';
 import HistorialEvento from './HistorialEvento';
-import { paymentNumbers } from '../utils/historial-eventos';
+import { filterEventsByDate, paymentNumbers } from '../utils/historial-eventos';
+
+const EMPTY_RANGE = { from: '', to: '' };
 
 export default function HistorialSection({
     gasto,
@@ -10,6 +13,7 @@ export default function HistorialSection({
     onCancelReversion,
 }) {
     const [expanded, setExpanded] = useState(true);
+    const [range, setRange] = useState(EMPTY_RANGE);
     const { user } = useAuth();
 
     const movements = useMemo(() => gasto.movements ?? [], [gasto.movements]);
@@ -17,7 +21,43 @@ export default function HistorialSection({
         () => [...movements].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
         [movements],
     );
+    const visibles = useMemo(() => filterEventsByDate(eventos, range), [eventos, range]);
     const numbers = useMemo(() => paymentNumbers(movements), [movements]);
+
+    const renderBody = () => {
+        if (eventos.length === 0) {
+            return (
+                <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
+                    Sin actividad registrada.
+                </p>
+            );
+        }
+        return (
+            <>
+                <DateRangeFilter from={range.from} to={range.to} onChange={setRange} />
+                {visibles.length === 0 ? (
+                    <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
+                        No hay actividad en ese rango.
+                    </p>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        {visibles.map((movement) => (
+                            <HistorialEvento
+                                key={movement.id}
+                                movement={movement}
+                                gasto={gasto}
+                                number={numbers.get(movement.id)}
+                                currentUserId={user?.id}
+                                settlementActive={settlementActive}
+                                onRevert={onRevert}
+                                onCancelReversion={onCancelReversion}
+                            />
+                        ))}
+                    </div>
+                )}
+            </>
+        );
+    };
 
     return (
         <section className="flex flex-col gap-4">
@@ -34,27 +74,7 @@ export default function HistorialSection({
                 </span>
             </button>
 
-            {expanded &&
-                (eventos.length === 0 ? (
-                    <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
-                        Sin actividad registrada.
-                    </p>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        {eventos.map((movement) => (
-                            <HistorialEvento
-                                key={movement.id}
-                                movement={movement}
-                                gasto={gasto}
-                                number={numbers.get(movement.id)}
-                                currentUserId={user?.id}
-                                settlementActive={settlementActive}
-                                onRevert={onRevert}
-                                onCancelReversion={onCancelReversion}
-                            />
-                        ))}
-                    </div>
-                ))}
+            {expanded && renderBody()}
         </section>
     );
 }
