@@ -47,7 +47,7 @@ export default function PagoCompartidoCard({
                         </span>
                         {pago.number_of_quotas > 0 &&
                             ` · cuota ${Math.min(
-                                (pago.payed_quotas ?? 0) + 1,
+                                pago.quota_number ?? (pago.payed_quotas ?? 0) + 1,
                                 pago.number_of_quotas,
                             )}/${pago.number_of_quotas}`}
                     </p>
