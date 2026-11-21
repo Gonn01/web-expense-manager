@@ -31,7 +31,7 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 | **Gasto fijo** | Gasto recurrente sin cantidad de cuotas (alquiler, suscripción). Nunca se finaliza. |
 | **Cuota** | Cada pago de un gasto. `monto por cuota = monto / cantidad de cuotas`. |
 | **Gasto finalizado** | Gasto no fijo con todas sus cuotas pagas. Deja de aparecer en el dashboard. |
-| **Movimiento** | Registro de historial de un gasto o de una entidad (creación, pago, reembolso, edición, etc.). |
+| **Movimiento** | Registro de historial de un gasto o de una entidad (creación, pago, reembolso, edición, etc.). Algunos solo registran un paso del historial, como el envío o la reversión de un pago compartido, y no cuentan como cuotas. |
 | **Gasto espejo** | Copia de un gasto con el tipo opuesto, creada en otra entidad propia al usar "pagar con otra entidad". |
 | **Entidad vinculada** | Entidad asociada a otro usuario de la plataforma (la *contraparte*) mediante su email. |
 | **Gasto compartido** | Gasto creado en una entidad vinculada: genera una copia para la contraparte, que debe aprobarla. |

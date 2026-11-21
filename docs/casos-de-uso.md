@@ -363,6 +363,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema muestra nombre, entidad, tipo, monto, moneda, categorías, progreso de pago (cuotas pagas, pendientes de confirmación y restantes) e historial de movimientos.
 - **Flujos alternativos**
     - 2a. El gasto es fijo: el progreso muestra cuántas veces se pagó.
+    - 2c. El gasto es compartido: el historial muestra cada paso de sus pagos y de su aprobación como una línea propia, con quién lo hizo y cuándo.
     - 2b. El usuario filtra el historial por rango de fechas: el sistema muestra solo los movimientos de ese rango, incluido todo el día final; si la fecha inicial es posterior a la final, lo avisa y usa el rango entre las dos. Si no hay movimientos, informa que no hay actividad en ese rango.
     - 1a. El gasto no existe o fue eliminado: el sistema lo informa.
     - 1b. El gasto no es del usuario: el sistema lo impide.
@@ -432,7 +433,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. En el historial del detalle del gasto, el usuario elige revertir uno de los pagos.
     2. El sistema pide confirmación.
-    3. El usuario confirma; el sistema elimina ese pago y registra un reembolso en el historial.
+    3. El usuario confirma; el sistema deja de contar ese pago, conserva en el historial una línea del pago revertido y registra un reembolso.
     4. El sistema actualiza el progreso; si el gasto estaba finalizado, vuelve a estar activo.
 - **Flujos alternativos**
     - 1a. No hay pagos para revertir: el sistema lo informa.
@@ -749,7 +750,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. La contraparte elige aceptar la solicitud desde Compartidos.
     2. El sistema pide confirmación.
-    3. La contraparte confirma; el sistema elimina el pago y su pago vinculado, y registra un reembolso en el historial de cada gasto.
+    3. La contraparte confirma; el sistema deja de contar el pago y su pago vinculado, conserva una línea del pago revertido y registra un reembolso en el historial de cada gasto.
     4. El sistema notifica a quien pidió la reversión (CU-38).
 - **Flujos alternativos**
     - 1a. La contraparte rechaza la solicitud: el pago se mantiene, la solicitud se borra y se notifica a quien la pidió.
@@ -825,7 +826,7 @@ stateDiagram-v2
     Revertido --> [*]
 ```
 
-Al confirmarse, el pago se registra también en la copia de la contraparte y los dos quedan vinculados: la reversión los elimina juntos y deja un reembolso en cada gasto. Estos estados son los que muestra cada ítem compartido en el detalle de un snapshot (RF-CTA-12).
+Al confirmarse, el pago se registra también en la copia de la contraparte y los dos quedan vinculados: la reversión los elimina juntos y deja en cada gasto una línea del pago revertido y un reembolso. Cada transición agrega su línea al historial del gasto (RF-GAS-07), sin perder el paso anterior. Estos estados son los que muestra cada ítem compartido en el detalle de un snapshot (RF-CTA-12).
 
 ### Pago diferido en una sesión de cuentas
 

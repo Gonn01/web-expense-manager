@@ -41,7 +41,8 @@ export default function HistorialEvento({
         (type === 'PENDING_PAYMENT' &&
             String(movement.created_by_user_id) === String(currentUserId));
 
-    const closed = type === 'PAYMENT_REJECTED' || type === 'PAYMENT_WITHDRAWN';
+    const closed =
+        type === 'PAYMENT_REJECTED' || type === 'PAYMENT_WITHDRAWN' || type === 'PAYMENT_REVERTED';
     const showAmount = isPaymentEvent(movement) && movement.amount != null;
     const date = formatEventDate(eventDate(movement));
 
@@ -95,7 +96,11 @@ export default function HistorialEvento({
                     )}
                 </div>
                 <p className="font-medium text-slate-900 dark:text-white whitespace-pre-line break-words">
-                    {eventTitle(movement, gasto, { number, counterpartyName })}
+                    {eventTitle(movement, gasto, {
+                        number,
+                        counterpartyName,
+                        currentUserId,
+                    })}
                 </p>
                 {date && <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">{date}</p>}
 

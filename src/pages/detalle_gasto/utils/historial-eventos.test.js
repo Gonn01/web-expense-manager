@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventDate, filterEventsByDate } from './historial-eventos';
+import { eventDate, eventTitle, filterEventsByDate, paymentNumbers } from './historial-eventos';
 
 const creacion = { id: 1, movement_type: 'CREATION', created_at: '2026-03-01T10:00:00' };
 const pago = {
@@ -32,6 +32,63 @@ describe('eventDate', () => {
 
     it('usa created_at en los eventos que no son pagos', () => {
         expect(eventDate(creacion)).toBe(creacion.created_at);
+    });
+
+    it('muestra el envío en su fecha y la aprobación en la fecha en que se resolvió', () => {
+        const fechas = { payment_date: '2026-11-10T10:00:00', created_by_user_id: 2 };
+        const enviado = {
+            ...fechas,
+            movement_type: 'PAYMENT_REQUESTED',
+            created_at: '2026-11-10T10:00:00',
+        };
+        const aprobado = {
+            ...fechas,
+            movement_type: 'PAYMENT',
+            created_at: '2026-11-12T18:00:00',
+        };
+        const rechazado = { ...aprobado, movement_type: 'PAYMENT_REJECTED' };
+
+        expect(eventDate(enviado)).toBe('2026-11-10T10:00:00');
+        expect(eventDate(aprobado)).toBe('2026-11-12T18:00:00');
+        expect(eventDate(rechazado)).toBe('2026-11-12T18:00:00');
+    });
+});
+
+describe('paymentNumbers', () => {
+    it('la línea histórica toma la cuota de su pago y no cuenta como otra cuota', () => {
+        const numbers = paymentNumbers([
+            { id: 10, movement_type: 'PAYMENT', payment_date: '2026-11-10T10:00:00' },
+            {
+                id: 11,
+                movement_type: 'PAYMENT_REQUESTED',
+                payment_date: '2026-11-10T10:00:00',
+                paired_movement_id: 10,
+            },
+            { id: 12, movement_type: 'PENDING_PAYMENT', payment_date: '2026-11-11T10:00:00' },
+            { id: 13, movement_type: 'REVERSAL_REQUESTED', paired_movement_id: 10 },
+        ]);
+
+        expect([...numbers.entries()].sort(([a], [b]) => a - b)).toEqual([
+            [10, 1],
+            [11, 1],
+            [12, 2],
+            [13, 1],
+        ]);
+    });
+});
+
+describe('eventTitle', () => {
+    const gasto = { fixed_expense: false, number_of_quotas: 6 };
+
+    it('nombra a quien hizo cada paso', () => {
+        const enviado = { movement_type: 'PAYMENT_REQUESTED', created_by_user_id: 2 };
+
+        expect(
+            eventTitle(enviado, gasto, { number: 3, counterpartyName: 'María', currentUserId: 2 }),
+        ).toBe('Cuota 3 de 6 · enviado por vos');
+        expect(
+            eventTitle(enviado, gasto, { number: 3, counterpartyName: 'María', currentUserId: 1 }),
+        ).toBe('Cuota 3 de 6 · enviado por María');
     });
 });
 

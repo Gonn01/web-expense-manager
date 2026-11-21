@@ -13,15 +13,40 @@ const LABELS = {
     UNPOSTPONED: 'Reactivado',
     DELETE: 'Eliminado',
     RESTORE: 'Restaurado',
+    PAYMENT_REQUESTED: 'Enviado',
+    PAYMENT_REVERTED: 'Pago anulado',
+    REVERSAL_REQUESTED: 'Reversión pedida',
+    REVERSAL_CANCELLED: 'Reversión cancelada',
+    REVERSAL_REJECTED: 'Reversión rechazada',
+    SHARED_APPROVED: 'Aprobado',
+    SHARED_REJECTED: 'Rechazado',
+    SHARED_RETRIED: 'Reenviado',
 };
 
 const PAYMENT_TYPES = new Set([
     'PAYMENT',
     'PENDING_PAYMENT',
+    'PAYMENT_REQUESTED',
     'PAYMENT_REJECTED',
     'PAYMENT_WITHDRAWN',
+    'PAYMENT_REVERTED',
     'REFUND',
 ]);
+
+const PAYMENT_LINKED_EVENTS = new Set([
+    'PAYMENT_REQUESTED',
+    'REVERSAL_REQUESTED',
+    'REVERSAL_CANCELLED',
+    'REVERSAL_REJECTED',
+]);
+
+function isDatedByResolution(movement) {
+    const type = movement.movement_type;
+    if (type === 'PAYMENT_REJECTED' || type === 'PAYMENT_WITHDRAWN') return true;
+    return (
+        (type === 'PAYMENT' || type === 'PAYMENT_REVERTED') && movement.created_by_user_id != null
+    );
+}
 
 export function eventConfig(movement, gasto) {
     const type = movement.movement_type;
@@ -34,9 +59,8 @@ export function isPaymentEvent(movement) {
 }
 
 export function eventDate(movement) {
-    return isPaymentEvent(movement)
-        ? (movement.payment_date ?? movement.created_at)
-        : movement.created_at;
+    if (!isPaymentEvent(movement) || isDatedByResolution(movement)) return movement.created_at;
+    return movement.payment_date ?? movement.created_at;
 }
 
 export function filterEventsByDate(movements, { from = '', to = '' } = {}) {
@@ -58,6 +82,12 @@ export function paymentNumbers(movements) {
         .sort(byPaymentDate);
     pagos.forEach((m, i) => numbers.set(m.id, i + 1));
     pendientes.forEach((m, i) => numbers.set(m.id, pagos.length + i + 1));
+    movements
+        .filter((m) => PAYMENT_LINKED_EVENTS.has(m.movement_type))
+        .forEach((m) => {
+            const number = numbers.get(m.paired_movement_id);
+            if (number != null) numbers.set(m.id, number);
+        });
     return numbers;
 }
 
@@ -67,10 +97,14 @@ export function paymentLabel(gasto, number) {
     return `Cuota ${number} de ${gasto.number_of_quotas}`;
 }
 
-export function eventTitle(movement, gasto, { number, counterpartyName }) {
+export function eventTitle(movement, gasto, { number, counterpartyName, currentUserId }) {
     const otra = counterpartyName ?? 'la otra persona';
     const cobro = gasto.type === 'INGRESO';
     const cuota = paymentLabel(gasto, number);
+    const actor =
+        currentUserId != null && String(movement.created_by_user_id) === String(currentUserId)
+            ? 'vos'
+            : otra;
 
     switch (movement.movement_type) {
         case 'CREATION':
@@ -79,6 +113,22 @@ export function eventTitle(movement, gasto, { number, counterpartyName }) {
             return cuota ?? (cobro ? 'Cuota cobrada' : 'Cuota pagada');
         case 'PENDING_PAYMENT':
             return `${cuota ?? 'Pago'} · esperando que ${otra} confirme`;
+        case 'PAYMENT_REQUESTED':
+            return `${cuota ?? 'Pago'} · enviado por ${actor}`;
+        case 'PAYMENT_REVERTED':
+            return 'Pago registrado, luego revertido';
+        case 'REVERSAL_REQUESTED':
+            return `${cuota ?? 'Pago'} · reversión pedida por ${actor}`;
+        case 'REVERSAL_CANCELLED':
+            return `${cuota ?? 'Pago'} · reversión cancelada por ${actor}`;
+        case 'REVERSAL_REJECTED':
+            return `${cuota ?? 'Pago'} · reversión rechazada por ${actor}`;
+        case 'SHARED_APPROVED':
+            return `Gasto compartido aprobado por ${actor}`;
+        case 'SHARED_REJECTED':
+            return `Gasto compartido rechazado por ${actor}`;
+        case 'SHARED_RETRIED':
+            return `Gasto compartido reenviado por ${actor}`;
         case 'PAYMENT_REJECTED':
             return `Pago rechazado por ${otra}`;
         case 'PAYMENT_WITHDRAWN':

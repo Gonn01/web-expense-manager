@@ -46,6 +46,14 @@ const MOVEMENT_STYLES = {
     [MovementType.RESTORE]: { icon: 'restore', tone: 'success' },
     [MovementType.LINK]: { icon: 'link', tone: 'info' },
     [MovementType.UNLINK]: { icon: 'link_off', tone: 'info' },
+    [MovementType.PAYMENT_REQUESTED]: { icon: 'send', tone: 'info' },
+    [MovementType.PAYMENT_REVERTED]: { icon: 'history', tone: 'revert' },
+    [MovementType.REVERSAL_REQUESTED]: { icon: 'pending_actions', tone: 'warning' },
+    [MovementType.REVERSAL_CANCELLED]: { icon: 'remove_circle', tone: 'neutral' },
+    [MovementType.REVERSAL_REJECTED]: { icon: 'cancel', tone: 'danger' },
+    [MovementType.SHARED_APPROVED]: { icon: 'check_circle', tone: 'success' },
+    [MovementType.SHARED_REJECTED]: { icon: 'cancel', tone: 'danger' },
+    [MovementType.SHARED_RETRIED]: { icon: 'replay', tone: 'info' },
 };
 
 const FALLBACK_STYLE = { icon: 'event', tone: 'neutral' };
