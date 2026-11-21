@@ -136,8 +136,8 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-LOC-01 | La interfaz y los mensajes de error de los clientes están en español rioplatense y en inglés. Los términos del dominio en código y API están en español. | Todos |
 | RNF-LOC-02 | Los clientes no contienen textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | Web, App |
 | RNF-LOC-03 | Los montos se muestran con el formato y el símbolo o código de su moneda. | Web, App |
-| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal, en cualquier idioma. | Web |
+| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal, en cualquier idioma. | Web, App |
 | RNF-LOC-05 | Salvo que el usuario elija un idioma (RF-CFG-06), se toma del navegador o del dispositivo: se usa el primero de sus idiomas preferidos que esté soportado y, si ninguno lo está, inglés. | Web, App |
 | RNF-LOC-06 | Las fechas, los números y los montos se muestran con el formato del idioma activo (`es-AR` o `en-US`). | Web, App |
 
-*Limitación conocida*: los textos que redacta la API (mensajes de error sin traducción en el catálogo del cliente y detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés. La app móvil todavía no formatea los campos de monto mientras se escribe (RNF-LOC-04).
+*Limitación conocida*: los textos que redacta la API (mensajes de error sin traducción en el catálogo del cliente y detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés.
