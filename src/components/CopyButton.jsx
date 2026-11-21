@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import Icon from '@/components/Icon';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
-
-const SIZES = {
-    md: { button: 'gap-2 px-4 py-2', icon: '' },
-    sm: { button: 'gap-1.5 px-2.5 py-1.5 text-xs shrink-0', icon: 'text-sm' },
-};
+import { ACTION_BUTTON_CLASS, ACTION_BUTTON_SIZES } from './action-button-styles';
 
 export default function CopyButton({
     getText,
@@ -13,7 +9,7 @@ export default function CopyButton({
     title = 'Copiar al portapapeles',
     size = 'md',
 }) {
-    const s = SIZES[size] ?? SIZES.md;
+    const s = ACTION_BUTTON_SIZES[size] ?? ACTION_BUTTON_SIZES.md;
     const [copied, setCopied] = useState(false);
 
     const handleClick = async () => {
@@ -32,7 +28,7 @@ export default function CopyButton({
             type="button"
             onClick={handleClick}
             title={title}
-            className={`flex items-center ${s.button} bg-primary/20 hover:bg-primary/30 transition-colors rounded-lg text-primary font-bold cursor-pointer`}
+            className={`${ACTION_BUTTON_CLASS} ${s.button}`}
         >
             <Icon name={copied ? 'check' : 'content_copy'} className={s.icon} />
             {copied ? '¡Copiado!' : label}

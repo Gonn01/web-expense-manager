@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
 import CopyButton from '@/components/CopyButton';
+import ShareButton from '@/components/ShareButton';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateTime } from '@/utils/FormatDate';
 import {
@@ -75,14 +76,23 @@ export default function SettlementDetail() {
                         {formatDateTime(snapshot.finished_at)}
                     </p>
                 </div>
-                <CopyButton
-                    size="sm"
-                    label="Exportar"
-                    title="Copiar resumen del mes"
-                    getText={() =>
-                        buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))
-                    }
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                    <CopyButton
+                        size="sm"
+                        label="Exportar"
+                        title="Copiar resumen del mes"
+                        getText={() =>
+                            buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))
+                        }
+                    />
+                    <ShareButton
+                        size="sm"
+                        title="Compartir resumen del mes"
+                        getText={() =>
+                            buildSettlementSnapshotText(snapshot, monthLabel(snapshot.month))
+                        }
+                    />
+                </div>
             </div>
 
             <div className="shrink-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-6">
@@ -166,6 +176,11 @@ export default function SettlementDetail() {
                                     size="sm"
                                     getText={() => buildSettlementEntityText(entityName, items)}
                                     title={`Copiar resumen de ${entityName}`}
+                                />
+                                <ShareButton
+                                    size="sm"
+                                    getText={() => buildSettlementEntityText(entityName, items)}
+                                    title={`Compartir resumen de ${entityName}`}
                                 />
                             </div>
                         </div>
