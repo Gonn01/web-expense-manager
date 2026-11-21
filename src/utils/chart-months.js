@@ -43,5 +43,14 @@ export function pendingQuotaMonths(gasto, currentMonth = currentMonthIndex()) {
     if (gasto.first_quota_date) {
         start = Math.max(monthIndexFromDateString(gasto.first_quota_date) + paid, currentMonth);
     }
+    start += postponedShift(gasto);
     return { start, end: start + remaining - 1 };
+}
+
+export function fixedExpenseStartMonth(gasto, currentMonth = currentMonthIndex()) {
+    return currentMonth + postponedShift(gasto);
+}
+
+function postponedShift(gasto) {
+    return gasto.is_postponed ? 1 : 0;
 }

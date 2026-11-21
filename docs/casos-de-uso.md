@@ -578,7 +578,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 1a. El usuario elige "Copiar" en una entidad del snapshot: el texto incluye solo esa entidad.
     - 1b. El usuario elige "Copiar" en una entidad del dashboard o en el detalle de una entidad: el texto resume los gastos activos de esa entidad, sin los postergados.
-- **Nota**: el sistema no envía mensajes; solo deja el texto en el portapapeles.
+    - 1c. En la web, si el navegador soporta compartir, el usuario elige "Compartir" en el snapshot o en una de sus entidades: el sistema abre el menú nativo para compartir con el mismo texto y el usuario elige la app (por ejemplo WhatsApp). Si cierra el menú, no pasa nada; si compartir falla, el sistema copia el texto al portapapeles y confirma que se copió.
+- **Nota**: el sistema no envía mensajes por su cuenta: deja el texto en el portapapeles o lo entrega al menú de compartir del sistema.
 
 ---
 
