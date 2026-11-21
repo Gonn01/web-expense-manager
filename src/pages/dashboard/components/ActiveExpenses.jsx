@@ -83,15 +83,17 @@ export default function ActiveExpenses({
                         {t('dashboard.allCount', { count: totalCount })}
                     </ToggleButton>
 
-                    {Object.values(Currency).map((cur) => (
-                        <ToggleButton
-                            key={cur}
-                            active={currency === cur}
-                            onClick={() => onCurrencyChange?.(cur)}
-                        >
-                            {cur} ({countByCurrency[cur]})
-                        </ToggleButton>
-                    ))}
+                    {Object.values(Currency)
+                        .filter((cur) => countByCurrency[cur] > 0 || currency === cur)
+                        .map((cur) => (
+                            <ToggleButton
+                                key={cur}
+                                active={currency === cur}
+                                onClick={() => onCurrencyChange?.(cur)}
+                            >
+                                {cur} ({countByCurrency[cur]})
+                            </ToggleButton>
+                        ))}
                 </FilterGroup>
 
                 <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />

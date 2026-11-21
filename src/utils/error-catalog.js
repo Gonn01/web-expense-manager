@@ -28,6 +28,14 @@ export const ERROR_PRESENTATION = Object.freeze({
         messageKey: 'errors.codes.GASTO_COMPARTIDO_DESVINCULADO.message',
         variant: 'snackbar',
     },
+    GASTO_COMPARTIDO_NO_RESTAURABLE: {
+        messageKey: 'errors.codes.GASTO_COMPARTIDO_NO_RESTAURABLE.message',
+        variant: 'snackbar',
+    },
+    GASTO_NO_COMPARTIBLE: {
+        messageKey: 'errors.codes.GASTO_NO_COMPARTIBLE.message',
+        variant: 'snackbar',
+    },
     GASTO_NO_ACTIVO: {
         messageKey: 'errors.codes.GASTO_NO_ACTIVO.message',
         variant: 'snackbar',

@@ -22,6 +22,12 @@
             "GASTO_COMPARTIDO_DESVINCULADO": {
                 "message": "La entidad ya no está vinculada a esa persona: solo podés descartar el gasto."
             },
+            "GASTO_COMPARTIDO_NO_RESTAURABLE": {
+                "message": "Un gasto compartido eliminado no se puede restaurar."
+            },
+            "GASTO_NO_COMPARTIBLE": {
+                "message": "Este gasto no se puede compartir: tiene que estar activo, en una entidad vinculada y no haber sido compartido antes."
+            },
             "GASTO_NO_ACTIVO": {
                 "message": "Este gasto no está activo: la otra persona lo rechazó."
             },
@@ -255,6 +261,7 @@
         "searchOption": "Buscar opción",
         "search": "Buscar...",
         "clpChileanPesos": "CLP (Pesos Chilenos)",
+        "currencyLabel": "{{code}} ({{name}})",
         "cancel": "Cancelar",
         "cancelRequest": "Cancelar pedido",
         "close": "Cerrar",
@@ -474,6 +481,13 @@
         "deleted": "Eliminado",
         "deleteExpense": "Eliminar gasto",
         "alsoDeleteTheLinkedMovement": "Eliminar también el movimiento vinculado",
+        "deleteRestorableHint": "Vas a poder restaurarlo desde Eliminados, en el detalle de la entidad.",
+        "deleteSharedWarning": "Este gasto está compartido con {{name}}. Si lo eliminás, no se puede restaurar. {{name}} conserva su gasto, que deja de ser compartido, sus pagos sin confirmar quedan confirmados y recibe un aviso.",
+        "deleteUnacceptedWarning": "Este gasto todavía no fue aceptado por {{name}}. Si lo eliminás, se retira el pedido, recibe un aviso y no se puede restaurar.",
+        "deleteFormerlySharedWarning": "Este gasto fue compartido, así que si lo eliminás no se puede restaurar.",
+        "shareExpense": "Compartir gasto",
+        "shareExpenseMessage": "{{name}} va a recibir una copia de \"{{expense}}\" con las mismas cuotas pagas. Hasta que la acepte, el gasto queda pendiente y no cuenta en tus saldos.",
+        "expenseShared": "Gasto enviado a {{name}}",
         "sent": "Enviado",
         "finishedTheExpense": "Finalizó el gasto",
         "expenseEdited": "Gasto editado",
@@ -569,6 +583,7 @@
         "finishThisMonthSSettlementPaymentsFor": "¿Terminar las cuentas de este mes? Se van a registrar los pagos de los gastos marcados y se guardará un resumen.",
         "expenseInstallment": "Cuota EGRESO ({{currency}})",
         "incomeInstallment": "Cuota INGRESO ({{currency}})",
+        "balancePerInstallmentShort": "Balance por cuota",
         "expenseInstallmentShort": "Cuota EGRESO",
         "incomeInstallmentShort": "Cuota INGRESO",
         "totalIn": "Total en {{currency}}",
@@ -703,6 +718,8 @@
         "expenseAccepted": "{{who}} ha aceptado tu gasto{{expense}}",
         "expenseRejected": "{{who}} rechazó tu gasto{{expense}}",
         "expenseDiscarded": "{{who}} descartó un gasto que habías rechazado",
+        "expenseUnshared": "{{who}} eliminó {{expense}}: ya no es un gasto compartido.",
+        "expenseUnsharedConfirmed": " Tus pagos pendientes quedaron confirmados.",
         "paymentPending": "{{who}} registró un pago. Confirmalo en Compartidos",
         "paymentConfirmed": "{{who}} confirmó tu pago",
         "paymentRejected": "{{who}} rechazó tu pago",
@@ -725,6 +742,7 @@
         "rateClp": "peso chileno",
         "rateUyu": "peso uruguayo",
         "rateUsed": "Valor del {{name}} tomado: 1 {{code}} = {{rate}} ARS",
+        "rateUsedGeneric": "Cotización tomada: 1 {{code}} = {{rate}} ARS",
         "installmentProgress": "Cuota {{number}}/{{total}}",
         "installmentNumber": "Cuota {{number}}",
         "iOweYou": "*Te debo ({{currency}}):*",
@@ -760,8 +778,9 @@
     },
     "entity": {
         "deleteBase": "También se eliminan todos sus gastos y se quitan de la sesión de cuentas.",
-        "deleteLinked": " Los gastos compartidos dejan de estar vinculados con los de {{name}}, y los pagos que registró sin confirmar quedan rechazados.",
-        "deleteRestore": " Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras: vuelve con los gastos que se eliminaron con ella.",
+        "deleteLinked": " Los gastos compartidos dejan de estar vinculados con los de {{name}}, los pagos que registró sin confirmar quedan confirmados y esos gastos no se pueden restaurar.",
+        "notRestorable": "Compartido: no se puede restaurar",
+        "deleteRestore": " Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras: vuelve con los gastos que se eliminaron con ella, salvo los compartidos.",
         "unlinkName": "Desvincular a {{name}}",
         "awaitingApprovalBy": "Esperan que los apruebe {{name}}",
         "pendingExplain": "Creaste estos gastos en una entidad vinculada: esperan que los apruebe {{name}}. Pasan a activos cuando se aprueban.",

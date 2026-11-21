@@ -15,7 +15,7 @@ Las deudas cotidianas de una persona están dispersas: cuotas de una tarjeta, un
 El sistema centraliza esas deudas en un único lugar:
 
 - Cada deuda o crédito es un **gasto** (egreso o ingreso), que pertenece a una **entidad financiera**: una persona, una tarjeta, un banco, un comercio.
-- Un gasto puede ser de pago único, en cuotas o fijo (recurrente), en cualquiera de las monedas soportadas (ARS, USD, EUR, BRL, CLP, UYU).
+- Un gasto puede ser de pago único, en cuotas o fijo (recurrente), en cualquiera de las 36 monedas soportadas: ARS y las 35 extranjeras con cotización en pesos del BCRA (AUD, AWG, BOB, BRL, CAD, CHF, CLP, CNH, CNY, COP, CZK, DKK, EUR, GBP, HKD, ILS, INR, JPY, MXN, NIO, NOK, NZD, PEN, PYG, RSD, RUB, SEK, SGD, TRY, USD, UYU, VES, VND, XDR, ZAR). Quedan fuera `REF` (dólar de referencia) y los metales `XAU` y `XAG`, que el BCRA publica sin cotización en pesos.
 - El usuario registra los pagos y cobros cuota por cuota, y el sistema calcula saldos, totales por moneda, equivalencias en su moneda preferida y qué proporción de su sueldo representan sus gastos.
 - El **modo hacer cuentas** permite el cierre periódico (típicamente mensual): el usuario marca qué va a pagar o cobrar, y al finalizar la sesión se registran todos los pagos juntos y queda un snapshot inmutable del cierre.
 - Una entidad puede **vincularse** con otro usuario de la plataforma. Los gastos de esa entidad se comparten: la contraparte los aprueba o rechaza, y confirma los pagos, de modo que ambos ven la misma deuda. Los cambios se notifican en tiempo real.
@@ -30,7 +30,7 @@ El sistema está formado por tres proyectos sobre un mismo modelo de datos:
 | Web | React (SPA) | Cliente para navegador. |
 | App móvil | Flutter | Cliente para Android e iOS. |
 
-Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (inicio con Google), Pusher Channels (tiempo real) y dolarapi.com (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
+Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (inicio con Google), Pusher Channels (tiempo real) y la API de Estadísticas Cambiarias del BCRA (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
 
 ### Usuarios
 
@@ -67,7 +67,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión de cualquier pago, pagos pendientes de confirmación en gastos compartidos. |
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
 | CTA — Hacer cuentas | Sesión de cierre persistida en el servidor, marcado de gastos, finalización con registro de pagos y snapshot, descarte, historial de cierres con el estado actual de cada pago compartido, y resumen para WhatsApp. |
-| CMP — Compartidos | Gastos compartidos recibidos y emitidos: aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
+| CMP — Compartidos | Gastos compartidos recibidos y emitidos: compartir un gasto existente de una entidad vinculada, aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
 | NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas. |
 
 **Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idiomas**: español rioplatense e inglés en ambos clientes, a elección del usuario o según el idioma del navegador o del dispositivo.

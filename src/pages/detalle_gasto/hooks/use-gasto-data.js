@@ -8,6 +8,7 @@ import {
     fetchGastoById,
     updateGasto,
     deleteGasto,
+    compartirGasto,
     solicitarEdicionCompartida,
     cancelarEdicionCompartida,
 } from '@/services/api';
@@ -45,6 +46,7 @@ export function useGastoData() {
             }
         };
         return {
+            'compartido.desvinculado': refreshIfShared,
             'pago.pendiente': refreshIfShared,
             'pago.confirmado': refreshIfShared,
             'pago.rechazado': refreshIfShared,
@@ -112,6 +114,21 @@ export function useGastoData() {
         useSnackbarStore
             .getState()
             .show(t('detail.transferred', { name: entityName }), 'success', 'swap_horiz');
+    }
+
+    async function compartir() {
+        if (!gasto) return;
+        try {
+            const updated = await compartirGasto(gasto.id, token);
+            setGasto(updated);
+            useSettlementStore.getState().applyUnmarked([gasto.id]);
+            const destinatario = gasto.share_target_name ?? t('people.otherPerson');
+            useSnackbarStore
+                .getState()
+                .show(t('detalleGasto.expenseShared', { name: destinatario }), 'success', 'group');
+        } catch (err) {
+            console.error('Error compartiendo gasto', err);
+        }
     }
 
     async function settleQuota() {
@@ -183,6 +200,7 @@ export function useGastoData() {
         gasto,
         actualizar,
         transferir,
+        compartir,
         settleQuota,
         revertirPago,
         cancelarReversion,

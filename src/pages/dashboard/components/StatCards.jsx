@@ -177,7 +177,7 @@ function StatCardsBreakdown({ summaryByCurrency, preferredCurrency, rates, verti
 
     const cuotaDefs = [
         {
-            label: t('dashboard.balancePerInstallment'),
+            label: t('dashboard.balancePerInstallmentShort'),
             key: 'cuota_balance',
             tone: (v) =>
                 v >= 0

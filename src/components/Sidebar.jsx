@@ -86,6 +86,21 @@ export default function Sidebar() {
         [loadPendingCount, token, user?.id],
     );
 
+    const handleDesvinculado = useCallback(
+        ({ actorName, gastoName, confirmedPayments } = {}) => {
+            loadPendingCount(token);
+            const quien = actorName || t('common.theOtherPerson');
+            const que = gastoName ? `"${gastoName}"` : t('realtime.anExpense');
+            const confirmados = confirmedPayments > 0 ? t('realtime.expenseUnsharedConfirmed') : '';
+            useSnackbarStore
+                .getState()
+                .show(
+                    `${t('realtime.expenseUnshared', { who: quien, expense: que })}${confirmados}`,
+                );
+        },
+        [loadPendingCount, token],
+    );
+
     const handlePagoPendiente = useCallback(
         ({ actorName } = {}) => {
             setPendingPaymentsCount((c) => c + 1);
@@ -193,6 +208,7 @@ export default function Sidebar() {
             'compartido.aprobado': handleAprobado,
             'compartido.rechazado': handleRechazado,
             'compartido.descartado': handleDescartado,
+            'compartido.desvinculado': handleDesvinculado,
             'pago.pendiente': handlePagoPendiente,
             'pago.confirmado': handlePagoConfirmado,
             'pago.rechazado': handlePagoRechazado,
@@ -215,6 +231,7 @@ export default function Sidebar() {
             handleAprobado,
             handleRechazado,
             handleDescartado,
+            handleDesvinculado,
             handlePagoPendiente,
             handlePagoConfirmado,
             handlePagoRechazado,

@@ -6,6 +6,7 @@ export default function DeleteExpenseModal({
     open,
     linked = false,
     linkedEntityName = '',
+    notice,
     onCancel,
     onDelete,
 }) {
@@ -23,7 +24,7 @@ export default function DeleteExpenseModal({
             message={
                 linked ? (
                     <span className="block">
-                        {t('common.thisActionCannotBeUndone')}
+                        {notice}
                         <label className="mt-4 flex items-center gap-2 cursor-pointer select-none text-slate-900 dark:text-white">
                             <input
                                 type="checkbox"
@@ -35,7 +36,7 @@ export default function DeleteExpenseModal({
                         </label>
                     </span>
                 ) : (
-                    t('common.thisActionCannotBeUndone')
+                    notice
                 )
             }
             confirmLabel={t('common.delete')}

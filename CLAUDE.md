@@ -63,7 +63,7 @@ npm test             # vitest run (unit tests)
 npm run test:watch   # vitest in watch mode
 ```
 
-Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first.
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/`, plus `services/error-handler.js` and `store/use-settlement-store.js` — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first. Do not use `vi.mock` with the `@/` alias: on Windows the mock is ignored when the working directory has a lowercase drive (`d:\`, as VS Code opens it). Replace store actions with `setState`, and fake HTTP by setting `axios.defaults.adapter` before dynamically importing the module (see `use-settlement-store.test.js`).
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
 

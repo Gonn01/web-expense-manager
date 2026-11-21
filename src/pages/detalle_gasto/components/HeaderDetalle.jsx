@@ -8,6 +8,7 @@ export default function HeaderDetalle({
     marcarProxima,
     abrirEditar,
     abrirTransferir,
+    abrirCompartir,
     abrirEliminar,
     transferLock,
     onRevertLast,
@@ -64,6 +65,15 @@ export default function HeaderDetalle({
                             label: t('detalleGasto.transferToAnotherEntity'),
                             onClick: transferLock ? avisarTransferBloqueado : abrirTransferir,
                         },
+                        ...(gasto.can_share
+                            ? [
+                                  {
+                                      icon: 'group_add',
+                                      label: t('detalleGasto.shareExpense'),
+                                      onClick: abrirCompartir,
+                                  },
+                              ]
+                            : []),
                         {
                             icon: 'delete',
                             label: t('detalleGasto.deleteExpense'),

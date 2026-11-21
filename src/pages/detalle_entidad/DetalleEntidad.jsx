@@ -422,18 +422,25 @@ function DeletedGastoRow({ gasto, restoring, onRestore }) {
                 </div>
             </div>
 
-            <button
-                type="button"
-                onClick={() => setConfirmOpen(true)}
-                disabled={restoring}
-                className="shrink-0 ml-auto flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-                <Icon
-                    name={restoring ? 'progress_activity' : 'restore_from_trash'}
-                    className={`text-base ${restoring ? 'animate-spin' : ''}`}
-                />
-                {t('common.restore')}
-            </button>
+            {gasto.can_restore === false ? (
+                <span className="shrink-0 ml-auto flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+                    <Icon name="lock" className="text-base" />
+                    {t('entity.notRestorable')}
+                </span>
+            ) : (
+                <button
+                    type="button"
+                    onClick={() => setConfirmOpen(true)}
+                    disabled={restoring}
+                    className="shrink-0 ml-auto flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                    <Icon
+                        name={restoring ? 'progress_activity' : 'restore_from_trash'}
+                        className={`text-base ${restoring ? 'animate-spin' : ''}`}
+                    />
+                    {t('common.restore')}
+                </button>
+            )}
 
             <ConfirmDeleteModal
                 open={confirmOpen}
