@@ -10,32 +10,22 @@ import {
 } from 'recharts';
 import {
     currentMonthIndex,
-    monthIndexFromDateString,
     keyFromMonthIndex,
     labelFromKey,
+    pendingQuotaMonths,
 } from '@/utils/chart-months';
 
 function accumulateCounts(gastos, type, counts) {
     const currentMonth = currentMonthIndex();
 
     for (const g of gastos) {
-        if (g.fixed_expense || g.type !== type) continue;
+        if (g.type !== type) continue;
 
-        const total = Number(g.number_of_quotas || 0);
-        const paid = Number(g.payed_quotas || 0);
-        const remaining = total - paid;
-        if (remaining <= 0 || total === 0) continue;
+        const range = pendingQuotaMonths(g, currentMonth);
+        if (!range) continue;
 
-        let nextMonth;
-        if (g.first_quota_date) {
-            nextMonth = monthIndexFromDateString(g.first_quota_date) + paid;
-            if (nextMonth < currentMonth) nextMonth = currentMonth;
-        } else {
-            nextMonth = currentMonth;
-        }
-
-        for (let i = 0; i < remaining; i++) {
-            const key = keyFromMonthIndex(nextMonth + i);
+        for (let month = range.start; month <= range.end; month++) {
+            const key = keyFromMonthIndex(month);
             counts[key] = (counts[key] || 0) + 1;
         }
     }

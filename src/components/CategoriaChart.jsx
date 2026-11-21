@@ -7,7 +7,12 @@ import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import { convertCurrency } from '@/utils/convert-currency';
 import { formatMoney } from '@/utils/FormatMoney';
 import { Currency, ExpenseType } from '@/utils/enums';
-import { currentMonthIndex, labelFromMonthIndex, pendingQuotaMonths } from '@/utils/chart-months';
+import {
+    currentMonthIndex,
+    fixedExpenseStartMonth,
+    labelFromMonthIndex,
+    pendingQuotaMonths,
+} from '@/utils/chart-months';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -29,7 +34,9 @@ const PALETTE = [
 ];
 
 function monthlyAmount(gasto, month, currentMonth) {
-    if (gasto.fixed_expense) return month >= currentMonth ? Number(gasto.amount || 0) : 0;
+    if (gasto.fixed_expense) {
+        return month >= fixedExpenseStartMonth(gasto, currentMonth) ? Number(gasto.amount || 0) : 0;
+    }
     const range = pendingQuotaMonths(gasto, currentMonth);
     if (!range || month < range.start || month > range.end) return 0;
     return Number(gasto.amount_per_quota || 0);
@@ -38,8 +45,10 @@ function monthlyAmount(gasto, month, currentMonth) {
 function lastMonthWithQuotas(gastos, currentMonth) {
     let last = currentMonth;
     for (const g of gastos) {
-        const range = pendingQuotaMonths(g, currentMonth);
-        if (range && range.end > last) last = range.end;
+        const end = g.fixed_expense
+            ? fixedExpenseStartMonth(g, currentMonth)
+            : pendingQuotaMonths(g, currentMonth)?.end;
+        if (end !== undefined && end > last) last = end;
     }
     return last;
 }
