@@ -85,7 +85,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-INT-01 | Entidades y gastos se eliminan con baja lógica; sus datos se conservan y pueden restaurarse. Los movimientos del historial nunca se borran: un pago revertido queda marcado como tal. Las categorías no se pueden eliminar. | API |
+| RNF-INT-01 | Entidades y gastos se eliminan con baja lógica; sus datos se conservan y pueden restaurarse, salvo los gastos que son o fueron compartidos, que quedan guardados sin opción de restaurar para que las dos copias no se desincronicen. Los movimientos del historial nunca se borran: un pago revertido queda marcado como tal. Las categorías no se pueden eliminar. | API |
 | RNF-INT-02 | Las cuotas pagas de un gasto no se guardan como contador: se derivan de la cantidad de movimientos de pago. | API |
 | RNF-INT-03 | Toda operación relevante sobre un gasto o una entidad deja un movimiento en su historial, con tipo y fecha. Un cambio de estado de un pago o gasto compartido agrega una línea y no borra la anterior del historial. | API |
 | RNF-INT-04 | Un snapshot de cuentas es inmutable y autocontenido: guarda nombres y montos al momento del cierre y no cambia si después se editan o eliminan los gastos. | API |

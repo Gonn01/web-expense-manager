@@ -22,6 +22,12 @@
             "GASTO_COMPARTIDO_DESVINCULADO": {
                 "message": "The entity is no longer linked to that person: you can only discard the expense."
             },
+            "GASTO_COMPARTIDO_NO_RESTAURABLE": {
+                "message": "A deleted shared expense can't be restored."
+            },
+            "GASTO_NO_COMPARTIBLE": {
+                "message": "This expense can't be shared: it must be active, in a linked entity and never shared before."
+            },
             "GASTO_NO_ACTIVO": {
                 "message": "This expense isn't active: the other person hasn't accepted it yet."
             },
@@ -475,6 +481,13 @@
         "deleted": "Deleted",
         "deleteExpense": "Delete expense",
         "alsoDeleteTheLinkedMovement": "Also delete the linked movement",
+        "deleteRestorableHint": "You can restore it from Deleted, in the entity detail.",
+        "deleteSharedWarning": "This expense is shared with {{name}}. If you delete it, it can't be restored. {{name}} keeps their expense, which is no longer shared, their unconfirmed payments become confirmed and they get a notice.",
+        "deleteUnacceptedWarning": "{{name}} hasn't accepted this expense yet. If you delete it, the request is withdrawn, they get a notice and it can't be restored.",
+        "deleteFormerlySharedWarning": "This expense was shared, so it can't be restored if you delete it.",
+        "shareExpense": "Share expense",
+        "shareExpenseMessage": "{{name}} will receive a copy of \"{{expense}}\" with the same paid installments. Until they accept it, the expense stays pending and does not count in your balances.",
+        "expenseShared": "Expense sent to {{name}}",
         "sent": "Sent",
         "finishedTheExpense": "Finished the expense",
         "expenseEdited": "Expense edited",
@@ -705,6 +718,8 @@
         "expenseAccepted": "{{who}} accepted your expense{{expense}}",
         "expenseRejected": "{{who}} rejected your expense{{expense}}",
         "expenseDiscarded": "{{who}} discarded an expense you had rejected",
+        "expenseUnshared": "{{who}} deleted {{expense}}: it is no longer a shared expense.",
+        "expenseUnsharedConfirmed": " Your pending payments were confirmed.",
         "paymentPending": "{{who}} recorded a payment. Confirm it in Shared",
         "paymentConfirmed": "{{who}} confirmed your payment",
         "paymentRejected": "{{who}} rejected your payment",
@@ -763,8 +778,9 @@
     },
     "entity": {
         "deleteBase": "All its expenses are deleted too and removed from the settlement session.",
-        "deleteLinked": " Shared expenses are no longer linked to {{name}}'s, and the payments they recorded without confirmation are rejected.",
-        "deleteRestore": " You can restore it later from 'View deleted', in Financial entities: it comes back with the expenses deleted along with it.",
+        "deleteLinked": " Shared expenses are no longer linked to {{name}}'s, the payments they recorded without confirmation become confirmed, and those expenses can't be restored.",
+        "notRestorable": "Shared: can't be restored",
+        "deleteRestore": " You can restore it later from 'View deleted', in Financial entities: it comes back with the expenses deleted along with it, except shared ones.",
         "unlinkName": "Unlink {{name}}",
         "awaitingApprovalBy": "Waiting for {{name}} to approve them",
         "pendingExplain": "You created these expenses in a linked entity: they're waiting for {{name}} to approve them. They become active once approved.",

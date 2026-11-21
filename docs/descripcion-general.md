@@ -67,7 +67,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión de cualquier pago, pagos pendientes de confirmación en gastos compartidos. |
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
 | CTA — Hacer cuentas | Sesión de cierre persistida en el servidor, marcado de gastos, finalización con registro de pagos y snapshot, descarte, historial de cierres con el estado actual de cada pago compartido, y resumen para WhatsApp. |
-| CMP — Compartidos | Gastos compartidos recibidos y emitidos: aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
+| CMP — Compartidos | Gastos compartidos recibidos y emitidos: compartir un gasto existente de una entidad vinculada, aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
 | NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas. |
 
 **Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idiomas**: español rioplatense e inglés en ambos clientes, a elección del usuario o según el idioma del navegador o del dispositivo.

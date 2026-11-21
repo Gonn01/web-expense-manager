@@ -185,6 +185,15 @@ export const restaurarGasto = async (gastoId, token) => {
     return data.data;
 };
 
+export const compartirGasto = async (gastoId, token) => {
+    const { data } = await api.post(
+        `/gastos/${gastoId}/compartir`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const settleQuota = async (gastoId, token, { direct = false } = {}) => {
     const { data } = await api.post(
         `/gastos/${gastoId}/settle-quota`,

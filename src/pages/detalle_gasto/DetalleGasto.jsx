@@ -18,6 +18,7 @@ import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentMo
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { lastPayment, paymentNumbers, revertDialog } from './utils/historial-eventos';
+import { deleteExpenseNotice } from '@/utils/delete-expense-notice';
 import { t } from '@/i18n';
 
 export default function DetalleGasto() {
@@ -31,6 +32,7 @@ export default function DetalleGasto() {
         cancelarEdicion,
         actualizar,
         transferir,
+        compartir,
         transferLock,
         eliminar,
         loading,
@@ -66,6 +68,19 @@ export default function DetalleGasto() {
         });
     };
 
+    const confirmarCompartir = () => {
+        const name = gasto.share_target_name ?? t('people.otherPerson');
+        useDialogStore.getState().confirm({
+            title: t('detalleGasto.shareExpense'),
+            message: t('detalleGasto.shareExpenseMessage', { name, expense: gasto.name }),
+            tone: 'primary',
+            confirmLabel: t('detalleGasto.shareExpense'),
+            onConfirm: compartir,
+        });
+    };
+
+    const avisoEliminar = deleteExpenseNotice(gasto);
+
     return (
         <div className="w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
             <div className="sm:px-2 md:px-6 lg:px-10 py-2 sm:py-6 flex justify-center">
@@ -76,6 +91,7 @@ export default function DetalleGasto() {
                             marcarProxima={() => setConfirmOpen(true)}
                             abrirEditar={() => setEditOpen(true)}
                             abrirTransferir={() => setTransferOpen(true)}
+                            abrirCompartir={confirmarCompartir}
                             abrirEliminar={() => setDeleteOpen(true)}
                             transferLock={transferLock}
                             onRevertLast={ultimoPago ? revertirUltimoPago : undefined}
@@ -157,6 +173,7 @@ export default function DetalleGasto() {
                 open={deleteOpen}
                 linked={Boolean(gasto.linked_purchase_id)}
                 linkedEntityName={getEntityById(gasto.linked_financial_entity_id)?.name ?? ''}
+                notice={t(avisoEliminar.key, avisoEliminar.params)}
                 onCancel={() => setDeleteOpen(false)}
                 onDelete={async (deleteLinked) => {
                     if (await eliminar(deleteLinked)) volverALista();

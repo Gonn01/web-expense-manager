@@ -75,6 +75,7 @@ export function useCompartidos() {
             'compartido.aprobado': reloadSilently,
             'compartido.rechazado': reloadSilently,
             'compartido.descartado': reloadSilently,
+            'compartido.desvinculado': reloadSilently,
             'pago.pendiente': reloadSilently,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,
