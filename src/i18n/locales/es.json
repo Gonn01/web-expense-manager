@@ -395,7 +395,7 @@
         "next": "Siguiente",
         "addARelativeOrAFriendAnd": "Sumá a un familiar o a un amigo y sabé a quién le debés o quién te debe.",
         "yourInstallmentsClearAndInOnePlace": "Tus cuotas, claras y en un solo lugar.",
-        "letSGo": "¡Empezar!",
+        "finish": "Finalizar",
         "hiWelcomeToExpenseManager": "¡Hola! Bienvenido/a a Expense Manager",
         "canTMakeItThisMonthPostpone": "¿No llegás este mes? Postergá un pago y lo pagás en el próximo período de cuentas.",
         "stepOf": "Paso {{step}} de {{total}}",

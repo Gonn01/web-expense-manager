@@ -190,7 +190,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario inicia sesión y entra a la app por primera vez en ese dispositivo.
     2. El cliente muestra el tutorial en el primer paso.
-    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca ¡Empezar!.
+    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca Finalizar.
     4. El cliente cierra el tutorial y guarda en el dispositivo que ese usuario ya lo vio.
 - **Flujos alternativos**
     - 3a. El usuario toca Saltar (o Escape en la web, o atrás en la app): el tutorial se cierra y se da por visto.
