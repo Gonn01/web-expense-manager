@@ -1,3 +1,5 @@
+import { getIntlLocale } from '@/i18n';
+
 export function formatAmount(n) {
     return Number(n ?? 0).toFixed(2);
 }
@@ -11,7 +13,7 @@ export function formatMoney(amount, currency) {
 
     if (VALID_CURRENCY.test(currency ?? '')) {
         try {
-            const f = new Intl.NumberFormat('es-AR', {
+            const f = new Intl.NumberFormat(getIntlLocale(), {
                 style: 'currency',
                 currency,
                 minimumFractionDigits: 2,
@@ -20,6 +22,6 @@ export function formatMoney(amount, currency) {
         } catch {}
     }
 
-    const f = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2 });
+    const f = new Intl.NumberFormat(getIntlLocale(), { minimumFractionDigits: 2 });
     return `${sign}${f.format(abs)}`;
 }

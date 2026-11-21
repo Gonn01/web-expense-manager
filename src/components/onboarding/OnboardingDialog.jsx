@@ -4,6 +4,7 @@ import { useOnboarding } from '@/hooks/use-onboarding';
 import OnboardingSlide from './OnboardingSlide';
 import OnboardingDots from './OnboardingDots';
 import OnboardingActions from './OnboardingActions';
+import { t } from '@/i18n';
 
 export default function OnboardingDialog() {
     const {
@@ -37,14 +38,14 @@ export default function OnboardingDialog() {
             >
                 <div className="flex items-center justify-between gap-2 mb-4">
                     <span className="text-xs font-medium text-slate-500 dark:text-[#9eb7a8]">
-                        Paso {step + 1} de {total}
+                        {t('onboarding.stepOf', { step: step + 1, total })}
                     </span>
                     <button
                         type="button"
                         onClick={skip}
                         className="cursor-pointer h-9 px-3 rounded-lg text-sm font-bold text-slate-600 dark:text-[#9eb7a8] hover:bg-black/5 dark:hover:bg-white/10 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
                     >
-                        Saltar
+                        {t('onboarding.skip')}
                     </button>
                 </div>
 

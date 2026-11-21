@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import useAuth from '@/store/use-auth-store';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 export default function LinkUserDialog({
     entity,
@@ -44,7 +46,7 @@ export default function LinkUserDialog({
             await onVincular(emailInput.trim());
             closeDialog();
         } catch (err) {
-            setError(err?.response?.data?.error || 'Error al vincular usuario');
+            setError(err?.response?.data?.error || t('detalleEntidad.errorLinkingUser'));
         }
     };
 
@@ -54,7 +56,7 @@ export default function LinkUserDialog({
             await onDesvincular();
             closeDialog();
         } catch (err) {
-            setError(err?.response?.data?.error || 'Error al desvincular usuario');
+            setError(err?.response?.data?.error || t('detalleEntidad.errorUnlinkingUser'));
         }
     };
 
@@ -71,15 +73,14 @@ export default function LinkUserDialog({
                                 <>
                                     <h3 className="text-lg font-bold mb-2 dark:text-white flex items-center gap-2">
                                         <Icon name="link" className="text-base" />
-                                        Vincular usuario
+                                        {t('detalleEntidad.linkUser')}
                                     </h3>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-                                        Ingresá el email del usuario. Los gastos de esta entidad se
-                                        compartirán automáticamente con él.
+                                        {t('detalleEntidad.enterTheUserSEmailThisEntity')}
                                     </p>
                                     <input
                                         type="email"
-                                        placeholder="Ej: juan@email.com"
+                                        placeholder={t('common.eGJohnEmailCom')}
                                         value={emailInput}
                                         disabled={loading}
                                         autoFocus
@@ -92,7 +93,7 @@ export default function LinkUserDialog({
                                     />
                                     {isSelfEmail && (
                                         <p className="text-xs text-red-500 mt-2">
-                                            No podés vincular tu propia cuenta.
+                                            {t('detalleEntidad.youCanTLinkYourOwnAccount')}
                                         </p>
                                     )}
                                 </>
@@ -100,16 +101,23 @@ export default function LinkUserDialog({
                                 <>
                                     <h3 className="text-lg font-bold mb-2 dark:text-white flex items-center gap-2">
                                         <Icon name="link_off" className="text-base text-red-500" />
-                                        Desvincular usuario
+                                        {t('detalleEntidad.unlinkUser')}
                                     </h3>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-                                        ¿Seguro que querés desvincular a{' '}
-                                        <span className="font-medium text-zinc-700 dark:text-zinc-200">
-                                            {entity.linked_user_name ||
-                                                entity.linked_user_email ||
-                                                'este usuario'}
-                                        </span>
-                                        ? Los nuevos gastos dejarán de compartirse automáticamente.
+                                        <Trans
+                                            i18nKey="entity.unlinkConfirm"
+                                            values={{
+                                                name:
+                                                    entity.linked_user_name ||
+                                                    entity.linked_user_email ||
+                                                    t('people.thisUser'),
+                                            }}
+                                            components={{
+                                                name: (
+                                                    <span className="font-medium text-zinc-700 dark:text-zinc-200" />
+                                                ),
+                                            }}
+                                        />
                                     </p>
                                 </>
                             )}
@@ -123,7 +131,7 @@ export default function LinkUserDialog({
                                     disabled={loading}
                                     className="px-4 py-2 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white text-sm disabled:opacity-50"
                                 >
-                                    Cancelar
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="button"
@@ -144,7 +152,9 @@ export default function LinkUserDialog({
                                             className="animate-spin text-sm"
                                         />
                                     )}
-                                    {dialog === 'link' ? 'Vincular' : 'Desvincular'}
+                                    {dialog === 'link'
+                                        ? t('detalleEntidad.link')
+                                        : t('detalleEntidad.unlink')}
                                 </button>
                             </div>
                         </div>

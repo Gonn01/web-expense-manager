@@ -1,27 +1,29 @@
+import { t } from '@/i18n';
+
 export const ONBOARDING_STEPS = Object.freeze([
     {
         icon: 'account_balance_wallet',
-        title: '¡Hola! Bienvenido/a a Expense Manager',
-        text: 'Tus cuotas, claras y en un solo lugar.',
+        title: t('onboarding.hiWelcomeToExpenseManager'),
+        text: t('onboarding.yourInstallmentsClearAndInOnePlace'),
     },
     {
         icon: 'receipt_long',
-        title: 'Cargá tus gastos',
-        text: 'Anotá lo que compraste en cuotas, los gastos fijos y los de una sola vez. Nosotros te llevamos la cuenta.',
+        title: t('onboarding.addYourExpenses'),
+        text: t('onboarding.logWhatYouBoughtInInstallmentsYour'),
     },
     {
         icon: 'monitoring',
-        title: 'Sabé cuánto debés',
-        text: 'Mirá cuánto debés hoy, el total, qué parte de tu sueldo es y cuándo terminás de pagar.',
+        title: t('onboarding.knowWhatYouOwe'),
+        text: t('onboarding.seeWhatYouOweTodayTheTotal'),
     },
     {
         icon: 'group',
-        title: 'Personas y gastos compartidos',
-        text: 'Sumá a un familiar o a un amigo y sabé a quién le debés o quién te debe.',
+        title: t('onboarding.peopleAndSharedExpenses'),
+        text: t('onboarding.addARelativeOrAFriendAnd'),
     },
     {
         icon: 'event_repeat',
-        title: 'Postergá sin perderte',
-        text: '¿No llegás este mes? Postergá un pago y lo pagás en el próximo período de cuentas.',
+        title: t('onboarding.postponeWithoutLosingTrack'),
+        text: t('onboarding.canTMakeItThisMonthPostpone'),
     },
 ]);

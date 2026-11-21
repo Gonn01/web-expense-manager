@@ -72,6 +72,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-44 | Ver tutorial de bienvenida | Usuario | 01 |
 | CU-45 | Descartar gasto rechazado | Usuario | 05 |
 | CU-46 | Pedir y responder edición de un gasto compartido | Usuario, Contraparte | 05 |
+| CU-47 | Elegir idioma | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -196,6 +197,17 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1a. El usuario toca "Ver tutorial de nuevo" en Configuración: el cliente muestra el tutorial desde el primer paso, aunque ya lo haya visto.
 - **Postcondición**: el tutorial no vuelve a abrirse solo para ese usuario en ese dispositivo.
 
+### CU-47 — Elegir idioma
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-06
+- **Flujo principal**
+    1. En Configuración, el usuario elige Sistema, Español o English.
+    2. El cliente guarda la elección en el dispositivo y aplica el idioma y el formato de fechas y montos. La app móvil lo hace al instante; la web recarga la página.
+- **Flujos alternativos**
+    - 1a. El usuario elige Sistema: el cliente usa el primer idioma soportado del navegador o del dispositivo y, si no hay ninguno, inglés.
+- **Postcondición**: el cliente abre con el idioma elegido en ese dispositivo; otros dispositivos de la misma cuenta conservan el suyo.
+
 ### CU-08 — Consultar dashboard
 
 - **Actor**: Usuario
@@ -232,7 +244,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 2a. No tiene entidades: el sistema muestra un estado vacío con la opción de crear una.
     - 2b. El usuario alterna entre vista de lista y de grilla.
-    - 2c. El usuario elige "Ver eliminadas": el sistema muestra las entidades eliminadas ya traídas en el paso 2, sin otra consulta. Al elegir restaurar una y confirmar, el sistema la reactiva y la entidad vuelve al listado de activas. (Solo en la web.)
+    - 2c. El usuario elige "Ver eliminadas": el sistema muestra las entidades eliminadas ya traídas en el paso 2, sin otra consulta. Al elegir restaurar una y confirmar, el sistema la reactiva y la entidad vuelve al listado de activas. En la app Flutter se restaura sin el paso de confirmación (cumplimiento parcial de RF-ENT-13).
 
 ### CU-10 — Crear entidad
 

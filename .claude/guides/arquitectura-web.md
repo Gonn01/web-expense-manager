@@ -17,6 +17,7 @@ src/
   services/        api.js (instancia única de axios + todas las llamadas), error-handler.js
   store/           stores de zustand, uno por dominio
   lib/             singletons de clientes de terceros (pusher.js)
+  i18n/            configuración de i18next y traducciones (locales/es.json, locales/en.json)
   utils/           formateo, enums, catálogo de errores, armado de textos
 ```
 
@@ -107,6 +108,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - Campos de monto con `components/AmountInput.jsx` (o `TextInput` con `type="amount"`): muestra los puntos de miles y la coma decimal mientras se escribe, pero el valor del estado sigue siendo el número crudo (`"1234.5"`), listo para `Number(...)`. No usar `type="number"` para montos.
 - **Colores en los dos temas**: la variante `dark:` de Tailwind depende de la clase `dark` (`@custom-variant` en `index.css`), no del sistema operativo. Todo color de fondo, texto o borde lleva su par: `bg-white dark:bg-[#111714]`, `text-slate-900 dark:text-white`, `text-slate-500 dark:text-[#9eb7a8]`, `border-slate-200 dark:border-[#29382f]`. Un color sin `dark:` solo vale si sirve en los dos temas (texto blanco sobre un botón rojo o verde, overlays `bg-black/60`). Lo que no se pinta con clases (ejes y grilla de recharts) usa las variables `--chart-grid` y `--chart-tick` de `index.css`.
 - Desplegables con `components/Select.jsx`, nunca con `<select>` nativo: recibe `options` (`{ value, label }`), `value`, `onChange(valor)` (siempre string, como el `<select>`) y un `placeholder` opcional que funciona como opción vacía. Con más de 10 opciones muestra un buscador (sin distinguir mayúsculas ni tildes). La lista se abre en un portal, así que no la recorta el `overflow` de un modal, y se cierra si se hace scroll fuera de ella (si no, quedaría flotando sobre el encabezado del modal). Los encabezados y pies `sticky` de los modales llevan `z-10`, para que los campos con posición propia no se dibujen encima al hacer scroll.
+- **Textos e idioma**: todo texto visible va en `src/i18n/locales/es.json` y `en.json`, con las mismas claves, variables y etiquetas (lo verifica `utils/locale-catalog.test.js`). Se usa `t` de `@/i18n`, también fuera de React; `<Trans>` para texto con marcado, y claves `_one`/`_other` para plurales. No se arman oraciones concatenando fragmentos. Para `Intl` y `toLocale*` se usa `getIntlLocale()`. El idioma es una preferencia por navegador (RF-CFG-06: `system`, `es`, `en`; clave `ui:language`, `IdiomaCard` en Configuración, `getLanguagePreference` y `setLanguagePreference` de `@/i18n`). `system` sigue al navegador (primer idioma soportado; si no hay, inglés). Cambiar el idioma activo recarga la app, porque algunas etiquetas se calculan al cargar el módulo. Los valores de datos de la API (`EGRESO`, `INGRESO`, estados) no se traducen.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.
 - Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/` y reglas de negocio sin red ni DOM; no hay entorno `jsdom` configurado.
@@ -120,6 +122,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - [ ] `pages/<feature>/<Feature>.jsx` + `hooks/use-<feature>-data.js` + `hooks/use-<feature>-ui.js` + `components/`.
 - [ ] Ruta en `App.jsx`, dentro de `/app` si requiere sesión, con la pantalla importada con `lazy()`; entrada en `components/Sidebar.jsx` si es navegable.
 - [ ] Componentes reutilizados por más de una pantalla en `src/components/`.
+- [ ] Textos nuevos en `locales/es.json` y `locales/en.json`.
 - [ ] Sin manejo de errores ad hoc: los muestra el interceptor.
 - [ ] Suscripción a Pusher con `usePusherChannel` si la pantalla depende de acciones de otro usuario.
 - [ ] `npm run lint` sin errores y `npm test` en verde.
@@ -130,4 +133,5 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 ## 9. Trampas
 
 - Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código, y solo cubren funciones puras de `utils/`: componentes, hooks y stores no tienen pruebas (no hay entorno DOM ni Testing Library instalados). Para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función.
-- Los textos de interfaz están escritos en los componentes, solo en español: la web no tiene l10n.
+- Los textos que redacta la API (errores sin clave en `utils/error-catalog.js`, detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés.
+- Los campos de monto usan punto de miles y coma decimal también en inglés (`utils/amount-input.js`).

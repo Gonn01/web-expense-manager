@@ -1,5 +1,6 @@
 import { ThemeMode, THEME_MODE_LABELS } from '@/utils/enums';
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 const THEME_ICONS = Object.freeze({
     [ThemeMode.SYSTEM]: 'contrast',
@@ -11,15 +12,15 @@ export function AparienciaCard({ themeMode, setThemeMode }) {
     return (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-background-dark/70">
             <h2 className="text-base font-medium mb-1 text-slate-900 dark:text-white">
-                Apariencia
+                {t('configuracion.appearance')}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                Elegí el tema de la aplicación. Se guarda en este navegador.
+                {t('configuracion.chooseTheAppThemeItIsSaved')}
             </p>
 
             <div
                 role="radiogroup"
-                aria-label="Tema"
+                aria-label={t('configuracion.theme')}
                 className="flex h-10 items-center rounded-lg bg-black/5 dark:bg-white/10 p-1"
             >
                 {Object.values(ThemeMode).map((mode) => (

@@ -60,9 +60,9 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | Módulo | Qué cubre |
 | --- | --- |
 | AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google; sesión persistente; cierre de sesión y expiración. |
-| CFG — Configuración | Perfil, moneda preferida, sueldo y tema de la interfaz (claro, oscuro o el del sistema). |
+| CFG — Configuración | Perfil, moneda preferida, sueldo, tema de la interfaz (claro, oscuro o el del sistema) e idioma (español, inglés o el del sistema). |
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
-| ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración (solo web). |
+| ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración. |
 | GAS — Gastos | Alta (con entidad nueva, gasto espejo o cuotas ya pagas), detalle, edición, baja lógica, postergación, favoritos e historial. |
 | PAG — Pagos y cobros | Pago directo o diferido de una cuota, pago en lote por entidad, reversión de cualquier pago, pagos pendientes de confirmación en gastos compartidos. |
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
@@ -70,7 +70,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | CMP — Compartidos | Gastos compartidos recibidos y emitidos: aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
 | NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas. |
 
-**Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idioma**: español rioplatense; la app móvil además en inglés.
+**Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idiomas**: español rioplatense e inglés en ambos clientes, a elección del usuario o según el idioma del navegador o del dispositivo.
 
 ### Fuera de alcance
 
@@ -82,4 +82,4 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente (por ejemplo, RF-ENT-13: ver y restaurar entidades eliminadas, que hoy solo ofrece la web), el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente o se cumple solo en parte, el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (canales públicos de Pusher, pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).

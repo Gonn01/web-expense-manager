@@ -16,6 +16,7 @@ import { isSettlementActive } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { t } from '@/i18n';
 
 export function useGastoData() {
     const { id } = useParams();
@@ -86,10 +87,10 @@ export function useGastoData() {
         const { name, image_url, category_ids } = payload;
         const updated = await updateGasto(gasto.id, { name, image_url, category_ids }, token);
         setGasto(updated);
-        const otra = gasto.shared_counterparty?.name ?? 'la otra persona';
+        const otra = gasto.shared_counterparty?.name ?? t('people.otherPerson');
         useSnackbarStore
             .getState()
-            .show(`Le pedimos a ${otra} que apruebe los cambios.`, 'success', 'pending_actions');
+            .show(t('detail.editRequestSent', { name: otra }), 'success', 'pending_actions');
     }
 
     async function cancelarEdicion() {
@@ -98,7 +99,7 @@ export function useGastoData() {
         try {
             await cancelarEdicionCompartida(request.id, token);
             await load(true);
-            useSnackbarStore.getState().show('Solicitud de edición cancelada.', 'success');
+            useSnackbarStore.getState().show(t('detalleGasto.editRequestCancelled'), 'success');
         } catch (err) {
             console.error('Error cancelando la edición', err);
         }
@@ -110,7 +111,7 @@ export function useGastoData() {
         setGasto(updated);
         useSnackbarStore
             .getState()
-            .show(`Gasto transferido a "${entityName}".`, 'success', 'swap_horiz');
+            .show(t('detail.transferred', { name: entityName }), 'success', 'swap_horiz');
     }
 
     async function settleQuota() {
@@ -124,8 +125,8 @@ export function useGastoData() {
                 .getState()
                 .show(
                     deferred
-                        ? 'Gasto marcado. Se registra al terminar las cuentas.'
-                        : 'Pago registrado en el historial del gasto.',
+                        ? t('common.expenseMarkedItSRecordedWhenYou')
+                        : t('common.paymentRecordedInTheExpenseHistory'),
                     'success',
                     deferred ? 'playlist_add_check' : 'check_circle',
                 );
@@ -137,9 +138,9 @@ export function useGastoData() {
     async function revertirPago(movement) {
         if (!gasto || !movement) return;
         const mensajes = {
-            revertido: 'Pago revertido en el historial del gasto.',
-            retirado: 'Pago retirado. La cuota vuelve a quedar sin pagar.',
-            solicitada: 'Le pedimos a la otra persona que confirme la reversión.',
+            revertido: t('detalleGasto.paymentRevertedInTheExpenseHistory'),
+            retirado: t('detalleGasto.paymentWithdrawnTheInstallmentIsUnpaidAgain'),
+            solicitada: t('detalleGasto.weAskedTheOtherPersonToConfirm'),
         };
         try {
             const { resultado, gasto: updated } = await revertirPagoApi(
@@ -159,7 +160,7 @@ export function useGastoData() {
         try {
             await cancelarReversionApi(movement.id, token);
             await load(true);
-            useSnackbarStore.getState().show('Pedido de reversión cancelado.', 'success');
+            useSnackbarStore.getState().show(t('detalleGasto.reversalRequestCancelled'), 'success');
         } catch (err) {
             console.error('Error cancelando la reversión', err);
         }

@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 export const Currency = Object.freeze({
     ARS: 'ARS',
     USD: 'USD',
@@ -8,12 +10,12 @@ export const Currency = Object.freeze({
 });
 
 export const CURRENCY_LABELS = Object.freeze({
-    [Currency.ARS]: 'ARS (Pesos Argentinos)',
-    [Currency.USD]: 'USD (Dólares)',
-    [Currency.EUR]: 'EUR (Euros)',
-    [Currency.BRL]: 'BRL (Reales Brasileños)',
-    [Currency.CLP]: 'CLP (Pesos Chilenos)',
-    [Currency.UYU]: 'UYU (Pesos Uruguayos)',
+    [Currency.ARS]: t('common.arsArgentinePesos'),
+    [Currency.USD]: t('common.usdUsDollars'),
+    [Currency.EUR]: t('common.eurEuros'),
+    [Currency.BRL]: t('common.brlBrazilianReais'),
+    [Currency.CLP]: t('common.clpChileanPesos'),
+    [Currency.UYU]: t('common.uyuUruguayanPesos'),
 });
 
 export const ExpenseType = Object.freeze({
@@ -34,9 +36,9 @@ export const ThemeMode = Object.freeze({
 });
 
 export const THEME_MODE_LABELS = Object.freeze({
-    [ThemeMode.SYSTEM]: 'Sistema',
-    [ThemeMode.LIGHT]: 'Claro',
-    [ThemeMode.DARK]: 'Oscuro',
+    [ThemeMode.SYSTEM]: t('common.system'),
+    [ThemeMode.LIGHT]: t('common.light'),
+    [ThemeMode.DARK]: t('common.dark'),
 });
 
 export const MovementType = Object.freeze({

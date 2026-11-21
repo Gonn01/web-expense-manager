@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Icon from '@/components/Icon';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
+import { t } from '@/i18n';
 
 export default function EditEntityModal({ open, entity, onClose, onSave, saving = false }) {
     const initialName = entity?.name || '';
@@ -17,7 +18,7 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
         try {
             await onSave(name.trim());
         } catch (err) {
-            setNameError(err?.message || 'No se pudo actualizar la entidad.');
+            setNameError(err?.message || t('detalleEntidad.couldnTUpdateTheEntity'));
         }
     };
 
@@ -52,17 +53,21 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                             name="progress_activity"
                             className="animate-spin text-primary text-4xl"
                         />
-                        <p className="text-sm font-medium text-white">Guardando cambios…</p>
+                        <p className="text-sm font-medium text-white">
+                            {t('detalleEntidad.savingChanges')}
+                        </p>
                     </div>
                 )}
 
                 <h2 className="text-xl font-bold mb-4 dark:text-white flex items-center gap-2">
                     <Icon name="edit" />
-                    Editar Entidad
+                    {t('detalleEntidad.editEntity')}
                 </h2>
 
                 <div className="mb-6">
-                    <label className="text-sm text-zinc-600 dark:text-zinc-300">Nombre</label>
+                    <label className="text-sm text-zinc-600 dark:text-zinc-300">
+                        {t('common.name')}
+                    </label>
                     <input
                         type="text"
                         value={name}
@@ -82,14 +87,14 @@ export default function EditEntityModal({ open, entity, onClose, onSave, saving 
                         onClick={requestClose}
                         className="px-4 py-2 rounded-lg bg-zinc-300 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-black dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Cancelar
+                        {t('common.cancel')}
                     </button>
                     <button
                         disabled={!canSave}
                         onClick={handleSaveName}
                         className="btn-save px-4 py-2 rounded-lg bg-primary text-background-dark font-bold flex items-center gap-2"
                     >
-                        Guardar
+                        {t('detalleEntidad.save')}
                     </button>
                 </div>
             </div>

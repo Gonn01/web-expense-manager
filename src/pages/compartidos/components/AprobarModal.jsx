@@ -4,6 +4,8 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import useAuth from '@/store/use-auth-store';
 import Select from '@/components/Select';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 export default function AprobarModal({ open, gasto, onClose, onConfirm, loading }) {
     const { token } = useAuth();
@@ -61,12 +63,12 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
             >
                 <h2 className="text-xl font-bold mb-1 dark:text-white flex items-center gap-2">
                     <Icon name="check_circle" className="text-green-500" />
-                    Aprobar gasto compartido
+                    {t('compartidos.approveSharedExpense')}
                 </h2>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">
                     <span className="font-medium dark:text-white">{gasto?.name}</span>
                     {' · '}
-                    {gasto?.currency_type} {Number(gasto?.amount).toLocaleString('es-AR')}
+                    {gasto?.currency_type} {Number(gasto?.amount).toLocaleString(getIntlLocale())}
                 </p>
 
                 <div className="flex gap-2 mb-4">
@@ -78,7 +80,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
                         }`}
                     >
-                        Entidad existente
+                        {t('compartidos.existingEntity')}
                     </button>
                     <button
                         onClick={() => setMode('new')}
@@ -88,7 +90,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                                 : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
                         }`}
                     >
-                        Crear nueva
+                        {t('compartidos.createNew')}
                     </button>
                 </div>
 
@@ -98,14 +100,14 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                             <Select
                                 value={selectedEntityId}
                                 onChange={setSelectedEntityId}
-                                placeholder="Seleccioná una entidad"
-                                aria-label="Entidad"
+                                placeholder={t('compartidos.selectAnEntity')}
+                                aria-label={t('common.entity')}
                                 className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-white text-sm cursor-pointer"
                                 options={entities.map((e) => ({ value: e.id, label: e.name }))}
                             />
                         ) : (
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                No tenés entidades. Creá una nueva.
+                                {t('compartidos.youDonTHaveAnyEntitiesCreate')}
                             </p>
                         )}
                     </div>
@@ -115,7 +117,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                     <div>
                         <input
                             type="text"
-                            placeholder={`Ej: ${gasto?.sender_name || 'Nombre de entidad'}`}
+                            placeholder={`Ej: ${gasto?.sender_name || t('compartidos.entityName')}`}
                             value={newEntityName}
                             onChange={(e) => setNewEntityName(e.target.value)}
                             className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-transparent dark:text-white text-sm"
@@ -129,7 +131,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                         onClick={requestClose}
                         className="px-4 py-2 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:text-white text-sm"
                     >
-                        Cancelar
+                        {t('common.cancel')}
                     </button>
                     <button
                         disabled={!canConfirm}
@@ -141,7 +143,7 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                         ) : (
                             <Icon name="check" className="text-sm" />
                         )}
-                        Aprobar
+                        {t('compartidos.approve')}
                     </button>
                 </div>
             </div>

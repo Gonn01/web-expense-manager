@@ -7,6 +7,8 @@ import { inDateRange } from '@/utils/date-range';
 import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateTime } from '@/utils/FormatDate';
 import { useSettlementHistoryList, monthLabel } from './hooks/use-settlement-history';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 export default function SettlementHistory() {
     const { snapshots, loading } = useSettlementHistoryList();
@@ -24,11 +26,10 @@ export default function SettlementHistory() {
         <div className="flex flex-col flex-1 lg:min-h-0">
             <div className="shrink-0 mb-6">
                 <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
-                    Historial de cuentas
+                    {t('common.settlementHistory')}
                 </p>
                 <p className="text-slate-500 dark:text-slate-400">
-                    Cada vez que terminás de hacer las cuentas guardamos un resumen para comparar
-                    meses.
+                    {t('cuentas.eachTimeYouFinishASettlementWe')}
                 </p>
             </div>
 
@@ -44,16 +45,18 @@ export default function SettlementHistory() {
             {snapshots.length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 text-center text-slate-500 dark:text-slate-400 gap-2">
                     <Icon name="history" className="text-5xl opacity-40" />
-                    <p>Todavía no cerraste ninguna sesión de cuentas.</p>
+                    <p>{t('cuentas.youHavenTClosedAnySettlementSession')}</p>
                     <p className="text-sm">
-                        Activá <span className="font-semibold">Hacer cuentas</span> en el dashboard
-                        y tocá <span className="font-semibold">Terminar</span> cuando termines.
+                        <Trans
+                            i18nKey="settlement.emptyHint"
+                            components={{ strong: <span className="font-semibold" /> }}
+                        />
                     </p>
                 </div>
             ) : visibles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 text-center text-slate-500 dark:text-slate-400 gap-2">
                     <Icon name="event_busy" className="text-5xl opacity-40" />
-                    <p>No hay cuentas cerradas en ese rango de fechas.</p>
+                    <p>{t('cuentas.noClosedSettlementsInThatDateRange')}</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:overflow-y-auto lg:pr-1 flex-1 lg:min-h-0 pb-4 content-start">
@@ -87,7 +90,10 @@ function SnapshotCard({ snap, onClick }) {
                         {monthLabel(snap.month)}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Del {formatDateTime(snap.started_at)} al {formatDateTime(snap.finished_at)}
+                        {t('settlement.dateRange', {
+                            from: formatDateTime(snap.started_at),
+                            to: formatDateTime(snap.finished_at),
+                        })}
                     </p>
                 </div>
                 <Icon name="chevron_right" className="text-slate-400 shrink-0" />
@@ -95,24 +101,22 @@ function SnapshotCard({ snap, onClick }) {
 
             <div className="flex flex-wrap gap-1.5 text-xs">
                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300">
-                    {totals.items ?? 0} gastos
+                    {t('settlement.expenses', { count: totals.items ?? 0 })}
                 </span>
                 <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300">
-                    {totals.entities ?? 0} entidades
+                    {t('settlement.entities', { count: totals.entities ?? 0 })}
                 </span>
                 {snap.pending_count > 0 && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold">
                         <Icon name="hourglass_empty" className="text-xs" />
-                        {snap.pending_count === 1
-                            ? '1 pago sin confirmar'
-                            : `${snap.pending_count} pagos sin confirmar`}
+                        {t('settlement.unconfirmed', { count: snap.pending_count })}
                     </span>
                 )}
             </div>
 
             <div className="flex flex-col gap-1">
                 {currencies.length === 0 && (
-                    <span className="text-xs text-slate-400">Sin movimientos</span>
+                    <span className="text-xs text-slate-400">{t('cuentas.noMovements')}</span>
                 )}
                 {currencies.map((cur) => {
                     const b = byCurrency[cur];

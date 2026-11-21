@@ -1,5 +1,6 @@
 import TextInput from '@/components/TextInput';
 import { LockReason } from './LockedField';
+import { t } from '@/i18n';
 
 export default function ExpenseInstallmentsSection({
     installments,
@@ -18,7 +19,7 @@ export default function ExpenseInstallmentsSection({
             <div className="grid grid-cols-2 gap-4 items-start">
                 <div className="space-y-1.5" data-field="installments">
                     <TextInput
-                        label="Cantidad de cuotas"
+                        label={t('modals.numberOfInstallments')}
                         type="number"
                         value={installments}
                         disabled={Boolean(installmentsLock)}
@@ -30,7 +31,7 @@ export default function ExpenseInstallmentsSection({
 
                 <div className="space-y-1.5">
                     <TextInput
-                        label="Cuotas pagadas"
+                        label={t('modals.paidInstallments')}
                         type="number"
                         value={paidInstallments}
                         placeholder="0"
@@ -51,7 +52,9 @@ export default function ExpenseInstallmentsSection({
             </div>
 
             <div>
-                <p className="text-slate-900 dark:text-white text-sm font-medium">Progreso</p>
+                <p className="text-slate-900 dark:text-white text-sm font-medium">
+                    {t('common.progress')}
+                </p>
                 <div className="w-full bg-slate-100 dark:bg-[#29382f] rounded-full h-2.5">
                     <div
                         className="bg-primary h-2.5 rounded-full"
@@ -59,7 +62,7 @@ export default function ExpenseInstallmentsSection({
                     />
                 </div>
                 <p className="text-right text-xs text-slate-500 dark:text-[#9eb7a8] mt-1">
-                    {paid} de {totalInstallments} cuotas pagadas
+                    {t('form.paidProgress', { paid, total: totalInstallments })}
                 </p>
             </div>
         </>

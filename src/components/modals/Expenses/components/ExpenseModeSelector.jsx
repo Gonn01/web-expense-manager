@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function ExpenseModeSelector({ isInstallment, isFixed, onChange }) {
     const mode = isFixed ? 'fixed' : isInstallment ? 'installment' : 'none';
@@ -14,7 +15,7 @@ export default function ExpenseModeSelector({ isInstallment, isFixed, onChange }
         <div className="flex h-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] p-1.5">
             <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-slate-500 dark:text-[#9eb7a8] text-sm font-medium has-checked:bg-white dark:has-checked:bg-white/10 has-checked:text-slate-900 dark:has-checked:text-white">
                 <Icon name="remove" />
-                <span>Sin cuotas</span>
+                <span>{t('modals.noInstallments')}</span>
                 <input
                     type="radio"
                     className="invisible w-0"
@@ -25,7 +26,7 @@ export default function ExpenseModeSelector({ isInstallment, isFixed, onChange }
 
             <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-slate-500 dark:text-[#9eb7a8] text-sm font-medium has-checked:bg-blue-500/10 has-checked:text-blue-400">
                 <Icon name="splitscreen" />
-                <span>Por cuotas</span>
+                <span>{t('modals.installments')}</span>
                 <input
                     type="radio"
                     className="invisible w-0"
@@ -36,7 +37,7 @@ export default function ExpenseModeSelector({ isInstallment, isFixed, onChange }
 
             <label className="flex cursor-pointer h-full grow items-center justify-center gap-2 rounded-md px-3 text-slate-500 dark:text-[#9eb7a8] text-sm font-medium has-checked:bg-yellow-500/10 has-checked:text-yellow-400">
                 <Icon name="repeat" />
-                <span>Fijo</span>
+                <span>{t('common.fixed')}</span>
                 <input
                     type="radio"
                     className="invisible w-0"

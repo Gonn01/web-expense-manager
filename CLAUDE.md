@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-React 19 SPA ("Plataforma de Gestión de Deudas" — personal debt/expense tracker), built with Vite (using the Rolldown-based `rolldown-vite` package aliased as `vite`), JavaScript/JSX (no TypeScript), Tailwind CSS 4, react-router-dom 7, zustand for state, axios for HTTP, Firebase for Google auth, Pusher for realtime.
+React 19 SPA ("Plataforma de Gestión de Deudas" — personal debt/expense tracker), built with Vite (using the Rolldown-based `rolldown-vite` package aliased as `vite`), JavaScript/JSX (no TypeScript), Tailwind CSS 4, react-router-dom 7, zustand for state, axios for HTTP, Firebase for Google auth, Pusher for realtime, i18next/react-i18next for translations.
 
 It is one of two frontend clients on a shared backend: the sibling repo `d:\proyectos_node\api-plataformas-desarrollo` (Node/Express API). The other client is the Flutter app `d:\proyectos_flutter\app_expense_manager`. Backend contract changes (routes, error codes, response shapes) affect both clients.
 
@@ -63,7 +63,7 @@ npm test             # vitest run (unit tests)
 npm run test:watch   # vitest in watch mode
 ```
 
-Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first.
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/` only — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first.
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
 
@@ -78,6 +78,7 @@ src/
   services/      # api.js (single axios instance + all API calls), error-handler.js
   store/         # zustand stores, one per domain
   lib/           # third-party client singletons (pusher.js)
+  i18n/          # i18next setup and locales/es.json + locales/en.json
   utils/         # formatting, enums, error-catalog
 ```
 
@@ -103,6 +104,8 @@ Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 **Light/dark theme**: Tailwind's `dark:` variant is class-based (`@custom-variant dark` in `index.css`), driven by `themeMode` (`system`/`light`/`dark`) in `use-ui-store.js` and applied by `utils/theme.js` + `hooks/use-theme-sync.js`. Every background/text/border color needs its light and `dark:` pair; don't add dark-only hex colors.
 
 **Responsive layout**: the web must work from 360px wide. Main breakpoint is `lg` (1024px, `DESKTOP_QUERY` in `hooks/use-media-query.js`): from there up the sidebar is fixed and collapsible; below it `components/MobileTopBar.jsx` opens it as an overlay drawer (`mobileSidebarOpen` in `use-ui-store.js`, not persisted). Internal-scroll pages (dashboard, settlement history) only scroll internally from `lg` up. Write mobile-first Tailwind classes; full conventions in `.claude/guides/arquitectura-web.md` (section 4, "Responsive").
+
+**Internationalization**: every user-visible text lives in `src/i18n/locales/es.json` and `en.json`, with the same keys, placeholders and rich-text tags (enforced by `utils/locale-catalog.test.js`). Import `t` from `@/i18n` (it also works outside React); use `<Trans>` for text with inline markup and `_one`/`_other` keys for plurals. Never concatenate sentence fragments. Use `getIntlLocale()` for `Intl`/`toLocale*`, never a hardcoded locale. The language is a per-browser preference (`system`/`es`/`en`, key `ui:language`, card `IdiomaCard` in Configuración, same options as Flutter). `system` follows the browser (first supported, otherwise English). Changing the active language reloads the app because some labels are built at module load. API data values such as `EGRESO`/`INGRESO` are not translated.
 
 **Path alias `@/*` → `src/*`** must stay in sync across three configs: `vite.config.js` (`resolve.alias`), `jsconfig.json` (`compilerOptions.paths`), `eslint.config.js` (`import/resolver.alias`).
 

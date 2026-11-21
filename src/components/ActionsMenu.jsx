@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
-export default function ActionsMenu({ items, icon = 'settings', label = 'Opciones' }) {
+export default function ActionsMenu({ items, icon = 'settings', label = t('common.options') }) {
     const [open, setOpen] = useState(false);
     const containerRef = useRef(null);
 

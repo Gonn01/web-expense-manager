@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 const payable = (group) => (group?.items ?? []).filter((it) => !it.is_postponed);
 
 export function hiddenSummaryCount(fullGroup, visibleGroup) {
@@ -8,6 +10,6 @@ export function hiddenSummaryCount(fullGroup, visibleGroup) {
 export function filteredCopyWarning(hidden) {
     if (hidden <= 0) return null;
     return hidden === 1
-        ? 'Copiado con filtros activos: quedó afuera 1 gasto.'
-        : `Copiado con filtros activos: quedaron afuera ${hidden} gastos.`;
+        ? t('dashboard.copiedWithActiveFilters1ExpenseWas')
+        : t('dashboard.copiedFilteredMany', { count: hidden });
 }

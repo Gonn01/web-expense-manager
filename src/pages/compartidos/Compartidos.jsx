@@ -23,6 +23,7 @@ import {
     recibidoGroup,
     reversionGroup,
 } from './utils/group-by-entity';
+import { t } from '@/i18n';
 
 export default function Compartidos() {
     const {
@@ -61,10 +62,13 @@ export default function Compartidos() {
 
     const handleRechazar = async (item) => {
         const confirmed = await useDialogStore.getState().confirm({
-            title: 'Rechazar gasto',
-            message: `¿Rechazar "${item.name}"? No lo vas a poder deshacer: solo ${item.sender_name ?? 'la otra persona'} puede volver a enviártelo.`,
+            title: t('compartidos.rejectExpense'),
+            message: t('shared.rejectConfirm', {
+                name: item.name,
+                sender: item.sender_name ?? t('people.otherPerson'),
+            }),
             tone: 'danger',
-            confirmLabel: 'Rechazar',
+            confirmLabel: t('compartidos.reject'),
         });
         if (confirmed) await rechazar(item.id);
     };
@@ -233,18 +237,11 @@ export default function Compartidos() {
         <>
             <div className="mb-6">
                 <h1 className="text-3xl sm:text-4xl font-black dark:text-white flex items-center gap-2">
-                    Compartidos
-                    <InfoTooltip
-                        align="start"
-                        text={
-                            'Esto aparece cuando vinculás una entidad a otra persona: los ' +
-                            'gastos y pagos que registra esa entidad le llegan acá para que ' +
-                            'los apruebe o confirme, y viceversa con los suyos.'
-                        }
-                    />
+                    {t('common.shared')}
+                    <InfoTooltip align="start" text={t('shared.info')} />
                 </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                    Gastos y pagos compartidos que todavía están pendientes
+                    {t('compartidos.sharedExpensesAndPaymentsThatAreStill')}
                 </p>
             </div>
 
@@ -253,13 +250,13 @@ export default function Compartidos() {
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                     <SubSection
-                        title="Necesita tu acción"
+                        title={t('compartidos.needsYourAction')}
                         icon="priority_high"
                         items={needsAction}
                     />
 
                     <SubSection
-                        title="Esperando a la otra persona"
+                        title={t('compartidos.waitingOnTheOtherPerson')}
                         icon="hourglass_top"
                         items={waitingOther}
                     />
@@ -276,7 +273,11 @@ export default function Compartidos() {
 
             {rejected.length > 0 && (
                 <div className="mt-6">
-                    <SubSection title="Rechazados por vos" icon="block" items={rejected} />
+                    <SubSection
+                        title={t('compartidos.rejectedByYou')}
+                        icon="block"
+                        items={rejected}
+                    />
                 </div>
             )}
 
@@ -313,19 +314,17 @@ function EmptyState({ onNewExpense }) {
         <div className="flex flex-col items-center text-center gap-3 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 px-6 py-10">
             <Icon name="group" className="text-4xl text-zinc-400 dark:text-zinc-500" />
             <p className="text-lg font-bold text-zinc-800 dark:text-white">
-                No tenés gastos compartidos pendientes
+                {t('compartidos.youHaveNoPendingSharedExpenses')}
             </p>
             <p className="max-w-md text-sm text-zinc-500 dark:text-zinc-400">
-                Para compartir un gasto con alguien, podés vincular una entidad a su usuario usando
-                su email, desde el detalle de la entidad. El gasto le va a llegar para su
-                aprobación.
+                {t('compartidos.toShareAnExpenseWithSomeoneLink')}
             </p>
             <button
                 onClick={onNewExpense}
                 className="cursor-pointer mt-2 flex items-center h-11 px-5 rounded-lg bg-primary text-background-dark font-bold"
             >
                 <Icon name="add_circle" className="mr-2" />
-                Crear Gasto / Deuda
+                {t('common.createExpenseDebt')}
             </button>
         </div>
     );
@@ -345,7 +344,9 @@ function SubSection({ title, icon, items }) {
             </div>
 
             {items.length === 0 ? (
-                <p className="text-sm text-zinc-400 dark:text-zinc-600 pl-6">Nada por acá.</p>
+                <p className="text-sm text-zinc-400 dark:text-zinc-600 pl-6">
+                    {t('compartidos.nothingHere')}
+                </p>
             ) : (
                 <div className="flex flex-col gap-2">
                     {groups.map((group) => (
@@ -378,8 +379,9 @@ function EntityGroup({ group }) {
                 </span>
                 <Icon
                     name="expand_more"
-                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform duration-300 ease-snappy ${open ? 'rotate-180' : ''
-                        }`}
+                    className={`text-xl text-zinc-500 dark:text-zinc-400 transition-transform duration-300 ease-snappy ${
+                        open ? 'rotate-180' : ''
+                    }`}
                 />
             </button>
             <Collapse open={open}>

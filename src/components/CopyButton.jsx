@@ -2,11 +2,12 @@ import { useState } from 'react';
 import Icon from '@/components/Icon';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { ACTION_BUTTON_CLASS, ACTION_BUTTON_SIZES } from './action-button-styles';
+import { t } from '@/i18n';
 
 export default function CopyButton({
     getText,
-    label = 'Copiar',
-    title = 'Copiar al portapapeles',
+    label = t('common.copy'),
+    title = t('common.copyToClipboard'),
     size = 'md',
     onCopied,
 }) {
@@ -21,7 +22,7 @@ export default function CopyButton({
             onCopied?.();
         } catch (err) {
             console.error('Error copiando al portapapeles', err);
-            useSnackbarStore.getState().show('No se pudo copiar al portapapeles.', 'error');
+            useSnackbarStore.getState().show(t('common.couldnTCopyToClipboard'), 'error');
         }
     };
 
@@ -33,7 +34,7 @@ export default function CopyButton({
             className={`${ACTION_BUTTON_CLASS} ${s.button}`}
         >
             <Icon name={copied ? 'check' : 'content_copy'} className={s.icon} />
-            {copied ? '¡Copiado!' : label}
+            {copied ? t('common.copied') : label}
         </button>
     );
 }

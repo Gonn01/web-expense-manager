@@ -7,6 +7,8 @@ import ModalHeader from './components/ModalHeader';
 import SinglePaymentSection from './components/SinglePaymentSection';
 import MultiPaymentSection from './components/MultiPaymentSection';
 import ModalActions from './components/ModalActions';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 export default function ConfirmInstallmentPaymentModal({
     open,
@@ -73,10 +75,10 @@ export default function ConfirmInstallmentPaymentModal({
         onConfirm?.(activeItems);
     };
 
-    const verbo = settlementActive ? 'marcar' : 'registrar';
+    const verbo = settlementActive ? t('payment.verbMark') : t('payment.verbRecord');
     const registraMsg = settlementActive
-        ? 'Se registra al terminar las cuentas.'
-        : 'Se registra ahora en el historial de este gasto.';
+        ? t('modals.itSRecordedWhenYouFinishThe')
+        : t('modals.itSRecordedNowInThisExpense');
 
     return createPortal(
         <ModalOverlay onClose={onCancel}>
@@ -86,18 +88,26 @@ export default function ConfirmInstallmentPaymentModal({
                     title={
                         settlementActive
                             ? isSingle
-                                ? 'Marcar Pago de Cuota'
-                                : 'Marcar Pago de Cuotas'
+                                ? t('modals.markInstallmentPayment')
+                                : t('modals.markInstallmentPayments')
                             : isSingle
-                              ? 'Registrar Pago de Cuota'
-                              : 'Registrar Pago de Cuotas'
+                              ? t('modals.recordInstallmentPayment')
+                              : t('modals.recordInstallmentPayments')
                     }
                     description={
                         isSingle
-                            ? `Vas a ${verbo} el pago de ${single.name} en ${entityName}. ${registraMsg}`
-                            : `Vas a ${verbo} el pago de ${activeItems.length} gasto${
-                                  activeItems.length === 1 ? '' : 's'
-                              } activo${activeItems.length === 1 ? '' : 's'} de ${entityName}. ${registraMsg}`
+                            ? t('payment.singleDescription', {
+                                  verb: verbo,
+                                  name: single.name,
+                                  entity: entityName,
+                                  detail: registraMsg,
+                              })
+                            : t('payment.multiDescription', {
+                                  count: activeItems.length,
+                                  verb: verbo,
+                                  entity: entityName,
+                                  detail: registraMsg,
+                              })
                     }
                 />
 
@@ -105,9 +115,10 @@ export default function ConfirmInstallmentPaymentModal({
                     <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-left text-xs text-amber-300">
                         <Icon name="warning" className="text-base shrink-0 mt-px" />
                         <span>
-                            No hay una sesión de «Hacer cuentas» abierta. Este pago va a quedar en
-                            el <strong>historial del gasto</strong>, pero{' '}
-                            <strong>no en el historial de cuentas</strong>.
+                            <Trans
+                                i18nKey="payment.noSessionWarning"
+                                components={{ strong: <strong /> }}
+                            />
                         </span>
                     </div>
                 )}
@@ -115,9 +126,7 @@ export default function ConfirmInstallmentPaymentModal({
                 {isSingle && single?.is_postponed && (
                     <div className="mb-3 flex items-start gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-left text-xs text-sky-300">
                         <Icon name="schedule" className="text-base shrink-0 mt-px" />
-                        <span>
-                            Este gasto está postergado. Al pagarlo se le quita la postergación.
-                        </span>
+                        <span>{t('modals.thisExpenseIsPostponedPayingItRemoves')}</span>
                     </div>
                 )}
 

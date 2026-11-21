@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { t } from '@/i18n';
 
 export function useDiscardGuard(dirty, onClose, { busy = false } = {}) {
     return useCallback(async () => {
@@ -11,11 +12,11 @@ export function useDiscardGuard(dirty, onClose, { busy = false } = {}) {
             return;
         }
         const discard = await dialog.confirm({
-            title: '¿Descartar cambios?',
-            message: 'Los datos que cargaste se van a perder.',
+            title: t('common.discardChanges'),
+            message: t('common.theDataYouEnteredWillBeLost'),
             tone: 'warning',
-            confirmLabel: 'Descartar',
-            cancelLabel: 'Seguir editando',
+            confirmLabel: t('common.discard'),
+            cancelLabel: t('common.keepEditing'),
         });
         if (discard) onClose?.();
     }, [dirty, onClose, busy]);

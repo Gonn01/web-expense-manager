@@ -17,4 +17,7 @@ export default defineConfig({
     resolve: {
         alias: { '@': path.resolve(process.cwd(), 'src') },
     },
+    test: {
+        setupFiles: ['src/i18n/test-setup.js'],
+    },
 });

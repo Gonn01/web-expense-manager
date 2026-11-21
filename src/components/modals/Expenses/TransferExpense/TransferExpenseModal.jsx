@@ -4,6 +4,7 @@ import Icon from '@/components/Icon';
 import Select from '@/components/Select';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { transferTargets } from '@/utils/expense-transfer';
+import { t } from '@/i18n';
 
 export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
     const entities = useEntitiesStore((s) => s.entities);
@@ -60,18 +61,17 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                                 id="transfer-expense-title"
                                 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
                             >
-                                Transferir gasto
+                                {t('modals.transferExpense')}
                             </h2>
                             <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                Mové “{gasto.name}” a otra entidad. Sus pagos e historial se
-                                mantienen.
+                                {t('transfer.description', { name: gasto.name })}
                             </p>
                         </div>
                         <button
                             type="button"
                             className="text-slate-500 dark:text-[#9eb7a8] transition-colors duration-200 hover:text-slate-900 dark:hover:text-white"
                             onClick={close}
-                            aria-label="Cerrar"
+                            aria-label={t('common.close')}
                         >
                             <Icon name="close" />
                         </button>
@@ -80,7 +80,7 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                     <div className="flex-1 px-6 pb-6 flex flex-col gap-4">
                         <div className="flex flex-col gap-1">
                             <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                Entidad actual
+                                {t('modals.currentEntity')}
                             </p>
                             <p className="text-slate-900 dark:text-white text-base font-medium">
                                 {currentName}
@@ -89,20 +89,20 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
 
                         <div className="flex flex-col gap-2">
                             <p className="text-slate-900 dark:text-white text-sm font-medium">
-                                Transferir a
+                                {t('modals.transferTo')}
                             </p>
                             {options.length ? (
                                 <Select
                                     value={target}
                                     onChange={setTarget}
                                     options={options}
-                                    placeholder="Elegí una entidad"
+                                    placeholder={t('modals.chooseAnEntity')}
                                     disabled={saving}
-                                    aria-label="Entidad de destino"
+                                    aria-label={t('modals.destinationEntity')}
                                 />
                             ) : (
                                 <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                    No tenés otra entidad a la que se pueda transferir este gasto.
+                                    {t('modals.youHaveNoOtherEntityThisExpense')}
                                 </p>
                             )}
                         </div>
@@ -115,7 +115,7 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                             className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-slate-200 dark:hover:bg-[#34453a] disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={close}
                         >
-                            <span className="truncate">Cancelar</span>
+                            <span className="truncate">{t('common.cancel')}</span>
                         </button>
                         <button
                             type="button"
@@ -124,7 +124,7 @@ export default function TransferExpenseModal({ gasto, onClose, onTransfer }) {
                             onClick={handleTransfer}
                         >
                             <span className={`truncate ${saving ? 'invisible' : ''}`}>
-                                Transferir
+                                {t('modals.transfer')}
                             </span>
                             {saving && (
                                 <span className="absolute w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />

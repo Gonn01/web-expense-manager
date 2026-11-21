@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import EntityCard from '@/pages/entidades_financieras/components/EntityCard';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
+import { t } from '@/i18n';
 
 export default function EntitiesList({
     filtered,
@@ -47,16 +48,16 @@ export default function EntitiesList({
 
                 {filtered.length === 0 && !showEmpty && (
                     <div className="text-center text-sm text-slate-500 dark:text-slate-400 py-8">
-                        No se encontraron entidades para “{query}”.
+                        {t('entity.notFoundQuery', { query })}
                     </div>
                 )}
             </div>
 
             <ConfirmDeleteModal
                 open={modalOpen}
-                title="Eliminar entidad"
-                message={`¿Seguro que querés eliminar "${selected?.name}"? También se eliminan todos sus gastos; si alguno es compartido, deja de estar vinculado con el de la otra persona. Podés restaurarla más tarde desde "Ver eliminadas" y vuelve con esos gastos.`}
-                confirmLabel="Eliminar entidad"
+                title={t('common.deleteEntity')}
+                message={t('entity.confirmDelete', { name: selected?.name })}
+                confirmLabel={t('common.deleteEntity')}
                 onCancel={() => setModalOpen(false)}
                 onConfirm={confirmDelete}
             />

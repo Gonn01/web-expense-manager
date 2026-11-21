@@ -1,11 +1,13 @@
+import { t } from '@/i18n';
+
 export const MAX_INSTALLMENTS = 360;
 
 export const EXPENSE_FIELD_LABELS = {
-    entity: 'Entidad financiera',
-    paymentEntity: 'Entidad de pago',
-    name: 'Nombre',
-    amount: 'Monto',
-    installments: 'Cantidad de cuotas',
+    entity: t('modals.financialEntity'),
+    paymentEntity: t('modals.paymentEntity'),
+    name: t('form.name'),
+    amount: t('modals.amount'),
+    installments: t('modals.numberOfInstallments'),
 };
 
 export function exceedsMaxInstallments(installments) {
@@ -24,35 +26,35 @@ export function validateExpenseForm({
     const errors = {};
 
     if (!entity) {
-        errors.entity = 'Elegí la entidad financiera.';
+        errors.entity = t('modals.chooseTheFinancialEntity');
     }
 
     if (payWithEntity) {
         if (!paymentEntity) {
-            errors.paymentEntity = 'Elegí la entidad con la que se paga.';
+            errors.paymentEntity = t('modals.chooseTheEntityUsedToPay');
         } else if (String(paymentEntity) === String(entity)) {
-            errors.paymentEntity = 'La entidad de pago tiene que ser distinta de la del gasto.';
+            errors.paymentEntity = t('modals.thePaymentEntityMustBeDifferentFrom');
         }
     }
 
     if (!name?.trim()) {
-        errors.name = 'El nombre es obligatorio.';
+        errors.name = t('modals.theNameIsRequired');
     }
 
     if (String(amount ?? '').trim() === '') {
-        errors.amount = 'El monto es obligatorio.';
+        errors.amount = t('modals.theAmountIsRequired');
     } else if (!(Number(amount) > 0)) {
-        errors.amount = 'El monto debe ser mayor a 0.';
+        errors.amount = t('modals.theAmountMustBeGreaterThan02');
     }
 
     if (isInstallment) {
         const n = Number(installments);
         if (String(installments ?? '').trim() === '') {
-            errors.installments = 'La cantidad de cuotas es obligatoria.';
+            errors.installments = t('modals.theNumberOfInstallmentsIsRequired');
         } else if (!Number.isInteger(n) || n < 1) {
-            errors.installments = 'La cantidad de cuotas debe ser un número entero mayor a 0.';
+            errors.installments = t('modals.theNumberOfInstallmentsMustBeA');
         } else if (exceedsMaxInstallments(n)) {
-            errors.installments = `El máximo es de ${MAX_INSTALLMENTS} cuotas.`;
+            errors.installments = t('form.maxInstallments', { max: MAX_INSTALLMENTS });
         }
     }
 

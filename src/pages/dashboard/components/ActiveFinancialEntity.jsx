@@ -13,6 +13,7 @@ import { ENTITY_STARTS_COLLAPSED, pendingCountOf } from '../utils/dashboard-grou
 import { pendingApprovalLabel } from '../utils/pending-approval-text';
 import { filteredCopyWarning, hiddenSummaryCount } from '../utils/copy-summary';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { t } from '@/i18n';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -39,11 +40,11 @@ function groupSettleLabel(items, settlementActive) {
     const hasIngreso = items.some((it) => it.type === ExpenseType.INGRESO);
 
     if (settlementActive) {
-        if (hasEgreso && hasIngreso) return 'Marcar pagos / cobros';
-        return hasIngreso ? 'Marcar cobros' : 'Marcar pagos';
+        if (hasEgreso && hasIngreso) return t('dashboard.markPaymentsCollections');
+        return hasIngreso ? t('dashboard.markCollections') : t('dashboard.markPayments');
     }
-    if (hasEgreso && hasIngreso) return 'Pagar / Cobrar';
-    return hasIngreso ? 'Cobrar' : 'Pagar';
+    if (hasEgreso && hasIngreso) return t('dashboard.payCollect');
+    return hasIngreso ? t('dashboard.collect') : t('dashboard.pay');
 }
 
 export default function ActiveFinancialEntity({
@@ -100,7 +101,9 @@ export default function ActiveFinancialEntity({
                         type="button"
                         onClick={() => setCollapsed((prev) => !prev)}
                         className="shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
-                        aria-label={collapsed ? 'Expandir entidad' : 'Colapsar entidad'}
+                        aria-label={
+                            collapsed ? t('dashboard.expandEntity') : t('dashboard.collapseEntity')
+                        }
                     >
                         <Icon
                             name="expand_more"
@@ -115,11 +118,13 @@ export default function ActiveFinancialEntity({
                             type="button"
                             aria-label={
                                 group.is_favorite
-                                    ? 'Quitar entidad de favoritos'
-                                    : 'Marcar entidad como favorita'
+                                    ? t('common.removeEntityFromFavorites')
+                                    : t('common.markEntityAsFavorite')
                             }
                             title={
-                                group.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorita'
+                                group.is_favorite
+                                    ? t('common.removeFromFavorites')
+                                    : t('common.markAsFavorite')
                             }
                             disabled={favoriteBusy}
                             onClick={() => onToggleFavoriteEntity(group.id, !group.is_favorite)}
@@ -154,9 +159,7 @@ export default function ActiveFinancialEntity({
                         </button>
                         <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                             <Icon name="receipt_long" className="text-sm" />
-                            <span>
-                                {count} {count === 1 ? 'gasto activo' : 'gastos activos'}
-                            </span>
+                            <span>{t('entity.activeExpenses', { count })}</span>
                             {pendingCount > 0 && (
                                 <>
                                     <span className="text-slate-300 dark:text-slate-600">·</span>
@@ -180,7 +183,7 @@ export default function ActiveFinancialEntity({
                                 <>
                                     <span className="text-slate-300 dark:text-slate-600">·</span>
                                     <span className="font-semibold text-emerald-500">
-                                        Pagado en esta sesión
+                                        {t('dashboard.paidInThisSession')}
                                     </span>
                                 </>
                             )}
@@ -192,7 +195,7 @@ export default function ActiveFinancialEntity({
                     <div className="flex items-center gap-2 shrink-0 ml-auto">
                         <CopyButton
                             size="sm"
-                            title={`Copiar resumen de ${group.name}`}
+                            title={t('dashboard.copyEntity', { name: group.name })}
                             getText={() =>
                                 buildWhatsAppText(group, currency, preferredCurrency, rates)
                             }
@@ -219,7 +222,7 @@ export default function ActiveFinancialEntity({
                                     className={`flex items-center gap-1.5 ${groupBusy ? 'invisible' : ''}`}
                                 >
                                     <Icon name="undo" className="text-sm" />
-                                    Revertir
+                                    {t('common.revert')}
                                 </span>
                                 {groupBusy && <ButtonSpinner />}
                             </button>
@@ -232,7 +235,7 @@ export default function ActiveFinancialEntity({
                                 title={
                                     settlementActive
                                         ? undefined
-                                        : 'Activá el modo "Hacer cuentas" para registrar pagos'
+                                        : t('common.turnOnSettleModeToRecordPayments')
                                 }
                                 onClick={() => onOpenGroup?.(group)}
                                 type="button"
@@ -252,7 +255,7 @@ export default function ActiveFinancialEntity({
                     <PendingApprovalNotice count={pendingCount} />
                 ) : count === 0 ? (
                     <p className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">
-                        Sin gastos que coincidan con el filtro.
+                        {t('dashboard.noExpensesMatchTheFilter')}
                     </p>
                 ) : (
                     <ul className="divide-y divide-slate-100 dark:divide-white/5 px-0.5 sm:px-1.5 py-1.5">

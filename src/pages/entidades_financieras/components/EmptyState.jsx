@@ -1,3 +1,6 @@
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
+
 export default function EmptyState({ onCreate }) {
     return (
         <div className="flex flex-col items-center justify-center gap-6 text-center bg-white dark:bg-slate-800/50 p-8 sm:p-12 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 mt-8">
@@ -7,16 +10,16 @@ export default function EmptyState({ onCreate }) {
 
             <div className="flex flex-col gap-2">
                 <h2 className="text-slate-900 dark:text-white text-xl font-bold">
-                    Aún no tienes entidades creadas
+                    {t('entidadesFinancieras.youDonTHaveAnyEntitiesYet')}
                 </h2>
                 <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Una <strong>entidad</strong> es cualquier tarjeta, cuenta bancaria, billetera
-                    virtual o persona con la que compartís gastos — por ejemplo{' '}
-                    <em>&ldquo;Tarjeta Visa&rdquo;</em>, <em>&ldquo;Efectivo&rdquo;</em> o{' '}
-                    <em>&ldquo;Mamá&rdquo;</em>.
+                    <Trans
+                        i18nKey="entity.emptyExplain"
+                        components={{ strong: <strong />, em: <em /> }}
+                    />
                 </p>
                 <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Creá tu primera entidad para empezar a registrar ahí tus gastos y pagos.
+                    {t('entidadesFinancieras.createYourFirstEntityToStartRecording')}
                 </p>
             </div>
 
@@ -25,7 +28,7 @@ export default function EmptyState({ onCreate }) {
                 className="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold tracking-wide shadow-sm hover:opacity-90 transition-opacity"
             >
                 <span className="material-symbols-outlined text-lg">add</span>
-                <span className="truncate">Crear Primera Entidad</span>
+                <span className="truncate">{t('entidadesFinancieras.createFirstEntity')}</span>
             </button>
         </div>
     );

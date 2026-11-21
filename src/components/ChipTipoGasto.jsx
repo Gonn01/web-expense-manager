@@ -1,4 +1,5 @@
 import { ExpenseType } from '@/utils/enums';
+import { t } from '@/i18n';
 
 export function ChipTipoGasto({ fijo, tipo, column = false }) {
     const tipoColor =
@@ -16,7 +17,7 @@ export function ChipTipoGasto({ fijo, tipo, column = false }) {
         return (
             <div className={`flex ${column ? 'flex-col' : 'items-center'} gap-2`}>
                 <span className="text-center text-xs font-semibold px-2.5 py-1 rounded-full bg-yellow-400/20 text-yellow-400">
-                    Gasto fijo
+                    {t('common.fixedExpense')}
                 </span>
                 {tipoChip}
             </div>

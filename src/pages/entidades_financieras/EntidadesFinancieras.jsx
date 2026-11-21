@@ -7,6 +7,7 @@ import NewEntityModal from '@/components/modals/NewEntityModal';
 import Loader from '@/components/Loader';
 
 import { useEntidadesUI } from './hooks/use-entidades-ui';
+import { t } from '@/i18n';
 
 export default function EntidadesFinancieras() {
     const {
@@ -31,7 +32,7 @@ export default function EntidadesFinancieras() {
     } = useEntidadesUI();
 
     if (loading) {
-        return <Loader label="Preparando información..." />;
+        return <Loader label={t('common.preparingInformation')} />;
     }
 
     return (

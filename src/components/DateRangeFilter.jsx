@@ -1,5 +1,6 @@
 import Icon from '@/components/Icon';
 import { isInvertedRange } from '@/utils/date-range';
+import { t } from '@/i18n';
 
 export default function DateRangeFilter({ from, to, onChange, className = '' }) {
     const hasRange = from || to;
@@ -11,7 +12,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
         <div className={`flex flex-col gap-1.5 ${className}`}>
             <div className="flex flex-wrap items-end gap-3">
                 <label className="flex flex-col gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    Desde
+                    {t('common.from')}
                     <input
                         type="date"
                         value={from}
@@ -22,7 +23,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
                 </label>
 
                 <label className="flex flex-col gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    Hasta
+                    {t('common.to')}
                     <input
                         type="date"
                         value={to}
@@ -39,7 +40,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
                         className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer"
                     >
                         <Icon name="close" className="text-sm" />
-                        Limpiar
+                        {t('common.clear')}
                     </button>
                 )}
             </div>
@@ -47,7 +48,7 @@ export default function DateRangeFilter({ from, to, onChange, className = '' }) 
             {inverted && (
                 <p className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
                     <Icon name="swap_vert" className="text-sm" />
-                    «Desde» es posterior a «Hasta»: se muestra el rango entre las dos fechas.
+                    {t('common.fromIsAfterToShowingTheRange')}
                 </p>
             )}
         </div>

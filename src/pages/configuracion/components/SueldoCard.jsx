@@ -3,6 +3,7 @@ import { Currency, CURRENCY_LABELS } from '@/utils/enums';
 import InfoTooltip from '@/components/InfoTooltip';
 import AmountInput from '@/components/AmountInput';
 import Select from '@/components/Select';
+import { t } from '@/i18n';
 
 export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSave }) {
     const [aumento, setAumento] = useState('');
@@ -26,33 +27,26 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
     return (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-background-dark/70">
             <h2 className="text-base font-medium mb-3 text-slate-900 dark:text-white flex items-center gap-1.5">
-                Sueldo
-                <InfoTooltip
-                    align="start"
-                    text={
-                        'Se usa en "Ver gráficos" (dashboard y detalle de cada entidad) para ' +
-                        'mostrar qué porcentaje de tu sueldo se lleva lo que pagás en el mes, ' +
-                        'en total y por categoría. No afecta ningún cálculo de pagos ni balances.'
-                    }
-                />
+                {t('configuracion.salary')}
+                <InfoTooltip align="start" text={t('settings.salaryInfo')} />
             </h2>
 
             <form className="space-y-4 text-sm" onSubmit={(e) => e.preventDefault()}>
                 <div className="flex flex-col gap-1">
                     <label className="text-slate-600 dark:text-slate-300" htmlFor="sueldo">
-                        Sueldo mensual
+                        {t('configuracion.monthlySalary')}
                     </label>
                     <div className="flex gap-2">
                         <AmountInput
                             id="sueldo"
-                            placeholder="Ej: 850.000"
+                            placeholder={t('configuracion.eG850000')}
                             className="flex-1 min-w-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
                             value={sueldo}
                             onChange={setSueldo}
                         />
                         <Select
                             id="sueldo-moneda"
-                            aria-label="Moneda del sueldo"
+                            aria-label={t('configuracion.salaryCurrency')}
                             className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
                             value={moneda}
                             onChange={setMoneda}
@@ -66,14 +60,14 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
 
                 <div className="flex flex-col gap-1 pt-3 border-t border-black/10 dark:border-white/10">
                     <label className="text-slate-600 dark:text-slate-300" htmlFor="aumento">
-                        Aplicar aumento (%)
+                        {t('configuracion.applyRaise')}
                     </label>
                     <div className="flex gap-2">
                         <input
                             id="aumento"
                             type="number"
                             step="0.01"
-                            placeholder="Ej: 10"
+                            placeholder={t('configuracion.eG10')}
                             className="flex-1 min-w-0 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white"
                             value={aumento}
                             onChange={(e) => setAumento(e.target.value)}
@@ -84,12 +78,11 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                             onClick={handleAplicarAumento}
                             disabled={!canApplyAumento}
                         >
-                            Aplicar
+                            {t('configuracion.apply')}
                         </button>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Recalcula el sueldo mensual; presioná &quot;Guardar sueldo&quot; para
-                        confirmar el cambio.
+                        {t('configuracion.recalculatesTheMonthlySalaryPressSaveSalary')}
                     </p>
                 </div>
 
@@ -99,7 +92,7 @@ export function SueldoCard({ sueldo, setSueldo, moneda, setMoneda, loading, onSa
                     onClick={onSave}
                     disabled={loading}
                 >
-                    {loading ? 'Guardando...' : 'Guardar sueldo'}
+                    {loading ? t('common.saving') : t('configuracion.saveSalary')}
                 </button>
             </form>
         </div>

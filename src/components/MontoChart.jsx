@@ -19,6 +19,7 @@ import useAuth from '@/store/use-auth-store';
 import { convertCurrency } from '@/utils/convert-currency';
 import { formatMoney } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
+import { t } from '@/i18n';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -93,7 +94,7 @@ const CustomTooltip = ({ active, payload, label, currency }) => {
             <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
-                    {p.dataKey === 'egreso' ? 'Egresos' : 'Ingresos'}:{' '}
+                    {p.dataKey === 'egreso' ? t('common.expenses') : t('common.income2')}:{' '}
                     {formatMoney(p.value, currency)}
                 </p>
             ))}
@@ -115,7 +116,7 @@ export default function MontoChart({ gastos }) {
     return (
         <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                Monto por mes{' '}
+                {t('common.amountPerMonth')}{' '}
                 <span className="font-normal text-slate-500">({preferredCurrency})</span>
             </p>
             <ResponsiveContainer width="100%" height={200}>
@@ -138,7 +139,9 @@ export default function MontoChart({ gastos }) {
                     <Legend
                         formatter={(value) => (
                             <span className="text-xs text-slate-400">
-                                {value === 'egreso' ? 'Egresos' : 'Ingresos'}{' '}
+                                {value === 'egreso'
+                                    ? t('common.expenses')
+                                    : t('common.income2')}{' '}
                             </span>
                         )}
                     />

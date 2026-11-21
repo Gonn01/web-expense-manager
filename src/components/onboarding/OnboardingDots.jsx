@@ -1,6 +1,12 @@
+import { t } from '@/i18n';
+
 export default function OnboardingDots({ total, current, onSelect }) {
     return (
-        <div className="flex items-center justify-center gap-1" role="group" aria-label="Progreso">
+        <div
+            className="flex items-center justify-center gap-1"
+            role="group"
+            aria-label={t('common.progress')}
+        >
             {Array.from({ length: total }, (_, index) => {
                 const active = index === current;
                 return (
@@ -8,7 +14,7 @@ export default function OnboardingDots({ total, current, onSelect }) {
                         key={index}
                         type="button"
                         onClick={() => onSelect(index)}
-                        aria-label={`Ir al paso ${index + 1} de ${total}`}
+                        aria-label={t('onboarding.goToStep', { step: index + 1, total })}
                         aria-current={active ? 'step' : undefined}
                         className="cursor-pointer flex h-6 items-center justify-center px-1 rounded-full focus-visible:outline-2 focus-visible:outline-primary"
                     >

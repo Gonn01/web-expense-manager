@@ -4,6 +4,7 @@ import SessionExpiredNotice from './components/SessionExpiredNotice';
 import GoogleButton from '../components/GoogleButton';
 import { useLogin } from './hooks/use-login';
 import { useGoogleAuth } from '../hooks/use-google-auth';
+import { t } from '@/i18n';
 
 export default function Login() {
     const { loading, error, setError, sessionExpired, handleLogin } = useLogin();
@@ -12,7 +13,10 @@ export default function Login() {
     return (
         <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-8 sm:py-16 font-display">
             <div className="w-full max-w-lg bg-white/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/40 rounded-2xl p-4 sm:p-8 shadow backdrop-blur-sm">
-                <BrandHeader title="Expense Manager" subtitle="Controla tus finanzas personales" />
+                <BrandHeader
+                    title="Expense Manager"
+                    subtitle={t('auth.takeControlOfYourPersonalFinances')}
+                />
 
                 {sessionExpired && <SessionExpiredNotice />}
 
@@ -30,7 +34,7 @@ export default function Login() {
                         </div>
                         <div className="relative flex justify-center">
                             <span className="px-2 text-sm text-emerald-700 dark:text-emerald-300/70">
-                                O continúa con
+                                {t('auth.orContinueWith')}
                             </span>
                         </div>
                     </div>
@@ -39,12 +43,12 @@ export default function Login() {
                 </div>
 
                 <p className="mt-6 text-center text-sm text-emerald-700 dark:text-emerald-300/70">
-                    ¿No tienes una cuenta?{' '}
+                    {t('auth.donTHaveAnAccount')}{' '}
                     <a
                         href="/register"
                         className="font-semibold text-primary hover:text-primary/80"
                     >
-                        Regístrate
+                        {t('auth.signUp2')}
                     </a>
                 </p>
             </div>

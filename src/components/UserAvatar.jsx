@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '@/i18n';
 
 function getInitials(name) {
     return (
@@ -19,7 +20,7 @@ export default function UserAvatar({ src, name, className = 'size-10 text-sm' })
         return (
             <img
                 src={src}
-                alt={name ? `Foto de perfil de ${name}` : 'Foto de perfil'}
+                alt={name ? t('profile.pictureOf', { name }) : t('common.profilePicture')}
                 referrerPolicy="no-referrer"
                 onError={() => setFailedSrc(src)}
                 className={`${base} object-cover`}
@@ -30,7 +31,7 @@ export default function UserAvatar({ src, name, className = 'size-10 text-sm' })
     return (
         <div
             role="img"
-            aria-label={name ? `Avatar de ${name}` : 'Avatar'}
+            aria-label={name ? t('profile.avatarOf', { name }) : t('common.avatar')}
             className={`${base} flex items-center justify-center bg-primary/15 text-primary font-bold`}
         >
             {getInitials(name)}

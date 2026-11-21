@@ -2,8 +2,9 @@ import { useCallback } from 'react';
 import { settleQuota, settleQuotasLote } from '@/services/api';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { t } from '@/i18n';
 
-const SETTLEMENT_MSG = 'Activá el modo "Hacer cuentas" para marcar pagos desde acá.';
+const SETTLEMENT_MSG = t('common.turnOnSettleModeToMarkPayments');
 
 export function isSettlementActive() {
     return useSettlementStore.getState().active;
@@ -38,8 +39,8 @@ export function useSettlements(token, onPaid) {
                     .getState()
                     .show(
                         updatedItems.length === 1
-                            ? 'Gasto marcado. Se registra al terminar las cuentas.'
-                            : `${updatedItems.length} gastos marcados. Se registran al terminar las cuentas.`,
+                            ? t('common.expenseMarkedItSRecordedWhenYou')
+                            : t('settlement.markedMany', { count: updatedItems.length }),
                         'success',
                         'playlist_add_check',
                     );

@@ -1,5 +1,6 @@
-export const SHARED_ENTITY_TRANSFER_REASON =
-    'La entidad está vinculada con otro usuario: sus gastos no se pueden transferir.';
+import { t } from '@/i18n';
+
+export const SHARED_ENTITY_TRANSFER_REASON = t('common.thisEntityIsLinkedToAnotherUser');
 
 export function transferBlockReason(gasto, entities) {
     if (!gasto) return null;

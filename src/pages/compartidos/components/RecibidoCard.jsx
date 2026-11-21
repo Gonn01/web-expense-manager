@@ -1,6 +1,8 @@
 import Icon from '@/components/Icon';
 import StatusBadge from './StatusBadge';
 import TypeBadge from './TypeBadge';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
     const isLoading = loading?.id === item.id;
@@ -18,9 +20,10 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         {item.currency_type}{' '}
                         <span className="font-medium text-zinc-700 dark:text-zinc-200">
-                            {Number(item.amount).toLocaleString('es-AR')}
+                            {Number(item.amount).toLocaleString(getIntlLocale())}
                         </span>
-                        {item.number_of_quotas > 0 && ` · ${item.number_of_quotas} cuotas`}
+                        {item.number_of_quotas > 0 &&
+                            t('shared.quotasSuffix', { count: item.number_of_quotas })}
                     </p>
                 </div>
                 <StatusBadge status={item.status} />
@@ -29,12 +32,14 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
             {item.status === 'ACTIVE' && item.assigned_entity_name && (
                 <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                     <Icon name="account_balance" className="text-base" />
-                    <span>Asignado a: {item.assigned_entity_name}</span>
+                    <span>
+                        {t('compartidos.assignedTo')} {item.assigned_entity_name}
+                    </span>
                 </div>
             )}
 
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
-                {new Date(item.created_at).toLocaleDateString('es-AR', {
+                {new Date(item.created_at).toLocaleDateString(getIntlLocale(), {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric',
@@ -52,7 +57,7 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="check" className="text-sm" /> Aprobar
+                                <Icon name="check" className="text-sm" /> {t('compartidos.approve')}
                             </>
                         )}
                     </button>
@@ -65,7 +70,7 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="close" className="text-sm" /> Rechazar
+                                <Icon name="close" className="text-sm" /> {t('compartidos.reject')}
                             </>
                         )}
                     </button>

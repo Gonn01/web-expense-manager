@@ -105,7 +105,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la app móvil no tiene pruebas automatizadas, y la web solo tiene pruebas unitarias (Vitest) de funciones puras de `src/utils/` (conversión de moneda y transferencia de gastos), no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte.
+*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, en `src/utils/` y en los `utils/` de cada pantalla, no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte.
 
 ## POR — Portabilidad y entorno
 
@@ -130,9 +130,11 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-LOC-01 | La interfaz, los mensajes de error y los términos del dominio están en español rioplatense. | Todos |
-| RNF-LOC-02 | La app móvil no contiene textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | App |
+| RNF-LOC-01 | La interfaz y los mensajes de error de los clientes están en español rioplatense y en inglés. Los términos del dominio en código y API están en español. | Todos |
+| RNF-LOC-02 | Los clientes no contienen textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | Web, App |
 | RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR, BRL, CLP, UYU). | Web, App |
-| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal. | Web |
+| RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal, en cualquier idioma. | Web |
+| RNF-LOC-05 | Salvo que el usuario elija un idioma (RF-CFG-06), se toma del navegador o del dispositivo: se usa el primero de sus idiomas preferidos que esté soportado y, si ninguno lo está, inglés. | Web, App |
+| RNF-LOC-06 | Las fechas, los números y los montos se muestran con el formato del idioma activo (`es-AR` o `en-US`). | Web, App |
 
-*Limitación conocida*: la web tiene los textos escritos directamente en los componentes, solo en español. La app móvil todavía no formatea los campos de monto mientras se escribe (RNF-LOC-04).
+*Limitación conocida*: los textos que redacta la API (mensajes de error sin traducción en el catálogo del cliente y detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés. La app móvil todavía no formatea los campos de monto mientras se escribe (RNF-LOC-04).

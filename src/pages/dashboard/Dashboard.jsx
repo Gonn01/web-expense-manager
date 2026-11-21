@@ -10,6 +10,7 @@ import { useDashboardData } from './hooks/use-dashboard-data';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import { useUIStore } from '@/store/use-ui-store';
 import Loader from '@/components/Loader';
+import { t } from '@/i18n';
 
 export default function Dashboard() {
     const data = useDashboardData();
@@ -46,7 +47,7 @@ export default function Dashboard() {
                         Dashboard
                     </p>
                     <p className="text-slate-500 dark:text-slate-400">
-                        Un resumen de tus finanzas personales.
+                        {t('dashboard.aSummaryOfYourPersonalFinances')}
                     </p>
                 </div>
 
@@ -57,14 +58,14 @@ export default function Dashboard() {
                         className="cursor-pointer shrink-0 flex items-center h-11 px-4 sm:px-5 rounded-lg border border-primary/60 text-primary font-bold hover:bg-primary/10 transition-colors"
                     >
                         <Icon name="bar_chart" className="mr-2" />
-                        Ver gráficos
+                        {t('common.viewCharts')}
                     </button>
                     <button
                         onClick={() => ui.setOpenNewExpense(true)}
                         className="cursor-pointer flex items-center justify-center h-11 px-4 sm:px-5 rounded-lg bg-primary text-background-dark font-bold w-full sm:w-auto"
                     >
                         <Icon name="add_circle" className="mr-2" />
-                        Crear Gasto / Deuda
+                        {t('common.createExpenseDebt')}
                     </button>
                 </div>
             </div>
@@ -89,8 +90,8 @@ export default function Dashboard() {
                 >
                     <button
                         onClick={toggleBalances}
-                        aria-label="Mostrar balances"
-                        title="Mostrar balances"
+                        aria-label={t('dashboard.showBalances')}
+                        title={t('dashboard.showBalances')}
                         tabIndex={balancesHidden ? 0 : -1}
                         className={`cursor-pointer absolute inset-y-0 left-0 z-10 flex items-start justify-center pt-2 w-6 text-slate-400 hover:text-primary transition-opacity duration-200 motion-reduce:transition-none ${
                             balancesHidden
@@ -109,12 +110,12 @@ export default function Dashboard() {
                     >
                         <div className="flex items-center justify-between">
                             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                                Balances
+                                {t('dashboard.balances')}
                             </p>
                             <button
                                 onClick={toggleBalances}
-                                aria-label="Ocultar balances"
-                                title="Ocultar balances"
+                                aria-label={t('dashboard.hideBalances')}
+                                title={t('dashboard.hideBalances')}
                                 className="cursor-pointer text-slate-400 hover:text-primary transition-colors"
                             >
                                 <Icon name="chevron_left" />

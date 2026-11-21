@@ -18,6 +18,7 @@ import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentMo
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { lastPayment, paymentNumbers, revertDialog } from './utils/historial-eventos';
+import { t } from '@/i18n';
 
 export default function DetalleGasto() {
     const {
@@ -85,7 +86,7 @@ export default function DetalleGasto() {
                     <div className="bg-white dark:bg-[#111714] rounded-xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem
-                                label="Entidad"
+                                label={t('common.entity')}
                                 value={
                                     gasto.financial_entity_id ? (
                                         <Link
@@ -93,26 +94,26 @@ export default function DetalleGasto() {
                                             className="text-primary hover:underline"
                                         >
                                             {getEntityById(gasto.financial_entity_id)?.name ??
-                                                'Ver entidad'}
+                                                t('detalleGasto.viewEntity')}
                                         </Link>
                                     ) : null
                                 }
                             />
                             <InfoItem
-                                label="Monto Total"
+                                label={t('detalleGasto.totalAmount')}
                                 value={formatMoney(gasto.amount, gasto.currency_type)}
                             />
-                            <InfoItem label="Moneda" value={gasto.currency_type} />
+                            <InfoItem label={t('common.currency')} value={gasto.currency_type} />
                             {gasto.linked_purchase_id && (
                                 <InfoItem
-                                    label="Pagado con"
+                                    label={t('detalleGasto.paidWith')}
                                     value={
                                         <Link
                                             to={`/app/gastos/${gasto.linked_purchase_id}`}
                                             className="text-primary hover:underline"
                                         >
                                             {getEntityById(gasto.linked_financial_entity_id)
-                                                ?.name ?? 'Otra entidad'}
+                                                ?.name ?? t('detalleGasto.otherEntity')}
                                         </Link>
                                     }
                                 />

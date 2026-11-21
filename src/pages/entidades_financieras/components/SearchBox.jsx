@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 export default function SearchBox({ query, setQuery }) {
     return (
         <div className="px-0 my-6">
@@ -9,7 +11,7 @@ export default function SearchBox({ query, setQuery }) {
                 <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Buscar entidad... (ej: Banco Galicia)"
+                    placeholder={t('entidadesFinancieras.searchEntityEGGaliciaBank')}
                     className="
                         w-full h-12
                         rounded-xl

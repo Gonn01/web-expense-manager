@@ -1,21 +1,24 @@
 import { Currency, CURRENCY_LABELS } from '@/utils/enums';
 import Select from '@/components/Select';
+import { t } from '@/i18n';
 
 export function PreferenciasCard({ moneda, setMoneda, loading, onSave }) {
     return (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-background-dark/70">
             <h2 className="text-base font-medium mb-3 text-slate-900 dark:text-white">
-                Preferencias
+                {t('configuracion.preferences')}
             </h2>
 
             <form className="space-y-4 text-sm" onSubmit={(e) => e.preventDefault()}>
                 <div className="flex flex-col gap-1">
-                    <label className="text-slate-600 dark:text-slate-300">Moneda principal</label>
+                    <label className="text-slate-600 dark:text-slate-300">
+                        {t('configuracion.mainCurrency')}
+                    </label>
                     <Select
                         className="rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-background-dark px-3 py-2 text-sm text-slate-900 dark:text-white cursor-pointer"
                         value={moneda}
                         onChange={setMoneda}
-                        aria-label="Moneda principal"
+                        aria-label={t('configuracion.mainCurrency')}
                         options={Object.values(Currency).map((c) => ({
                             value: c,
                             label: CURRENCY_LABELS[c],
@@ -29,7 +32,7 @@ export function PreferenciasCard({ moneda, setMoneda, loading, onSave }) {
                     onClick={onSave}
                     disabled={loading}
                 >
-                    {loading ? 'Guardando...' : 'Guardar cambios'}
+                    {loading ? t('common.saving') : t('common.saveChanges')}
                 </button>
             </form>
         </div>

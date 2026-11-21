@@ -1,3 +1,5 @@
+import { getIntlLocale } from '@/i18n';
+
 export function currentMonthIndex() {
     const today = new Date();
     return today.getFullYear() * 12 + today.getMonth();
@@ -20,14 +22,14 @@ export function keyFromMonthIndex(idx) {
 
 export function labelFromKey(key) {
     const [year, month] = key.split('-');
-    return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('es-AR', {
+    return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString(getIntlLocale(), {
         month: 'short',
         year: 'numeric',
     });
 }
 
 export function labelFromMonthIndex(idx) {
-    return new Date(Math.floor(idx / 12), idx % 12, 1).toLocaleDateString('es-AR', {
+    return new Date(Math.floor(idx / 12), idx % 12, 1).toLocaleDateString(getIntlLocale(), {
         month: 'long',
         year: 'numeric',
     });

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useUIStore } from '@/store/use-ui-store';
 import { useOnboardingStore } from '@/store/use-onboarding-store';
 import { useConfiguracionData } from './use-configuracion-data';
+import { getLanguagePreference, setLanguagePreference, t } from '@/i18n';
 
 export function useConfiguracionUI() {
     const {
@@ -27,6 +28,12 @@ export function useConfiguracionUI() {
     const [loadingMoneda, setLoadingMoneda] = useState(false);
     const [loadingSueldo, setLoadingSueldo] = useState(false);
     const [snackbar, setSnackbar] = useState(null);
+    const [languagePreference, setLanguagePreferenceState] = useState(getLanguagePreference);
+
+    const onChangeLanguage = (preference) => {
+        setLanguagePreference(preference);
+        setLanguagePreferenceState(getLanguagePreference());
+    };
 
     useEffect(() => {
         setMoneda(monedaActual);
@@ -47,7 +54,7 @@ export function useConfiguracionUI() {
         try {
             setLoadingMoneda(true);
             await guardarMoneda(moneda);
-            showSnackbar('Moneda preferida actualizada.');
+            showSnackbar(t('configuracion.preferredCurrencyUpdated'));
         } catch (err) {
             console.error('Error guardando configuración:', err);
         } finally {
@@ -59,14 +66,14 @@ export function useConfiguracionUI() {
         const sueldoNumber = Number(sueldo);
 
         if (sueldo === '' || !Number.isFinite(sueldoNumber) || sueldoNumber < 0) {
-            showSnackbar('Ingresá un sueldo válido (número mayor o igual a 0).', 'error');
+            showSnackbar(t('configuracion.enterAValidSalaryANumberGreater'), 'error');
             return;
         }
 
         try {
             setLoadingSueldo(true);
             await guardarSueldo(sueldoNumber, sueldoMoneda);
-            showSnackbar('Sueldo actualizado.');
+            showSnackbar(t('configuracion.salaryUpdated'));
         } catch (err) {
             console.error('Error guardando sueldo:', err);
         } finally {
@@ -94,6 +101,9 @@ export function useConfiguracionUI() {
         themeMode,
 
         setThemeMode,
+
+        languagePreference,
+        onChangeLanguage,
 
         onOpenTutorial,
 

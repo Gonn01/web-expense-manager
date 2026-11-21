@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function InfoTooltip({ text, className = '', align = 'center', side = 'bottom' }) {
     const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function InfoTooltip({ text, className = '', align = 'center', si
             <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                aria-label="Más información"
+                aria-label={t('common.moreInformation')}
                 aria-expanded={open}
                 className="cursor-pointer flex items-center justify-center text-slate-400 hover:text-primary dark:text-slate-500 dark:hover:text-primary transition-colors"
             >

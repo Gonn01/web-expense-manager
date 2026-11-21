@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function SessionExpiredNotice() {
     return (
@@ -8,8 +9,8 @@ export default function SessionExpiredNotice() {
         >
             <Icon name="schedule" className="text-amber-300" />
             <div>
-                <p className="font-semibold">Tu sesión venció</p>
-                <p className="text-amber-100/80">Volvé a iniciar sesión para continuar.</p>
+                <p className="font-semibold">{t('auth.yourSessionExpired')}</p>
+                <p className="text-amber-100/80">{t('auth.signInAgainToContinue')}</p>
             </div>
         </div>
     );

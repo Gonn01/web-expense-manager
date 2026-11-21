@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { t } from '@/i18n';
 
-export default function AlertModal({ open, title, message, confirmLabel = 'Entendido', onClose }) {
+export default function AlertModal({
+    open,
+    title,
+    message,
+    confirmLabel = t('dialog.understood'),
+    onClose,
+}) {
     const [visible, setVisible] = useState(open);
 
     useEffect(() => {

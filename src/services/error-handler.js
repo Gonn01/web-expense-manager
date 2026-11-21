@@ -1,6 +1,7 @@
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { ERROR_PRESENTATION, STATUS_PRESENTATION, GENERIC_ERROR } from '@/utils/error-catalog';
+import { t } from '@/i18n';
 
 export function normalizeApiError(error) {
     if (error?.isApiError) return error;
@@ -21,7 +22,9 @@ export function normalizeApiError(error) {
         (status != null && STATUS_PRESENTATION[status]) ||
         GENERIC_ERROR;
 
-    const message = preset.message || serverMessage || GENERIC_ERROR.message;
+    const message = preset.messageKey
+        ? t(preset.messageKey)
+        : serverMessage || t(GENERIC_ERROR.messageKey);
 
     const normalized = new Error(message);
     normalized.isApiError = true;
@@ -30,7 +33,7 @@ export function normalizeApiError(error) {
     normalized.serverMessage = serverMessage;
     normalized.variant = preset.variant ?? 'snackbar';
     normalized.icon = preset.icon ?? (normalized.variant === 'dialog' ? undefined : 'error');
-    normalized.title = preset.title ?? GENERIC_ERROR.title;
+    normalized.title = t(preset.titleKey ?? GENERIC_ERROR.titleKey);
     normalized.tone = preset.tone ?? 'error';
     normalized.details = body.details ?? null;
     normalized.raw = error;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { register } from '@/services/api';
+import { t } from '@/i18n';
 
 export function useRegister() {
     const nav = useNavigate();
@@ -8,10 +9,9 @@ export function useRegister() {
     const [error, setError] = useState('');
 
     const validar = ({ name, email, password }) => {
-        if (!name || name.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
-        if (!email.includes('@')) return 'Email inválido';
-        if (!password || password.length < 6)
-            return 'La contraseña debe tener al menos 6 caracteres';
+        if (!name || name.trim().length < 2) return t('auth.theNameMustBeAtLeast2');
+        if (!email.includes('@')) return t('auth.invalidEmail');
+        if (!password || password.length < 6) return t('auth.thePasswordMustBeAtLeast6');
         return '';
     };
 
@@ -29,7 +29,7 @@ export function useRegister() {
             nav('/login');
             return true;
         } catch (err) {
-            setError(err.message || 'Error registrando usuario');
+            setError(err.message || t('auth.errorRegisteringUser'));
             return false;
         } finally {
             setLoading(false);

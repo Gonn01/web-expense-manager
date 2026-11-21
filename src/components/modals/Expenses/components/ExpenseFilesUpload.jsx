@@ -1,10 +1,11 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function ExpenseFilesUpload({ setFiles }) {
     return (
         <div>
             <p className="text-slate-900 dark:text-white text-sm font-medium pb-2">
-                Adjuntar imágenes
+                {t('modals.attachImages')}
             </p>
 
             <label
@@ -19,9 +20,11 @@ export default function ExpenseFilesUpload({ setFiles }) {
                         className="text-4xl text-slate-500 dark:text-[#9eb7a8]"
                     />
                     <p className="mb-2 text-sm text-slate-500 dark:text-[#9eb7a8]">
-                        <span className="font-semibold text-primary">Haz clic o arrastra</span>
+                        <span className="font-semibold text-primary">
+                            {t('modals.clickOrDrag')}
+                        </span>
                     </p>
-                    <p className="text-xs text-gray-500">PNG, JPG o PDF (MAX 5MB)</p>
+                    <p className="text-xs text-gray-500">{t('modals.pngJpgOrPdfMax5mb')}</p>
                 </div>
 
                 <input

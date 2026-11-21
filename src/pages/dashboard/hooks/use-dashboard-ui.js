@@ -4,6 +4,7 @@ import { useSettlementStore } from '@/store/use-settlement-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { Currency } from '@/utils/enums';
 import { filterDashboardGroups } from '../utils/dashboard-groups';
+import { t } from '@/i18n';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -80,18 +81,19 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     const requestTogglePostpone = useCallback(
         (gastoId, postponed) => {
             const gasto = groups.flatMap((g) => g.items).find((it) => it.id === gastoId);
-            const nombre = gasto?.name ? `"${gasto.name}"` : 'El gasto';
+            const nombre = gasto?.name ? `"${gasto.name}"` : t('dashboard.theExpense');
             const marcado = useSettlementStore.getState().isChecked?.(gastoId);
 
             return useDialogStore.getState().confirm({
-                title: postponed ? '¿Postergar gasto?' : '¿Reactivar gasto?',
+                title: postponed
+                    ? t('dashboard.postponeExpense')
+                    : t('dashboard.reactivateExpense'),
                 message: postponed
-                    ? `${nombre} queda fuera de la sesión de cuentas actual (o de la próxima que abras) hasta que la cierres.${
-                          marcado ? ' Como está marcado en la sesión, se le quita la marca.' : ''
-                      }`
-                    : `${nombre} vuelve a poder marcarse en la sesión de cuentas.`,
+                    ? t('dashboard.postponeMessage', { name: nombre }) +
+                      (marcado ? t('dashboard.postponeMarkedNote') : '')
+                    : t('dashboard.reactivateMessage', { name: nombre }),
                 tone: 'info',
-                confirmLabel: postponed ? 'Postergar' : 'Reactivar',
+                confirmLabel: postponed ? t('common.postpone') : t('common.reactivate'),
                 onConfirm: () => postergarGasto(gastoId, postponed),
             });
         },

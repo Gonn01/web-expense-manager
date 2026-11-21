@@ -1,22 +1,28 @@
 import { create } from 'zustand';
+import { t } from '@/i18n';
 
 let idSeq = 0;
 
 export const useDialogStore = create((set, get) => ({
     current: null,
 
-    alert: ({ title = 'Error', message, tone = 'error', confirmLabel = 'Entendido' } = {}) => {
+    alert: ({
+        title = t('dialog.error'),
+        message,
+        tone = 'error',
+        confirmLabel = t('dialog.understood'),
+    } = {}) => {
         get().current?.resolve?.(false);
         idSeq += 1;
         set({ current: { id: idSeq, kind: 'alert', title, message, tone, confirmLabel } });
     },
 
     confirm: ({
-        title = '¿Estás seguro?',
+        title = t('dialog.areYouSure'),
         message,
         tone = 'warning',
-        confirmLabel = 'Confirmar',
-        cancelLabel = 'Cancelar',
+        confirmLabel = t('common.confirm'),
+        cancelLabel = t('common.cancel'),
         onConfirm,
     } = {}) =>
         new Promise((resolve) => {

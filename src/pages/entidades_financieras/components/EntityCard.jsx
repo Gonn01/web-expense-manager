@@ -1,5 +1,6 @@
 import EntityIcon from './EntityIcon';
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function EntityCard({
     entity,
@@ -22,10 +23,14 @@ export default function EntityCard({
                     disabled={favoriteBusy}
                     aria-label={
                         entity.is_favorite
-                            ? 'Quitar entidad de favoritos'
-                            : 'Marcar entidad como favorita'
+                            ? t('common.removeEntityFromFavorites')
+                            : t('common.markEntityAsFavorite')
                     }
-                    title={entity.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorita'}
+                    title={
+                        entity.is_favorite
+                            ? t('common.removeFromFavorites')
+                            : t('common.markAsFavorite')
+                    }
                     onClick={(e) => {
                         e.stopPropagation();
                         onToggleFavorite?.(entity);
@@ -46,14 +51,13 @@ export default function EntityCard({
                     </p>
 
                     <p className="mt-1 text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">
-                        {entity.cantidad == undefined ? 0 : entity.cantidad} gasto
-                        {entity.cantidad === 1 ? ' activo' : 's activos'}
+                        {t('entity.activeExpenses', { count: entity.cantidad ?? 0 })}
                     </p>
 
                     {entity.linked_user_name && (
                         <p className="mt-1 flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">
                             <span className="material-symbols-outlined text-sm">person</span>
-                            Vinculada a: {entity.linked_user_name}
+                            {t('entidadesFinancieras.linkedTo')} {entity.linked_user_name}
                         </p>
                     )}
                 </div>
@@ -71,7 +75,7 @@ export default function EntityCard({
                     transition-all duration-200
                     text-red-500 hover:text-red-600
                 "
-                title="Eliminar entidad"
+                title={t('common.deleteEntity')}
             >
                 <span className="material-symbols-outlined text-2xl">delete</span>
             </button>

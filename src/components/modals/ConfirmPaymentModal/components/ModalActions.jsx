@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function ModalActions({ onCancel, onConfirm, loading = false, disabled = false }) {
     return (
@@ -9,7 +10,7 @@ export default function ModalActions({ onCancel, onConfirm, loading = false, dis
                 disabled={loading}
                 className="h-10 px-4 rounded-lg bg-slate-200 dark:bg-slate-700 text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-900 dark:text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Cancelar
+                {t('common.cancel')}
             </button>
 
             <button
@@ -23,7 +24,7 @@ export default function ModalActions({ onCancel, onConfirm, loading = false, dis
                 ) : (
                     <Icon name="check_circle" className="text-lg" />
                 )}
-                {loading ? 'Guardando...' : 'Confirmar Pago'}
+                {loading ? t('common.saving') : t('modals.confirmPayment')}
             </button>
         </div>
     );

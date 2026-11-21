@@ -3,6 +3,7 @@ import TextInput from '@/components/TextInput';
 import PasswordInput from '../../components/PasswordInput';
 import ErrorMessage from '../../components/ErrorMessage';
 import SubmitButton from '@/components/SubmitButton';
+import { t } from '@/i18n';
 
 export default function LoginForm({ loading, error, onErrorClear, onSubmit }) {
     const [form, setForm] = useState({
@@ -27,18 +28,18 @@ export default function LoginForm({ loading, error, onErrorClear, onSubmit }) {
                 type="email"
                 value={form.email}
                 onChange={(e) => onChange('email', e.target.value)}
-                placeholder="Ej: juan@email.com"
+                placeholder={t('common.eGJohnEmailCom')}
             />
 
             <PasswordInput
                 value={form.password}
                 onChange={(e) => onChange('password', e.target.value)}
-                placeholder="Ej: MiClave123"
+                placeholder={t('auth.eGMypassword123')}
             />
 
             {error && <ErrorMessage message={error} />}
 
-            <SubmitButton loading={loading}>Iniciar Sesión</SubmitButton>
+            <SubmitButton loading={loading}>{t('auth.signIn2')}</SubmitButton>
         </form>
     );
 }

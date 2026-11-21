@@ -1,6 +1,7 @@
 import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import ActionsMenu from '@/components/ActionsMenu';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
+import { t } from '@/i18n';
 
 export default function HeaderDetalle({
     gasto,
@@ -33,21 +34,21 @@ export default function HeaderDetalle({
                         className="flex-1 sm:flex-none cursor-pointer h-10 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-opacity-90 transition-opacity"
                     >
                         {gasto.type === 'INGRESO'
-                            ? 'Marcar cuota como cobrada'
-                            : 'Marcar cuota como pagada'}
+                            ? t('detalleGasto.markInstallmentAsCollected')
+                            : t('detalleGasto.markInstallmentAsPaid')}
                     </button>
                 ) : null}
 
                 <ActionsMenu
-                    label="Opciones del gasto"
+                    label={t('detalleGasto.expenseOptions')}
                     items={[
                         ...(onRevertLast
                             ? [
                                   {
                                       icon: 'undo',
                                       label: gasto.shared_counterparty
-                                          ? 'Pedir reversión del último pago'
-                                          : 'Revertir último pago',
+                                          ? t('detalleGasto.requestReversalOfTheLastPayment')
+                                          : t('detalleGasto.revertLastPayment'),
                                       disabled: revertLastDisabled,
                                       onClick: onRevertLast,
                                   },
@@ -55,17 +56,17 @@ export default function HeaderDetalle({
                             : []),
                         {
                             icon: 'edit',
-                            label: 'Editar gasto',
+                            label: t('detalleGasto.editExpense'),
                             onClick: abrirEditar,
                         },
                         {
                             icon: transferLock ? 'lock' : 'swap_horiz',
-                            label: 'Transferir a otra entidad',
+                            label: t('detalleGasto.transferToAnotherEntity'),
                             onClick: transferLock ? avisarTransferBloqueado : abrirTransferir,
                         },
                         {
                             icon: 'delete',
-                            label: 'Eliminar gasto',
+                            label: t('detalleGasto.deleteExpense'),
                             tone: 'danger',
                             onClick: abrirEliminar,
                         },

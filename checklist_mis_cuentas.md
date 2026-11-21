@@ -46,7 +46,7 @@
 
 ## GENERAL
 
-- [ ] Manejo centralizado de errores.
+- [x] Manejo centralizado de errores.
 - [ ] Añadir logs.
 - [ ] Momentos de carga globales.
 - [ ] Optimizar imágenes y fallbacks.

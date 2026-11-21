@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
+import { t } from '@/i18n';
 
 function MirrorOption({ name, checked, onChange, title, hint }) {
     return (
@@ -24,41 +25,44 @@ function MirrorOption({ name, checked, onChange, title, hint }) {
 export default function DescartarModal({ item, loading, onClose, onConfirm }) {
     const [deleteLinked, setDeleteLinked] = useState(null);
     const hasMirror = item.mirror_id != null;
-    const mirrorName = item.mirror_entity_name ?? 'la otra entidad';
+    const mirrorName = item.mirror_entity_name ?? t('people.theOtherEntity');
     const paidQuotas = Number(item.mirror_payed_quotas) || 0;
 
     const message = hasMirror ? (
         <span className="flex flex-col gap-2">
-            <span className="block">¿Qué hacemos con el movimiento en {mirrorName}?</span>
+            <span className="block">{t('shared.mirrorQuestion', { entity: mirrorName })}</span>
             <MirrorOption
-                name={`en ${mirrorName}`}
-                title="Conservarlo"
-                hint="El pago existió: queda como un gasto independiente."
+                name={t('shared.inEntity', { entity: mirrorName })}
+                title={t('compartidos.keepIt')}
+                hint={t('compartidos.thePaymentHappenedItStaysAsA')}
                 checked={deleteLinked === false}
                 onChange={() => setDeleteLinked(false)}
             />
             <MirrorOption
-                name={`en ${mirrorName}`}
-                title="Eliminarlo"
+                name={t('shared.inEntity', { entity: mirrorName })}
+                title={t('compartidos.deleteIt')}
                 hint={
                     paidQuotas > 0
-                        ? `El gasto fue un error. Tiene ${paidQuotas} ${paidQuotas === 1 ? 'pago registrado' : 'pagos registrados'} que dejan de contar.`
-                        : 'El gasto fue un error: deja de contar.'
+                        ? t('shared.mirrorPaid', { count: paidQuotas })
+                        : t('compartidos.theExpenseWasAMistakeItStops')
                 }
                 checked={deleteLinked === true}
                 onChange={() => setDeleteLinked(true)}
             />
         </span>
     ) : (
-        `"${item.name}" deja de aparecer para vos y para ${item.receiver_name ?? 'la otra persona'}.`
+        t('shared.discardMessage', {
+            name: item.name,
+            receiver: item.receiver_name ?? t('people.otherPerson'),
+        })
     );
 
     return (
         <ConfirmDeleteModal
             open
-            title="Descartar gasto"
+            title={t('compartidos.discardExpense')}
             message={message}
-            confirmLabel="Descartar"
+            confirmLabel={t('common.discard')}
             loading={loading}
             confirmDisabled={hasMirror && deleteLinked === null}
             onCancel={onClose}

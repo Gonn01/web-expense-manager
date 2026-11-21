@@ -10,6 +10,7 @@ import { useSnackbarStore } from '@/store/use-snackbar-store';
 import Snackbar from './Snackbar';
 import UserAvatar from './UserAvatar';
 import ConfirmDeleteModal from './modals/ConfirmDeleteModal';
+import { t } from '@/i18n';
 
 export default function Sidebar() {
     const base = 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium leading-normal';
@@ -52,21 +53,25 @@ export default function Sidebar() {
 
     const handleNuevo = useCallback(() => {
         setPendingCount((c) => c + 1);
-        setNotification('Recibiste un nuevo gasto compartido');
+        setNotification(t('common.youReceivedANewSharedExpense'));
     }, [setPendingCount]);
 
     const handleAprobado = useCallback(({ receiverName, gastoName } = {}) => {
-        const quien = receiverName || 'Un usuario';
+        const quien = receiverName || t('common.aUser');
         const que = gastoName ? ` "${gastoName}"` : '';
-        useSnackbarStore.getState().show(`${quien} ha aceptado tu gasto${que}`, 'success');
+        useSnackbarStore
+            .getState()
+            .show(t('realtime.expenseAccepted', { who: quien, expense: que }), 'success');
     }, []);
 
     const handleRechazado = useCallback(
         ({ receiverName, gastoName } = {}) => {
-            const quien = receiverName || 'Un usuario';
+            const quien = receiverName || t('common.aUser');
             const que = gastoName ? ` "${gastoName}"` : '';
             loadPendingCount(token);
-            useSnackbarStore.getState().show(`${quien} rechazó tu gasto${que}`, 'error');
+            useSnackbarStore
+                .getState()
+                .show(t('realtime.expenseRejected', { who: quien, expense: que }), 'error');
         },
         [loadPendingCount, token],
     );
@@ -75,8 +80,8 @@ export default function Sidebar() {
         ({ actorId, actorName } = {}) => {
             loadPendingCount(token);
             if (String(actorId) === String(user?.id)) return;
-            const quien = actorName || 'La otra persona';
-            useSnackbarStore.getState().show(`${quien} descartó un gasto que habías rechazado`);
+            const quien = actorName || t('common.theOtherPerson');
+            useSnackbarStore.getState().show(t('realtime.expenseDiscarded', { who: quien }));
         },
         [loadPendingCount, token, user?.id],
     );
@@ -85,83 +90,79 @@ export default function Sidebar() {
         ({ actorName } = {}) => {
             setPendingPaymentsCount((c) => c + 1);
             const mensaje = actorName
-                ? `${actorName} registró un pago. Confirmalo en Compartidos`
-                : 'Tenés un pago para confirmar en Compartidos';
+                ? t('realtime.paymentPending', { who: actorName })
+                : t('common.youHaveAPaymentToConfirmIn');
             useSnackbarStore.getState().show(mensaje, 'success', 'pending_actions');
         },
         [setPendingPaymentsCount],
     );
 
     const handlePagoConfirmado = useCallback(({ actorName } = {}) => {
-        const quien = actorName || 'La otra persona';
-        useSnackbarStore.getState().show(`${quien} confirmó tu pago`, 'success');
+        const quien = actorName || t('common.theOtherPerson');
+        useSnackbarStore.getState().show(t('realtime.paymentConfirmed', { who: quien }), 'success');
     }, []);
 
     const handlePagoRechazado = useCallback(({ actorName } = {}) => {
-        const quien = actorName || 'La otra persona';
-        useSnackbarStore.getState().show(`${quien} rechazó tu pago`, 'error');
+        const quien = actorName || t('common.theOtherPerson');
+        useSnackbarStore.getState().show(t('realtime.paymentRejected', { who: quien }), 'error');
     }, []);
 
     const handlePagoRetirado = useCallback(
         ({ actorName } = {}) => {
-            const quien = actorName || 'La otra persona';
+            const quien = actorName || t('common.theOtherPerson');
             loadPendingCount(token);
-            useSnackbarStore.getState().show(`${quien} retiró un pago que tenías para confirmar`);
+            useSnackbarStore.getState().show(t('realtime.paymentWithdrawn', { who: quien }));
         },
         [loadPendingCount, token],
     );
 
     const handleReversionSolicitada = useCallback(
         ({ actorName } = {}) => {
-            const quien = actorName || 'La otra persona';
+            const quien = actorName || t('common.theOtherPerson');
             setPendingPaymentsCount((c) => c + 1);
             useSnackbarStore
                 .getState()
-                .show(
-                    `${quien} pidió revertir un pago. Respondé en Compartidos`,
-                    'success',
-                    'undo',
-                );
+                .show(t('realtime.reversalRequested', { who: quien }), 'success', 'undo');
         },
         [setPendingPaymentsCount],
     );
 
     const handleReversionCancelada = useCallback(
         ({ actorName } = {}) => {
-            const quien = actorName || 'La otra persona';
+            const quien = actorName || t('common.theOtherPerson');
             loadPendingCount(token);
-            useSnackbarStore.getState().show(`${quien} canceló el pedido de reversión de un pago`);
+            useSnackbarStore.getState().show(t('realtime.reversalCancelled', { who: quien }));
         },
         [loadPendingCount, token],
     );
 
     const handleReversionAceptada = useCallback(({ actorName } = {}) => {
-        const quien = actorName || 'La otra persona';
-        useSnackbarStore.getState().show(`${quien} aceptó revertir el pago`, 'success');
+        const quien = actorName || t('common.theOtherPerson');
+        useSnackbarStore.getState().show(t('realtime.reversalAccepted', { who: quien }), 'success');
     }, []);
 
     const handleReversionRechazada = useCallback(({ actorName } = {}) => {
-        const quien = actorName || 'La otra persona';
-        useSnackbarStore.getState().show(`${quien} rechazó revertir el pago`, 'error');
+        const quien = actorName || t('common.theOtherPerson');
+        useSnackbarStore.getState().show(t('realtime.reversalRejected', { who: quien }), 'error');
     }, []);
 
     const handleEdicionSolicitada = useCallback(
         ({ actorName, gastoName } = {}) => {
-            const quien = actorName || 'La otra persona';
-            const que = gastoName ? ` "${gastoName}"` : ' un gasto';
+            const quien = actorName || t('common.theOtherPerson');
+            const que = ` ${gastoName ? `"${gastoName}"` : t('realtime.anExpense')}`;
             setPendingPaymentsCount((c) => c + 1);
             useSnackbarStore
                 .getState()
-                .show(`${quien} pidió editar${que}. Respondé en Compartidos`, 'success', 'edit');
+                .show(t('realtime.editRequested', { who: quien, expense: que }), 'success', 'edit');
         },
         [setPendingPaymentsCount],
     );
 
     const handleEdicionCancelada = useCallback(
         ({ actorName } = {}) => {
-            const quien = actorName || 'La otra persona';
+            const quien = actorName || t('common.theOtherPerson');
             loadPendingCount(token);
-            useSnackbarStore.getState().show(`${quien} canceló un pedido de edición`);
+            useSnackbarStore.getState().show(t('realtime.editCancelled', { who: quien }));
         },
         [loadPendingCount, token],
     );
@@ -169,17 +170,21 @@ export default function Sidebar() {
     const handleEdicionAprobada = useCallback(
         ({ actorId, actorName, gastoName } = {}) => {
             if (String(actorId) === String(user?.id)) return;
-            const quien = actorName || 'La otra persona';
-            const que = gastoName ? ` de "${gastoName}"` : '';
-            useSnackbarStore.getState().show(`${quien} aprobó la edición${que}`, 'success');
+            const quien = actorName || t('common.theOtherPerson');
+            const que = gastoName ? t('realtime.ofExpense', { expense: gastoName }) : '';
+            useSnackbarStore
+                .getState()
+                .show(t('realtime.editApproved', { who: quien, expense: que }), 'success');
         },
         [user?.id],
     );
 
     const handleEdicionRechazada = useCallback(({ actorName, gastoName } = {}) => {
-        const quien = actorName || 'La otra persona';
-        const que = gastoName ? ` de "${gastoName}"` : '';
-        useSnackbarStore.getState().show(`${quien} rechazó la edición${que}`, 'error');
+        const quien = actorName || t('common.theOtherPerson');
+        const que = gastoName ? t('realtime.ofExpense', { expense: gastoName }) : '';
+        useSnackbarStore
+            .getState()
+            .show(t('realtime.editRejected', { who: quien, expense: que }), 'error');
     }, []);
 
     const pusherEvents = useMemo(
@@ -239,12 +244,12 @@ export default function Sidebar() {
 
     const navItems = [
         { to: '/app/dashboard', icon: 'dashboard', label: 'Dashboard' },
-        { to: '/app/entidades', icon: 'account_balance', label: 'Entidades Financieras' },
-        { to: '/app/settlement', icon: 'history', label: 'Historial de cuentas' },
+        { to: '/app/entidades', icon: 'account_balance', label: t('common.financialEntities') },
+        { to: '/app/settlement', icon: 'history', label: t('common.settlementHistory') },
         {
             to: '/app/compartidos',
             icon: 'group',
-            label: 'Compartidos',
+            label: t('common.shared'),
             badge: pendingCount + pendingPaymentsCount,
         },
     ];
@@ -272,8 +277,8 @@ export default function Sidebar() {
                     <button
                         type="button"
                         onClick={toggleSidebar}
-                        aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-                        title={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+                        aria-label={collapsed ? t('common.expandMenu') : t('common.collapseMenu')}
+                        title={collapsed ? t('common.expandMenu') : t('common.collapseMenu')}
                         className={`mb-5 flex size-7 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer transition-[margin] duration-200 ${
                             collapsed ? 'mr-2.5' : 'mr-0'
                         }`}
@@ -287,8 +292,8 @@ export default function Sidebar() {
                     <button
                         type="button"
                         onClick={closeMobile}
-                        aria-label="Cerrar menú"
-                        title="Cerrar menú"
+                        aria-label={t('common.closeMenu')}
+                        title={t('common.closeMenu')}
                         className="mb-5 flex size-9 shrink-0 self-end items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-slate-500 dark:text-slate-300 hover:text-primary cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
@@ -338,33 +343,33 @@ export default function Sidebar() {
                 <div className="mt-auto pt-6 flex flex-col gap-1 w-full">
                     <NavLink
                         to="/app/configuracion"
-                        title={collapsed ? 'Configuración' : undefined}
+                        title={collapsed ? t('common.settings') : undefined}
                         onClick={closeMobile}
                         className={({ isActive }) => linkClass(isActive)}
                     >
                         <Icon name="settings" className="text-2xl" />
-                        {!collapsed && <p>Configuración</p>}
+                        {!collapsed && <p>{t('common.settings')}</p>}
                     </NavLink>
                     <button
                         onClick={() => {
                             closeMobile();
                             setConfirmLogoutOpen(true);
                         }}
-                        title={collapsed ? 'Cerrar sesión' : undefined}
+                        title={collapsed ? t('common.signOut') : undefined}
                         className={`${linkClass(false)} text-left w-full`}
                     >
                         <Icon name="logout" className="text-2xl" />
-                        {!collapsed && <p>Cerrar sesión</p>}
+                        {!collapsed && <p>{t('common.signOut')}</p>}
                     </button>
                 </div>
             </aside>
 
             <ConfirmDeleteModal
                 open={confirmLogoutOpen}
-                title="¿Cerrar sesión?"
-                message="Vas a tener que volver a iniciar sesión para acceder a tu cuenta."
-                confirmLabel="Cerrar sesión"
-                cancelLabel="Cancelar"
+                title={t('common.signOut2')}
+                message={t('common.youLlNeedToSignInAgain')}
+                confirmLabel={t('common.signOut')}
+                cancelLabel={t('common.cancel')}
                 onConfirm={handleConfirmLogout}
                 onCancel={() => setConfirmLogoutOpen(false)}
             />

@@ -1,37 +1,39 @@
 import { inDateRange } from '@/utils/date-range';
 import { movementStyle } from '@/utils/movement-styles';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 const LABELS = {
-    CREATION: 'Creación',
-    PAYMENT: 'Pago',
-    PENDING_PAYMENT: 'Pendiente',
-    PAYMENT_REJECTED: 'Rechazado',
-    PAYMENT_WITHDRAWN: 'Retirado',
-    REFUND: 'Reversión',
-    EDITED: 'Edición',
-    POSTPONED: 'Postergado',
-    UNPOSTPONED: 'Reactivado',
-    DELETE: 'Eliminado',
-    RESTORE: 'Restaurado',
-    PAYMENT_REQUESTED: 'Enviado',
-    PAYMENT_REVERTED: 'Pago anulado',
-    REVERSAL_REQUESTED: 'Reversión pedida',
-    REVERSAL_CANCELLED: 'Reversión cancelada',
-    REVERSAL_REJECTED: 'Reversión rechazada',
-    SHARED_APPROVED: 'Aprobado',
-    SHARED_REJECTED: 'Rechazado',
-    SHARED_RETRIED: 'Reenviado',
-    EDIT_REQUESTED: 'Edición pedida',
-    EDIT_APPROVED: 'Edición aprobada',
-    EDIT_REJECTED: 'Edición rechazada',
-    EDIT_CANCELLED: 'Edición cancelada',
+    CREATION: t('detalleGasto.created'),
+    PAYMENT: t('common.payment'),
+    PENDING_PAYMENT: t('common.pending'),
+    PAYMENT_REJECTED: t('common.rejected'),
+    PAYMENT_WITHDRAWN: t('common.withdrawn'),
+    REFUND: t('common.reversal'),
+    EDITED: t('common.edit'),
+    POSTPONED: t('detalleGasto.postponed'),
+    UNPOSTPONED: t('detalleGasto.reactivated'),
+    DELETE: t('detalleGasto.deleted'),
+    RESTORE: t('detalleGasto.restored'),
+    PAYMENT_REQUESTED: t('detalleGasto.sent'),
+    PAYMENT_REVERTED: t('detalleGasto.paymentVoided'),
+    REVERSAL_REQUESTED: t('detalleGasto.reversalRequested'),
+    REVERSAL_CANCELLED: t('detalleGasto.reversalCancelled'),
+    REVERSAL_REJECTED: t('common.reversalRejected'),
+    SHARED_APPROVED: t('common.approved'),
+    SHARED_REJECTED: t('common.rejected'),
+    SHARED_RETRIED: t('detalleGasto.resent'),
+    EDIT_REQUESTED: t('detalleGasto.editRequested'),
+    EDIT_APPROVED: t('common.editApproved'),
+    EDIT_REJECTED: t('common.editRejected'),
+    EDIT_CANCELLED: t('detalleGasto.editCancelled'),
 };
 
 const EDIT_TITLES = {
-    EDIT_REQUESTED: 'Edición pedida por',
-    EDIT_APPROVED: 'Edición aprobada por',
-    EDIT_REJECTED: 'Edición rechazada por',
-    EDIT_CANCELLED: 'Edición cancelada por',
+    EDIT_REQUESTED: 'history.editRequestedBy',
+    EDIT_APPROVED: 'history.editApprovedBy',
+    EDIT_REJECTED: 'history.editRejectedBy',
+    EDIT_CANCELLED: 'history.editCancelledBy',
 };
 
 const PAYMENT_TYPES = new Set([
@@ -61,7 +63,10 @@ function isDatedByResolution(movement) {
 
 export function eventConfig(movement, gasto) {
     const type = movement.movement_type;
-    const label = type === 'PAYMENT' && gasto.type === 'INGRESO' ? 'Cobro' : (LABELS[type] ?? type);
+    const label =
+        type === 'PAYMENT' && gasto.type === 'INGRESO'
+            ? t('common.collection')
+            : (LABELS[type] ?? type);
     return { ...movementStyle(type), label };
 }
 
@@ -109,67 +114,82 @@ export function lastPayment(movements = []) {
 
 export function paymentLabel(gasto, number) {
     if (number == null) return null;
-    if (gasto.fixed_expense) return `Pago #${number}`;
-    return `Cuota ${number} de ${gasto.number_of_quotas}`;
+    if (gasto.fixed_expense) return t('history.paymentNumber', { number });
+    return t('history.installmentOf', { number, total: gasto.number_of_quotas });
 }
 
 export function eventTitle(movement, gasto, { number, counterpartyName, currentUserId }) {
-    const otra = counterpartyName ?? 'la otra persona';
+    const otra = counterpartyName ?? t('people.otherPerson');
     const cobro = gasto.type === 'INGRESO';
     const cuota = paymentLabel(gasto, number);
     const actor =
         currentUserId != null && String(movement.created_by_user_id) === String(currentUserId)
-            ? 'vos'
+            ? t('history.actorYou')
             : otra;
 
     switch (movement.movement_type) {
         case 'CREATION':
-            return 'Gasto creado';
+            return t('common.expenseCreated');
         case 'PAYMENT':
-            return cuota ?? (cobro ? 'Cuota cobrada' : 'Cuota pagada');
+            return (
+                cuota ??
+                (cobro ? t('detalleGasto.installmentCollected') : t('detalleGasto.installmentPaid'))
+            );
         case 'PENDING_PAYMENT':
-            return `${cuota ?? 'Pago'} · esperando que ${otra} confirme`;
+            return t('history.waitingConfirm', {
+                payment: cuota ?? t('common.payment'),
+                name: otra,
+            });
         case 'PAYMENT_REQUESTED':
-            return `${cuota ?? 'Pago'} · enviado por ${actor}`;
+            return t('history.sentBy', { payment: cuota ?? t('common.payment'), actor });
         case 'PAYMENT_REVERTED':
-            return 'Pago registrado, luego revertido';
+            return t('detalleGasto.paymentRecordedLaterReverted');
         case 'REVERSAL_REQUESTED':
-            return `${cuota ?? 'Pago'} · reversión pedida por ${actor}`;
+            return t('history.reversalRequestedBy', {
+                payment: cuota ?? t('common.payment'),
+                actor,
+            });
         case 'REVERSAL_CANCELLED':
-            return `${cuota ?? 'Pago'} · reversión cancelada por ${actor}`;
+            return t('history.reversalCancelledBy', {
+                payment: cuota ?? t('common.payment'),
+                actor,
+            });
         case 'REVERSAL_REJECTED':
-            return `${cuota ?? 'Pago'} · reversión rechazada por ${actor}`;
+            return t('history.reversalRejectedBy', {
+                payment: cuota ?? t('common.payment'),
+                actor,
+            });
         case 'SHARED_APPROVED':
-            return `Gasto compartido aprobado por ${actor}`;
+            return t('history.sharedApprovedBy', { actor });
         case 'SHARED_REJECTED':
-            return `Gasto compartido rechazado por ${actor}`;
+            return t('history.sharedRejectedBy', { actor });
         case 'SHARED_RETRIED':
-            return `Gasto compartido reenviado por ${actor}`;
+            return t('history.sharedResentBy', { actor });
         case 'EDIT_REQUESTED':
         case 'EDIT_APPROVED':
         case 'EDIT_REJECTED':
         case 'EDIT_CANCELLED': {
-            const title = `${EDIT_TITLES[movement.movement_type]} ${actor}`;
+            const title = t(EDIT_TITLES[movement.movement_type], { actor });
             return movement.detail?.trim() ? `${title}\n${movement.detail}` : title;
         }
         case 'PAYMENT_REJECTED':
-            return `Pago rechazado por ${otra}`;
+            return t('history.paymentRejectedBy', { name: otra });
         case 'PAYMENT_WITHDRAWN':
-            return 'Pago retirado antes de que lo confirmaran';
+            return t('detalleGasto.paymentWithdrawnBeforeItWasConfirmed');
         case 'REFUND': {
-            const base = cobro ? 'Cobro revertido' : 'Pago revertido';
+            const base = cobro ? t('detalleGasto.collectionReverted') : t('common.paymentReverted');
             return movement.detail?.trim() ? `${base}: ${movement.detail}` : base;
         }
         case 'EDITED':
-            return movement.detail?.trim() ? movement.detail : 'Gasto editado';
+            return movement.detail?.trim() ? movement.detail : t('detalleGasto.expenseEdited');
         case 'POSTPONED':
-            return 'Gasto postergado';
+            return t('detalleGasto.expensePostponed');
         case 'UNPOSTPONED':
-            return movement.detail?.trim() ? movement.detail : 'Postergación quitada';
+            return movement.detail?.trim() ? movement.detail : t('common.postponementRemoved');
         case 'DELETE':
-            return 'Gasto eliminado';
+            return t('common.expenseDeleted');
         case 'RESTORE':
-            return 'Gasto restaurado';
+            return t('common.expenseRestored');
         default:
             return movement.detail?.trim() ? movement.detail : movement.movement_type;
     }
@@ -186,7 +206,7 @@ export function isFinalizationPayment(movement, gasto) {
 
 export function formatEventDate(date) {
     if (!date) return null;
-    return new Date(date).toLocaleString('es-AR', {
+    return new Date(date).toLocaleString(getIntlLocale(), {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -196,30 +216,28 @@ export function formatEventDate(date) {
 }
 
 export function revertDialog({ movement, gasto, number, counterpartyName, settlementActive }) {
-    const otra = counterpartyName ?? 'la otra persona';
-    const cual = paymentLabel(gasto, number)?.toLowerCase() ?? 'este pago';
+    const otra = counterpartyName ?? t('people.otherPerson');
+    const cual = paymentLabel(gasto, number)?.toLowerCase() ?? t('history.thisPayment');
 
     if (movement.movement_type === 'PENDING_PAYMENT') {
         return {
-            title: '¿Retirar el pago?',
-            message: `Se retira el pago de ${cual} que le mandaste a ${otra}. La cuota vuelve a quedar sin pagar.`,
-            confirmLabel: 'Retirar',
+            title: t('common.withdrawThePayment'),
+            message: t('history.withdrawMessage', { which: cual, name: otra }),
+            confirmLabel: t('common.withdraw'),
         };
     }
     if (gasto.shared_counterparty) {
         return {
-            title: '¿Pedir la reversión?',
-            message: `Se le va a pedir a ${otra} que confirme la reversión del pago de ${cual}. Cuando la acepte, el pago queda revertido en los dos gastos.`,
-            confirmLabel: 'Pedir reversión',
+            title: t('detalleGasto.requestTheReversal'),
+            message: t('history.requestReversalMessage', { which: cual, name: otra }),
+            confirmLabel: t('detalleGasto.requestReversal'),
         };
     }
     return {
-        title: '¿Revertir pago?',
+        title: t('detalleGasto.revertPayment'),
         message:
-            `El pago de ${cual} quedará revertido en el historial y se registrará un reembolso. Esta acción no se puede deshacer.` +
-            (settlementActive
-                ? ''
-                : ' No hay una sesión de «Hacer cuentas» abierta: el reembolso queda en el historial del gasto, pero no en el historial de cuentas.'),
-        confirmLabel: 'Revertir',
+            t('history.revertMessage', { which: cual }) +
+            (settlementActive ? '' : t('history.noSessionRefund')),
+        confirmLabel: t('common.revert'),
     };
 }

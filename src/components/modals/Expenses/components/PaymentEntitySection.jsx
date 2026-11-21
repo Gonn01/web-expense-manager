@@ -2,6 +2,7 @@ import Icon from '@/components/Icon';
 import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
 import NewEntityInlineForm from './NewEntityInlineForm';
+import { t } from '@/i18n';
 
 export default function PaymentEntitySection({
     enabled,
@@ -36,7 +37,7 @@ export default function PaymentEntitySection({
                     {enabled && <span className="text-black text-xs font-bold">✓</span>}
                 </div>
                 <span className="text-slate-900 dark:text-white text-sm font-medium">
-                    Pagar con otra entidad
+                    {t('modals.payWithAnotherEntity')}
                 </span>
             </label>
 
@@ -50,8 +51,8 @@ export default function PaymentEntitySection({
                             } bg-white dark:bg-[#111714] px-3 text-slate-900 dark:text-white cursor-pointer`}
                             value={paymentEntity}
                             onChange={setPaymentEntity}
-                            placeholder="Seleccionar entidad de pago..."
-                            aria-label="Entidad de pago"
+                            placeholder={t('modals.selectPaymentEntity')}
+                            aria-label={t('modals.paymentEntity')}
                             options={options.map((e) => ({
                                 value: e.id,
                                 label: e.is_favorite ? `★ ${e.name}` : e.name,
@@ -78,7 +79,7 @@ export default function PaymentEntitySection({
                             onClick={() => setShowNewEntity(true)}
                             className="text-primary text-sm flex items-center gap-1 hover:underline"
                         >
-                            + Crear nueva entidad
+                            {t('modals.createNewEntity')}
                         </button>
                     )}
 
@@ -86,8 +87,7 @@ export default function PaymentEntitySection({
 
                     <p className="flex items-start gap-2 text-xs text-slate-500 dark:text-[#9eb7a8]">
                         <Icon name="info" className="text-sm mt-0.5" />
-                        Se creará un {oppositeTypeLabel} espejo en esa entidad, con el mismo monto,
-                        cuotas y estado de pago.
+                        {t('form.mirrorInfo', { type: oppositeTypeLabel })}
                     </p>
                 </div>
             )}

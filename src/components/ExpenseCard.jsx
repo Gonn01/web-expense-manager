@@ -8,6 +8,7 @@ import { formatMoney } from '@/utils/FormatMoney';
 import { formatDateShort } from '@/utils/FormatDate';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { ExpenseStatus } from '@/utils/enums';
+import { t } from '@/i18n';
 
 export default function ExpenseCard({
     gasto,
@@ -44,8 +45,8 @@ export default function ExpenseCard({
         gasto.number_of_quotas > 0 &&
         gasto.payed_quotas + pendingQuotas >= gasto.number_of_quotas;
 
-    const counterparty = counterpartyName || 'la otra persona';
-    const counterpartyLabel = counterpartyName || 'La otra persona';
+    const counterparty = counterpartyName || t('people.otherPerson');
+    const counterpartyLabel = counterpartyName || t('common.theOtherPerson');
     const counterpartyPendingQuotas = gasto.counterparty_pending_quotas ?? 0;
     const awaitingApproval = gasto.status === ExpenseStatus.PENDING_APPROVAL;
 
@@ -72,13 +73,13 @@ export default function ExpenseCard({
                                 type="button"
                                 aria-label={
                                     gasto.is_favorite
-                                        ? 'Quitar gasto de favoritos'
-                                        : 'Marcar gasto como favorito'
+                                        ? t('common.removeExpenseFromFavorites')
+                                        : t('common.markExpenseAsFavorite')
                                 }
                                 title={
                                     gasto.is_favorite
-                                        ? 'Quitar de favoritos'
-                                        : 'Marcar como favorito'
+                                        ? t('common.removeFromFavorites')
+                                        : t('common.markAsFavorite2')
                                 }
                                 disabled={favoriteBusy}
                                 onClick={(e) => {
@@ -112,41 +113,48 @@ export default function ExpenseCard({
                         {gasto.is_postponed && onTogglePostpone && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 text-xs font-bold px-2 py-0.5"
-                                title="Postergada: no entra en la sesión de cuentas actual"
+                                title={t('common.postponedItSNotPartOfThe')}
                             >
                                 <Icon name="schedule" className="text-xs" />
-                                Postergada
+                                {t('common.postponed')}
                             </span>
                         )}
                         {awaitingApproval && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
-                                title={`Creaste este gasto en una entidad vinculada: ${counterparty} tiene que aprobarlo para que pase a activos`}
+                                title={t('expense.awaitingApprovalHint', { name: counterparty })}
                             >
                                 <Icon name="hourglass_empty" className="text-xs" />
-                                Esperando que lo apruebe {counterparty}
+                                {t('expense.awaitingApproval', { name: counterparty })}
                             </span>
                         )}
                         {pendingQuotas > 0 && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-0.5"
-                                title={`Registraste ${pendingQuotas === 1 ? 'el pago' : 'los pagos'}: ${counterparty} tiene que confirmar${pendingQuotas === 1 ? 'lo' : 'los'} para que cuente${pendingQuotas === 1 ? '' : 'n'}`}
+                                title={t('expense.pendingHint', {
+                                    count: pendingQuotas,
+                                    name: counterparty,
+                                })}
                             >
                                 <Icon name="hourglass_empty" className="text-xs" />
-                                {pendingQuotas === 1
-                                    ? `Esperando que ${counterparty} confirme el pago`
-                                    : `Esperando que ${counterparty} confirme ${pendingQuotas} pagos`}
+                                {t('expense.pendingBadge', {
+                                    count: pendingQuotas,
+                                    name: counterparty,
+                                })}
                             </span>
                         )}
                         {counterpartyPendingQuotas > 0 && (
                             <span
                                 className="inline-flex items-center gap-1 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 text-xs font-bold px-2 py-0.5"
-                                title={`${counterpartyLabel} ya registró ${counterpartyPendingQuotas === 1 ? 'un pago' : `${counterpartyPendingQuotas} pagos`} de este gasto. Si lo marcás en tu sesión, se confirma al terminar las cuentas; también podés confirmarlo desde Compartidos.`}
+                                title={t('expense.counterpartyHint', {
+                                    count: counterpartyPendingQuotas,
+                                    name: counterpartyLabel,
+                                })}
                             >
                                 <Icon name="pending_actions" className="text-xs" />
                                 {settlementActive
-                                    ? `${counterpartyLabel} ya lo pagó: marcalo para confirmar`
-                                    : `${counterpartyLabel} ya registró el pago`}
+                                    ? t('expense.counterpartyPaidMark', { name: counterpartyLabel })
+                                    : t('expense.counterpartyPaid', { name: counterpartyLabel })}
                             </span>
                         )}
                     </div>
@@ -154,12 +162,12 @@ export default function ExpenseCard({
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
                         {gasto.created_at && (
                             <span className="text-xs text-slate-400 dark:text-slate-500">
-                                Creado: {formatDateShort(gasto.created_at)}
+                                {t('common.created')} {formatDateShort(gasto.created_at)}
                             </span>
                         )}
                         {gasto.last_payment_date && (
                             <span className="text-xs text-slate-400 dark:text-slate-500">
-                                Último pago: {formatDateShort(gasto.last_payment_date)}
+                                {t('common.lastPayment')} {formatDateShort(gasto.last_payment_date)}
                             </span>
                         )}
                     </div>
@@ -169,13 +177,16 @@ export default function ExpenseCard({
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                         {formatMoney(gasto.amount_per_quota, cur)}
                         <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1">
-                            / cuota
+                            {t('common.installment')}
                         </span>
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
                         {gasto.fixed_expense
-                            ? `${gasto.payed_quotas} ${gasto.payed_quotas === 1 ? 'vez pagado' : 'veces pagado'}`
-                            : `${gasto.payed_quotas}/${gasto.number_of_quotas} cuotas`}
+                            ? t('expense.timesPaid', { count: gasto.payed_quotas })
+                            : t('expense.installmentsProgress', {
+                                  paid: gasto.payed_quotas,
+                                  total: gasto.number_of_quotas,
+                              })}
                     </p>
                     {!gasto.fixed_expense && (
                         <p className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
@@ -213,8 +224,8 @@ export default function ExpenseCard({
                         disabled={loading || postponeBusy}
                         title={
                             gasto.is_postponed
-                                ? 'Volver a incluir en la sesión de cuentas'
-                                : 'Postergar para la próxima sesión de cuentas'
+                                ? t('common.includeInTheSettlementSessionAgain')
+                                : t('common.postponeToTheNextSettlementSession')
                         }
                         onClick={(e) => {
                             e.stopPropagation();
@@ -228,7 +239,7 @@ export default function ExpenseCard({
                                 name={gasto.is_postponed ? 'undo' : 'schedule'}
                                 className="text-sm"
                             />
-                            {gasto.is_postponed ? 'Reactivar' : 'Postergar'}
+                            {gasto.is_postponed ? t('common.reactivate') : t('common.postpone')}
                         </span>
                         {postponeBusy && (
                             <span className="absolute inset-0 flex items-center justify-center">
@@ -251,7 +262,7 @@ export default function ExpenseCard({
                             className={`flex items-center gap-1.5 ${settlementPending ? 'invisible' : ''}`}
                         >
                             <Icon name="undo" className="text-sm" />
-                            Revertir
+                            {t('common.revert')}
                         </span>
                         {settlementPending && (
                             <span className="absolute inset-0 flex items-center justify-center">
@@ -269,7 +280,7 @@ export default function ExpenseCard({
                             disabled={loading}
                             title={
                                 settlementEnabled && !sessionActive
-                                    ? 'Activá el modo "Hacer cuentas" para registrar pagos'
+                                    ? t('common.turnOnSettleModeToRecordPayments')
                                     : undefined
                             }
                             onClick={(e) => {
@@ -284,11 +295,11 @@ export default function ExpenseCard({
                             <span className={loading ? 'invisible' : ''}>
                                 {gasto.type === 'INGRESO'
                                     ? settlementActive
-                                        ? 'Marcar cobro'
-                                        : 'Registrar cobro'
+                                        ? t('common.markCollection')
+                                        : t('common.recordCollection')
                                     : settlementActive
-                                      ? 'Marcar pago'
-                                      : 'Pagar cuota'}
+                                      ? t('common.markPayment')
+                                      : t('common.payInstallment')}
                             </span>
                             {loading && (
                                 <span className="absolute inset-0 flex items-center justify-center">
@@ -302,8 +313,12 @@ export default function ExpenseCard({
 
             <AlertModal
                 open={showExhaustedWarning}
-                title="Nada para registrar"
-                message={`Ya no hay cuotas para registrar: ${gasto.payed_quotas} pagadas + ${pendingQuotas} pendientes de confirmación de la otra persona cubren las ${gasto.number_of_quotas} cuotas del gasto.`}
+                title={t('common.nothingToRecord')}
+                message={t('expense.exhausted', {
+                    paid: gasto.payed_quotas,
+                    pending: pendingQuotas,
+                    total: gasto.number_of_quotas,
+                })}
                 onClose={() => setShowExhaustedWarning(false)}
             />
         </div>

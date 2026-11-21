@@ -3,6 +3,7 @@ import Icon from '@/components/Icon';
 import CuotasChart from '@/components/CuotasChart';
 import MontoChart from '@/components/MontoChart';
 import CategoriaChart from '@/components/CategoriaChart';
+import { t } from '@/i18n';
 
 export default function ChartsModal({ gastos, onClose }) {
     return createPortal(
@@ -13,12 +14,12 @@ export default function ChartsModal({ gastos, onClose }) {
                     <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="bar_chart" className="text-primary" />
                         <h2 className="text-slate-900 dark:text-white text-lg font-bold">
-                            Gráficos
+                            {t('modals.charts')}
                         </h2>
                     </div>
                     <button
                         onClick={onClose}
-                        aria-label="Cerrar"
+                        aria-label={t('common.close')}
                         className="cursor-pointer text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
                         <Icon name="close" />

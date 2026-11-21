@@ -6,6 +6,7 @@ import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { useSettlement } from '@/hooks/use-settlement';
+import { t } from '@/i18n';
 
 export function SettlementToggle() {
     const active = useSettlementStore((s) => s.active);
@@ -30,7 +31,7 @@ export function SettlementToggle() {
             >
                 <span className={`flex items-center ${starting ? 'invisible' : ''}`}>
                     <Icon name="playlist_add_check" className="mr-2" />
-                    Hacer cuentas
+                    {t('common.settle')}
                 </span>
                 {starting && (
                     <span className="absolute inset-0 flex items-center justify-center">
@@ -38,15 +39,7 @@ export function SettlementToggle() {
                     </span>
                 )}
             </button>
-            <InfoTooltip
-                align="end"
-                text={
-                    'Al activar este modo, pagar o cobrar un gasto solo lo marca — todavía no ' +
-                    'registra el pago. Cuando toques "Terminar" se registran de una vez todos ' +
-                    'los pagos marcados y se guarda un resumen del mes. Podés salir y volver ' +
-                    'cuando quieras: la sesión queda guardada hasta que la termines.'
-                }
-            />
+            <InfoTooltip align="end" text={t('settlement.modeInfo')} />
         </div>
     );
 }
@@ -66,7 +59,7 @@ export function SettlementBar({ totalItems = 0 }) {
     const handleFinish = async () => {
         if (checkedCount === 0) {
             showSnackbar(
-                'Marcá al menos un gasto para terminar las cuentas, o descartá la sesión.',
+                t('dashboard.markAtLeastOneExpenseToFinish'),
                 'info',
                 'playlist_add_check',
             );
@@ -74,27 +67,26 @@ export function SettlementBar({ totalItems = 0 }) {
         }
         let snapshot;
         await confirmDialog({
-            title: 'Terminar cuentas',
-            message:
-                '¿Terminar las cuentas de este mes? Se van a registrar los pagos de los gastos marcados y se guardará un resumen.',
+            title: t('dashboard.finishSettlement'),
+            message: t('dashboard.finishThisMonthSSettlementPaymentsFor'),
             tone: 'info',
-            confirmLabel: 'Terminar',
+            confirmLabel: t('common.finish'),
             onConfirm: async () => {
                 snapshot = await finishSession();
             },
         });
         if (snapshot) {
-            showSnackbar('Cuentas cerradas. Guardamos el resumen del mes.', 'success');
+            showSnackbar(t('dashboard.settlementClosedWeSavedThisMonthS'), 'success');
             navigate(`/app/settlement/${snapshot.id}`);
         }
     };
 
     const handleDiscard = async () => {
         await confirmDialog({
-            title: 'Descartar sesión',
-            message: '¿Descartar esta sesión? Se pierden las marcas y no se guarda resumen.',
+            title: t('dashboard.discardSession'),
+            message: t('dashboard.discardThisSessionTheMarksAreLost'),
             tone: 'error',
-            confirmLabel: 'Descartar',
+            confirmLabel: t('common.discard'),
             onConfirm: discardSession,
         });
     };
@@ -104,20 +96,13 @@ export function SettlementBar({ totalItems = 0 }) {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <div className="flex flex-wrap items-center gap-2 text-primary font-bold">
                     <Icon name="playlist_add_check" />
-                    Modo hacer cuentas
+                    {t('dashboard.settleMode')}
                     {startedLabel && (
                         <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
-                            · iniciado {startedLabel}
+                            {t('dashboard.started')} {startedLabel}
                         </span>
                     )}
-                    <InfoTooltip
-                        align="start"
-                        text={
-                            '"Terminar" registra todos los pagos marcados y guarda un resumen ' +
-                            'del mes. "Descartar" cierra la sesión sin registrar nada: se ' +
-                            'pierden las marcas y no queda resumen.'
-                        }
-                    />
+                    <InfoTooltip align="start" text={t('settlement.activeInfo')} />
                 </div>
 
                 <div className="flex items-center gap-2 basis-full sm:basis-auto sm:min-w-[180px] flex-1">
@@ -129,7 +114,7 @@ export function SettlementBar({ totalItems = 0 }) {
                     </div>
                     <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
                         {checkedCount}
-                        {totalItems > 0 ? ` / ${totalItems}` : ''} marcados
+                        {totalItems > 0 ? ` / ${totalItems}` : ''} {t('dashboard.marked')}
                     </span>
                 </div>
 
@@ -138,14 +123,14 @@ export function SettlementBar({ totalItems = 0 }) {
                         onClick={handleDiscard}
                         className="cursor-pointer text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     >
-                        Descartar
+                        {t('common.discard')}
                     </button>
                     <button
                         onClick={handleFinish}
                         className="cursor-pointer flex items-center gap-1.5 h-9 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary/90 transition-colors"
                     >
                         <Icon name="check_circle" className="text-base" />
-                        Terminar
+                        {t('common.finish')}
                     </button>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import UserAvatar from './UserAvatar';
 import useAuth from '@/store/use-auth-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
+import { t } from '@/i18n';
 
 export default function MobileTopBar() {
     const { user } = useAuth();
@@ -15,8 +16,8 @@ export default function MobileTopBar() {
             <button
                 type="button"
                 onClick={() => setMobileOpen(true)}
-                aria-label="Abrir menú"
-                title="Abrir menú"
+                aria-label={t('common.openMenu')}
+                title={t('common.openMenu')}
                 className="relative flex size-10 items-center justify-center rounded-lg text-slate-700 dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
             >
                 <Icon name="menu" className="text-2xl" />
@@ -32,7 +33,11 @@ export default function MobileTopBar() {
                 Expense Manager
             </Link>
 
-            <Link to="/app/configuracion" aria-label="Configuración" title="Configuración">
+            <Link
+                to="/app/configuracion"
+                aria-label={t('common.settings')}
+                title={t('common.settings')}
+            >
                 <UserAvatar src={user?.avatar} name={user?.name} className="size-8 text-xs" />
             </Link>
         </header>

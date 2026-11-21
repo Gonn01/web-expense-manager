@@ -13,6 +13,8 @@ import {
     labelFromMonthIndex,
     pendingQuotaMonths,
 } from '@/utils/chart-months';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
@@ -107,7 +109,9 @@ const CustomTooltip = ({ active, payload, total, currency }) => {
             <p className="text-slate-700 dark:text-slate-300">
                 {formatMoney(item.value, currency)}
             </p>
-            <p className="text-slate-400 text-xs">{formatPercent(pct)} del total</p>
+            <p className="text-slate-400 text-xs">
+                {t('charts.percentOfTotal', { percent: formatPercent(pct) })}
+            </p>
         </div>
     );
 };
@@ -142,13 +146,13 @@ export default function CategoriaChart({ gastos }) {
         <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Gastos por categoría del mes{' '}
+                    {t('charts.categoriesTitle')}{' '}
                     <span className="font-normal text-slate-500">({preferredCurrency})</span>
                 </p>
                 <div className="flex items-center gap-1">
                     <MonthButton
                         icon="chevron_left"
-                        label="Mes anterior"
+                        label={t('common.previousMonth')}
                         disabled={selectedMonth <= currentMonth}
                         onClick={() => setMonth(selectedMonth - 1)}
                     />
@@ -157,7 +161,7 @@ export default function CategoriaChart({ gastos }) {
                     </span>
                     <MonthButton
                         icon="chevron_right"
-                        label="Mes siguiente"
+                        label={t('common.nextMonth')}
                         disabled={selectedMonth >= lastMonth}
                         onClick={() => setMonth(selectedMonth + 1)}
                     />
@@ -165,7 +169,7 @@ export default function CategoriaChart({ gastos }) {
             </div>
             {data.length === 0 ? (
                 <p className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-                    No hay gastos a pagar en este mes.
+                    {t('common.thereAreNoExpensesToPayThis')}
                 </p>
             ) : (
                 <div className="flex flex-col gap-4">
@@ -193,7 +197,7 @@ export default function CategoriaChart({ gastos }) {
                     <div className="flex flex-col gap-1.5 rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 text-sm">
                         <div className="flex flex-wrap items-baseline justify-between gap-2">
                             <span className="text-slate-700 dark:text-slate-200">
-                                Total del mes:{' '}
+                                {t('charts.monthTotal')}{' '}
                                 <span className="font-semibold">
                                     {formatMoney(total, preferredCurrency)}
                                 </span>
@@ -206,7 +210,9 @@ export default function CategoriaChart({ gastos }) {
                                             : 'text-slate-700 dark:text-slate-200'
                                     }`}
                                 >
-                                    {formatPercent((total / sueldo) * 100)} del sueldo
+                                    {t('charts.percentOfSalary', {
+                                        percent: formatPercent((total / sueldo) * 100),
+                                    })}
                                 </span>
                             )}
                         </div>
@@ -221,13 +227,17 @@ export default function CategoriaChart({ gastos }) {
                             </div>
                         ) : (
                             <p className="text-xs text-slate-500 dark:text-slate-400">
-                                <Link
-                                    to="/app/configuracion"
-                                    className="text-primary font-semibold hover:underline"
-                                >
-                                    Cargá tu sueldo
-                                </Link>{' '}
-                                para ver qué parte de tus ingresos se lleva cada categoría.
+                                <Trans
+                                    i18nKey="charts.loadSalary"
+                                    components={{
+                                        salaryLink: (
+                                            <Link
+                                                to="/app/configuracion"
+                                                className="text-primary font-semibold hover:underline"
+                                            />
+                                        ),
+                                    }}
+                                />
                             </p>
                         )}
                     </div>
@@ -247,11 +257,15 @@ export default function CategoriaChart({ gastos }) {
                                         </span>
                                         <span className="text-slate-500 dark:text-slate-400">
                                             {formatMoney(d.value, preferredCurrency)} ·{' '}
-                                            {formatPercent(pct)} del total
+                                            {t('charts.percentOfTotal', {
+                                                percent: formatPercent(pct),
+                                            })}
                                         </span>
                                         {pctSueldo !== null && (
                                             <span className="text-slate-400 dark:text-slate-500">
-                                                {formatPercent(pctSueldo)} del sueldo
+                                                {t('charts.percentOfSalary', {
+                                                    percent: formatPercent(pctSueldo),
+                                                })}
                                             </span>
                                         )}
                                     </div>

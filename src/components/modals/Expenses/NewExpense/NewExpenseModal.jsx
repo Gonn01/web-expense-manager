@@ -19,6 +19,7 @@ import ExpenseModeSelector from '../components/ExpenseModeSelector';
 import PaymentEntitySection from '../components/PaymentEntitySection';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
 import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
+import { t } from '@/i18n';
 
 export default function NewExpenseModal({
     onClose,
@@ -117,11 +118,11 @@ export default function NewExpenseModal({
                 } catch (linkErr) {
                     console.error('Error vinculando usuario:', linkErr);
                     useDialogStore.getState().alert({
-                        title: 'Entidad creada',
+                        title: t('common.entityCreated'),
                         tone: 'warning',
-                        message: `Se creó la entidad, pero no se pudo vincular el usuario: ${
-                            linkErr.message ?? 'revisá el email.'
-                        }`,
+                        message: t('entity.createdLinkFailed', {
+                            reason: linkErr.message ?? t('common.checkTheEmail'),
+                        }),
                     });
                 }
             }
@@ -205,13 +206,13 @@ export default function NewExpenseModal({
                     <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="add_circle" className="text-primary" />
                         <h2 className="text-slate-900 dark:text-white text-lg font-bold">
-                            Nuevo Gasto/Deuda
+                            {t('modals.newExpenseDebt')}
                         </h2>
                     </div>
 
                     <button
                         onClick={requestClose}
-                        aria-label="Cerrar"
+                        aria-label={t('common.close')}
                         className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-[#3d5245] cursor-pointer"
                     >
                         <Icon name="close" className="text-xl" />
@@ -223,8 +224,8 @@ export default function NewExpenseModal({
 
                     <div data-field="name">
                         <TextInput
-                            label="Nombre del gasto"
-                            placeholder="Ej: Préstamo personal"
+                            label={t('modals.expenseName')}
+                            placeholder={t('modals.eGPersonalLoan')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             error={visibleErrors.name}
@@ -302,7 +303,7 @@ export default function NewExpenseModal({
                                 {isPaid && <span className="text-black text-xs font-bold">✓</span>}
                             </div>
                             <span className="text-slate-900 dark:text-white text-sm font-medium">
-                                Pagado
+                                {t('modals.paid')}
                             </span>
                         </label>
                     )}
@@ -323,7 +324,11 @@ export default function NewExpenseModal({
                         setNewEntityEmail={setNewEntityEmail}
                         handleCreateEntity={handleCreateEntity}
                         loadingNewEntity={loadingNewEntity}
-                        oppositeTypeLabel={type === ExpenseType.EGRESO ? 'ingreso' : 'egreso'}
+                        oppositeTypeLabel={
+                            type === ExpenseType.EGRESO
+                                ? t('form.mirrorIncome')
+                                : t('form.mirrorExpense')
+                        }
                     />
 
                     <label
@@ -340,11 +345,11 @@ export default function NewExpenseModal({
                             {postponed && <span className="text-black text-xs font-bold">✓</span>}
                         </div>
                         <span className="text-slate-900 dark:text-white text-sm font-medium">
-                            Postergar para la próxima sesión de cuentas
+                            {t('common.postponeToTheNextSettlementSession')}
                             <span className="block text-xs font-normal text-slate-500 dark:text-[#9eb7a8]">
                                 {fullyPaid
-                                    ? 'No disponible: un gasto pagado no tiene nada para postergar.'
-                                    : 'Queda fuera de la sesión de cuentas actual (o de la próxima que abras). Se habilita cuando la cierres.'}
+                                    ? t('modals.notAvailableAPaidExpenseHasNothing')
+                                    : t('modals.itStaysOutOfTheCurrentSettlement')}
                             </span>
                         </span>
                     </label>
@@ -356,7 +361,7 @@ export default function NewExpenseModal({
                         onClick={requestClose}
                         className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer"
                     >
-                        Cancelar
+                        {t('common.cancel')}
                     </button>
 
                     <button
@@ -367,10 +372,10 @@ export default function NewExpenseModal({
                         {saving ? (
                             <>
                                 <Icon name="progress_activity" className="animate-spin" />
-                                Guardando...
+                                {t('common.saving')}
                             </>
                         ) : (
-                            'Guardar gasto'
+                            t('modals.saveExpense')
                         )}
                     </button>
                 </footer>

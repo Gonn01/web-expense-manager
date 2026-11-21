@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 export default function GoogleButton({ loading, onClick }) {
     return (
         <button
@@ -31,7 +33,7 @@ export default function GoogleButton({ loading, onClick }) {
                 </defs>
             </svg>
 
-            {loading ? 'Conectando...' : 'Continuar con Google'}
+            {loading ? 'Conectando...' : t('auth.continueWithGoogle')}
         </button>
     );
 }

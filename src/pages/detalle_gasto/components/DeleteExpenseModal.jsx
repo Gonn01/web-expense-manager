@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
+import { t } from '@/i18n';
 
 export default function DeleteExpenseModal({
     open,
@@ -18,27 +19,27 @@ export default function DeleteExpenseModal({
     return (
         <ConfirmDeleteModal
             open={open}
-            title="Eliminar gasto"
+            title={t('detalleGasto.deleteExpense')}
             message={
                 linked ? (
                     <span className="block">
-                        Esta acción no se puede deshacer.
+                        {t('common.thisActionCannotBeUndone')}
                         <label className="mt-4 flex items-center gap-2 cursor-pointer select-none text-slate-900 dark:text-white">
                             <input
                                 type="checkbox"
                                 checked={deleteLinked}
                                 onChange={(e) => setDeleteLinked(e.target.checked)}
                             />
-                            Eliminar también el movimiento vinculado
+                            {t('detalleGasto.alsoDeleteTheLinkedMovement')}
                             {linkedEntityName ? ` en ${linkedEntityName}` : ''}
                         </label>
                     </span>
                 ) : (
-                    'Esta acción no se puede deshacer.'
+                    t('common.thisActionCannotBeUndone')
                 )
             }
-            confirmLabel="Eliminar"
-            cancelLabel="Cancelar"
+            confirmLabel={t('common.delete')}
+            cancelLabel={t('common.cancel')}
             onCancel={close}
             onConfirm={() => {
                 onDelete(deleteLinked);

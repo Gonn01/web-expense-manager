@@ -1,10 +1,12 @@
 import Snackbar from '@/components/Snackbar';
 import { AparienciaCard } from './components/AparienciaCard';
+import { IdiomaCard } from './components/IdiomaCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
 import { SueldoCard } from './components/SueldoCard';
 import { TutorialCard } from './components/TutorialCard';
 import { useConfiguracionUI } from './hooks/use-configuracion-ui';
+import { t } from '@/i18n';
 
 export default function Configuracion() {
     const {
@@ -28,6 +30,9 @@ export default function Configuracion() {
 
         setThemeMode,
 
+        languagePreference,
+        onChangeLanguage,
+
         onOpenTutorial,
 
         snackbar,
@@ -43,10 +48,10 @@ export default function Configuracion() {
 
             <header>
                 <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
-                    Configuración de la cuenta
+                    {t('configuracion.accountSettings')}
                 </h1>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                    Personalizá tus datos y preferencias básicas.
+                    {t('configuracion.customizeYourDetailsAndBasicPreferences')}
                 </p>
             </header>
 
@@ -61,6 +66,11 @@ export default function Configuracion() {
                 />
 
                 <AparienciaCard themeMode={themeMode} setThemeMode={setThemeMode} />
+
+                <IdiomaCard
+                    languagePreference={languagePreference}
+                    onChangeLanguage={onChangeLanguage}
+                />
 
                 <SueldoCard
                     sueldo={sueldo}

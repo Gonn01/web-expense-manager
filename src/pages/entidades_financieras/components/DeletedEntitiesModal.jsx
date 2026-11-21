@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/components/Icon';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
+import { t } from '@/i18n';
 
 export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onClose, onRestore }) {
     const [selected, setSelected] = useState(null);
@@ -59,17 +60,17 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                                 id="deleted-entities-title"
                                 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
                             >
-                                Entidades Eliminadas
+                                {t('entidadesFinancieras.deletedEntities')}
                             </h2>
                             <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                Restaurá una entidad para que vuelva a tu listado.
+                                {t('entidadesFinancieras.restoreAnEntityToBringItBack')}
                             </p>
                         </div>
                         <button
                             type="button"
                             className="text-slate-500 dark:text-[#9eb7a8] transition-colors duration-200 hover:text-slate-900 dark:hover:text-white"
                             onClick={onClose}
-                            aria-label="Cerrar"
+                            aria-label={t('common.close')}
                         >
                             <Icon name="close" />
                         </button>
@@ -78,7 +79,7 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                     <div className="flex-1 px-6 pb-6 max-h-[60vh] overflow-y-auto">
                         {deletedEntities.length === 0 ? (
                             <p className="text-slate-500 dark:text-[#9eb7a8] text-sm text-center py-6">
-                                No tenés entidades eliminadas.
+                                {t('entidadesFinancieras.youHaveNoDeletedEntities')}
                             </p>
                         ) : (
                             <ul className="flex flex-col gap-2">
@@ -99,7 +100,7 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                                             className="flex items-center justify-center gap-2 shrink-0 rounded-lg h-9 px-3 bg-primary text-[#111714] text-sm font-bold tracking-wide transition-opacity duration-200 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <Icon name="restore" className="text-base" />
-                                            <span className="truncate">Restaurar</span>
+                                            <span className="truncate">{t('common.restore')}</span>
                                         </button>
                                     </li>
                                 ))}
@@ -113,7 +114,7 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                             className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-slate-200 dark:hover:bg-[#34453a]"
                             onClick={onClose}
                         >
-                            <span className="truncate">Cerrar</span>
+                            <span className="truncate">{t('common.close')}</span>
                         </button>
                     </div>
                 </div>
@@ -121,9 +122,9 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
 
             <ConfirmDeleteModal
                 open={!!selected}
-                title="Restaurar entidad"
-                message={`¿Seguro que querés restaurar "${selected?.name}"?`}
-                confirmLabel="Confirmar"
+                title={t('entidadesFinancieras.restoreEntity')}
+                message={t('entity.confirmRestore', { name: selected?.name })}
+                confirmLabel={t('common.confirm')}
                 tone="primary"
                 loading={restoringId !== null}
                 loadingLabel="Restaurando..."

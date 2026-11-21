@@ -1,13 +1,14 @@
 import { convertCurrency } from '@/utils/convert-currency';
 import { formatAmount } from '@/utils/FormatMoney';
 import { Currency } from '@/utils/enums';
+import { t } from '@/i18n';
 
 const RATE_NAMES = {
-    [Currency.USD]: 'dólar',
-    [Currency.EUR]: 'euro',
-    [Currency.BRL]: 'real brasileño',
-    [Currency.CLP]: 'peso chileno',
-    [Currency.UYU]: 'peso uruguayo',
+    [Currency.USD]: 'share.rateUsd',
+    [Currency.EUR]: 'share.rateEur',
+    [Currency.BRL]: 'share.rateBrl',
+    [Currency.CLP]: 'share.rateClp',
+    [Currency.UYU]: 'share.rateUyu',
 };
 
 function purchaseText(it, displayCur, rates) {
@@ -22,9 +23,9 @@ function purchaseText(it, displayCur, rates) {
     }
     const cuota = it.fixed_expense
         ? it.type === 'INGRESO'
-            ? 'Ingreso fijo'
-            : 'Gasto fijo'
-        : `Cuota ${it.payed_quotas}/${it.number_of_quotas}`;
+            ? t('common.fixedIncome')
+            : t('common.fixedExpense')
+        : t('share.installmentProgress', { number: it.payed_quotas, total: it.number_of_quotas });
     return `${it.name}: ${amount}\n${cuota}\n\n`;
 }
 
@@ -41,20 +42,22 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
         const totalCreditor = ingresos.reduce((s, it) => s + Number(it.amount_per_quota ?? 0), 0);
 
         if (egresos.length > 0) {
-            buf.push(`\n*Te debo (${selectedCurrency}):*\n\n`);
+            buf.push(`\n${t('share.iOweYou', { currency: selectedCurrency })}\n\n`);
             for (const it of egresos) buf.push(purchaseText(it, selectedCurrency, null));
-            buf.push(`*En total te debo:* ${formatAmount(totalDebtor)} ${selectedCurrency}\n\n\n`);
+            buf.push(
+                `${t('share.totalIOweYou')} ${formatAmount(totalDebtor)} ${selectedCurrency}\n\n\n`,
+            );
         }
         if (ingresos.length > 0) {
-            buf.push(`*Me debés (${selectedCurrency}):*\n\n`);
+            buf.push(`${t('share.youOweMe', { currency: selectedCurrency })}\n\n`);
             for (const it of ingresos) buf.push(purchaseText(it, selectedCurrency, null));
             buf.push(
-                `*En total me debés:* ${formatAmount(totalCreditor)} ${selectedCurrency}\n\n\n`,
+                `${t('share.totalYouOweMe')} ${formatAmount(totalCreditor)} ${selectedCurrency}\n\n\n`,
             );
         }
 
         const balance = totalDebtor - totalCreditor;
-        const label = balance < 0 ? '*Resumen*: Me debés en total:' : 'Te debo en total:';
+        const label = balance < 0 ? t('share.summaryYouOweMe') : t('share.summaryIOweYou');
         buf.push(`${label} ${formatAmount(Math.abs(balance))} ${selectedCurrency}`);
         if (totalDebtor > 0 && totalCreditor > 0) {
             buf.push(
@@ -82,25 +85,25 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
     );
 
     if (egresos.length > 0) {
-        buf.push(`\n*Te debo (${cur}):*\n\n`);
+        buf.push(`\n${t('share.iOweYou', { currency: cur })}\n\n`);
         for (const it of egresos) buf.push(purchaseText(it, cur, rates));
-        buf.push(`*En total te debo:* ${formatAmount(totalDebtor)} ${cur}\n\n\n`);
+        buf.push(`${t('share.totalIOweYou')} ${formatAmount(totalDebtor)} ${cur}\n\n\n`);
     }
     if (ingresos.length > 0) {
-        buf.push(`*Me debés (${cur}):*\n\n`);
+        buf.push(`${t('share.youOweMe', { currency: cur })}\n\n`);
         for (const it of ingresos) buf.push(purchaseText(it, cur, rates));
-        buf.push(`*En total me debés:* ${formatAmount(totalCreditor)} ${cur}\n\n\n`);
+        buf.push(`${t('share.totalYouOweMe')} ${formatAmount(totalCreditor)} ${cur}\n\n\n`);
     }
 
     for (const [code, name] of Object.entries(RATE_NAMES)) {
         const used = activeItems.some((i) => i.currency_type === code);
         if (used && rates?.[code]) {
-            buf.push(`Valor del ${name} tomado: 1 ${code} = ${rates[code]} ARS\n\n\n`);
+            buf.push(`${t('share.rateUsed', { name: t(name), code, rate: rates[code] })}\n\n\n`);
         }
     }
 
     const balance = totalDebtor - totalCreditor;
-    const label = balance < 0 ? '*Resumen*: Me debés en total:' : 'Te debo en total:';
+    const label = balance < 0 ? t('share.summaryYouOweMe') : t('share.summaryIOweYou');
     buf.push(`${label} ${formatAmount(Math.abs(balance))} ${cur}`);
     if (totalDebtor > 0 && totalCreditor > 0) {
         buf.push(

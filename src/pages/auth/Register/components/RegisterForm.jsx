@@ -3,6 +3,7 @@ import TextInput from '@/components/TextInput';
 import PasswordInput from '../../components/PasswordInput';
 import ErrorMessage from '../../components/ErrorMessage';
 import SubmitButton from '@/components/SubmitButton';
+import { t } from '@/i18n';
 
 export default function RegisterForm({ loading, error, onErrorClear, onSubmit }) {
     const [form, setForm] = useState({
@@ -24,10 +25,10 @@ export default function RegisterForm({ loading, error, onErrorClear, onSubmit })
     return (
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <TextInput
-                label="Nombre"
+                label={t('common.name')}
                 value={form.name}
                 onChange={(e) => onChange('name', e.target.value)}
-                placeholder="Ej: Juan Pérez"
+                placeholder={t('auth.eGJohnSmith')}
             />
 
             <TextInput
@@ -35,17 +36,17 @@ export default function RegisterForm({ loading, error, onErrorClear, onSubmit })
                 type="email"
                 value={form.email}
                 onChange={(e) => onChange('email', e.target.value)}
-                placeholder="Ej: juan@email.com"
+                placeholder={t('common.eGJohnEmailCom')}
             />
 
             <PasswordInput
                 value={form.password}
                 onChange={(e) => onChange('password', e.target.value)}
-                placeholder="Ej: MiClave123"
+                placeholder={t('auth.eGMypassword123')}
             />
 
             {error && <ErrorMessage message={error} />}
-            <SubmitButton loading={loading}>Registrarse</SubmitButton>
+            <SubmitButton loading={loading}>{t('auth.signUp')}</SubmitButton>
         </form>
     );
 }

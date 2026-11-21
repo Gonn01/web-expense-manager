@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function CategorySelector({ categories, selectedIds, onToggle, onCreate, loading }) {
     const [open, setOpen] = useState(false);
@@ -35,7 +36,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
     return (
         <div className="space-y-2">
             <label className="text-slate-900 dark:text-white text-sm font-medium">
-                Categorías (opcional)
+                {t('modals.categoriesOptional')}
             </label>
 
             <div className="relative" ref={dropdownRef}>
@@ -46,7 +47,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                 ) : categories.length === 0 ? (
                     <div className="h-12 w-full rounded-lg border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm">
                         <Icon name="info" className="text-base" />
-                        No tenés categorías creadas aún
+                        {t('modals.youDonTHaveAnyCategoriesYet')}
                     </div>
                 ) : (
                     <button
@@ -58,7 +59,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     >
                         {selected.length === 0 ? (
                             <span className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                Seleccionar categorías...
+                                {t('modals.selectCategories')}
                             </span>
                         ) : (
                             selected.map((c) => (
@@ -128,14 +129,14 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                         {selected.length > 0 && (
                             <div className="border-t border-slate-200 dark:border-[#29382f] px-3 py-2 flex justify-between items-center">
                                 <span className="text-xs text-slate-500 dark:text-[#9eb7a8]">
-                                    {selected.length} seleccionada{selected.length !== 1 ? 's' : ''}
+                                    {t('form.selectedCount', { count: selected.length })}
                                 </span>
                                 <button
                                     type="button"
                                     onClick={() => setOpen(false)}
                                     className="text-xs text-primary hover:opacity-80 cursor-pointer"
                                 >
-                                    Aceptar
+                                    {t('common.accept')}
                                 </button>
                             </div>
                         )}
@@ -150,15 +151,15 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                     onClick={() => setShowForm(true)}
                     className="text-primary text-sm mt-1 flex items-center gap-1 hover:underline disabled:opacity-50"
                 >
-                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}+
-                    Crear nueva categoría
+                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}
+                    {t('modals.createNewCategory')}
                 </button>
             ) : (
                 <div className="mt-2 p-3 border border-slate-200 dark:border-[#29382f] rounded-lg bg-slate-50 dark:bg-[#1c2620] space-y-3">
                     <input
                         disabled={creating}
                         className="h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245] text-slate-900 dark:text-white px-3 disabled:opacity-60"
-                        placeholder="Ej: Supermercado"
+                        placeholder={t('modals.eGGroceries')}
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -175,7 +176,7 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                             className={`text-sm px-3 py-1.5 rounded-lg
                                 ${creating ? 'bg-slate-100/60 dark:bg-[#29382f]/60 cursor-not-allowed text-slate-400 dark:text-white/50' : 'bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer'}`}
                         >
-                            Cancelar
+                            {t('common.cancel')}
                         </button>
                         <button
                             type="button"
@@ -186,10 +187,10 @@ export default function CategorySelector({ categories, selectedIds, onToggle, on
                             {creating ? (
                                 <>
                                     <Icon name="progress_activity" className="animate-spin" />
-                                    Creando...
+                                    {t('modals.creating')}
                                 </>
                             ) : (
-                                'Crear'
+                                t('modals.create')
                             )}
                         </button>
                     </div>

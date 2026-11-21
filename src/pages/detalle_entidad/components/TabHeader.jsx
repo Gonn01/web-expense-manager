@@ -1,3 +1,5 @@
+import { t as translate } from '@/i18n';
+
 export function TabHeader({ tab, setTab, pendingCount = 0 }) {
     const tabs = ['activos', 'finalizados'];
     if (pendingCount > 0) tabs.push('pendientes');
@@ -6,16 +8,16 @@ export function TabHeader({ tab, setTab, pendingCount = 0 }) {
 
     const labelFor = (t) =>
         t === 'activos'
-            ? 'Gastos Activos'
+            ? translate('detalleEntidad.activeExpenses')
             : t === 'finalizados'
-              ? 'Gastos Finalizados'
+              ? translate('detalleEntidad.finishedExpenses')
               : t === 'fijos'
-                ? 'Gastos Fijos'
+                ? translate('detalleEntidad.fixedExpenses')
                 : t === 'pendientes'
-                  ? 'Pendientes'
+                  ? translate('detalleEntidad.pending')
                   : t === 'eliminados'
-                    ? 'Eliminados'
-                    : 'Historial';
+                    ? translate('detalleEntidad.deleted')
+                    : translate('common.history');
 
     return (
         <div className="shrink-0 border-b border-zinc-200 dark:border-zinc-800 mb-4 -mx-3 px-3 sm:mx-0 sm:px-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

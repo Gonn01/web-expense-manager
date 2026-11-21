@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEntidadesData } from './use-entidades-data';
 import { useUIStore } from '@/store/use-ui-store';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { t } from '@/i18n';
 
 export function useEntidadesUI() {
     const navigate = useNavigate();
@@ -47,11 +48,11 @@ export function useEntidadesUI() {
             if (linkError) {
                 console.error('Error vinculando usuario:', linkError);
                 useDialogStore.getState().alert({
-                    title: 'Entidad creada',
+                    title: t('common.entityCreated'),
                     tone: 'warning',
-                    message: `Se creó la entidad, pero no se pudo vincular el usuario: ${
-                        linkError.message ?? 'revisá el email.'
-                    }`,
+                    message: t('entity.createdLinkFailed', {
+                        reason: linkError.message ?? t('common.checkTheEmail'),
+                    }),
                 });
             }
         } catch (err) {

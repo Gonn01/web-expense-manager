@@ -1,41 +1,42 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 const STATUS = {
     pendiente: {
-        label: 'Pendiente',
+        label: t('common.pending'),
         icon: 'hourglass_empty',
         className: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-        title: 'Falta que la otra persona confirme el pago',
+        title: t('cuentas.theOtherPersonStillHasToConfirm'),
     },
     aprobado: {
-        label: 'Aprobado',
+        label: t('common.approved'),
         icon: 'check_circle',
         className: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-        title: 'La otra persona confirmó el pago',
+        title: t('cuentas.theOtherPersonConfirmedThePayment'),
     },
     rechazado: {
-        label: 'Rechazado',
+        label: t('common.rejected'),
         icon: 'cancel',
         className: 'bg-red-500/15 text-red-600 dark:text-red-400',
-        title: 'La otra persona rechazó el pago: la cuota sigue sin pagar',
+        title: t('cuentas.theOtherPersonRejectedThePaymentThe'),
     },
     retirado: {
-        label: 'Retirado',
+        label: t('common.withdrawn'),
         icon: 'remove_circle',
         className: 'bg-slate-500/15 text-slate-600 dark:text-slate-300',
-        title: 'Retiraste el pago antes de que lo confirmaran',
+        title: t('cuentas.youWithdrewThePaymentBeforeItWas'),
     },
     reversion_pendiente: {
-        label: 'Reversión pendiente',
+        label: t('common.reversalPending'),
         icon: 'undo',
         className: 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
-        title: 'Hay un pedido de reversión de este pago esperando respuesta',
+        title: t('cuentas.aReversalRequestForThisPaymentIs'),
     },
     revertido: {
-        label: 'Revertido',
+        label: t('cuentas.reverted'),
         icon: 'undo',
         className: 'bg-slate-500/15 text-slate-600 dark:text-slate-300',
-        title: 'El pago se revirtió después de cerrar las cuentas',
+        title: t('cuentas.thePaymentWasRevertedAfterTheSettlement'),
     },
 };
 

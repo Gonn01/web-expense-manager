@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icon';
+import { t } from '@/i18n';
 
 const SEARCH_THRESHOLD = 10;
 const POPOVER_MAX_HEIGHT = 288;
@@ -194,8 +195,8 @@ export default function Select({
                                         setQuery(e.target.value);
                                         setActiveIndex(0);
                                     }}
-                                    placeholder="Buscar..."
-                                    aria-label="Buscar opción"
+                                    placeholder={t('common.search')}
+                                    aria-label={t('common.searchOption')}
                                     aria-controls={listId}
                                     autoComplete="off"
                                     className="h-10 w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
@@ -211,7 +212,9 @@ export default function Select({
                             className="flex-1 overflow-y-auto py-1"
                         >
                             {visibleOptions.length === 0 ? (
-                                <li className="px-3 py-2 text-sm text-slate-400">Sin resultados</li>
+                                <li className="px-3 py-2 text-sm text-slate-400">
+                                    {t('common.noResults')}
+                                </li>
                             ) : (
                                 visibleOptions.map((option, index) => {
                                     const isSelected = String(option.value) === String(value ?? '');

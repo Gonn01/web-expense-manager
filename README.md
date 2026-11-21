@@ -104,6 +104,7 @@ src/
   services/        api.js (instancia única de axios + todas las llamadas) y error-handler.js
   store/           stores de zustand, uno por dominio
   lib/             singletons de clientes de terceros (Pusher)
+  i18n/            configuración de i18next y traducciones (locales/es.json, locales/en.json)
   utils/           formateo, enums, catálogo de errores
 ```
 
@@ -112,6 +113,7 @@ src/
 - **Estado global** con zustand (sesión, entidades, categorías, sesión de "hacer cuentas", preferencias de UI, feedback global).
 - **Tiempo real**: suscripción al canal de Pusher `compartidos-<userId>`, con conteo de referencias para compartir el canal entre componentes.
 - **Responsive** desde 360 px de ancho; tema claro, oscuro o del sistema.
+- **Internacionalización** en español e inglés, a elección en Configuración o según el idioma del navegador; si no está soportado, usa inglés.
 
 ## Librerías principales
 
@@ -126,6 +128,7 @@ src/
 | [Firebase](https://firebase.google.com/docs/auth) | Inicio de sesión con Google |
 | [pusher-js](https://github.com/pusher/pusher-js) | Notificaciones en tiempo real |
 | [recharts](https://recharts.org) | Gráficos del dashboard |
+| [i18next](https://www.i18next.com) + [react-i18next](https://react.i18next.com) | Traducciones (español e inglés) |
 | [Vitest](https://vitest.dev) | Pruebas unitarias |
 | ESLint + Prettier | Linting y formato |
 

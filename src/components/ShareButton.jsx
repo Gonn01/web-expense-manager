@@ -3,13 +3,14 @@ import Icon from '@/components/Icon';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { ShareOutcome, canShareText, shareText } from '@/utils/share-text';
 import { ACTION_BUTTON_CLASS, ACTION_BUTTON_SIZES } from './action-button-styles';
+import { t } from '@/i18n';
 
 const SUPPORT_PROBE_TEXT = 'Expense Manager';
 
 export default function ShareButton({
     getText,
-    label = 'Compartir',
-    title = 'Compartir con otra app',
+    label = t('common.share'),
+    title = t('common.shareWithAnotherApp'),
     size = 'md',
 }) {
     const s = ACTION_BUTTON_SIZES[size] ?? ACTION_BUTTON_SIZES.md;
@@ -24,7 +25,7 @@ export default function ShareButton({
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Error copiando al portapapeles', err);
-            useSnackbarStore.getState().show('No se pudo compartir ni copiar el resumen.', 'error');
+            useSnackbarStore.getState().show(t('common.theSummaryCouldnTBeSharedOr'), 'error');
         }
     };
 
@@ -46,7 +47,7 @@ export default function ShareButton({
             className={`${ACTION_BUTTON_CLASS} ${s.button}`}
         >
             <Icon name={copied ? 'check' : 'share'} className={s.icon} />
-            {copied ? '¡Copiado!' : label}
+            {copied ? t('common.copied') : label}
         </button>
     );
 }

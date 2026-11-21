@@ -15,6 +15,7 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useParams } from 'react-router-dom';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { t } from '@/i18n';
 
 export function useEntidadData() {
     const { id } = useParams();
@@ -241,7 +242,11 @@ export function useEntidadData() {
 
                 useSnackbarStore
                     .getState()
-                    .show('Pago registrado en el historial del gasto.', 'success', 'check_circle');
+                    .show(
+                        t('common.paymentRecordedInTheExpenseHistory'),
+                        'success',
+                        'check_circle',
+                    );
             } catch (err) {
                 console.error('Error registrando pago', err);
             }

@@ -27,6 +27,8 @@ import { Currency, MovementType } from '@/utils/enums';
 import { buildWhatsAppText } from '@/utils/build-whats-app-text';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 export default function EntidadDetalle() {
     const {
@@ -88,23 +90,26 @@ export default function EntidadDetalle() {
     if (loading) return <Loader />;
 
     if (!entity) {
-        return <div className="text-center p-10 text-red-500">Entidad no encontrada</div>;
+        return (
+            <div className="text-center p-10 text-red-500">
+                {t('detalleEntidad.entityNotFound')}
+            </div>
+        );
     }
 
-    const counterparty = entity.linked_user_name || entity.linked_user_email || 'la otra persona';
+    const counterparty =
+        entity.linked_user_name || entity.linked_user_email || t('people.otherPerson');
     const isLinked = !!entity.linked_user_id;
 
     const confirmDeleteEntity = () =>
         useDialogStore.getState().confirm({
-            title: 'Eliminar entidad',
+            title: t('common.deleteEntity'),
             message:
-                'También se eliminan todos sus gastos y se quitan de la sesión de cuentas.' +
-                (isLinked
-                    ? ` Los gastos compartidos dejan de estar vinculados con los de ${counterparty}, y los pagos que registró sin confirmar quedan rechazados.`
-                    : '') +
-                " Podés restaurarla más tarde desde 'Ver eliminadas', dentro de Entidades Financieras: vuelve con los gastos que se eliminaron con ella.",
+                t('entity.deleteBase') +
+                (isLinked ? t('entity.deleteLinked', { name: counterparty }) : '') +
+                t('entity.deleteRestore'),
             tone: 'error',
-            confirmLabel: 'Eliminar',
+            confirmLabel: t('common.delete'),
             onConfirm: onDeleteEntity,
         });
 
@@ -113,9 +118,11 @@ export default function EntidadDetalle() {
             await navigator.clipboard.writeText(
                 buildWhatsAppText(whatsappGroup, null, preferredCurrency, rates),
             );
-            useSnackbarStore.getState().show('Resumen copiado al portapapeles.', 'success');
+            useSnackbarStore
+                .getState()
+                .show(t('detalleEntidad.summaryCopiedToClipboard'), 'success');
         } catch {
-            useSnackbarStore.getState().show('No se pudo copiar al portapapeles.', 'error');
+            useSnackbarStore.getState().show(t('common.couldnTCopyToClipboard'), 'error');
         }
     };
 
@@ -130,43 +137,43 @@ export default function EntidadDetalle() {
                         className="flex h-10 items-center gap-2 bg-primary/20 hover:bg-primary/30 px-4 rounded-lg text-primary font-bold cursor-pointer"
                         onClick={() => setOpenNewExpense(true)}
                     >
-                        <Icon name="add" /> Crear Gasto
+                        <Icon name="add" /> {t('detalleEntidad.createExpense')}
                     </button>
                     <ActionsMenu
-                        label="Opciones de la entidad"
+                        label={t('detalleEntidad.entityOptions')}
                         items={[
                             {
                                 icon: 'bar_chart',
-                                label: 'Ver gráficos',
+                                label: t('common.viewCharts'),
                                 onClick: () => setShowCharts(true),
                             },
                             {
                                 icon: 'content_copy',
-                                label: 'Copiar resumen',
+                                label: t('detalleEntidad.copySummary'),
                                 onClick: copySummary,
                             },
                             {
                                 icon: 'edit',
-                                label: 'Editar entidad',
+                                label: t('detalleEntidad.editEntity2'),
                                 onClick: () => setOpenEditEntity(true),
                             },
                             isLinked
                                 ? {
                                       icon: 'link_off',
-                                      label: `Desvincular a ${counterparty}`,
+                                      label: t('entity.unlinkName', { name: counterparty }),
                                       disabled: loadingVincular,
                                       tone: 'danger',
                                       onClick: () => setLinkDialog('unlink'),
                                   }
                                 : {
                                       icon: 'person_add',
-                                      label: 'Vincular usuario',
+                                      label: t('detalleEntidad.linkUser'),
                                       disabled: loadingVincular,
                                       onClick: () => setLinkDialog('link'),
                                   },
                             {
                                 icon: 'delete',
-                                label: 'Eliminar entidad',
+                                label: t('common.deleteEntity'),
                                 tone: 'danger',
                                 onClick: confirmDeleteEntity,
                             },
@@ -186,18 +193,18 @@ export default function EntidadDetalle() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                 <StatCard
-                    label="Gastos activos"
+                    label={t('detalleEntidad.activeExpenses2')}
                     value={stats.debts}
                     onClick={() => setTab('activos')}
                 />
                 <StatCard
-                    label="Gastos finalizados"
+                    label={t('detalleEntidad.finishedExpenses2')}
                     value={stats.finalized}
                     onClick={() => setTab('finalizados')}
                 />
                 {stats.pending > 0 && (
                     <StatCard
-                        label={`Esperan que los apruebe ${counterparty}`}
+                        label={t('entity.awaitingApprovalBy', { name: counterparty })}
                         value={stats.pending}
                         onClick={() => setTab('pendientes')}
                     />
@@ -212,9 +219,7 @@ export default function EntidadDetalle() {
                 >
                     <Icon name="hourglass_empty" className="text-base" />
                     <span className="flex-1">
-                        {stats.pending === 1
-                            ? `1 gasto que creaste espera que lo apruebe ${counterparty}`
-                            : `${stats.pending} gastos que creaste esperan que los apruebe ${counterparty}`}
+                        {t('entity.pendingBanner', { count: stats.pending, name: counterparty })}
                     </span>
                     <Icon name="chevron_right" className="text-base" />
                 </button>
@@ -225,7 +230,7 @@ export default function EntidadDetalle() {
             {tab === 'activos' && (
                 <ListContainer
                     empty={entity.gastos_activos.length === 0}
-                    emptyLabel="Sin gastos activos."
+                    emptyLabel={t('detalleEntidad.noActiveExpenses')}
                 >
                     {[...entity.gastos_activos]
                         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -245,7 +250,7 @@ export default function EntidadDetalle() {
             {tab === 'finalizados' && (
                 <ListContainer
                     empty={entity.gastos_inactivos.length === 0}
-                    emptyLabel="Sin gastos finalizados."
+                    emptyLabel={t('detalleEntidad.noFinishedExpenses')}
                 >
                     {[...entity.gastos_inactivos]
                         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -263,11 +268,10 @@ export default function EntidadDetalle() {
             {tab === 'pendientes' && (
                 <ListContainer
                     empty={(entity.gastos_pendientes ?? []).length === 0}
-                    emptyLabel="Sin gastos pendientes."
+                    emptyLabel={t('detalleEntidad.noPendingExpenses')}
                 >
                     <p className="mb-2 text-xs text-zinc-500 dark:text-zinc-400">
-                        Creaste estos gastos en una entidad vinculada: esperan que los apruebe{' '}
-                        {counterparty}. Pasan a activos cuando se aprueban.
+                        {t('entity.pendingExplain', { name: counterparty })}
                     </p>
                     {[...(entity.gastos_pendientes ?? [])]
                         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -285,7 +289,7 @@ export default function EntidadDetalle() {
             {tab === 'eliminados' && (
                 <ListContainer
                     empty={gastosEliminados.length === 0}
-                    emptyLabel="No hay gastos eliminados en esta entidad."
+                    emptyLabel={t('detalleEntidad.thereAreNoDeletedExpensesInThis')}
                 >
                     {gastosEliminados.map((g) => (
                         <DeletedGastoRow
@@ -305,8 +309,8 @@ export default function EntidadDetalle() {
                         empty={filteredMovements.length === 0}
                         emptyLabel={
                             entity.movements.length === 0
-                                ? 'Sin registros.'
-                                : 'Sin registros en ese rango de fechas.'
+                                ? t('detalleEntidad.noRecords')
+                                : t('detalleEntidad.noRecordsInThatDateRange')
                         }
                     >
                         {filteredMovements.map((l, i) => (
@@ -355,20 +359,20 @@ export default function EntidadDetalle() {
 }
 
 const MOVEMENT_LABELS = {
-    [MovementType.CREATION]: 'Entidad creada',
-    [MovementType.PURCHASE_CREATED]: 'Gasto creado',
-    [MovementType.EDITED]: 'Editado',
-    [MovementType.DELETE]: 'Gasto eliminado',
-    [MovementType.RESTORE]: 'Gasto restaurado',
-    [MovementType.LINK]: 'Usuario vinculado',
-    [MovementType.UNLINK]: 'Usuario desvinculado',
-    [MovementType.POSTPONED]: 'Postergación agregada',
-    [MovementType.UNPOSTPONED]: 'Postergación quitada',
-    [MovementType.PAYMENT]: 'Pago',
-    [MovementType.REFUND]: 'Reembolso',
-    [MovementType.PENDING_PAYMENT]: 'Pago pendiente',
-    [MovementType.PAYMENT_REJECTED]: 'Pago rechazado',
-    [MovementType.PAYMENT_WITHDRAWN]: 'Pago retirado',
+    [MovementType.CREATION]: t('common.entityCreated'),
+    [MovementType.PURCHASE_CREATED]: t('common.expenseCreated'),
+    [MovementType.EDITED]: t('detalleEntidad.edited'),
+    [MovementType.DELETE]: t('common.expenseDeleted'),
+    [MovementType.RESTORE]: t('common.expenseRestored'),
+    [MovementType.LINK]: t('detalleEntidad.userLinked'),
+    [MovementType.UNLINK]: t('detalleEntidad.userUnlinked'),
+    [MovementType.POSTPONED]: t('detalleEntidad.postponementAdded'),
+    [MovementType.UNPOSTPONED]: t('common.postponementRemoved'),
+    [MovementType.PAYMENT]: t('common.payment'),
+    [MovementType.REFUND]: t('detalleEntidad.refund'),
+    [MovementType.PENDING_PAYMENT]: t('detalleEntidad.pendingPayment'),
+    [MovementType.PAYMENT_REJECTED]: t('common.paymentRejected'),
+    [MovementType.PAYMENT_WITHDRAWN]: t('common.paymentWithdrawn'),
 };
 
 function MovementRow({ mov }) {
@@ -394,7 +398,7 @@ function MovementRow({ mov }) {
                 </div>
             </div>
             <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0 pl-11 sm:pl-0">
-                {new Date(mov.created_at).toLocaleString()}
+                {new Date(mov.created_at).toLocaleString(getIntlLocale())}
             </span>
         </div>
     );
@@ -428,15 +432,15 @@ function DeletedGastoRow({ gasto, restoring, onRestore }) {
                     name={restoring ? 'progress_activity' : 'restore_from_trash'}
                     className={`text-base ${restoring ? 'animate-spin' : ''}`}
                 />
-                Restaurar
+                {t('common.restore')}
             </button>
 
             <ConfirmDeleteModal
                 open={confirmOpen}
-                title="¿Restaurar gasto?"
-                message={`"${gasto.name}" vuelve a la entidad y aparece de nuevo en activos / finalizados / pendientes.`}
-                confirmLabel="Restaurar"
-                cancelLabel="Cancelar"
+                title={t('detalleEntidad.restoreExpense')}
+                message={t('entity.restoreExpenseMessage', { name: gasto.name })}
+                confirmLabel={t('common.restore')}
+                cancelLabel={t('common.cancel')}
                 tone="primary"
                 loading={restoring}
                 onConfirm={async () => {

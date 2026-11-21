@@ -2,6 +2,9 @@ import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
 import { useDialogStore } from '@/store/use-dialog-store';
 import TypeBadge from './TypeBadge';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 export default function ReversionCard({
     reversion,
@@ -14,14 +17,14 @@ export default function ReversionCard({
     const isLoading = loading?.id === reversion.movement_id;
     const loadingKind = isLoading ? loading.kind : null;
     const porConfirmar = variant === 'porConfirmar';
-    const requester = reversion.requester_name ?? 'La otra persona';
+    const requester = reversion.requester_name ?? t('common.theOtherPerson');
 
     const handleAceptar = async () => {
         const ok = await useDialogStore.getState().confirm({
-            title: '¿Revertir el pago?',
-            message: `El pago de "${reversion.gasto_name}" queda revertido en los dos gastos, con un reembolso en el historial de cada uno.`,
+            title: t('compartidos.revertThePayment'),
+            message: t('shared.revertMessage', { expense: reversion.gasto_name }),
             tone: 'danger',
-            confirmLabel: 'Revertir',
+            confirmLabel: t('common.revert'),
         });
         if (ok) onAceptar(reversion.movement_id);
     };
@@ -35,23 +38,33 @@ export default function ReversionCard({
                     </div>
                     <p className="font-semibold dark:text-white truncate">{reversion.gasto_name}</p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        {porConfirmar
-                            ? `${requester} pidió revertir el pago de `
-                            : 'Pediste revertir el pago de '}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-200">
-                            {formatMoney(reversion.amount, reversion.currency_type)}
-                        </span>
+                        <Trans
+                            i18nKey={
+                                porConfirmar
+                                    ? 'shared.reversalRequestedBy'
+                                    : 'shared.reversalRequestedByYou'
+                            }
+                            values={{
+                                name: requester,
+                                amount: formatMoney(reversion.amount, reversion.currency_type),
+                            }}
+                            components={{
+                                amount: (
+                                    <span className="font-medium text-zinc-700 dark:text-zinc-200" />
+                                ),
+                            }}
+                        />
                     </p>
                 </div>
                 <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-1">
                     <Icon name="hourglass_empty" className="text-sm" />
-                    Pendiente
+                    {t('common.pending')}
                 </span>
             </div>
 
             {reversion.reversal_requested_at && (
                 <p className="text-xs text-zinc-400 dark:text-zinc-600">
-                    {new Date(reversion.reversal_requested_at).toLocaleDateString('es-AR', {
+                    {new Date(reversion.reversal_requested_at).toLocaleDateString(getIntlLocale(), {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
@@ -70,7 +83,7 @@ export default function ReversionCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="check" className="text-sm" /> Aceptar
+                                <Icon name="check" className="text-sm" /> {t('common.accept')}
                             </>
                         )}
                     </button>
@@ -83,7 +96,7 @@ export default function ReversionCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="close" className="text-sm" /> Rechazar
+                                <Icon name="close" className="text-sm" /> {t('compartidos.reject')}
                             </>
                         )}
                     </button>
@@ -98,7 +111,7 @@ export default function ReversionCard({
                         <Icon name="progress_activity" className="animate-spin text-sm" />
                     ) : (
                         <>
-                            <Icon name="close" className="text-sm" /> Cancelar pedido
+                            <Icon name="close" className="text-sm" /> {t('common.cancelRequest')}
                         </>
                     )}
                 </button>

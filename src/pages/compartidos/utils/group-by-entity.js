@@ -1,3 +1,6 @@
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
+
 function entityLinkedTo(entities, userId) {
     if (userId == null) return null;
     return entities.find((e) => String(e.linked_user_id) === String(userId)) ?? null;
@@ -13,7 +16,7 @@ function groupFor(entity, personName, fallbackEntity) {
     if (named) return { key: `entity-${named.id}`, name: named.name, isPerson: false };
     return {
         key: `person-${personName ?? '-'}`,
-        name: personName ?? 'Sin entidad',
+        name: personName ?? t('common.noEntity'),
         isPerson: true,
     };
 }
@@ -61,5 +64,5 @@ export function groupByEntity(items) {
         group.items.push(item);
         groups.set(item.group.key, group);
     }
-    return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name, getIntlLocale()));
 }

@@ -9,6 +9,7 @@ import {
     finishSettlementSession,
     discardSettlementSession,
 } from '@/services/api';
+import { t } from '@/i18n';
 
 const token = () => useAuth.getState().token;
 const toast = (msg, type = 'error') => useSnackbarStore.getState().show(msg, type);
@@ -73,7 +74,7 @@ export const useSettlementStore = create((set, get) => ({
         try {
             const data = await startSettlementSession(token());
             set({ active: true, session: data.session, checkedExpenses: itemsToMap(data.items) });
-            toast('Modo hacer cuentas activado.', 'success');
+            toast(t('common.settleModeOn'), 'success');
         } catch (err) {
             console.error('Error iniciando sesión de cuentas:', err);
         }

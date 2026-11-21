@@ -1,6 +1,8 @@
 import { formatMoney } from '../../../utils/FormatMoney';
 import { convertCurrency } from '@/utils/convert-currency';
 import { Currency } from '@/utils/enums';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 export default function StatCards({
     summary,
@@ -27,7 +29,7 @@ export default function StatCards({
 
     const cuotaCards = [
         {
-            label: `Balance por cuota (${currency})`,
+            label: t('dashboard.balancePerInstallment', { currency }),
             value: formatMoney(cuota_balance, currency),
             tone:
                 cuota_balance >= 0
@@ -35,12 +37,12 @@ export default function StatCards({
                     : 'text-red-500 dark:text-red-400',
         },
         {
-            label: `Cuota EGRESO (${currency})`,
+            label: t('dashboard.expenseInstallment', { currency }),
             value: formatMoney(cuota_egreso, currency),
             tone: 'text-red-500 dark:text-red-400',
         },
         {
-            label: `Cuota INGRESO (${currency})`,
+            label: t('dashboard.incomeInstallment', { currency }),
             value: formatMoney(cuota_ingreso, currency),
             tone: 'text-emerald-600 dark:text-emerald-400',
         },
@@ -133,7 +135,7 @@ function BreakdownRow({
                                         <span
                                             className={`${sub ? 'text-sm' : 'text-base'} whitespace-nowrap font-bold leading-tight tracking-tight ${isEmpty ? 'text-slate-600 dark:text-slate-700' : card.tone(val)}`}
                                         >
-                                            {new Intl.NumberFormat('es-AR', {
+                                            {new Intl.NumberFormat(getIntlLocale(), {
                                                 minimumFractionDigits: 2,
                                                 maximumFractionDigits: 2,
                                             }).format(val)}
@@ -146,7 +148,7 @@ function BreakdownRow({
                         {rates && (
                             <div className="mt-2 pt-2 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
                                 <span className="whitespace-nowrap text-xs text-slate-400 dark:text-slate-500">
-                                    Total en {preferredCurrency}
+                                    {t('dashboard.totalIn', { currency: preferredCurrency })}
                                 </span>
                                 <span
                                     className={`${card.tone(total)} ml-auto whitespace-nowrap text-sm font-bold tracking-tight`}
@@ -175,7 +177,7 @@ function StatCardsBreakdown({ summaryByCurrency, preferredCurrency, rates, verti
 
     const cuotaDefs = [
         {
-            label: 'Balance por cuota',
+            label: t('dashboard.balancePerInstallment'),
             key: 'cuota_balance',
             tone: (v) =>
                 v >= 0
@@ -183,12 +185,12 @@ function StatCardsBreakdown({ summaryByCurrency, preferredCurrency, rates, verti
                     : 'text-red-500 dark:text-red-400',
         },
         {
-            label: 'Cuota EGRESO',
+            label: t('dashboard.expenseInstallmentShort'),
             key: 'cuota_egreso',
             tone: () => 'text-red-500 dark:text-red-400',
         },
         {
-            label: 'Cuota INGRESO',
+            label: t('dashboard.incomeInstallmentShort'),
             key: 'cuota_ingreso',
             tone: () => 'text-emerald-600 dark:text-emerald-400',
         },

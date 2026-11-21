@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { t as translate } from '@/i18n';
 
 const TONE = {
     danger: 'bg-red-600 hover:bg-red-700',
@@ -8,10 +9,10 @@ const TONE = {
 
 export default function ConfirmDeleteModal({
     open,
-    title = '¿Eliminar?',
-    message = 'Esta acción no se puede deshacer.',
-    confirmLabel = 'Eliminar',
-    cancelLabel = 'Cancelar',
+    title = translate('modals.delete'),
+    message = translate('common.thisActionCannotBeUndone'),
+    confirmLabel = translate('common.delete'),
+    cancelLabel = translate('common.cancel'),
     tone = 'danger',
     loading = false,
     confirmDisabled = false,

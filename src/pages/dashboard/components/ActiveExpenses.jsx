@@ -4,6 +4,7 @@ import ActiveFinancialEntity from './ActiveFinancialEntity';
 
 import { useNavigate } from 'react-router-dom';
 import { Currency } from '@/utils/enums';
+import { t } from '@/i18n';
 
 export default function ActiveExpenses({
     query,
@@ -51,12 +52,11 @@ export default function ActiveExpenses({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div className="shrink-0">
                     <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-                        Entidades
+                        {t('dashboard.entities')}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                        {visibleEntities} {visibleEntities === 1 ? 'entidad' : 'entidades'} ·{' '}
-                        {visibleExpenses}{' '}
-                        {visibleExpenses === 1 ? 'gasto activo' : 'gastos activos'}
+                        {t('settlement.entities', { count: visibleEntities })} ·{' '}
+                        {t('entity.activeExpenses', { count: visibleExpenses })}
                     </p>
                 </div>
                 <div className="relative w-full sm:max-w-xs">
@@ -66,7 +66,7 @@ export default function ActiveExpenses({
                     />
                     <input
                         className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
-                        placeholder="Buscar gasto... (ej: Préstamo personal)"
+                        placeholder={t('dashboard.searchExpenseEGPersonalLoan')}
                         type="text"
                         value={query}
                         onChange={(e) => onQueryChange?.(e.target.value)}
@@ -75,12 +75,12 @@ export default function ActiveExpenses({
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2 border-y border-black/10 dark:border-white/10">
-                <FilterGroup label="Moneda">
+                <FilterGroup label={t('common.currency')}>
                     <ToggleButton
                         active={currency === null}
                         onClick={() => onCurrencyChange?.(null)}
                     >
-                        Todos ({totalCount})
+                        {t('dashboard.allCount', { count: totalCount })}
                     </ToggleButton>
 
                     {Object.values(Currency).map((cur) => (
@@ -96,11 +96,11 @@ export default function ActiveExpenses({
 
                 <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
 
-                <FilterGroup label="Tipo">
+                <FilterGroup label={t('dashboard.type')}>
                     {[
-                        { value: null, label: 'Todos' },
-                        { value: 'EGRESO', label: 'Egreso' },
-                        { value: 'INGRESO', label: 'Ingreso' },
+                        { value: null, label: t('dashboard.all') },
+                        { value: 'EGRESO', label: t('common.expense') },
+                        { value: 'INGRESO', label: t('common.income') },
                     ].map(({ value, label }) => (
                         <ToggleButton
                             key={label}
@@ -114,11 +114,15 @@ export default function ActiveExpenses({
 
                 <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
 
-                <FilterGroup label="Frecuencia">
+                <FilterGroup label={t('dashboard.frequency')}>
                     {[
-                        { value: null, label: 'Todos', count: totalCount },
-                        { value: true, label: 'Fijos', count: countByFixed[true] },
-                        { value: false, label: 'Variables', count: countByFixed[false] },
+                        { value: null, label: t('dashboard.all'), count: totalCount },
+                        { value: true, label: t('dashboard.fixed'), count: countByFixed[true] },
+                        {
+                            value: false,
+                            label: t('dashboard.variable'),
+                            count: countByFixed[false],
+                        },
                     ].map(({ value, label, count }) => (
                         <ToggleButton
                             key={label}
@@ -153,7 +157,7 @@ export default function ActiveExpenses({
 
                 {filteredGroups.length === 0 && (
                     <div className="text-center text-sm text-slate-500 dark:text-slate-400 py-8">
-                        No hay entidades con gastos activos para este filtro.
+                        {t('dashboard.thereAreNoEntitiesWithActiveExpenses')}
                     </div>
                 )}
             </div>

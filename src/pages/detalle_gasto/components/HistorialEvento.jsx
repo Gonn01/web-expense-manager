@@ -12,10 +12,11 @@ import {
     isPaymentEvent,
     revertDialog,
 } from '../utils/historial-eventos';
+import { t } from '@/i18n';
 
 function revertLabel(movement, gasto) {
-    if (movement.movement_type === 'PENDING_PAYMENT') return 'Retirar';
-    return gasto.shared_counterparty ? 'Pedir reversión' : 'Revertir';
+    if (movement.movement_type === 'PENDING_PAYMENT') return t('common.withdraw');
+    return gasto.shared_counterparty ? t('detalleGasto.requestReversal') : t('common.revert');
 }
 
 export default function HistorialEvento({
@@ -91,7 +92,7 @@ export default function HistorialEvento({
                         <span
                             className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${TONES.success.badge}`}
                         >
-                            Finalizó el gasto
+                            {t('detalleGasto.finishedTheExpense')}
                         </span>
                     )}
                 </div>
@@ -106,7 +107,7 @@ export default function HistorialEvento({
 
                 {reversalPending && (
                     <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 flex flex-wrap items-center gap-x-2">
-                        Reversión pendiente
+                        {t('common.reversalPending')}
                         {reversalIsMine ? (
                             <button
                                 type="button"
@@ -114,11 +115,11 @@ export default function HistorialEvento({
                                 onClick={handleCancelReversion}
                                 className="underline cursor-pointer text-slate-600 dark:text-slate-300 disabled:opacity-50"
                             >
-                                {cancelling ? 'Cancelando…' : 'Cancelar pedido'}
+                                {cancelling ? 'Cancelando…' : t('common.cancelRequest')}
                             </button>
                         ) : (
                             <span className="font-normal text-slate-500 dark:text-[#9eb7a8]">
-                                Respondé en Compartidos
+                                {t('detalleGasto.respondInShared')}
                             </span>
                         )}
                     </p>

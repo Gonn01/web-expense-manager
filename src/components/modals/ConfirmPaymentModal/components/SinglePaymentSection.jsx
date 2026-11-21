@@ -2,6 +2,7 @@ import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import { formatMoney } from '@/utils/FormatMoney';
 import ProgressBar from '@/components/ProgressBar';
 import CurrencyBadge from './CurrencyBadge';
+import { t } from '@/i18n';
 
 export default function SinglePaymentSection({ item }) {
     return (
@@ -15,7 +16,8 @@ export default function SinglePaymentSection({ item }) {
                         <CurrencyBadge currency={item.currency_type} />
                         {!item.fixed_expense && (
                             <span>
-                                {item.payed_quotas}/{item.number_of_quotas} cuotas pagadas
+                                {item.payed_quotas}/{item.number_of_quotas}{' '}
+                                {t('modals.installmentsPaid')}
                             </span>
                         )}
                     </div>
@@ -28,7 +30,9 @@ export default function SinglePaymentSection({ item }) {
 
                     {!item.fixed_expense && (
                         <p className="text-xs text-slate-500">
-                            de {formatMoney(item.amount, item.currency_type)}
+                            {t('payment.ofAmount', {
+                                amount: formatMoney(item.amount, item.currency_type),
+                            })}
                         </p>
                     )}
                 </div>
@@ -52,7 +56,7 @@ export default function SinglePaymentSection({ item }) {
             <div className="rounded-lg border border-black/10 p-3 bg-white/60 dark:bg-background-dark/60">
                 <div className="flex items-baseline justify-between">
                     <span className="text-xs text-slate-500">
-                        Monto a pagar ({item.currency_type})
+                        {t('payment.amountToPay', { currency: item.currency_type })}
                     </span>
                     <span className="text-lg font-bold">
                         {formatMoney(item.amount_per_quota, item.currency_type)}

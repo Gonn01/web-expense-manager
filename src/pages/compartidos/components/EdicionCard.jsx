@@ -2,6 +2,8 @@ import Icon from '@/components/Icon';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { describeSharedEdit } from '@/utils/shared-edit';
 import TypeBadge from './TypeBadge';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 export default function EdicionCard({
     edicion,
@@ -14,15 +16,18 @@ export default function EdicionCard({
     const isLoading = loading?.id === `edicion-${edicion.id}`;
     const loadingKind = isLoading ? loading.kind : null;
     const porConfirmar = variant === 'porConfirmar';
-    const requester = edicion.requester_name ?? 'La otra persona';
+    const requester = edicion.requester_name ?? t('common.theOtherPerson');
     const lines = describeSharedEdit(edicion.changes, edicion);
 
     const handleAprobar = async () => {
         const ok = await useDialogStore.getState().confirm({
-            title: '¿Aprobar la edición?',
-            message: `Los cambios en "${edicion.gasto_name}" se aplican en los dos gastos.\n${lines.join('\n')}`,
+            title: t('compartidos.approveTheEdit'),
+            message: t('shared.approveEditMessage', {
+                name: edicion.gasto_name,
+                changes: lines.join('\n'),
+            }),
             tone: 'info',
-            confirmLabel: 'Aprobar',
+            confirmLabel: t('compartidos.approve'),
         });
         if (ok) onAprobar(edicion.id);
     };
@@ -37,13 +42,13 @@ export default function EdicionCard({
                     <p className="font-semibold dark:text-white truncate">{edicion.gasto_name}</p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
                         {porConfirmar
-                            ? `${requester} pidió editar este gasto`
-                            : 'Pediste editar este gasto'}
+                            ? t('detail.editRequestedByName', { name: requester })
+                            : t('compartidos.youAskedToEditThisExpense')}
                     </p>
                 </div>
                 <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-1">
                     <Icon name="hourglass_empty" className="text-sm" />
-                    Pendiente
+                    {t('common.pending')}
                 </span>
             </div>
 
@@ -55,7 +60,7 @@ export default function EdicionCard({
 
             {edicion.created_at && (
                 <p className="text-xs text-zinc-400 dark:text-zinc-600">
-                    {new Date(edicion.created_at).toLocaleDateString('es-AR', {
+                    {new Date(edicion.created_at).toLocaleDateString(getIntlLocale(), {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
@@ -74,7 +79,7 @@ export default function EdicionCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="check" className="text-sm" /> Aprobar
+                                <Icon name="check" className="text-sm" /> {t('compartidos.approve')}
                             </>
                         )}
                     </button>
@@ -87,7 +92,7 @@ export default function EdicionCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="close" className="text-sm" /> Rechazar
+                                <Icon name="close" className="text-sm" /> {t('compartidos.reject')}
                             </>
                         )}
                     </button>
@@ -102,7 +107,7 @@ export default function EdicionCard({
                         <Icon name="progress_activity" className="animate-spin text-sm" />
                     ) : (
                         <>
-                            <Icon name="close" className="text-sm" /> Cancelar pedido
+                            <Icon name="close" className="text-sm" /> {t('common.cancelRequest')}
                         </>
                     )}
                 </button>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { fetchSettlementSnapshots, fetchSettlementSnapshotById } from '@/services/api';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { getIntlLocale } from '@/i18n';
 
 const PAYMENT_STATUS_EVENTS = [
     'pago.confirmado',
@@ -86,11 +87,11 @@ export function useSettlementDetail(id) {
     return { snapshot, loading, error };
 }
 
-const MONTH_FMT = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' });
-
 export function monthLabel(month) {
     if (!month) return '';
     const [y, m] = month.split('-').map(Number);
     if (!y || !m) return month;
-    return MONTH_FMT.format(new Date(y, m - 1, 1));
+    return new Intl.DateTimeFormat(getIntlLocale(), { month: 'long', year: 'numeric' }).format(
+        new Date(y, m - 1, 1),
+    );
 }

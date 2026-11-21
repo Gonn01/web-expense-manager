@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 export function pendingApprovalLabel(count) {
-    return count === 1 ? '1 gasto esperando respuesta' : `${count} gastos esperando respuesta`;
+    return t('dashboard.pendingApproval', { count });
 }

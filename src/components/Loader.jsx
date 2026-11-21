@@ -1,4 +1,6 @@
-export default function Loader({ label = 'Preparando información...' }) {
+import { t } from '@/i18n';
+
+export default function Loader({ label = t('common.preparingInformation') }) {
     return (
         <div className="flex-1 min-h-[60dvh] flex flex-col items-center justify-center text-emerald-700 dark:text-emerald-300/80">
             <div className="flex gap-2 mb-4">

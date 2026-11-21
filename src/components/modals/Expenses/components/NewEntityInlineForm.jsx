@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 const inputClass =
     'h-11 w-full rounded-lg bg-white dark:bg-[#111714] border border-slate-300 dark:border-[#3d5245] text-slate-900 dark:text-white px-3 disabled:opacity-60';
@@ -19,7 +20,7 @@ export default function NewEntityInlineForm({
             <input
                 disabled={loading}
                 className={inputClass}
-                placeholder="Ej: Banco Galicia"
+                placeholder={t('modals.eGGaliciaBank')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={setEmail ? undefined : onEnter}
@@ -31,7 +32,7 @@ export default function NewEntityInlineForm({
                     type="email"
                     disabled={loading}
                     className={inputClass}
-                    placeholder="Ej: juan@email.com (opcional)"
+                    placeholder={t('modals.eGJohnEmailComOptional')}
                     value={email ?? ''}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={onEnter}
@@ -46,7 +47,7 @@ export default function NewEntityInlineForm({
                     className={`text-sm px-3 py-1.5 rounded-lg
                     ${loading ? 'bg-slate-100/60 dark:bg-[#29382f]/60 cursor-not-allowed text-slate-400 dark:text-white/50' : 'bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer'}`}
                 >
-                    Cancelar
+                    {t('common.cancel')}
                 </button>
 
                 <button
@@ -58,10 +59,10 @@ export default function NewEntityInlineForm({
                     {loading ? (
                         <>
                             <Icon name="progress_activity" className="animate-spin" />
-                            Creando...
+                            {t('modals.creating')}
                         </>
                     ) : (
-                        'Crear'
+                        t('modals.create')
                     )}
                 </button>
             </div>

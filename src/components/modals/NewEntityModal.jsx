@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '../Icon';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
+import { t } from '@/i18n';
 
 export default function NewEntityModal({ open, onClose, onSave }) {
     const [name, setName] = useState('');
@@ -69,17 +70,17 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                 id="new-entity-title"
                                 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight"
                             >
-                                Crear Nueva Entidad
+                                {t('modals.createNewEntity2')}
                             </h2>
                             <p className="text-slate-500 dark:text-[#9eb7a8] text-sm">
-                                Añade un nuevo banco, persona o servicio.
+                                {t('modals.addANewBankPersonOrService')}
                             </p>
                         </div>
                         <button
                             type="button"
                             className="text-slate-500 dark:text-[#9eb7a8] transition-colors duration-200 hover:text-slate-900 dark:hover:text-white"
                             onClick={requestClose}
-                            aria-label="Cerrar"
+                            aria-label={t('common.close')}
                         >
                             <Icon name="close" />
                         </button>
@@ -89,11 +90,11 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                         <div className="flex flex-col gap-4">
                             <label className="flex flex-col w-full">
                                 <p className="text-slate-900 dark:text-white text-sm font-medium pb-2">
-                                    Nombre de la entidad
+                                    {t('modals.entityName')}
                                 </p>
                                 <input
                                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] h-12 placeholder:text-slate-400 dark:placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
-                                    placeholder="Ej: Banco Galicia, Juan Pérez, etc."
+                                    placeholder={t('modals.eGGaliciaBankJohnSmithEtc')}
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     autoFocus
@@ -102,12 +103,12 @@ export default function NewEntityModal({ open, onClose, onSave }) {
 
                             <label className="flex flex-col w-full">
                                 <p className="text-slate-900 dark:text-white text-sm font-medium pb-2">
-                                    Vincular a un usuario (opcional)
+                                    {t('modals.linkToAUserOptional')}
                                 </p>
                                 <input
                                     type="email"
                                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-[#3d5245] bg-slate-50 dark:bg-[#1c2620] h-12 placeholder:text-slate-400 dark:placeholder:text-[#9eb7a8] px-4 py-3 text-base font-normal"
-                                    placeholder="Ej: juan@email.com"
+                                    placeholder={t('common.eGJohnEmailCom')}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -122,7 +123,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                             className="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-5 bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white text-sm font-bold tracking-wide transition-colors duration-200 hover:bg-slate-200 dark:hover:bg-[#34453a] disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={requestClose}
                         >
-                            <span className="truncate">Cancelar</span>
+                            <span className="truncate">{t('common.cancel')}</span>
                         </button>
                         <button
                             type="button"
@@ -134,7 +135,7 @@ export default function NewEntityModal({ open, onClose, onSave }) {
                                 <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin shrink-0" />
                             )}
                             <span className="truncate">
-                                {saving ? 'Guardando...' : 'Guardar Entidad'}
+                                {saving ? t('common.saving') : t('modals.saveEntity')}
                             </span>
                         </button>
                     </div>

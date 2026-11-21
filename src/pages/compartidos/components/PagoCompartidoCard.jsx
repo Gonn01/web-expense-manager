@@ -3,6 +3,9 @@ import { formatMoney } from '@/utils/FormatMoney';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import TypeBadge from './TypeBadge';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
+import { Trans } from 'react-i18next';
 
 export default function PagoCompartidoCard({
     pago,
@@ -24,10 +27,13 @@ export default function PagoCompartidoCard({
 
     const handleRetirar = async () => {
         const ok = await useDialogStore.getState().confirm({
-            title: '¿Retirar el pago?',
-            message: `Se retira el pago de "${pago.gasto_name}" que le mandaste a ${pago.counterparty_name ?? 'la otra persona'}. La cuota vuelve a quedar sin pagar.`,
+            title: t('common.withdrawThePayment'),
+            message: t('shared.withdrawMessage', {
+                expense: pago.gasto_name,
+                name: pago.counterparty_name ?? t('people.otherPerson'),
+            }),
             tone: 'danger',
-            confirmLabel: 'Retirar',
+            confirmLabel: t('common.withdraw'),
         });
         if (ok) onRetirar?.(pago.movement_id);
     };
@@ -41,20 +47,28 @@ export default function PagoCompartidoCard({
                     </div>
                     <p className="font-semibold dark:text-white truncate">{pago.gasto_name}</p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                        Pago de{' '}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-200">
-                            {formatMoney(pago.amount, pago.currency_type)}
-                        </span>
+                        <Trans
+                            i18nKey="shared.paymentOf"
+                            values={{ amount: formatMoney(pago.amount, pago.currency_type) }}
+                            components={{
+                                amount: (
+                                    <span className="font-medium text-zinc-700 dark:text-zinc-200" />
+                                ),
+                            }}
+                        />
                         {pago.number_of_quotas > 0 &&
-                            ` · cuota ${Math.min(
-                                pago.quota_number ?? (pago.payed_quotas ?? 0) + 1,
-                                pago.number_of_quotas,
-                            )}/${pago.number_of_quotas}`}
+                            t('shared.quotaSuffix', {
+                                number: Math.min(
+                                    pago.quota_number ?? (pago.payed_quotas ?? 0) + 1,
+                                    pago.number_of_quotas,
+                                ),
+                                total: pago.number_of_quotas,
+                            })}
                     </p>
                 </div>
                 <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-1">
                     <Icon name="hourglass_empty" className="text-sm" />
-                    Pendiente
+                    {t('common.pending')}
                 </span>
             </div>
 
@@ -62,14 +76,16 @@ export default function PagoCompartidoCard({
                 <div className="flex items-start gap-2 rounded-lg bg-primary/10 text-primary px-3 py-2 text-xs">
                     <Icon name="playlist_add_check" className="text-base shrink-0" />
                     <span>
-                        <span className="font-bold">Marcado en tu sesión de cuentas.</span> Se
-                        confirma solo al terminar las cuentas.
+                        <span className="font-bold">
+                            {t('compartidos.markedInYourSettlementSession')}
+                        </span>{' '}
+                        {t('compartidos.itSConfirmedWhenYouFinishThe')}
                     </span>
                 </div>
             )}
 
             <p className="text-xs text-zinc-400 dark:text-zinc-600">
-                {new Date(pago.created_at).toLocaleDateString('es-AR', {
+                {new Date(pago.created_at).toLocaleDateString(getIntlLocale(), {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric',
@@ -87,7 +103,7 @@ export default function PagoCompartidoCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="check" className="text-sm" /> Confirmar
+                                <Icon name="check" className="text-sm" /> {t('common.confirm')}
                             </>
                         )}
                     </button>
@@ -100,7 +116,7 @@ export default function PagoCompartidoCard({
                             <Icon name="progress_activity" className="animate-spin text-sm" />
                         ) : (
                             <>
-                                <Icon name="close" className="text-sm" /> Rechazar
+                                <Icon name="close" className="text-sm" /> {t('compartidos.reject')}
                             </>
                         )}
                     </button>
@@ -117,7 +133,8 @@ export default function PagoCompartidoCard({
                         <Icon name="progress_activity" className="animate-spin text-sm" />
                     ) : (
                         <>
-                            <Icon name="undo" className="text-sm" /> Retirar pago
+                            <Icon name="undo" className="text-sm" />{' '}
+                            {t('compartidos.withdrawPayment')}
                         </>
                     )}
                 </button>

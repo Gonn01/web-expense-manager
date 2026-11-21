@@ -3,6 +3,7 @@ import useAuth from '@/store/use-auth-store';
 import DateRangeFilter from '@/components/DateRangeFilter';
 import HistorialEvento from './HistorialEvento';
 import { filterEventsByDate, paymentNumbers } from '../utils/historial-eventos';
+import { t } from '@/i18n';
 
 const EMPTY_RANGE = { from: '', to: '' };
 
@@ -31,7 +32,7 @@ export default function HistorialSection({
         if (eventos.length === 0) {
             return (
                 <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
-                    Sin actividad registrada.
+                    {t('detalleGasto.noActivityRecorded')}
                 </p>
             );
         }
@@ -40,7 +41,7 @@ export default function HistorialSection({
                 <DateRangeFilter from={range.from} to={range.to} onChange={setRange} />
                 {visibles.length === 0 ? (
                     <p className="text-sm text-slate-500 dark:text-[#9eb7a8]">
-                        No hay actividad en ese rango.
+                        {t('detalleGasto.noActivityInThatRange')}
                     </p>
                 ) : (
                     <div className="flex flex-col gap-2">
@@ -69,7 +70,7 @@ export default function HistorialSection({
                 onClick={() => setExpanded((v) => !v)}
                 className="flex items-center justify-between w-full"
             >
-                <h2 className="text-xl font-bold">Historial</h2>
+                <h2 className="text-xl font-bold">{t('common.history')}</h2>
                 <span
                     className={`material-symbols-outlined text-2xl text-slate-500 dark:text-[#9eb7a8] transition-transform ${expanded ? 'rotate-180' : ''}`}
                 >

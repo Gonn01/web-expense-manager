@@ -2,6 +2,7 @@ import { ChipTipoGasto } from '@/components/ChipTipoGasto';
 import ProgressBar from '@/components/ProgressBar';
 import { formatDate } from '@/utils/FormatDate';
 import { formatMoney } from '@/utils/FormatMoney';
+import { t } from '@/i18n';
 
 export default function GastoItem({ gasto, variant = 'activo', onClick }) {
     let subtitle = '';
@@ -9,12 +10,15 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
     switch (variant) {
         case 'activo':
             subtitle = gasto.fixed_expense
-                ? `Veces pagado ${gasto.payed_quotas}`
-                : `Cuotas: ${gasto.payed_quotas}/${gasto.number_of_quotas}`;
+                ? t('detail.timesPaid', { count: gasto.payed_quotas })
+                : t('detail.installmentsShort', {
+                      paid: gasto.payed_quotas,
+                      total: gasto.number_of_quotas,
+                  });
             break;
 
         case 'finalizado':
-            subtitle = 'Finalizado';
+            subtitle = t('detalleEntidad.finished');
             break;
     }
 
@@ -64,12 +68,18 @@ export default function GastoItem({ gasto, variant = 'activo', onClick }) {
                     />
                     <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
                         <span>
-                            {formatMoney(paidTotal, currency)} pagado de{' '}
-                            {formatMoney(gasto.amount, currency)}
+                            {t('detail.paidOf', {
+                                paid: formatMoney(paidTotal, currency),
+                                total: formatMoney(gasto.amount, currency),
+                            })}
                         </span>
                         <div className="flex items-center gap-2">
                             {!gasto.fixed_expense && (
-                                <span>c/u {formatMoney(gasto.amount_per_quota, currency)}</span>
+                                <span>
+                                    {t('detail.perInstallment', {
+                                        amount: formatMoney(gasto.amount_per_quota, currency),
+                                    })}
+                                </span>
                             )}
                             {percentageLabel && (
                                 <span className="font-semibold text-zinc-600 dark:text-zinc-300">

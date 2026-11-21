@@ -1,12 +1,17 @@
+import { t } from '@/i18n';
+
 const BADGES = {
-    gasto: { label: 'Gasto', className: 'bg-primary/15 text-primary' },
-    pago: { label: 'Pago', className: 'bg-blue-500/15 text-blue-600 dark:text-blue-400' },
+    gasto: { label: t('compartidos.expense'), className: 'bg-primary/15 text-primary' },
+    pago: {
+        label: t('common.payment'),
+        className: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+    },
     reversion: {
-        label: 'Reversión',
+        label: t('common.reversal'),
         className: 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
     },
     edicion: {
-        label: 'Edición',
+        label: t('common.edit'),
         className: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
     },
 };

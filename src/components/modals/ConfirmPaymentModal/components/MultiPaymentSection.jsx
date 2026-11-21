@@ -1,6 +1,7 @@
 import Icon from '@/components/Icon';
 import { formatMoney } from '@/utils/FormatMoney';
 import CurrencyBadge from './CurrencyBadge';
+import { t } from '@/i18n';
 
 export default function MultiPaymentSection({ items, removedItems = [], onRemove, onRestore }) {
     const totals = Array.from(
@@ -17,12 +18,12 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
     return (
         <div className="flex flex-col gap-4 rounded-lg border bg-black/5 dark:bg-white/5 p-4">
             <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Gastos a afectar:
+                {t('modals.expensesAffected')}
             </p>
 
             {items.length === 0 ? (
                 <p className="text-sm text-slate-400 ml-1">
-                    No queda ningún gasto seleccionado. Restaurá al menos uno para continuar.
+                    {t('modals.noExpenseIsSelectedRestoreAtLeast')}
                 </p>
             ) : (
                 <ul className="flex flex-col gap-1 text-sm text-slate-900 dark:text-white">
@@ -38,7 +39,7 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
                             <button
                                 type="button"
                                 onClick={() => onRemove?.(it.id)}
-                                title="Quitar de este pago"
+                                title={t('modals.removeFromThisPayment')}
                                 className="shrink-0 flex items-center justify-center h-6 w-6 rounded-md text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                             >
                                 <Icon name="close" className="text-base" />
@@ -50,7 +51,9 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
 
             {removedItems.length > 0 && (
                 <div className="flex flex-col gap-1">
-                    <p className="text-xs font-semibold text-slate-400">Quitados de este pago:</p>
+                    <p className="text-xs font-semibold text-slate-400">
+                        {t('modals.removedFromThisPayment')}
+                    </p>
                     <ul className="flex flex-col gap-1 text-sm text-slate-400">
                         {removedItems.map((it) => (
                             <li key={it.id} className="flex items-center justify-between gap-2">
@@ -64,11 +67,11 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
                                 <button
                                     type="button"
                                     onClick={() => onRestore?.(it.id)}
-                                    title="Restaurar"
+                                    title={t('common.restore')}
                                     className="shrink-0 flex items-center gap-1 h-6 px-2 rounded-md text-xs font-semibold text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                                 >
                                     <Icon name="undo" className="text-sm" />
-                                    Restaurar
+                                    {t('common.restore')}
                                 </button>
                             </li>
                         ))}
@@ -79,7 +82,7 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
             <div className="border-t" />
 
             <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                Monto total a pagar/cobrar:
+                {t('modals.totalAmountToPayCollect')}
             </p>
 
             <div className="flex flex-col gap-2">
@@ -91,7 +94,9 @@ export default function MultiPaymentSection({ items, removedItems = [], onRemove
                             key={row.currency}
                             className="flex justify-between text-slate-900 dark:text-white"
                         >
-                            <span className="text-xs">En {row.currency}</span>
+                            <span className="text-xs">
+                                {t('payment.inCurrency', { currency: row.currency })}
+                            </span>
                             <span className="text-lg font-bold">
                                 {formatMoney(row.amount, row.currency)}
                             </span>

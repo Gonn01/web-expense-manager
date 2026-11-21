@@ -3,6 +3,7 @@ import TextInput from '@/components/TextInput';
 import { Currency } from '@/utils/enums';
 import { LockReason } from './LockedField';
 import Select from '@/components/Select';
+import { t } from '@/i18n';
 
 export default function ExpenseAmountSection({
     amount,
@@ -15,17 +16,15 @@ export default function ExpenseAmountSection({
     error,
 }) {
     const liveError =
-        amount !== '' && Number(amount) <= 0
-            ? 'El monto debe ser mayor a 0 (no se aceptan números negativos).'
-            : null;
+        amount !== '' && Number(amount) <= 0 ? t('modals.theAmountMustBeGreaterThan0') : null;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 items-start">
             <div className="sm:col-span-3 space-y-1.5" data-field="amount">
                 <TextInput
-                    label="Monto total"
+                    label={t('modals.totalAmount')}
                     type="amount"
-                    placeholder="Ej: 150.000"
+                    placeholder={t('modals.eG150000')}
                     value={amount}
                     disabled={Boolean(amountLock)}
                     onChange={setAmount}
@@ -43,7 +42,9 @@ export default function ExpenseAmountSection({
             </div>
 
             <div className="relative sm:col-span-2 space-y-2">
-                <label className="text-slate-900 dark:text-white text-sm font-medium">Moneda</label>
+                <label className="text-slate-900 dark:text-white text-sm font-medium">
+                    {t('common.currency')}
+                </label>
 
                 <div className="relative">
                     <Select
@@ -51,7 +52,7 @@ export default function ExpenseAmountSection({
                         value={currency}
                         disabled={Boolean(currencyLock)}
                         onChange={setCurrency}
-                        aria-label="Moneda"
+                        aria-label={t('common.currency')}
                         options={Object.values(Currency).map((curr) => ({
                             value: curr,
                             label: curr,

@@ -14,6 +14,7 @@ import {
     labelFromKey,
     pendingQuotaMonths,
 } from '@/utils/chart-months';
+import { t } from '@/i18n';
 
 function accumulateCounts(gastos, type, counts) {
     const currentMonth = currentMonthIndex();
@@ -83,7 +84,7 @@ function renderLastDot(color, flagKey) {
                     fontWeight="bold"
                     fill={color}
                 >
-                    ÚLTIMA
+                    {t('charts.last')}
                 </text>
             </g>
         );
@@ -97,8 +98,8 @@ const CustomTooltip = ({ active, payload, label }) => {
             <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
-                    {p.dataKey === 'egreso' ? 'Egresos' : 'Ingresos'}: {p.value} cuota
-                    {p.value !== 1 ? 's' : ''}
+                    {p.dataKey === 'egreso' ? t('common.expenses') : t('common.income2')}:{' '}
+                    {t('charts.installments', { count: p.value })}
                 </p>
             ))}
         </div>
@@ -113,7 +114,7 @@ export default function CuotasChart({ gastos }) {
     return (
         <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                Cuotas por mes
+                {t('common.installmentsPerMonth')}
             </p>
             <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={data} margin={{ top: 16, right: 8, left: -20, bottom: 0 }}>
@@ -134,7 +135,7 @@ export default function CuotasChart({ gastos }) {
                     <Legend
                         formatter={(value) => (
                             <span className="text-xs text-slate-400">
-                                {value === 'egreso' ? 'Egresos' : 'Ingresos'}
+                                {value === 'egreso' ? t('common.expenses') : t('common.income2')}
                             </span>
                         )}
                     />

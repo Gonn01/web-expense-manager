@@ -1,4 +1,5 @@
 import Icon from '@/components/Icon';
+import { t } from '@/i18n';
 
 export default function OnboardingActions({ isFirst, isLast, onBack, onNext }) {
     return (
@@ -14,7 +15,7 @@ export default function OnboardingActions({ isFirst, isLast, onBack, onNext }) {
                 }`}
             >
                 <Icon name="arrow_back" className="text-lg" />
-                Atrás
+                {t('onboarding.back')}
             </button>
 
             <button
@@ -23,7 +24,7 @@ export default function OnboardingActions({ isFirst, isLast, onBack, onNext }) {
                 onClick={onNext}
                 className="cursor-pointer inline-flex h-11 items-center gap-1 px-5 rounded-lg text-sm font-bold bg-primary text-background-dark hover:bg-primary/90 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-                {isLast ? '¡Empezar!' : 'Siguiente'}
+                {isLast ? t('onboarding.letSGo') : t('onboarding.next')}
                 {!isLast && <Icon name="arrow_forward" className="text-lg" />}
             </button>
         </div>

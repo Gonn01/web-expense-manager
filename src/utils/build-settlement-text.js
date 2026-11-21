@@ -1,7 +1,9 @@
 import { formatAmount } from '@/utils/FormatMoney';
+import { getIntlLocale } from '@/i18n';
+import { t } from '@/i18n';
 
 function shortDate(iso) {
-    return new Date(iso).toLocaleDateString('es-AR', {
+    return new Date(iso).toLocaleDateString(getIntlLocale(), {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -13,13 +15,16 @@ function itemLine(it) {
 
     let sub;
     if (it.fixed_expense) {
-        sub = it.type === 'INGRESO' ? 'Ingreso fijo' : 'Gasto fijo';
+        sub = it.type === 'INGRESO' ? t('common.fixedIncome') : t('common.fixedExpense');
     } else if (it.quota_number) {
         sub = it.number_of_quotas
-            ? `Cuota ${it.quota_number}/${it.number_of_quotas}`
-            : `Cuota ${it.quota_number}`;
+            ? t('share.installmentProgress', {
+                  number: it.quota_number,
+                  total: it.number_of_quotas,
+              })
+            : t('share.installmentNumber', { number: it.quota_number });
     } else {
-        sub = it.type === 'INGRESO' ? 'Cobro' : 'Pago';
+        sub = it.type === 'INGRESO' ? t('common.collection') : t('common.payment');
     }
 
     return `${it.name}: ${amount}\n${sub}\n`;
@@ -45,14 +50,14 @@ export function buildSettlementEntityText(entityName, items = []) {
         const ingresos = curItems.filter((i) => i.type === 'INGRESO');
 
         if (egresos.length) {
-            buf.push(`\n*Pagado (${cur}):*\n\n`);
+            buf.push(`\n${t('share.paid', { currency: cur })}\n\n`);
             for (const it of egresos) buf.push(itemLine(it) + '\n');
-            buf.push(`*Total pagado:* ${formatAmount(sum(egresos))} ${cur}\n`);
+            buf.push(`${t('share.totalPaid')} ${formatAmount(sum(egresos))} ${cur}\n`);
         }
         if (ingresos.length) {
-            buf.push(`\n*Cobrado (${cur}):*\n\n`);
+            buf.push(`\n${t('share.collected', { currency: cur })}\n\n`);
             for (const it of ingresos) buf.push(itemLine(it) + '\n');
-            buf.push(`*Total cobrado:* ${formatAmount(sum(ingresos))} ${cur}\n`);
+            buf.push(`${t('share.totalCollected')} ${formatAmount(sum(ingresos))} ${cur}\n`);
         }
     }
 
@@ -64,14 +69,14 @@ export function buildSettlementSnapshotText(snapshot, monthLabelText) {
     const totals = snapshot?.totals ?? {};
     const buf = [];
 
-    buf.push(`*Cuentas de ${monthLabelText}*\n`);
+    buf.push(`${t('share.settlementOf', { month: monthLabelText })}\n`);
     if (snapshot?.started_at && snapshot?.finished_at) {
         buf.push(`${shortDate(snapshot.started_at)} → ${shortDate(snapshot.finished_at)}\n`);
     }
 
     const groups = new Map();
     for (const it of items) {
-        const key = it.entity_name ?? 'Sin entidad';
+        const key = it.entity_name ?? t('common.noEntity');
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(it);
     }
@@ -81,16 +86,16 @@ export function buildSettlementSnapshotText(snapshot, monthLabelText) {
 
     const byCurrency = totals.byCurrency ?? {};
     if (Object.keys(byCurrency).length) {
-        buf.push('\n────────\n*TOTALES DEL MES*\n');
+        buf.push(`\n────────\n${t('share.monthTotals')}\n`);
         for (const [cur, b] of Object.entries(byCurrency)) {
             const net = Number(b.ingreso ?? 0) - Number(b.egreso ?? 0);
             buf.push(
-                `${cur}: pagado ${formatAmount(b.egreso)} · cobrado ${formatAmount(b.ingreso)} · neto ${formatAmount(net)}\n`,
+                `${t('share.currencyLine', { currency: cur, paid: formatAmount(b.egreso), collected: formatAmount(b.ingreso), net: formatAmount(net) })}\n`,
             );
         }
     }
     buf.push(
-        `\n${totals.items ?? items.length} gastos · ${totals.entities ?? groups.size} entidades`,
+        `\n${t('share.itemsEntities', { items: totals.items ?? items.length, entities: totals.entities ?? groups.size })}`,
     );
 
     return buf.join('').trim();

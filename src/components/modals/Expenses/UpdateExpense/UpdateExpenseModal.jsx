@@ -16,6 +16,7 @@ import { transferTargets } from '@/utils/expense-transfer';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
 import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
+import { t } from '@/i18n';
 
 export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     const { token } = useAuth();
@@ -39,8 +40,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
     );
 
     const locks = gasto.shared_edit_locks ?? gasto.edit_locks ?? {};
-    const paidLock =
-        locks.payed_quotas ?? 'Los pagos se registran con Pagar y se deshacen con Revertir.';
+    const paidLock = locks.payed_quotas ?? t('modals.paymentsAreRecordedWithPayAndUndone');
 
     const [isFixed, setIsFixed] = useState(Boolean(gasto.fixed_expense));
     const [isInstallment, setIsInstallment] = useState(
@@ -92,7 +92,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         (isInstallment && exceedsMaxInstallments(installments) ? errors.installments : undefined);
     const installmentsError =
         isInstallment && installments !== '' && totalInstallments < committedQuotas
-            ? `No puede ser menor que las cuotas ya pagadas o pendientes (${committedQuotas}).`
+            ? t('form.quotasBelowCommitted', { count: committedQuotas })
             : null;
 
     const canSave = useMemo(() => {
@@ -109,7 +109,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
 
     const amountNote =
         hasPayments && Number(amount) !== Number(gasto.amount)
-            ? 'Los pagos ya registrados conservan su monto: el cambio solo afecta a las cuotas que faltan.'
+            ? t('modals.paymentsAlreadyRecordedKeepTheirAmountThe')
             : null;
 
     const handleCreateEntity = async () => {
@@ -224,7 +224,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     <div className="flex items-center gap-3 text-slate-900 dark:text-white">
                         <Icon name="edit" className="text-primary" />
                         <h2 className="text-slate-900 dark:text-white text-lg font-bold">
-                            Editar Gasto/Deuda
+                            {t('modals.editExpenseDebt')}
                         </h2>
                     </div>
 
@@ -241,9 +241,9 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                     {gasto.shared_edit_locks && (
                         <p className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
                             <Icon name="group" className="text-base shrink-0 mt-px" />
-                            Los cambios de monto, moneda, tipo, frecuencia o cuotas se aplican
-                            cuando {gasto.shared_counterparty?.name ?? 'la otra persona'} los
-                            apruebe.
+                            {t('form.sharedEditNotice', {
+                                name: gasto.shared_counterparty?.name ?? t('people.otherPerson'),
+                            })}
                         </p>
                     )}
                     <LockedField reason={locks.type}>
@@ -252,8 +252,8 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
 
                     <div data-field="name">
                         <TextInput
-                            label="Nombre del gasto"
-                            placeholder="Ej: Préstamo personal"
+                            label={t('modals.expenseName')}
+                            placeholder={t('modals.eGPersonalLoan')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             error={visibleErrors.name}
@@ -338,7 +338,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                     )}
                                 </div>
                                 <span className="text-slate-900 dark:text-white text-sm font-medium">
-                                    Pagado
+                                    {t('modals.paid')}
                                 </span>
                             </div>
                             <LockReason reason={paidLock} />
@@ -354,7 +354,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         disabled={saving}
                         className="h-11 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Cancelar
+                        {t('common.cancel')}
                     </button>
 
                     <button
@@ -367,17 +367,16 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         ) : (
                             <Icon name="save" />
                         )}
-                        {saving ? 'Guardando...' : 'Guardar cambios'}
+                        {saving ? t('common.saving') : t('common.saveChanges')}
                     </button>
                 </footer>
 
                 {linkedPrompt && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 rounded-2xl p-4">
                         <div className="w-full max-w-sm rounded-xl bg-white dark:bg-[#111714] p-6 border border-slate-200 dark:border-[#29382f] shadow-lg text-slate-900 dark:text-white">
-                            <h3 className="text-lg font-bold mb-2">Movimiento vinculado</h3>
+                            <h3 className="text-lg font-bold mb-2">{t('modals.linkedMovement')}</h3>
                             <p className="text-sm text-slate-500 dark:text-[#9eb7a8] mb-6">
-                                Este movimiento está vinculado a otro en otra entidad. ¿Querés
-                                aplicar los cambios también a ese movimiento?
+                                {t('modals.thisMovementIsLinkedToAnotherOne')}
                             </p>
                             <div className="flex flex-col gap-2">
                                 <button
@@ -385,14 +384,14 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                     disabled={saving}
                                     className="btn-save h-11 px-4 text-sm font-bold rounded-lg bg-primary text-black cursor-pointer hover:bg-primary/80 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
-                                    Aplicar a ambos
+                                    {t('modals.applyToBoth')}
                                 </button>
                                 <button
                                     onClick={() => confirmLinked(false)}
                                     disabled={saving}
                                     className="h-11 px-4 text-sm font-bold rounded-lg bg-slate-100 dark:bg-[#29382f] text-slate-900 dark:text-white cursor-pointer hover:bg-slate-200 dark:hover:bg-[#3d5245] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
-                                    Sólo este
+                                    {t('modals.onlyThisOne')}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -402,7 +401,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                                     disabled={saving}
                                     className="h-9 px-4 text-sm font-bold text-slate-500 dark:text-[#9eb7a8] hover:bg-slate-100 dark:hover:bg-[#29382f] rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Cancelar
+                                    {t('common.cancel')}
                                 </button>
                             </div>
                         </div>

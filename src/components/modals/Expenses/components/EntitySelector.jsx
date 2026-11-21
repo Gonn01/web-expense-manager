@@ -2,6 +2,7 @@ import Icon from '@/components/Icon';
 import { FieldError } from '@/components/TextInput';
 import Select from '@/components/Select';
 import NewEntityInlineForm from './NewEntityInlineForm';
+import { t } from '@/i18n';
 
 export default function EntitySelector({
     entity,
@@ -23,7 +24,7 @@ export default function EntitySelector({
     return (
         <div className="space-y-2" data-field="entity">
             <label className="text-slate-900 dark:text-white text-sm font-medium">
-                Entidad financiera
+                {t('modals.financialEntity')}
             </label>
 
             <div className="relative">
@@ -36,7 +37,7 @@ export default function EntitySelector({
                         className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 flex items-center gap-2 text-slate-500 dark:text-[#9eb7a8] text-sm`}
                     >
                         <Icon name="info" className="text-base" />
-                        No tenés entidades creadas aún
+                        {t('modals.youDonTHaveAnyEntitiesYet')}
                     </div>
                 ) : (
                     <div className="relative">
@@ -45,8 +46,8 @@ export default function EntitySelector({
                             className={`h-12 w-full rounded-lg border ${borderClass} bg-slate-50 dark:bg-[#1c2620] px-3 text-slate-900 dark:text-white cursor-pointer`}
                             value={entity}
                             onChange={setEntity}
-                            placeholder="Seleccionar..."
-                            aria-label="Entidad financiera"
+                            placeholder={t('modals.select')}
+                            aria-label={t('modals.financialEntity')}
                             options={entities.map((e) => ({
                                 value: e.id,
                                 label: e.is_favorite ? `★ ${e.name}` : e.name,
@@ -58,7 +59,7 @@ export default function EntitySelector({
 
             {error && (
                 <FieldError
-                    message={entities.length === 0 ? `${error} Creá una nueva más abajo.` : error}
+                    message={entities.length === 0 ? t('form.createBelow', { error }) : error}
                 />
             )}
 
@@ -71,8 +72,8 @@ export default function EntitySelector({
                     hover:underline disabled:opacity-50
                 "
                 >
-                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}+
-                    Crear nueva entidad
+                    {loading && <Icon name="progress_activity" className="animate-spin text-xs" />}
+                    {t('modals.createNewEntity')}
                 </button>
             )}
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import { clearSessionExpired, isSessionExpiredMarked } from '@/utils/session-expired';
+import { t } from '@/i18n';
 
 export function useLogin() {
     const nav = useNavigate();
@@ -16,9 +17,8 @@ export function useLogin() {
     }, []);
 
     const validar = ({ email, password }) => {
-        if (!email.includes('@')) return 'Email inválido';
-        if (!password || password.length < 6)
-            return 'La contraseña debe tener al menos 6 caracteres';
+        if (!email.includes('@')) return t('auth.invalidEmail');
+        if (!password || password.length < 6) return t('auth.thePasswordMustBeAtLeast6');
         return '';
     };
 
@@ -36,7 +36,7 @@ export function useLogin() {
             nav('/app/dashboard', { replace: true });
             return true;
         } catch (err) {
-            setError(err.message || 'Error de autenticación');
+            setError(err.message || t('auth.authenticationError'));
             return false;
         } finally {
             setLoading(false);

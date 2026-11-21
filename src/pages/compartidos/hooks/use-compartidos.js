@@ -23,6 +23,7 @@ import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { countGastosPorResolver } from '@/utils/compartidos-pending';
+import { t } from '@/i18n';
 
 export function useCompartidos() {
     const { token, user } = useAuth();
@@ -177,7 +178,7 @@ export function useCompartidos() {
             setLoadingAction({ id: gastoId, kind: 'descartar' });
             try {
                 const result = await descartarCompartido(gastoId, deleteLinked, token);
-                useSnackbarStore.getState().show('Gasto descartado', 'success');
+                useSnackbarStore.getState().show(t('compartidos.expenseDiscarded'), 'success');
                 await load({ silent: true });
                 if (result?.mirror_deleted) {
                     useSettlementStore.getState().loadSession();
@@ -216,12 +217,19 @@ export function useCompartidos() {
     );
 
     const confirmarPago = useCallback(
-        (movementId) => responderPago(movementId, 'confirmar', confirmarPagoApi, 'Pago confirmado'),
+        (movementId) =>
+            responderPago(
+                movementId,
+                'confirmar',
+                confirmarPagoApi,
+                t('compartidos.paymentConfirmed'),
+            ),
         [responderPago],
     );
 
     const rechazarPago = useCallback(
-        (movementId) => responderPago(movementId, 'rechazar', rechazarPagoApi, 'Pago rechazado'),
+        (movementId) =>
+            responderPago(movementId, 'rechazar', rechazarPagoApi, t('common.paymentRejected')),
         [responderPago],
     );
 
@@ -242,18 +250,25 @@ export function useCompartidos() {
     );
 
     const retirarPago = useCallback(
-        (movementId) => runPagoAction(movementId, 'retirar', retirarPagoApi, 'Pago retirado'),
+        (movementId) =>
+            runPagoAction(movementId, 'retirar', retirarPagoApi, t('common.paymentWithdrawn')),
         [runPagoAction],
     );
 
     const aceptarReversion = useCallback(
-        (movementId) => runPagoAction(movementId, 'aceptar', aceptarReversionApi, 'Pago revertido'),
+        (movementId) =>
+            runPagoAction(movementId, 'aceptar', aceptarReversionApi, t('common.paymentReverted')),
         [runPagoAction],
     );
 
     const rechazarReversion = useCallback(
         (movementId) =>
-            runPagoAction(movementId, 'rechazar', rechazarReversionApi, 'Reversión rechazada'),
+            runPagoAction(
+                movementId,
+                'rechazar',
+                rechazarReversionApi,
+                t('common.reversalRejected'),
+            ),
         [runPagoAction],
     );
 
@@ -263,7 +278,7 @@ export function useCompartidos() {
                 movementId,
                 'cancelar',
                 cancelarReversionApi,
-                'Pedido de reversión cancelado',
+                t('compartidos.reversalRequestCancelled'),
             ),
         [runPagoAction],
     );
@@ -286,13 +301,18 @@ export function useCompartidos() {
 
     const aprobarEdicion = useCallback(
         (editId) =>
-            runEdicionAction(editId, 'aprobar', aprobarEdicionCompartida, 'Edición aprobada'),
+            runEdicionAction(editId, 'aprobar', aprobarEdicionCompartida, t('common.editApproved')),
         [runEdicionAction],
     );
 
     const rechazarEdicion = useCallback(
         (editId) =>
-            runEdicionAction(editId, 'rechazar', rechazarEdicionCompartida, 'Edición rechazada'),
+            runEdicionAction(
+                editId,
+                'rechazar',
+                rechazarEdicionCompartida,
+                t('common.editRejected'),
+            ),
         [runEdicionAction],
     );
 
@@ -302,7 +322,7 @@ export function useCompartidos() {
                 editId,
                 'cancelar',
                 cancelarEdicionCompartida,
-                'Solicitud de edición cancelada',
+                t('compartidos.editRequestCancelled'),
             ),
         [runEdicionAction],
     );
