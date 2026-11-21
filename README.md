@@ -10,7 +10,7 @@ Funcionalidades principales:
 
 - **Autenticación** con email y contraseña o con Google (Firebase).
 - **Dashboard**: gastos agrupados por entidad, filtros, totales y balance por moneda, equivalencia en la moneda preferida, gráficos y peso de los gastos sobre el sueldo.
-- **Gastos** (egresos o ingresos) de pago único, en cuotas o fijos, en ARS, USD, EUR, BRL, CLP y UYU, con categorías, historial y reversión de pagos.
+- **Gastos** (egresos o ingresos) de pago único, en cuotas o fijos, en ARS y las 35 monedas extranjeras con cotización del BCRA, con categorías, historial y reversión de pagos.
 - **Entidades financieras** (personas, tarjetas, bancos, comercios), con favoritos y vinculación con otro usuario.
 - **Gastos compartidos**: al vincular una entidad con otro usuario, la contraparte aprueba o rechaza los gastos y confirma los pagos. Los cambios llegan en tiempo real (Pusher).
 - **Modo "hacer cuentas"**: sesión de cierre periódico en la que se marcan los pagos; al finalizarla se registran todos juntos y queda un snapshot inmutable que se puede compartir.
@@ -79,7 +79,7 @@ La app queda en `http://localhost:5173`.
 | `npm run format` | Formatea el código con Prettier |
 | `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
 
-Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Por ahora cubren funciones puras de `utils/` (no hay pruebas de componentes).
+Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Cubren funciones puras de `utils/`, el manejo de errores de la API y el store de la sesión de cuentas (no hay pruebas de componentes).
 
 ### Despliegue
 

@@ -153,7 +153,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Actor**: Usuario
 - **Requerimientos**: RF-CFG-02
 - **Flujo principal**
-    1. En Configuración, el usuario elige ARS, USD, EUR, BRL, CLP o UYU.
+    1. En Configuración, el usuario elige una de las 36 monedas soportadas.
     2. El sistema guarda la preferencia.
     3. El cliente actualiza los datos del usuario guardados en el dispositivo.
 - **Flujos alternativos**
@@ -216,7 +216,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     1. El usuario abre el dashboard.
     2. El sistema obtiene las entidades con sus gastos activos y las ordena (favoritas primero, luego por gasto más reciente).
     3. El sistema calcula por moneda los totales de egreso, de ingreso y el balance, sin contar los gastos postergados.
-    4. El sistema obtiene la cotización de USD, EUR, BRL, CLP y UYU.
+    4. El sistema obtiene la cotización de las 35 monedas extranjeras soportadas.
     5. El sistema muestra los balances, los gastos agrupados por entidad y, si corresponde, cuántos gastos compartidos esperan respuesta en cada entidad. Esos gastos no cuentan en balances, totales ni contadores.
 - **Flujos alternativos**
     - 5a. *Cambiar moneda de visualización* («extend»): el usuario elige una moneda; el sistema muestra solo los gastos y totales de esa moneda.

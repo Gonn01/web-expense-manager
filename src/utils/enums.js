@@ -1,4 +1,4 @@
-import { t } from '@/i18n';
+import { getIntlLocale, t } from '@/i18n';
 
 export const Currency = Object.freeze({
     ARS: 'ARS',
@@ -7,16 +7,58 @@ export const Currency = Object.freeze({
     BRL: 'BRL',
     CLP: 'CLP',
     UYU: 'UYU',
+    AUD: 'AUD',
+    AWG: 'AWG',
+    BOB: 'BOB',
+    CAD: 'CAD',
+    CHF: 'CHF',
+    CNH: 'CNH',
+    CNY: 'CNY',
+    COP: 'COP',
+    CZK: 'CZK',
+    DKK: 'DKK',
+    GBP: 'GBP',
+    HKD: 'HKD',
+    ILS: 'ILS',
+    INR: 'INR',
+    JPY: 'JPY',
+    MXN: 'MXN',
+    NIO: 'NIO',
+    NOK: 'NOK',
+    NZD: 'NZD',
+    PEN: 'PEN',
+    PYG: 'PYG',
+    RSD: 'RSD',
+    RUB: 'RUB',
+    SEK: 'SEK',
+    SGD: 'SGD',
+    TRY: 'TRY',
+    VES: 'VES',
+    VND: 'VND',
+    XDR: 'XDR',
+    ZAR: 'ZAR',
 });
 
-export const CURRENCY_LABELS = Object.freeze({
+const TRANSLATED_CURRENCY_LABELS = {
     [Currency.ARS]: t('common.arsArgentinePesos'),
     [Currency.USD]: t('common.usdUsDollars'),
     [Currency.EUR]: t('common.eurEuros'),
     [Currency.BRL]: t('common.brlBrazilianReais'),
     [Currency.CLP]: t('common.clpChileanPesos'),
     [Currency.UYU]: t('common.uyuUruguayanPesos'),
-});
+};
+
+const currencyNames = new Intl.DisplayNames(getIntlLocale(), { type: 'currency' });
+
+export const CURRENCY_LABELS = Object.freeze(
+    Object.fromEntries(
+        Object.values(Currency).map((code) => [
+            code,
+            TRANSLATED_CURRENCY_LABELS[code] ??
+                t('common.currencyLabel', { code, name: currencyNames.of(code) }),
+        ]),
+    ),
+);
 
 export const ExpenseType = Object.freeze({
     EGRESO: 'EGRESO',

@@ -92,7 +92,10 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-INT-05 | Los montos se guardan en su moneda original. Las conversiones son solo de presentación y nunca se persisten. | Todos |
 | RNF-INT-06 | Toda operación que escribe más de una fila se ejecuta en una transacción de base de datos: si algo falla a mitad de camino, no queda nada a medias. Por ejemplo, crear un gasto con su espejo y su copia compartida, editarlo o eliminarlo junto con su espejo, aprobar o rechazar un compartido, o reemplazar las categorías de un gasto. La única excepción es el historial de entidades (RNF-DIS-02), que es best-effort. | API |
 
-*Limitación conocida*: las fechas se muestran con un corrimiento de 3 horas respecto de la hora local (pendiente en `checklist_mis_cuentas.md`).
+**Limitaciones conocidas**
+
+- Las fechas se muestran con un corrimiento de 3 horas respecto de la hora local (pendiente en `checklist_mis_cuentas.md`).
+- La base solo acepta `ARS`, `USD` y `EUR` hasta ejecutar `migrations/manual/2026-11-21_monedas_bcra.sql`. Esa migración no agrega `BRL`, `CLP` ni `UYU`, así que crear un gasto en esas monedas responde 500.
 
 ## MAN — Mantenibilidad
 
@@ -101,11 +104,11 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-01 | La API respeta la separación en capas `route → factory → controller → service → repository`. La lógica de negocio vive solo en los services. | API |
 | RNF-MAN-02 | La web centraliza todas las llamadas HTTP y el manejo de errores en un único módulo, y separa por pantalla los hooks de datos de los de interfaz. | Web |
 | RNF-MAN-03 | La app móvil respeta la dependencia unidireccional `app → services → repositories → providers → core` y la regla de una clase por archivo. | App |
-| RNF-MAN-04 | La API cuenta con pruebas unitarias, ejecutables sin base de datos, de sus controllers, del middleware de autenticación y de las reglas de pertenencia y de pago del service de gastos. | API |
+| RNF-MAN-04 | La API cuenta con pruebas unitarias, ejecutables sin base de datos, de sus controllers, del middleware de autenticación y de las reglas de pertenencia y de pago del service de gastos. Además tiene pruebas de integración por HTTP contra un Postgres local temporal, que cubren pagos, sesión de cuentas, compartidos y bajas en cascada. | API |
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, en `src/utils/` y en los `utils/` de cada pantalla, no de componentes ni hooks. En la API no tienen pruebas los services de categorías, dashboard y usuario, y el de entidades las tiene solo en parte.
+*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, del manejo de errores de la API y del store de la sesión de cuentas, no de componentes ni hooks. En la API no tienen pruebas unitarias los services de categorías, dashboard y usuario.
 
 ## POR — Portabilidad y entorno
 
@@ -123,7 +126,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando |
 | Pusher Channels | Notificaciones en tiempo real | RNF-DIS-04 |
-| dolarapi.com | Cotización de USD, EUR, BRL, CLP y UYU | RNF-DIS-05 |
+| API de Estadísticas Cambiarias del BCRA | Cotización de las 35 monedas extranjeras soportadas | RNF-DIS-05 |
 | Firebase Analytics | Registro de errores de la app móvil | RNF-DIS-06 |
 
 ## LOC — Localización
@@ -132,7 +135,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | RNF-LOC-01 | La interfaz y los mensajes de error de los clientes están en español rioplatense y en inglés. Los términos del dominio en código y API están en español. | Todos |
 | RNF-LOC-02 | Los clientes no contienen textos fijos en el código de interfaz: todos provienen de los archivos de localización, en español e inglés. | Web, App |
-| RNF-LOC-03 | Los montos se muestran con el formato y el símbolo de su moneda (ARS, USD, EUR, BRL, CLP, UYU). | Web, App |
+| RNF-LOC-03 | Los montos se muestran con el formato y el símbolo o código de su moneda. | Web, App |
 | RNF-LOC-04 | Los campos de monto (monto del gasto, sueldo) agregan los puntos de miles mientras se escribe y usan la coma como separador decimal, en cualquier idioma. | Web |
 | RNF-LOC-05 | Salvo que el usuario elija un idioma (RF-CFG-06), se toma del navegador o del dispositivo: se usa el primero de sus idiomas preferidos que esté soportado y, si ninguno lo está, inglés. | Web, App |
 | RNF-LOC-06 | Las fechas, los números y los montos se muestran con el formato del idioma activo (`es-AR` o `en-US`). | Web, App |

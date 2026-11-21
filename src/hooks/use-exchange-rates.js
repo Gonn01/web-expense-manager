@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Currency } from '@/utils/enums';
+import { parseExchangeRates } from '@/utils/parse-exchange-rates';
 
 const CACHE_DURATION_MS = 5 * 60 * 1000;
-const FOREIGN_CURRENCIES = Object.values(Currency).filter((c) => c !== Currency.ARS);
+const EXCHANGE_RATES_URL = 'https://api.bcra.gob.ar/estadisticascambiarias/v1.0/Cotizaciones';
 let _cache = null;
 let _cacheTime = null;
 
@@ -22,17 +22,14 @@ export function useExchangeRates() {
         const fetchRates = async () => {
             setLoading(true);
             try {
-                const res = await fetch('https://dolarapi.com/v1/cotizaciones', {
+                const res = await fetch(EXCHANGE_RATES_URL, {
                     signal: controller.signal,
                 });
-                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(`Exchange rates request failed: ${res.status}`);
+                }
 
-                const parsed = Object.fromEntries(
-                    FOREIGN_CURRENCIES.map((cur) => [
-                        cur,
-                        data.find((d) => d.moneda === cur)?.venta ?? null,
-                    ]),
-                );
+                const parsed = parseExchangeRates(await res.json());
 
                 _cache = parsed;
                 _cacheTime = Date.now();

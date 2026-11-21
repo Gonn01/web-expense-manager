@@ -95,10 +95,14 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
         buf.push(`${t('share.totalYouOweMe')} ${formatAmount(totalCreditor)} ${cur}\n\n\n`);
     }
 
-    for (const [code, name] of Object.entries(RATE_NAMES)) {
+    for (const code of Object.values(Currency)) {
         const used = activeItems.some((i) => i.currency_type === code);
         if (used && rates?.[code]) {
-            buf.push(`${t('share.rateUsed', { name: t(name), code, rate: rates[code] })}\n\n\n`);
+            const rate = rates[code];
+            const line = RATE_NAMES[code]
+                ? t('share.rateUsed', { name: t(RATE_NAMES[code]), code, rate })
+                : t('share.rateUsedGeneric', { code, rate });
+            buf.push(`${line}\n\n\n`);
         }
     }
 

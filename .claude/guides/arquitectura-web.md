@@ -111,7 +111,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - **Textos e idioma**: todo texto visible va en `src/i18n/locales/es.json` y `en.json`, con las mismas claves, variables y etiquetas (lo verifica `utils/locale-catalog.test.js`). Se usa `t` de `@/i18n`, también fuera de React; `<Trans>` para texto con marcado, y claves `_one`/`_other` para plurales. No se arman oraciones concatenando fragmentos. Para `Intl` y `toLocale*` se usa `getIntlLocale()`. El idioma es una preferencia por navegador (RF-CFG-06: `system`, `es`, `en`; clave `ui:language`, `IdiomaCard` en Configuración, `getLanguagePreference` y `setLanguagePreference` de `@/i18n`). `system` sigue al navegador (primer idioma soportado; si no hay, inglés). Cambiar el idioma activo recarga la app, porque algunas etiquetas se calculan al cargar el módulo. Los valores de datos de la API (`EGRESO`, `INGRESO`, estados) no se traducen.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.
-- Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/` y reglas de negocio sin red ni DOM; no hay entorno `jsdom` configurado.
+- Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/`, `services/error-handler.js` y `store/use-settlement-store.js`, sin red ni DOM; no hay entorno `jsdom` configurado.
 - `npm test` antes de dar por terminado un cambio que toque lógica cubierta por pruebas.
 
 ## 8. Checklist: feature nueva de punta a punta
@@ -132,6 +132,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 
 ## 9. Trampas
 
-- Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código, y solo cubren funciones puras de `utils/`: componentes, hooks y stores no tienen pruebas (no hay entorno DOM ni Testing Library instalados). Para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función.
+- Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código. Componentes y hooks no tienen pruebas (no hay entorno DOM ni Testing Library instalados). Para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función.
+- No usar `vi.mock` con el alias `@/`: en Windows el mock se ignora si el directorio de trabajo tiene la unidad en minúscula (`d:\`, como lo abre VS Code), y la prueba pasa o falla según desde dónde se corra. Para reemplazar acciones de un store se usa `setState`; para simular HTTP, `axios.defaults.adapter` antes de importar el módulo con `await import` (ver `store/use-settlement-store.test.js`).
 - Los textos que redacta la API (errores sin clave en `utils/error-catalog.js`, detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés.
 - Los campos de monto usan punto de miles y coma decimal también en inglés (`utils/amount-input.js`).
