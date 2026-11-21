@@ -384,6 +384,25 @@ export const rechazarReversion = async (movementId, token) => {
     return data.data;
 };
 
+const postEdicion = async (url, body, token) => {
+    const { data } = await api.post(url, body, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const solicitarEdicionCompartida = (gastoId, changes, token) =>
+    postEdicion(`/compartidos/gastos/${gastoId}/edicion`, changes, token);
+
+export const aprobarEdicionCompartida = (editId, token) =>
+    postEdicion(`/compartidos/ediciones/${editId}/aprobar`, {}, token);
+
+export const rechazarEdicionCompartida = (editId, token) =>
+    postEdicion(`/compartidos/ediciones/${editId}/rechazar`, {}, token);
+
+export const cancelarEdicionCompartida = (editId, token) =>
+    postEdicion(`/compartidos/ediciones/${editId}/cancelar`, {}, token);
+
 export const cancelarReversion = async (movementId, token) => {
     const { data } = await api.post(
         `/compartidos/pagos/${movementId}/reversion/cancelar`,

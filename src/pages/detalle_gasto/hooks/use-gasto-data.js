@@ -8,7 +8,10 @@ import {
     fetchGastoById,
     updateGasto,
     deleteGasto,
+    solicitarEdicionCompartida,
+    cancelarEdicionCompartida,
 } from '@/services/api';
+import { sharedEditChanges } from '@/utils/shared-edit';
 import { isSettlementActive } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
@@ -49,6 +52,10 @@ export function useGastoData() {
             'pago.reversion_cancelada': refreshIfShared,
             'pago.reversion_aceptada': refreshIfShared,
             'pago.reversion_rechazada': refreshIfShared,
+            'edicion.solicitada': refreshIfShared,
+            'edicion.aprobada': refreshIfShared,
+            'edicion.rechazada': refreshIfShared,
+            'edicion.cancelada': refreshIfShared,
         };
     }, [id, token]);
 
@@ -69,8 +76,32 @@ export function useGastoData() {
 
     async function actualizar(payload) {
         if (!gasto) return;
-        const updated = await updateGasto(gasto.id, payload, token);
+        const changes = gasto.shared_edit_locks ? sharedEditChanges(gasto, payload) : null;
+        if (!changes) {
+            const updated = await updateGasto(gasto.id, payload, token);
+            setGasto(updated);
+            return;
+        }
+        await solicitarEdicionCompartida(gasto.id, changes, token);
+        const { name, image_url, category_ids } = payload;
+        const updated = await updateGasto(gasto.id, { name, image_url, category_ids }, token);
         setGasto(updated);
+        const otra = gasto.shared_counterparty?.name ?? 'la otra persona';
+        useSnackbarStore
+            .getState()
+            .show(`Le pedimos a ${otra} que apruebe los cambios.`, 'success', 'pending_actions');
+    }
+
+    async function cancelarEdicion() {
+        const request = gasto?.pending_edit_request;
+        if (!request) return;
+        try {
+            await cancelarEdicionCompartida(request.id, token);
+            await load(true);
+            useSnackbarStore.getState().show('Solicitud de edición cancelada.', 'success');
+        } catch (err) {
+            console.error('Error cancelando la edición', err);
+        }
     }
 
     async function transferir(entityId, entityName) {
@@ -154,6 +185,7 @@ export function useGastoData() {
         settleQuota,
         revertirPago,
         cancelarReversion,
+        cancelarEdicion,
         eliminar,
         load,
         loading,

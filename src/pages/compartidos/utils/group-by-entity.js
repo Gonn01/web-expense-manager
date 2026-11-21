@@ -47,6 +47,13 @@ export function reversionGroup(reversion, entities, userId) {
     return groupFor(entityLinkedTo(entities, otherUserId), otherName);
 }
 
+export function edicionGroup(edicion, entities, userId) {
+    const iRequested = String(edicion.requested_by_user_id) === String(userId);
+    const otherUserId = iRequested ? edicion.counterparty_user_id : edicion.requested_by_user_id;
+    const otherName = iRequested ? edicion.counterparty_name : edicion.requester_name;
+    return groupFor(entityLinkedTo(entities, otherUserId), otherName);
+}
+
 export function groupByEntity(items) {
     const groups = new Map();
     for (const item of items) {

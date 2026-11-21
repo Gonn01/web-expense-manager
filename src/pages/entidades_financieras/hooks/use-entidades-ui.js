@@ -6,8 +6,16 @@ import { useDialogStore } from '@/store/use-dialog-store';
 
 export function useEntidadesUI() {
     const navigate = useNavigate();
-    const { entities, deletedEntities, loading, crearEntidad, eliminarEntidad, restaurarEntidad } =
-        useEntidadesData();
+    const {
+        entities,
+        deletedEntities,
+        loading,
+        crearEntidad,
+        eliminarEntidad,
+        restaurarEntidad,
+        toggleFavorito,
+    } = useEntidadesData();
+    const [favoriteBusyIds, setFavoriteBusyIds] = useState(() => new Set());
 
     const [query, setQuery] = useState('');
     const [openNew, setOpenNew] = useState(false);
@@ -21,7 +29,11 @@ export function useEntidadesUI() {
             ? entities.filter((e) => (e.name || '').toLowerCase().includes(q))
             : [...entities];
 
-        return result.sort((a, b) => (b.activeExpenses ?? 0) - (a.activeExpenses ?? 0));
+        return result.sort(
+            (a, b) =>
+                Number(Boolean(b.is_favorite)) - Number(Boolean(a.is_favorite)) ||
+                (b.cantidad ?? 0) - (a.cantidad ?? 0),
+        );
     }, [query, entities]);
 
     const showEmpty = !loading && entities.length === 0 && filtered.length === 0;
@@ -55,7 +67,24 @@ export function useEntidadesUI() {
         }
     }
 
+    async function handleToggleFavorite(entity) {
+        setFavoriteBusyIds((prev) => new Set(prev).add(entity.id));
+        try {
+            await toggleFavorito(entity);
+        } catch (err) {
+            console.error('Error marking entity as favorite:', err);
+        } finally {
+            setFavoriteBusyIds((prev) => {
+                const next = new Set(prev);
+                next.delete(entity.id);
+                return next;
+            });
+        }
+    }
+
     return {
+        favoriteBusyIds,
+        handleToggleFavorite,
         query,
         setQuery,
         openNew,

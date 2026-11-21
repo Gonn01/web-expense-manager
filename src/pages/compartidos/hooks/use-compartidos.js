@@ -11,6 +11,9 @@ import {
     aceptarReversion as aceptarReversionApi,
     rechazarReversion as rechazarReversionApi,
     cancelarReversion as cancelarReversionApi,
+    aprobarEdicionCompartida,
+    rechazarEdicionCompartida,
+    cancelarEdicionCompartida,
     createGasto,
 } from '@/services/api';
 import useAuth from '@/store/use-auth-store';
@@ -28,6 +31,7 @@ export function useCompartidos() {
     const [compartidos, setCompartidos] = useState({ recibidos: [], emitidos: [] });
     const [pagos, setPagos] = useState({ porConfirmar: [], esperando: [] });
     const [reversiones, setReversiones] = useState({ porConfirmar: [], esperando: [] });
+    const [ediciones, setEdiciones] = useState({ porConfirmar: [], esperando: [] });
     const [loading, setLoading] = useState(true);
     const [loadingAction, setLoadingAction] = useState(null);
 
@@ -39,12 +43,16 @@ export function useCompartidos() {
                 const data = await fetchCompartidos(token);
                 const pagosData = data.pagos ?? { porConfirmar: [], esperando: [] };
                 const reversionesData = data.reversiones ?? { porConfirmar: [], esperando: [] };
+                const edicionesData = data.ediciones ?? { porConfirmar: [], esperando: [] };
                 setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
                 setPagos(pagosData);
                 setReversiones(reversionesData);
+                setEdiciones(edicionesData);
                 setPendingCount(countGastosPorResolver(data));
                 setPendingPaymentsCount(
-                    pagosData.porConfirmar.length + reversionesData.porConfirmar.length,
+                    pagosData.porConfirmar.length +
+                        reversionesData.porConfirmar.length +
+                        edicionesData.porConfirmar.length,
                 );
             } catch (err) {
                 console.error('Error cargando compartidos', err);
@@ -74,6 +82,10 @@ export function useCompartidos() {
             'pago.reversion_cancelada': reloadSilently,
             'pago.reversion_aceptada': reloadSilently,
             'pago.reversion_rechazada': reloadSilently,
+            'edicion.solicitada': reloadSilently,
+            'edicion.aprobada': reloadSilently,
+            'edicion.rechazada': reloadSilently,
+            'edicion.cancelada': reloadSilently,
         };
     }, [load]);
 
@@ -256,6 +268,45 @@ export function useCompartidos() {
         [runPagoAction],
     );
 
+    const runEdicionAction = useCallback(
+        async (editId, kind, apiCall, successMessage) => {
+            setLoadingAction({ id: `edicion-${editId}`, kind });
+            try {
+                await apiCall(editId, token);
+                useSnackbarStore.getState().show(successMessage, 'success');
+                await load({ silent: true });
+            } catch (err) {
+                console.error(successMessage, err);
+            } finally {
+                setLoadingAction(null);
+            }
+        },
+        [token, load],
+    );
+
+    const aprobarEdicion = useCallback(
+        (editId) =>
+            runEdicionAction(editId, 'aprobar', aprobarEdicionCompartida, 'Edición aprobada'),
+        [runEdicionAction],
+    );
+
+    const rechazarEdicion = useCallback(
+        (editId) =>
+            runEdicionAction(editId, 'rechazar', rechazarEdicionCompartida, 'Edición rechazada'),
+        [runEdicionAction],
+    );
+
+    const cancelarEdicion = useCallback(
+        (editId) =>
+            runEdicionAction(
+                editId,
+                'cancelar',
+                cancelarEdicionCompartida,
+                'Solicitud de edición cancelada',
+            ),
+        [runEdicionAction],
+    );
+
     const crearGasto = useCallback(
         async (payload) => {
             await createGasto(payload, token);
@@ -268,6 +319,10 @@ export function useCompartidos() {
         compartidos,
         pagos,
         reversiones,
+        ediciones,
+        aprobarEdicion,
+        rechazarEdicion,
+        cancelarEdicion,
         loading,
         loadingAction,
         aprobar,

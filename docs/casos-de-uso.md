@@ -71,6 +71,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-43 | Cancelar pedido de reversión | Usuario | 05 |
 | CU-44 | Ver tutorial de bienvenida | Usuario | 01 |
 | CU-45 | Descartar gasto rechazado | Usuario | 05 |
+| CU-46 | Pedir y responder edición de un gasto compartido | Usuario, Contraparte | 05 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -582,7 +583,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 1a. El usuario elige "Copiar" en una entidad del snapshot: el texto incluye solo esa entidad.
     - 1b. El usuario elige "Copiar" en una entidad del dashboard o en el detalle de una entidad: el texto resume los gastos activos de esa entidad, sin los postergados.
-    - 1c. En la web, si el navegador soporta compartir, el usuario elige "Compartir" en el snapshot o en una de sus entidades: el sistema abre el menú nativo para compartir con el mismo texto y el usuario elige la app (por ejemplo WhatsApp). Si cierra el menú, no pasa nada; si compartir falla, el sistema copia el texto al portapapeles y confirma que se copió.
+    - 1c. En la app, o en la web si el navegador soporta compartir, el usuario elige "Compartir" en el snapshot o en una de sus entidades: el sistema abre el menú nativo para compartir con el mismo texto y el usuario elige la app (por ejemplo WhatsApp). Si cierra el menú, no pasa nada; si compartir falla, el sistema copia el texto al portapapeles y confirma que se copió.
 - **Nota**: el sistema no envía mensajes por su cuenta: deja el texto en el portapapeles o lo entrega al menú de compartir del sistema.
 
 ---
@@ -692,6 +693,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. El sistema publica un evento en el canal del actor a través de Pusher.
     3. Pusher entrega el evento al cliente.
     4. El cliente vuelve a obtener los datos de las pantallas afectadas y actualiza los contadores.
+    5. El cliente muestra un aviso con quién hizo la acción.
 - **Eventos**
 
     | Evento | Lo origina | Lo recibe |
@@ -708,9 +710,15 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     | `pago.reversion_cancelada` | CU-43 | La otra parte |
     | `pago.reversion_aceptada` | CU-42 | Quien pidió la reversión |
     | `pago.reversion_rechazada` | CU-42 | Quien pidió la reversión |
+    | `edicion.solicitada` | CU-46 | La otra parte |
+    | `edicion.cancelada` | CU-46 | La otra parte |
+    | `edicion.aprobada` | CU-46 | Las dos partes |
+    | `edicion.rechazada` | CU-46 | Quien pidió la edición |
 
 - **Flujos alternativos**
     - 2a. Pusher no está disponible: la acción de origen igual se completa; el actor verá el cambio al recargar o navegar.
+    - 5a. La app Flutter está en segundo plano: el aviso es una notificación local del sistema. Al tocarla, la app abre Compartidos.
+    - 5b. El sistema cerró la app o cortó su conexión: el evento no llega y el actor verá el cambio al volver a abrirla.
 
 ### CU-40 — Retirar pago compartido
 
@@ -790,6 +798,22 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 3a. El gasto ya no está rechazado: el sistema lo informa.
 - **Postcondición**: el gasto deja de aparecer para las dos partes y puede restaurarse desde CU-16, en estado rechazado.
 
+### CU-46 — Pedir y responder edición de un gasto compartido
+
+- **Actores**: Usuario (quien pide); Contraparte (quien responde)
+- **Requerimientos**: RF-CMP-18, RF-GAS-15
+- **Precondición**: el gasto está compartido, activo y sin otra solicitud de edición pendiente.
+- **Flujo principal**
+    1. El usuario edita monto, moneda, tipo, frecuencia o cuotas y guarda.
+    2. El sistema registra la solicitud sin modificar los gastos y notifica a la contraparte (CU-38).
+    3. La contraparte ve los cambios en Compartidos y los aprueba, previa confirmación.
+    4. El sistema aplica los cambios en los dos gastos, lo registra en ambos historiales y notifica a las dos partes.
+- **Flujos alternativos**
+    - 3a. La contraparte rechaza: los gastos no cambian y se notifica a quien pidió la edición.
+    - 3b. Quien la pidió la cancela mientras está pendiente: los gastos no cambian y se notifica a la contraparte.
+    - 2a o 4a. Un bloqueo de cualquiera de los dos gastos impide el cambio: el sistema lo informa y no aplica nada.
+- **Postcondición**: la solicitud queda resuelta y cada paso permanece en el historial de los dos gastos.
+
 ---
 
 ## Diagramas de comportamiento
@@ -826,7 +850,7 @@ stateDiagram-v2
     Revertido --> [*]
 ```
 
-Al confirmarse, el pago se registra también en la copia de la contraparte y los dos quedan vinculados: la reversión los elimina juntos y deja en cada gasto una línea del pago revertido y un reembolso. Cada transición agrega su línea al historial del gasto (RF-GAS-07), sin perder el paso anterior. Estos estados son los que muestra cada ítem compartido en el detalle de un snapshot (RF-CTA-12).
+Al confirmarse, el pago se registra también en la copia de la contraparte y los dos quedan vinculados: la reversión los marca juntos como revertidos, sin borrarlos, y deja un reembolso en cada gasto. Cada transición agrega su línea al historial del gasto (RF-GAS-07), sin perder el paso anterior. Estos estados son los que muestra cada ítem compartido en el detalle de un snapshot (RF-CTA-12).
 
 ### Pago diferido en una sesión de cuentas
 

@@ -11,6 +11,8 @@ import { ExpenseType } from '@/utils/enums';
 import PendingApprovalNotice from './PendingApprovalNotice';
 import { ENTITY_STARTS_COLLAPSED, pendingCountOf } from '../utils/dashboard-groups';
 import { pendingApprovalLabel } from '../utils/pending-approval-text';
+import { filteredCopyWarning, hiddenSummaryCount } from '../utils/copy-summary';
+import { useSnackbarStore } from '@/store/use-snackbar-store';
 
 function EntityAvatar({ name, done }) {
     const initials =
@@ -192,13 +194,19 @@ export default function ActiveFinancialEntity({
                             size="sm"
                             title={`Copiar resumen de ${group.name}`}
                             getText={() =>
-                                buildWhatsAppText(
-                                    groups.find((g) => g.id === group.id) ?? group,
-                                    currency,
-                                    preferredCurrency,
-                                    rates,
-                                )
+                                buildWhatsAppText(group, currency, preferredCurrency, rates)
                             }
+                            onCopied={() => {
+                                const warning = filteredCopyWarning(
+                                    hiddenSummaryCount(
+                                        groups.find((g) => g.id === group.id) ?? group,
+                                        group,
+                                    ),
+                                );
+                                if (warning) {
+                                    useSnackbarStore.getState().show(warning, 'info', 'filter_alt');
+                                }
+                            }}
                         />
                         {entityDone ? (
                             <button

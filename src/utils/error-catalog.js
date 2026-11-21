@@ -115,6 +115,19 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
     },
 
+    EDICION_NOT_FOUND: {
+        message: 'Esa solicitud de edición ya no está pendiente.',
+        variant: 'snackbar',
+    },
+    EDICION_YA_SOLICITADA: {
+        message: 'Este gasto ya tiene una solicitud de edición pendiente.',
+        variant: 'snackbar',
+    },
+    EDICION_SIN_CAMBIOS: {
+        message: 'La solicitud no cambia ningún dato del gasto.',
+        variant: 'snackbar',
+    },
+
     SETTLEMENT_REQUIRED: {
         message: 'Necesitás una sesión de "Hacer cuentas" abierta para esto.',
         variant: 'snackbar',

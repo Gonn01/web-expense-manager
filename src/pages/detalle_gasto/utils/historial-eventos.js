@@ -21,6 +21,17 @@ const LABELS = {
     SHARED_APPROVED: 'Aprobado',
     SHARED_REJECTED: 'Rechazado',
     SHARED_RETRIED: 'Reenviado',
+    EDIT_REQUESTED: 'Edición pedida',
+    EDIT_APPROVED: 'Edición aprobada',
+    EDIT_REJECTED: 'Edición rechazada',
+    EDIT_CANCELLED: 'Edición cancelada',
+};
+
+const EDIT_TITLES = {
+    EDIT_REQUESTED: 'Edición pedida por',
+    EDIT_APPROVED: 'Edición aprobada por',
+    EDIT_REJECTED: 'Edición rechazada por',
+    EDIT_CANCELLED: 'Edición cancelada por',
 };
 
 const PAYMENT_TYPES = new Set([
@@ -91,6 +102,11 @@ export function paymentNumbers(movements) {
     return numbers;
 }
 
+export function lastPayment(movements = []) {
+    const pagos = movements.filter((m) => m.movement_type === 'PAYMENT').sort(byPaymentDate);
+    return pagos.at(-1) ?? null;
+}
+
 export function paymentLabel(gasto, number) {
     if (number == null) return null;
     if (gasto.fixed_expense) return `Pago #${number}`;
@@ -129,6 +145,13 @@ export function eventTitle(movement, gasto, { number, counterpartyName, currentU
             return `Gasto compartido rechazado por ${actor}`;
         case 'SHARED_RETRIED':
             return `Gasto compartido reenviado por ${actor}`;
+        case 'EDIT_REQUESTED':
+        case 'EDIT_APPROVED':
+        case 'EDIT_REJECTED':
+        case 'EDIT_CANCELLED': {
+            const title = `${EDIT_TITLES[movement.movement_type]} ${actor}`;
+            return movement.detail?.trim() ? `${title}\n${movement.detail}` : title;
+        }
         case 'PAYMENT_REJECTED':
             return `Pago rechazado por ${otra}`;
         case 'PAYMENT_WITHDRAWN':
@@ -186,14 +209,14 @@ export function revertDialog({ movement, gasto, number, counterpartyName, settle
     if (gasto.shared_counterparty) {
         return {
             title: '¿Pedir la reversión?',
-            message: `Se le va a pedir a ${otra} que confirme la reversión del pago de ${cual}. Cuando la acepte, el pago se elimina en los dos gastos.`,
+            message: `Se le va a pedir a ${otra} que confirme la reversión del pago de ${cual}. Cuando la acepte, el pago queda revertido en los dos gastos.`,
             confirmLabel: 'Pedir reversión',
         };
     }
     return {
         title: '¿Revertir pago?',
         message:
-            `Se eliminará el pago de ${cual} y se registrará un reembolso. Esta acción no se puede deshacer.` +
+            `El pago de ${cual} quedará revertido en el historial y se registrará un reembolso. Esta acción no se puede deshacer.` +
             (settlementActive
                 ? ''
                 : ' No hay una sesión de «Hacer cuentas» abierta: el reembolso queda en el historial del gasto, pero no en el historial de cuentas.'),

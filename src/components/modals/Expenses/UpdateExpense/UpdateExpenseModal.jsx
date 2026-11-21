@@ -38,7 +38,7 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
         [entities, gasto],
     );
 
-    const locks = gasto.edit_locks ?? {};
+    const locks = gasto.shared_edit_locks ?? gasto.edit_locks ?? {};
     const paidLock =
         locks.payed_quotas ?? 'Los pagos se registran con Pagar y se deshacen con Revertir.';
 
@@ -238,6 +238,14 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                 </header>
 
                 <div className="p-4 sm:p-6 space-y-6">
+                    {gasto.shared_edit_locks && (
+                        <p className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <Icon name="group" className="text-base shrink-0 mt-px" />
+                            Los cambios de monto, moneda, tipo, frecuencia o cuotas se aplican
+                            cuando {gasto.shared_counterparty?.name ?? 'la otra persona'} los
+                            apruebe.
+                        </p>
+                    )}
                     <LockedField reason={locks.type}>
                         <ExpenseTypeSelector type={type} setType={setType} />
                     </LockedField>

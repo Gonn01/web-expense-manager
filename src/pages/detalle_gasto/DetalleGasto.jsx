@@ -6,6 +6,7 @@ import InfoItem from './components/InfoItem';
 import ProgresoPago from './components/ProgresoPago';
 import HistorialSection from './components/HistorialSection';
 import DeleteExpenseModal from './components/DeleteExpenseModal';
+import PendingEditBanner from './components/PendingEditBanner';
 import { useGastoUI } from './hooks/use-gasto-ui';
 import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
@@ -15,6 +16,8 @@ import TransferExpenseModal from '@/components/modals/Expenses/TransferExpense/T
 import CategoryBadges from '@/components/CategoryBadges';
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { useDialogStore } from '@/store/use-dialog-store';
+import { lastPayment, paymentNumbers, revertDialog } from './utils/historial-eventos';
 
 export default function DetalleGasto() {
     const {
@@ -24,6 +27,7 @@ export default function DetalleGasto() {
         settleQuota,
         revertirPago,
         cancelarReversion,
+        cancelarEdicion,
         actualizar,
         transferir,
         transferLock,
@@ -44,6 +48,23 @@ export default function DetalleGasto() {
     }
 
     if (!gasto) return null;
+
+    const ultimoPago = lastPayment(gasto.movements ?? []);
+    const revertirUltimoPago = () => {
+        const dialog = revertDialog({
+            movement: ultimoPago,
+            gasto,
+            number: paymentNumbers(gasto.movements ?? []).get(ultimoPago.id),
+            counterpartyName: gasto.shared_counterparty?.name,
+            settlementActive,
+        });
+        useDialogStore.getState().confirm({
+            ...dialog,
+            tone: 'error',
+            onConfirm: () => revertirPago(ultimoPago),
+        });
+    };
+
     return (
         <div className="w-full bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display">
             <div className="sm:px-2 md:px-6 lg:px-10 py-2 sm:py-6 flex justify-center">
@@ -56,8 +77,11 @@ export default function DetalleGasto() {
                             abrirTransferir={() => setTransferOpen(true)}
                             abrirEliminar={() => setDeleteOpen(true)}
                             transferLock={transferLock}
+                            onRevertLast={ultimoPago ? revertirUltimoPago : undefined}
+                            revertLastDisabled={ultimoPago?.reversal_requested_by_user_id != null}
                         />
                     ) : null}
+                    <PendingEditBanner gasto={gasto} onCancel={cancelarEdicion} />
                     <div className="bg-white dark:bg-[#111714] rounded-xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem

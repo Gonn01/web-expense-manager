@@ -24,6 +24,8 @@ export default function EntidadesFinancieras() {
         loading,
         handleSaveNew,
         handleDelete,
+        handleToggleFavorite,
+        favoriteBusyIds,
         restaurarEntidad,
         navigate,
     } = useEntidadesUI();
@@ -48,6 +50,8 @@ export default function EntidadesFinancieras() {
                 query={query}
                 navigate={navigate}
                 onDelete={handleDelete}
+                onToggleFavorite={handleToggleFavorite}
+                favoriteBusyIds={favoriteBusyIds}
                 showEmpty={showEmpty}
                 viewMode={viewMode}
             />

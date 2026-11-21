@@ -2,7 +2,16 @@ import { useState } from 'react';
 import EntityCard from '@/pages/entidades_financieras/components/EntityCard';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
 
-export default function EntitiesList({ filtered, query, navigate, onDelete, showEmpty, viewMode }) {
+export default function EntitiesList({
+    filtered,
+    query,
+    navigate,
+    onDelete,
+    onToggleFavorite,
+    favoriteBusyIds,
+    showEmpty,
+    viewMode,
+}) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selected, setSelected] = useState(null);
 
@@ -31,6 +40,8 @@ export default function EntitiesList({ filtered, query, navigate, onDelete, show
                         entity={e}
                         onClick={() => navigate(`/app/entidades/${e.id}`)}
                         onDelete={openDelete}
+                        onToggleFavorite={onToggleFavorite}
+                        favoriteBusy={Boolean(favoriteBusyIds?.has(e.id))}
                     />
                 ))}
 

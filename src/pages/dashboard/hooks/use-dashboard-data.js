@@ -298,6 +298,7 @@ export function useDashboardData() {
             'pago.rechazado': reloadSilently,
             'pago.retirado': reloadSilently,
             'pago.reversion_aceptada': reloadSilently,
+            'edicion.aprobada': reloadSilently,
         }),
         [onCompartidoRespondido, onPagoPendiente, reloadSilently],
     );

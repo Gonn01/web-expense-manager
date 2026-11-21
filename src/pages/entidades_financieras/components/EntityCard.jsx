@@ -1,6 +1,13 @@
 import EntityIcon from './EntityIcon';
+import Icon from '@/components/Icon';
 
-export default function EntityCard({ entity, onClick, onDelete }) {
+export default function EntityCard({
+    entity,
+    onClick,
+    onDelete,
+    onToggleFavorite,
+    favoriteBusy = false,
+}) {
     return (
         <div
             className="group relative w-full text-left flex gap-4 bg-white dark:bg-slate-800/50 
@@ -9,7 +16,28 @@ export default function EntityCard({ entity, onClick, onDelete }) {
                        transition-all cursor-pointer"
             onClick={() => onClick?.(entity)}
         >
-            <div className="flex items-center gap-4 min-w-0 pr-8">
+            <div className="flex items-center gap-3 min-w-0 pr-8">
+                <button
+                    type="button"
+                    disabled={favoriteBusy}
+                    aria-label={
+                        entity.is_favorite
+                            ? 'Quitar entidad de favoritos'
+                            : 'Marcar entidad como favorita'
+                    }
+                    title={entity.is_favorite ? 'Quitar de favoritos' : 'Marcar como favorita'}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite?.(entity);
+                    }}
+                    className={`shrink-0 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait ${
+                        entity.is_favorite
+                            ? 'text-amber-400 hover:text-amber-500'
+                            : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'
+                    }`}
+                >
+                    <Icon name="star" className="text-xl" filled={Boolean(entity.is_favorite)} />
+                </button>
                 <EntityIcon type={entity.type} />
 
                 <div className="flex flex-1 flex-col justify-center min-w-0">

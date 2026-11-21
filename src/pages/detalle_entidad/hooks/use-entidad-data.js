@@ -58,6 +58,7 @@ export function useEntidadData() {
             'pago.reversion_cancelada': reloadSilently,
             'pago.reversion_aceptada': reloadSilently,
             'pago.reversion_rechazada': reloadSilently,
+            'edicion.aprobada': reloadSilently,
         };
     }, [loadEntity]);
 

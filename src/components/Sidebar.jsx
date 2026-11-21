@@ -145,6 +145,43 @@ export default function Sidebar() {
         useSnackbarStore.getState().show(`${quien} rechazó revertir el pago`, 'error');
     }, []);
 
+    const handleEdicionSolicitada = useCallback(
+        ({ actorName, gastoName } = {}) => {
+            const quien = actorName || 'La otra persona';
+            const que = gastoName ? ` "${gastoName}"` : ' un gasto';
+            setPendingPaymentsCount((c) => c + 1);
+            useSnackbarStore
+                .getState()
+                .show(`${quien} pidió editar${que}. Respondé en Compartidos`, 'success', 'edit');
+        },
+        [setPendingPaymentsCount],
+    );
+
+    const handleEdicionCancelada = useCallback(
+        ({ actorName } = {}) => {
+            const quien = actorName || 'La otra persona';
+            loadPendingCount(token);
+            useSnackbarStore.getState().show(`${quien} canceló un pedido de edición`);
+        },
+        [loadPendingCount, token],
+    );
+
+    const handleEdicionAprobada = useCallback(
+        ({ actorId, actorName, gastoName } = {}) => {
+            if (String(actorId) === String(user?.id)) return;
+            const quien = actorName || 'La otra persona';
+            const que = gastoName ? ` de "${gastoName}"` : '';
+            useSnackbarStore.getState().show(`${quien} aprobó la edición${que}`, 'success');
+        },
+        [user?.id],
+    );
+
+    const handleEdicionRechazada = useCallback(({ actorName, gastoName } = {}) => {
+        const quien = actorName || 'La otra persona';
+        const que = gastoName ? ` de "${gastoName}"` : '';
+        useSnackbarStore.getState().show(`${quien} rechazó la edición${que}`, 'error');
+    }, []);
+
     const pusherEvents = useMemo(
         () => ({
             'compartido.nuevo': handleNuevo,
@@ -159,8 +196,16 @@ export default function Sidebar() {
             'pago.reversion_cancelada': handleReversionCancelada,
             'pago.reversion_aceptada': handleReversionAceptada,
             'pago.reversion_rechazada': handleReversionRechazada,
+            'edicion.solicitada': handleEdicionSolicitada,
+            'edicion.cancelada': handleEdicionCancelada,
+            'edicion.aprobada': handleEdicionAprobada,
+            'edicion.rechazada': handleEdicionRechazada,
         }),
         [
+            handleEdicionSolicitada,
+            handleEdicionCancelada,
+            handleEdicionAprobada,
+            handleEdicionRechazada,
             handleNuevo,
             handleAprobado,
             handleRechazado,

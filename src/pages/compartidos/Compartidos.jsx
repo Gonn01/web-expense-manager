@@ -3,6 +3,7 @@ import RecibidoCard from './components/RecibidoCard';
 import EmitidoCard from './components/EmitidoCard';
 import PagoCompartidoCard from './components/PagoCompartidoCard';
 import ReversionCard from './components/ReversionCard';
+import EdicionCard from './components/EdicionCard';
 import AprobarModal from './components/AprobarModal';
 import DescartarModal from './components/DescartarModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
@@ -15,6 +16,7 @@ import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import {
+    edicionGroup,
     emitidoGroup,
     groupByEntity,
     pagoGroup,
@@ -27,6 +29,10 @@ export default function Compartidos() {
         compartidos,
         pagos,
         reversiones,
+        ediciones,
+        aprobarEdicion,
+        rechazarEdicion,
+        cancelarEdicion,
         loading,
         loadingAction,
         aprobar,
@@ -116,6 +122,19 @@ export default function Compartidos() {
                 />
             ),
         })),
+        ...ediciones.porConfirmar.map((e) => ({
+            key: `edicion-${e.id}`,
+            group: edicionGroup(e, entities, user?.id),
+            element: (
+                <EdicionCard
+                    edicion={e}
+                    variant="porConfirmar"
+                    loading={loadingAction}
+                    onAprobar={aprobarEdicion}
+                    onRechazar={rechazarEdicion}
+                />
+            ),
+        })),
         ...recibidosPendientes.map((item) => ({
             key: `recibido-${item.id}`,
             group: recibidoGroup(item, entities),
@@ -176,6 +195,18 @@ export default function Compartidos() {
                     variant="esperando"
                     loading={loadingAction}
                     onCancelar={(id) => cancelarReversion(id)}
+                />
+            ),
+        })),
+        ...ediciones.esperando.map((e) => ({
+            key: `edicion-${e.id}`,
+            group: edicionGroup(e, entities, user?.id),
+            element: (
+                <EdicionCard
+                    edicion={e}
+                    variant="esperando"
+                    loading={loadingAction}
+                    onCancelar={cancelarEdicion}
                 />
             ),
         })),

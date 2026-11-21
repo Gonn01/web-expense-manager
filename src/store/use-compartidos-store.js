@@ -24,7 +24,8 @@ export const useCompartidosStore = create((set) => ({
             const count = countGastosPorResolver(data);
             const porConfirmar =
                 (data.pagos?.porConfirmar.length ?? 0) +
-                (data.reversiones?.porConfirmar.length ?? 0);
+                (data.reversiones?.porConfirmar.length ?? 0) +
+                (data.ediciones?.porConfirmar.length ?? 0);
             set({ pendingCount: count, pendingPaymentsCount: porConfirmar });
         } catch (err) {
             console.error('Error cargando compartidos pendientes', err);

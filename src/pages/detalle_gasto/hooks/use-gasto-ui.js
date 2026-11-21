@@ -15,6 +15,7 @@ export function useGastoUI() {
         settleQuota,
         revertirPago,
         cancelarReversion,
+        cancelarEdicion,
         eliminar,
         loading,
     } = useGastoData();
@@ -59,6 +60,7 @@ export function useGastoUI() {
         settleQuota,
         revertirPago,
         cancelarReversion,
+        cancelarEdicion,
         eliminar,
         onSeleccionAdjuntos,
         volverALista,

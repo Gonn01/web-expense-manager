@@ -67,7 +67,7 @@
 ## Metricas
 
 - [ ] egreso ingreso por categoria y cuanto de el sueldo ingresado representa
-- [ ] [PENDIENTE MOBILE] la app Flutter no tiene gráficos y guarda el sueldo pero no lo usa en ningún cálculo. En la web ya está: "Ver gráficos" en el header del dashboard y gráfico de categorías con cuota mensual (solo egresos, convertido a moneda preferida) + "% del sueldo" total y por categoría. Falta decidir si en mobile va un resumen simple o los gráficos completos.
+- [x] Gráficos en web y app Flutter: cuotas, montos y categorías con cuota mensual (solo egresos, convertido a moneda preferida) + "% del sueldo" total y por categoría.
 
 ## Adicionales
 
@@ -78,7 +78,8 @@
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
 - [x] dEFINIR TEMA MARKETING
 - [ ] Notificaciones de cuando tenes que pagar cosas
-- [ ] [PENDIENTE MOBILE] avisos de los eventos en tiempo real: la app Flutter no muestra ningún aviso cuando llega un evento de Pusher (compartido nuevo/aprobado/rechazado, pagos y reversiones), solo recarga los datos. En la web cada evento muestra un snackbar con quién hizo la acción (`Sidebar.jsx`). Para hacerlo, `PusherService` tiene que pasar también los datos del evento (`actorName`, `receiverName`, `gastoName`), porque hoy solo emite el nombre. Encararlo junto con las notificaciones push.
+- [x] avisos de los eventos en tiempo real en la app Flutter: snackbar con la app abierta y notificación local en segundo plano
+- [ ] notificaciones push para recibir eventos con la app cerrada
 - [ ] como hacemos para explicarle al usuario como usar el sistema
 - [ ] [REVISAR]el grafico del dashboard debe tener en cuenta si el usuario ya hizo las cuentas este mes, para saber en que mes empieza el grafico
 

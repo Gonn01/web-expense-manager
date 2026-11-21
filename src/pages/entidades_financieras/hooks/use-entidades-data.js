@@ -3,6 +3,7 @@ import {
     fetchFinancialEntities,
     createEntity,
     deleteFinancialEntity,
+    favoritoEntidad,
     restoreEntity,
     vincularUsuarioEntidad,
 } from '@/services/api';
@@ -71,6 +72,15 @@ export function useEntidadesData() {
         removeEntity(id);
     }
 
+    async function toggleFavorito(entity) {
+        const favorite = !entity.is_favorite;
+        await favoritoEntidad(entity.id, favorite, token);
+        setAllEntities((prev) =>
+            prev.map((e) => (e.id === entity.id ? { ...e, is_favorite: favorite } : e)),
+        );
+        useEntitiesStore.getState().updateEntity(entity.id, { is_favorite: favorite });
+    }
+
     async function restaurarEntidad(id) {
         await restoreEntity(id, token);
         const restored = allEntities.find((e) => e.id === id);
@@ -85,5 +95,6 @@ export function useEntidadesData() {
         crearEntidad,
         eliminarEntidad,
         restaurarEntidad,
+        toggleFavorito,
     };
 }

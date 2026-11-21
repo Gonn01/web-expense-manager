@@ -54,6 +54,10 @@ const MOVEMENT_STYLES = {
     [MovementType.SHARED_APPROVED]: { icon: 'check_circle', tone: 'success' },
     [MovementType.SHARED_REJECTED]: { icon: 'cancel', tone: 'danger' },
     [MovementType.SHARED_RETRIED]: { icon: 'replay', tone: 'info' },
+    [MovementType.EDIT_REQUESTED]: { icon: 'pending_actions', tone: 'warning' },
+    [MovementType.EDIT_APPROVED]: { icon: 'check_circle', tone: 'success' },
+    [MovementType.EDIT_REJECTED]: { icon: 'cancel', tone: 'danger' },
+    [MovementType.EDIT_CANCELLED]: { icon: 'remove_circle', tone: 'neutral' },
 };
 
 const FALLBACK_STYLE = { icon: 'event', tone: 'neutral' };

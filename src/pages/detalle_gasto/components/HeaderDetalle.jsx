@@ -9,6 +9,8 @@ export default function HeaderDetalle({
     abrirTransferir,
     abrirEliminar,
     transferLock,
+    onRevertLast,
+    revertLastDisabled = false,
 }) {
     const avisarTransferBloqueado = () =>
         useSnackbarStore.getState().show(transferLock, 'error', 'lock');
@@ -39,6 +41,18 @@ export default function HeaderDetalle({
                 <ActionsMenu
                     label="Opciones del gasto"
                     items={[
+                        ...(onRevertLast
+                            ? [
+                                  {
+                                      icon: 'undo',
+                                      label: gasto.shared_counterparty
+                                          ? 'Pedir reversión del último pago'
+                                          : 'Revertir último pago',
+                                      disabled: revertLastDisabled,
+                                      onClick: onRevertLast,
+                                  },
+                              ]
+                            : []),
                         {
                             icon: 'edit',
                             label: 'Editar gasto',

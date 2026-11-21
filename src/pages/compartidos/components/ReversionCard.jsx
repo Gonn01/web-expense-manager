@@ -19,7 +19,7 @@ export default function ReversionCard({
     const handleAceptar = async () => {
         const ok = await useDialogStore.getState().confirm({
             title: '¿Revertir el pago?',
-            message: `El pago de "${reversion.gasto_name}" se elimina en los dos gastos y queda un reembolso en el historial de cada uno.`,
+            message: `El pago de "${reversion.gasto_name}" queda revertido en los dos gastos, con un reembolso en el historial de cada uno.`,
             tone: 'danger',
             confirmLabel: 'Revertir',
         });

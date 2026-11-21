@@ -5,6 +5,10 @@ const BADGES = {
         label: 'Reversión',
         className: 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
     },
+    edicion: {
+        label: 'Edición',
+        className: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+    },
 };
 
 export default function TypeBadge({ type }) {
