@@ -9,6 +9,7 @@ import MultiPaymentSection from './components/MultiPaymentSection';
 import ModalActions from './components/ModalActions';
 import { t } from '@/i18n';
 import { Trans } from 'react-i18next';
+import { isAwaitingApproval } from '@/utils/expense-approval';
 
 export default function ConfirmInstallmentPaymentModal({
     open,
@@ -117,6 +118,18 @@ export default function ConfirmInstallmentPaymentModal({
                         <span>
                             <Trans
                                 i18nKey="payment.noSessionWarning"
+                                components={{ strong: <strong /> }}
+                            />
+                        </span>
+                    </div>
+                )}
+
+                {activeItems.some(isAwaitingApproval) && (
+                    <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-left text-xs text-amber-700 dark:text-amber-300">
+                        <Icon name="hourglass_top" className="text-base shrink-0 mt-px" />
+                        <span>
+                            <Trans
+                                i18nKey="payment.awaitingApprovalWarning"
                                 components={{ strong: <strong /> }}
                             />
                         </span>

@@ -23,7 +23,7 @@
                 "message": "La entidad ya no está vinculada a esa persona: solo podés descartar el gasto."
             },
             "GASTO_NO_ACTIVO": {
-                "message": "Este gasto no está activo: la otra persona todavía no lo aceptó."
+                "message": "Este gasto no está activo: la otra persona lo rechazó."
             },
             "GASTO_YA_SALDADO": {
                 "message": "Ese gasto ya tiene todas sus cuotas pagas."
@@ -834,6 +834,8 @@
         "verbMark": "marcar",
         "verbRecord": "registrar",
         "noSessionWarning": "No hay una sesión de «Hacer cuentas» abierta. Este pago va a quedar en el <strong>historial del gasto</strong>, pero <strong>no en el historial de cuentas</strong>.",
+        "awaitingApprovalWarning": "La otra persona todavía no aceptó este gasto. El pago va a quedar <strong>pendiente</strong> hasta que lo acepte y lo confirme.",
+        "sharedPaidQuotasStayPending": "Esta entidad está vinculada a otra persona: las cuotas que marques como pagadas van a quedar pendientes hasta que acepte el gasto y confirme cada pago.",
         "ofAmount": "de {{amount}}",
         "amountToPay": "Monto a pagar ({{currency}})",
         "inCurrency": "En {{currency}}"

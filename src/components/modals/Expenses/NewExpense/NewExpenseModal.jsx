@@ -20,6 +20,7 @@ import PaymentEntitySection from '../components/PaymentEntitySection';
 import ExpenseFormErrors from '../components/ExpenseFormErrors';
 import { validateExpenseForm, focusFirstError, exceedsMaxInstallments } from '../validate-expense';
 import { t } from '@/i18n';
+import { paidQuotasStayPending } from '@/utils/expense-approval';
 
 export default function NewExpenseModal({
     onClose,
@@ -77,6 +78,9 @@ export default function NewExpenseModal({
         ? totalInstallments > 0 && paid >= totalInstallments
         : !isFixed && isPaid;
     const postponed = isPostponed && !fullyPaid;
+    const registeredPaidQuotas = isInstallment ? paid : !isFixed && isPaid ? 1 : 0;
+    const selectedEntity = entities.find((e) => String(e.id) === String(entity));
+    const showSharedPaidNote = paidQuotasStayPending(selectedEntity, registeredPaidQuotas);
 
     const containerRef = useRef(null);
 
@@ -306,6 +310,13 @@ export default function NewExpenseModal({
                                 {t('modals.paid')}
                             </span>
                         </label>
+                    )}
+
+                    {showSharedPaidNote && (
+                        <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+                            <Icon name="hourglass_top" className="text-base shrink-0 mt-px" />
+                            <span>{t('payment.sharedPaidQuotasStayPending')}</span>
+                        </div>
                     )}
 
                     <PaymentEntitySection

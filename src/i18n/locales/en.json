@@ -23,7 +23,7 @@
                 "message": "The entity is no longer linked to that person: you can only discard the expense."
             },
             "GASTO_NO_ACTIVO": {
-                "message": "This expense isn't active: the other person hasn't accepted it yet."
+                "message": "This expense isn't active: the other person rejected it."
             },
             "GASTO_YA_SALDADO": {
                 "message": "That expense already has all its installments paid."
@@ -834,6 +834,8 @@
         "verbMark": "mark",
         "verbRecord": "record",
         "noSessionWarning": "There's no open settlement session. This payment will appear in the <strong>expense history</strong>, but <strong>not in the settlement history</strong>.",
+        "awaitingApprovalWarning": "The other person hasn't accepted this expense yet. The payment will stay <strong>pending</strong> until they accept and confirm it.",
+        "sharedPaidQuotasStayPending": "This entity is linked to another person: the installments you mark as paid will stay pending until they accept the expense and confirm each payment.",
         "ofAmount": "of {{amount}}",
         "amountToPay": "Amount to pay ({{currency}})",
         "inCurrency": "In {{currency}}"
