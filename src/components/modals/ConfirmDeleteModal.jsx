@@ -14,6 +14,7 @@ export default function ConfirmDeleteModal({
     cancelLabel = 'Cancelar',
     tone = 'danger',
     loading = false,
+    confirmDisabled = false,
     loadingLabel = 'Procesando...',
     onConfirm,
     onCancel,
@@ -63,7 +64,7 @@ export default function ConfirmDeleteModal({
 
                     <button
                         onClick={onConfirm}
-                        disabled={loading}
+                        disabled={loading || confirmDisabled}
                         className={`cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
                             TONE[tone] ?? TONE.danger
                         }`}

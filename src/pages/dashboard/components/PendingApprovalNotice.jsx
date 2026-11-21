@@ -19,8 +19,8 @@ export default function PendingApprovalNotice({ count }) {
                 </p>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
                     {plural
-                        ? 'La otra persona todavía no los aceptó. Se suman a los balances cuando los acepte.'
-                        : 'La otra persona todavía no lo aceptó. Se suma a los balances cuando lo acepte.'}
+                        ? 'La otra persona todavía no los aceptó. En esta entidad se suman a los balances cuando los acepte.'
+                        : 'La otra persona todavía no lo aceptó. En esta entidad se suma a los balances cuando lo acepte.'}
                 </p>
             </div>
         </div>

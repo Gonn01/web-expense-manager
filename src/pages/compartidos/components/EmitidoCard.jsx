@@ -1,10 +1,14 @@
 import Icon from '@/components/Icon';
 import StatusBadge from './StatusBadge';
 import TypeBadge from './TypeBadge';
+import { ExpenseStatus } from '@/utils/enums';
 
-export default function EmitidoCard({ item, onReintentar, loading }) {
+export default function EmitidoCard({ item, onReintentar, onDescartar, loading }) {
     const isLoading = loading?.id === item.id;
-    const isRejected = item.copy_status === 'REJECTED';
+    const loadingKind = isLoading ? loading.kind : null;
+    const isRejected = item.copy_status === ExpenseStatus.REJECTED;
+    const canRetry = item.can_retry !== false;
+    const receiver = item.receiver_name ?? item.receiver_email ?? 'La otra persona';
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">
@@ -41,19 +45,56 @@ export default function EmitidoCard({ item, onReintentar, loading }) {
             </p>
 
             {isRejected && (
-                <button
-                    disabled={isLoading}
-                    onClick={() => onReintentar(item.id)}
-                    className="flex items-center justify-center gap-1 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary text-sm font-medium disabled:opacity-50"
-                >
-                    {isLoading ? (
-                        <Icon name="progress_activity" className="animate-spin text-sm" />
-                    ) : (
-                        <>
-                            <Icon name="refresh" className="text-sm" /> Reintentar
-                        </>
+                <div className="flex flex-col gap-1 text-sm text-slate-600 dark:text-slate-300">
+                    <p>{receiver} rechazó este gasto.</p>
+                    {item.mirror_id != null && (
+                        <p className="flex items-start gap-1 text-xs text-amber-700 dark:text-amber-400">
+                            <Icon name="info" className="text-sm" />
+                            <span>
+                                También tiene un movimiento en{' '}
+                                {item.mirror_entity_name ?? 'otra entidad'}, que sigue contando.
+                            </span>
+                        </p>
                     )}
-                </button>
+                    {!canRetry && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            La entidad ya no está vinculada a esta persona: solo podés descartarlo.
+                        </p>
+                    )}
+                </div>
+            )}
+
+            {isRejected && (
+                <div className="flex flex-wrap gap-2">
+                    {canRetry && (
+                        <button
+                            disabled={isLoading}
+                            onClick={() => onReintentar(item.id)}
+                            className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary text-sm font-medium disabled:opacity-50"
+                        >
+                            {loadingKind === 'reintentar' ? (
+                                <Icon name="progress_activity" className="animate-spin text-sm" />
+                            ) : (
+                                <>
+                                    <Icon name="refresh" className="text-sm" /> Reintentar
+                                </>
+                            )}
+                        </button>
+                    )}
+                    <button
+                        disabled={isLoading}
+                        onClick={() => onDescartar(item)}
+                        className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 text-sm font-medium disabled:opacity-50"
+                    >
+                        {loadingKind === 'descartar' ? (
+                            <Icon name="progress_activity" className="animate-spin text-sm" />
+                        ) : (
+                            <>
+                                <Icon name="delete" className="text-sm" /> Descartar
+                            </>
+                        )}
+                    </button>
+                </div>
             )}
         </div>
     );

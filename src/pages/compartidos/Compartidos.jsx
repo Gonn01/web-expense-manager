@@ -4,6 +4,7 @@ import EmitidoCard from './components/EmitidoCard';
 import PagoCompartidoCard from './components/PagoCompartidoCard';
 import ReversionCard from './components/ReversionCard';
 import AprobarModal from './components/AprobarModal';
+import DescartarModal from './components/DescartarModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import Loader from '@/components/Loader';
 import Icon from '@/components/Icon';
@@ -12,6 +13,7 @@ import InfoTooltip from '@/components/InfoTooltip';
 import { useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { useDialogStore } from '@/store/use-dialog-store';
 import {
     emitidoGroup,
     groupByEntity,
@@ -30,6 +32,7 @@ export default function Compartidos() {
         aprobar,
         rechazar,
         reintentar,
+        descartar,
         confirmarPago,
         rechazarPago,
         retirarPago,
@@ -39,6 +42,7 @@ export default function Compartidos() {
         crearGasto,
     } = useCompartidos();
     const [aprobarTarget, setAprobarTarget] = useState(null);
+    const [descartarTarget, setDescartarTarget] = useState(null);
     const { user } = useAuth();
     const entities = useEntitiesStore((s) => s.entities);
     const [openNewExpense, setOpenNewExpense] = useState(false);
@@ -47,6 +51,21 @@ export default function Compartidos() {
     const handleAprobar = async (entityId, newEntityName) => {
         await aprobar(aprobarTarget.id, entityId, newEntityName);
         setAprobarTarget(null);
+    };
+
+    const handleRechazar = async (item) => {
+        const confirmed = await useDialogStore.getState().confirm({
+            title: 'Rechazar gasto',
+            message: `¿Rechazar "${item.name}"? No lo vas a poder deshacer: solo ${item.sender_name ?? 'la otra persona'} puede volver a enviártelo.`,
+            tone: 'danger',
+            confirmLabel: 'Rechazar',
+        });
+        if (confirmed) await rechazar(item.id);
+    };
+
+    const handleDescartar = async (deleteLinked) => {
+        const done = await descartar(descartarTarget.id, deleteLinked);
+        if (done) setDescartarTarget(null);
     };
 
     const handleCreateExpense = async (payload) => {
@@ -105,7 +124,7 @@ export default function Compartidos() {
                     item={item}
                     loading={loadingAction}
                     onAprobar={(g) => setAprobarTarget(g)}
-                    onRechazar={(id) => rechazar(id)}
+                    onRechazar={() => handleRechazar(item)}
                 />
             ),
         })),
@@ -117,6 +136,7 @@ export default function Compartidos() {
                     item={item}
                     loading={loadingAction}
                     onReintentar={(id) => reintentar(id)}
+                    onDescartar={(g) => setDescartarTarget(g)}
                 />
             ),
         })),
@@ -131,6 +151,7 @@ export default function Compartidos() {
                     item={item}
                     loading={loadingAction}
                     onReintentar={(id) => reintentar(id)}
+                    onDescartar={(g) => setDescartarTarget(g)}
                 />
             ),
         })),
@@ -168,7 +189,7 @@ export default function Compartidos() {
                 item={item}
                 loading={loadingAction}
                 onAprobar={(g) => setAprobarTarget(g)}
-                onRechazar={(id) => rechazar(id)}
+                onRechazar={() => handleRechazar(item)}
             />
         ),
     }));
@@ -237,6 +258,19 @@ export default function Compartidos() {
                     }
                     onClose={() => setAprobarTarget(null)}
                     onConfirm={handleAprobar}
+                />
+            )}
+
+            {descartarTarget && (
+                <DescartarModal
+                    key={descartarTarget.id}
+                    item={descartarTarget}
+                    loading={
+                        loadingAction?.id === descartarTarget.id &&
+                        loadingAction?.kind === 'descartar'
+                    }
+                    onClose={() => setDescartarTarget(null)}
+                    onConfirm={handleDescartar}
                 />
             )}
         </>

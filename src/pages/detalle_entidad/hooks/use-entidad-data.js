@@ -49,6 +49,7 @@ export function useEntidadData() {
             'compartido.nuevo': reloadSilently,
             'compartido.aprobado': reloadSilently,
             'compartido.rechazado': reloadSilently,
+            'compartido.descartado': reloadSilently,
             'pago.pendiente': reloadSilently,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,

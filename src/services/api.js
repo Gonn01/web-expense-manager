@@ -330,6 +330,15 @@ export const reintentarCompartido = async (gastoId, token) => {
     return data.data;
 };
 
+export const descartarCompartido = async (gastoId, deleteLinked, token) => {
+    const { data } = await api.post(
+        `/compartidos/${gastoId}/descartar`,
+        { delete_linked: deleteLinked },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const confirmarPago = async (movementId, token) => {
     const { data } = await api.post(
         `/compartidos/pagos/${movementId}/confirmar`,

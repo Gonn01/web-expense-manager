@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchCompartidos } from '@/services/api';
+import { countGastosPorResolver } from '@/utils/compartidos-pending';
 
 export const useCompartidosStore = create((set) => ({
     pendingCount: 0,
@@ -20,7 +21,7 @@ export const useCompartidosStore = create((set) => ({
         if (!token) return;
         try {
             const data = await fetchCompartidos(token);
-            const count = data.recibidos.filter((r) => r.status === 'PENDING_APPROVAL').length;
+            const count = countGastosPorResolver(data);
             const porConfirmar =
                 (data.pagos?.porConfirmar.length ?? 0) +
                 (data.reversiones?.porConfirmar.length ?? 0);

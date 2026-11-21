@@ -292,6 +292,7 @@ export function useDashboardData() {
         () => ({
             'compartido.aprobado': onCompartidoRespondido,
             'compartido.rechazado': onCompartidoRespondido,
+            'compartido.descartado': reloadSilently,
             'pago.pendiente': onPagoPendiente,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,

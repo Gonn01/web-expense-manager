@@ -4,6 +4,7 @@ import {
     aprobarCompartido,
     rechazarCompartido,
     reintentarCompartido,
+    descartarCompartido,
     confirmarPago as confirmarPagoApi,
     rechazarPago as rechazarPagoApi,
     retirarPago as retirarPagoApi,
@@ -18,6 +19,7 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { countGastosPorResolver } from '@/utils/compartidos-pending';
 
 export function useCompartidos() {
     const { token, user } = useAuth();
@@ -40,10 +42,7 @@ export function useCompartidos() {
                 setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
                 setPagos(pagosData);
                 setReversiones(reversionesData);
-                const pending = data.recibidos.filter(
-                    (r) => r.status === 'PENDING_APPROVAL',
-                ).length;
-                setPendingCount(pending);
+                setPendingCount(countGastosPorResolver(data));
                 setPendingPaymentsCount(
                     pagosData.porConfirmar.length + reversionesData.porConfirmar.length,
                 );
@@ -66,6 +65,7 @@ export function useCompartidos() {
             'compartido.nuevo': reloadSilently,
             'compartido.aprobado': reloadSilently,
             'compartido.rechazado': reloadSilently,
+            'compartido.descartado': reloadSilently,
             'pago.pendiente': reloadSilently,
             'pago.confirmado': reloadSilently,
             'pago.rechazado': reloadSilently,
@@ -153,6 +153,28 @@ export function useCompartidos() {
             try {
                 await reintentarCompartido(gastoId, token);
                 await load({ silent: true });
+            } finally {
+                setLoadingAction(null);
+            }
+        },
+        [token, load],
+    );
+
+    const descartar = useCallback(
+        async (gastoId, deleteLinked) => {
+            setLoadingAction({ id: gastoId, kind: 'descartar' });
+            try {
+                const result = await descartarCompartido(gastoId, deleteLinked, token);
+                useSnackbarStore.getState().show('Gasto descartado', 'success');
+                await load({ silent: true });
+                if (result?.mirror_deleted) {
+                    useSettlementStore.getState().loadSession();
+                    useEntitiesStore.getState().loadEntities(token);
+                }
+                return true;
+            } catch (err) {
+                console.error('Error descartando gasto', err);
+                return false;
             } finally {
                 setLoadingAction(null);
             }
@@ -251,6 +273,7 @@ export function useCompartidos() {
         aprobar,
         rechazar,
         reintentar,
+        descartar,
         confirmarPago,
         rechazarPago,
         retirarPago,

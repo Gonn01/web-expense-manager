@@ -61,11 +61,25 @@ export default function Sidebar() {
         useSnackbarStore.getState().show(`${quien} ha aceptado tu gasto${que}`, 'success');
     }, []);
 
-    const handleRechazado = useCallback(({ receiverName, gastoName } = {}) => {
-        const quien = receiverName || 'Un usuario';
-        const que = gastoName ? ` "${gastoName}"` : '';
-        useSnackbarStore.getState().show(`${quien} rechazó tu gasto${que}`, 'error');
-    }, []);
+    const handleRechazado = useCallback(
+        ({ receiverName, gastoName } = {}) => {
+            const quien = receiverName || 'Un usuario';
+            const que = gastoName ? ` "${gastoName}"` : '';
+            loadPendingCount(token);
+            useSnackbarStore.getState().show(`${quien} rechazó tu gasto${que}`, 'error');
+        },
+        [loadPendingCount, token],
+    );
+
+    const handleDescartado = useCallback(
+        ({ actorId, actorName } = {}) => {
+            loadPendingCount(token);
+            if (String(actorId) === String(user?.id)) return;
+            const quien = actorName || 'La otra persona';
+            useSnackbarStore.getState().show(`${quien} descartó un gasto que habías rechazado`);
+        },
+        [loadPendingCount, token, user?.id],
+    );
 
     const handlePagoPendiente = useCallback(
         ({ actorName } = {}) => {
@@ -136,6 +150,7 @@ export default function Sidebar() {
             'compartido.nuevo': handleNuevo,
             'compartido.aprobado': handleAprobado,
             'compartido.rechazado': handleRechazado,
+            'compartido.descartado': handleDescartado,
             'pago.pendiente': handlePagoPendiente,
             'pago.confirmado': handlePagoConfirmado,
             'pago.rechazado': handlePagoRechazado,
@@ -149,6 +164,7 @@ export default function Sidebar() {
             handleNuevo,
             handleAprobado,
             handleRechazado,
+            handleDescartado,
             handlePagoPendiente,
             handlePagoConfirmado,
             handlePagoRechazado,

@@ -24,6 +24,14 @@ export const ERROR_PRESENTATION = Object.freeze({
         message: 'Ese gasto compartido no está rechazado.',
         variant: 'snackbar',
     },
+    GASTO_COMPARTIDO_DESVINCULADO: {
+        message: 'La entidad ya no está vinculada a esa persona: solo podés descartar el gasto.',
+        variant: 'snackbar',
+    },
+    GASTO_NO_ACTIVO: {
+        message: 'Este gasto no está activo: la otra persona todavía no lo aceptó.',
+        variant: 'snackbar',
+    },
     GASTO_YA_SALDADO: {
         message: 'Ese gasto ya tiene todas sus cuotas pagas.',
         variant: 'snackbar',

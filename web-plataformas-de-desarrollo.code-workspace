@@ -4,10 +4,10 @@
             "path": ".",
         },
         {
-            "path": "../api-expense-manager",
+            "path": "D:/proyectos_node/api-plataformas-desarrollo",
         },
         {
-            "path": "../app_expense_manager",
+            "path": "D:/proyectos_flutter/app_expense_manager",
         },
     ],
     "settings": {

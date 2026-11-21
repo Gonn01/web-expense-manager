@@ -70,6 +70,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-42 | Responder reversión de un pago | Contraparte | 05 |
 | CU-43 | Cancelar pedido de reversión | Usuario | 05 |
 | CU-44 | Ver tutorial de bienvenida | Usuario | 01 |
+| CU-45 | Descartar gasto rechazado | Usuario | 05 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -402,7 +403,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-21 — Pagar o cobrar cuota
 
 - **Actores**: Usuario; Contraparte (si el gasto es compartido)
-- **Requerimientos**: RF-PAG-01 a RF-PAG-08
+- **Requerimientos**: RF-PAG-01 a RF-PAG-08, RF-CMP-17
 - **Precondición**: el gasto está activo y, si no es fijo, tiene cuotas sin pagar.
 - **Flujo principal (pago directo)**
     1. El usuario elige pagar (egreso) o registrar cobro (ingreso) desde el detalle de una entidad, o desde el detalle de un gasto sin sesión de cuentas abierta.
@@ -417,6 +418,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1d. El gasto no es de una entidad del usuario: el sistema lo impide.
     - 1e. El gasto no es fijo y ya tiene todas sus cuotas pagas: el sistema lo impide, tanto para el pago directo como para el diferido.
     - 1f. El gasto es compartido y las cuotas que quedan ya están cubiertas por pagos propios pendientes de confirmación: el sistema lo impide (`GASTO_CUOTAS_CUBIERTAS`).
+    - 1g. El gasto es compartido y está pendiente o rechazado: el sistema lo impide (`GASTO_NO_ACTIVO`).
     - 3a. Pago directo de un gasto postergado: el sistema quita la postergación, lo registra en el historial y continúa.
     - 3b. *Registrar pago pendiente de confirmación* («extend»): el gasto es compartido. El pago se registra como pendiente, se notifica a la contraparte (CU-38) y la cuota no cuenta como paga hasta que la confirme (CU-36).
     - 3c. El gasto es compartido y la contraparte ya registró un pago pendiente sobre él: en lugar de crear otro pendiente, el sistema confirma el más antiguo de la contraparte, como en CU-36, y se lo notifica.
@@ -500,7 +502,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-27 — Marcar o desmarcar gastos
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-CTA-03, RF-CTA-04, RF-PAG-02, RF-PAG-07, RF-PAG-08, RF-PAG-10
+- **Requerimientos**: RF-CTA-03, RF-CTA-04, RF-PAG-02, RF-PAG-07, RF-PAG-08, RF-PAG-10, RF-CMP-17
 - **Precondición**: hay una sesión de cuentas abierta.
 - **Flujo principal**
     1. El usuario marca un gasto del dashboard.
@@ -514,13 +516,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1d. El gasto, o alguno de los del lote, no es de una entidad del usuario: el sistema lo impide y no marca ninguno.
     - 1e. Las cuotas que quedan del gasto ya están cubiertas por pagos propios pendientes de confirmación: el sistema no lo marca; en un lote, lo omite y marca el resto.
     - 1f. El gasto es compartido y la otra persona ya registró un pago: el dashboard lo indica, y marcarlo confirma ese pago al finalizar (CU-28, 2d).
+    - 1g. El gasto es compartido y está pendiente o rechazado: el sistema no lo marca (`GASTO_NO_ACTIVO`); en un lote, lo omite y marca el resto.
     - 3a. El sistema rechaza la marca: el cliente la revierte.
 - **Postcondición**: las marcas quedan guardadas. No se registró ningún pago.
 
 ### CU-28 — Finalizar sesión de cuentas
 
 - **Actores**: Usuario; Contraparte (por los gastos compartidos)
-- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07, RF-CTA-11, RF-PAG-08, RF-CMP-08
+- **Requerimientos**: RF-CTA-05, RF-CTA-06, RF-CTA-07, RF-CTA-11, RF-PAG-08, RF-CMP-08, RF-CMP-17
 - **Precondición**: hay una sesión de cuentas abierta.
 - **Flujo principal**
     1. El usuario elige "Terminar" y confirma.
@@ -530,7 +533,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     5. *Liberar gastos postergados* («include»): todos los gastos postergados del usuario dejan de estarlo.
     6. La aplicación sale del modo "Hacer cuentas" y muestra el snapshot generado.
 - **Flujos alternativos**
-    - 2a. Un gasto marcado fue eliminado, no es del usuario, está postergado, ya está saldado o es compartido con las cuotas restantes cubiertas por pagos propios pendientes: el sistema lo quita de la sesión y no lo incluye en el snapshot.
+    - 2a. Un gasto marcado fue eliminado, no es del usuario, es compartido y está pendiente o rechazado, está postergado, ya está saldado o es compartido con las cuotas restantes cubiertas por pagos propios pendientes: el sistema lo quita de la sesión y no lo incluye en el snapshot.
     - 2d. Un gasto marcado es compartido y la contraparte ya registró un pago pendiente sobre él: el sistema confirma ese pago en lugar de crear otro (CU-36, sin pasar por Compartidos) y el snapshot lo muestra como la confirmación del pago de la otra persona.
     - 2e. La contraparte cierra su sesión al mismo tiempo con el mismo gasto marcado: uno de los cierres espera al otro; el primero registra el pendiente y el segundo lo confirma.
     - 2b. Falla cualquier paso del cierre (pagos, snapshot o cierre de la sesión): no se guarda nada, porque todo el cierre es una transacción. El sistema informa el error y la sesión sigue abierta para reintentar.
@@ -623,9 +626,13 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Precondición**: el gasto fue compartido con el actor y está pendiente de aprobación.
 - **Flujo principal**
     1. El receptor elige rechazar un gasto recibido.
-    2. El sistema marca como rechazados la copia y el gasto original.
-    3. El sistema notifica al emisor (CU-38).
-- **Postcondición**: el gasto no se activa para ninguno de los dos. El emisor puede reintentarlo (CU-35).
+    2. El sistema pide confirmación, explicando que no se puede deshacer.
+    3. El receptor confirma; el sistema marca como rechazados la copia y el gasto original.
+    4. El sistema notifica al emisor (CU-38).
+- **Flujos alternativos**
+    - 2a. El receptor cancela: el gasto sigue pendiente.
+    - 3a. El original tiene un movimiento espejo: el espejo sigue activo y contando en su entidad.
+- **Postcondición**: el gasto compartido no cuenta para ninguno de los dos. El emisor puede reintentarlo (CU-35) o descartarlo (CU-45).
 
 ### CU-35 — Reintentar gasto rechazado
 
@@ -639,6 +646,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 1a. El gasto no es de una entidad del actor: el sistema lo impide.
     - 2a. El gasto no tiene copia compartida o no está rechazado: el sistema lo informa.
+    - 1b. La entidad ya no está vinculada al receptor: la interfaz solo ofrece descartar (CU-45) y el sistema rechaza el reintento (`GASTO_COMPARTIDO_DESVINCULADO`).
+- **Postcondición**: el gasto vuelve a estar pendiente para las dos partes y su espejo, si lo tiene, no cambia.
 
 ### CU-36 — Confirmar pago compartido
 
@@ -689,6 +698,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     | `compartido.nuevo` | CU-17, CU-35 | Receptor |
     | `compartido.aprobado` | CU-33 | Emisor |
     | `compartido.rechazado` | CU-34 | Emisor |
+    | `compartido.descartado` | CU-45 | Las dos partes |
     | `pago.pendiente` | CU-21, CU-28 | Contraparte |
     | `pago.confirmado` | CU-36 | Quien registró el pago |
     | `pago.rechazado` | CU-37, CU-20 | Quien registró el pago |
@@ -761,6 +771,24 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1a. El actor no pidió esa reversión: el sistema lo impide.
 - **Postcondición**: el pago queda confirmado, como estaba.
 
+### CU-45 — Descartar gasto rechazado
+
+- **Actores**: Usuario (emisor); Contraparte (receptor)
+- **Requerimientos**: RF-CMP-07, RF-CMP-16
+- **Precondición**: el actor emitió el gasto y la contraparte lo rechazó.
+- **Flujo principal**
+    1. El emisor elige descartar un gasto emitido rechazado.
+    2. El sistema pide confirmación.
+    3. El emisor confirma; el sistema da de baja el gasto y lo registra en el historial de la entidad.
+    4. El sistema notifica a las dos partes (CU-38).
+- **Flujos alternativos**
+    - 2a. El gasto tiene un movimiento espejo: el sistema pregunta qué hacer con él y no deja confirmar sin elegir.
+        - Conservarlo: queda activo como gasto independiente.
+        - Eliminarlo: se da de baja y se quita de la sesión de cuentas abierta. Si tiene pagos registrados, el diálogo lo advierte.
+    - 1a. El actor no es el emisor: el sistema lo impide.
+    - 3a. El gasto ya no está rechazado: el sistema lo informa.
+- **Postcondición**: el gasto deja de aparecer para las dos partes y puede restaurarse desde CU-16, en estado rechazado.
+
 ---
 
 ## Diagramas de comportamiento
@@ -775,10 +803,11 @@ stateDiagram-v2
     PENDING_APPROVAL --> ACTIVE: CU-33 la contraparte aprueba
     PENDING_APPROVAL --> REJECTED: CU-34 la contraparte rechaza
     REJECTED --> PENDING_APPROVAL: CU-35 el emisor reintenta
+    REJECTED --> [*]: CU-45 el emisor descarta
     ACTIVE --> [*]: todas las cuotas pagas
 ```
 
-El gasto original y su copia cambian de estado siempre juntos. Un gasto creado en una entidad **no** vinculada nace directamente `ACTIVE`.
+El gasto original y su copia cambian de estado siempre juntos. Su movimiento espejo, si lo tiene, no sigue estos estados: nace `ACTIVE` y solo se da de baja si el emisor lo elige al descartar. Un gasto creado en una entidad **no** vinculada nace directamente `ACTIVE`.
 
 ### Estados de un pago compartido
 
