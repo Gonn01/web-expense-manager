@@ -1,0 +1,1819 @@
+{
+  "info": {
+    "name": "Plataforma de Gestión de Deudas API",
+    "description": "Todos los endpoints de la API. Configurar baseUrl, email y password en las variables de la colección, ejecutar Auth > Iniciar sesión y el token se aplica a todas las demás requests. Las requests de creación y listado guardan los ids en variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01 Health",
+      "description": "Comprueba que la API y la base de datos respondan. Público.",
+      "item": [
+        {
+          "name": "Estado de la API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Responde 200 con status, database, uptime y timestamp, o 503 si la base no responde."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 Auth",
+      "description": "Registro e inicio de sesión. Públicos. Los dos login guardan token y userId en las variables de la colección.",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Obligatorios: name, email, password. Opcional: firebaseId."
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.token !== undefined && data.token !== null) pm.collectionVariables.set('token', String(data.token));",
+                  "if (pm.response.code < 300 && data && data.user && data.user.id !== undefined && data.user && data.user.id !== null) pm.collectionVariables.set('userId', String(data.user && data.user.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Devuelve user y un token JWT válido por 7 días."
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión con Firebase",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.token !== undefined && data.token !== null) pm.collectionVariables.set('token', String(data.token));",
+                  "if (pm.response.code < 300 && data && data.user && data.user.id !== undefined && data.user && data.user.id !== null) pm.collectionVariables.set('userId', String(data.user && data.user.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/firebase-login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "firebase-login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firebaseId\": \"{{firebaseId}}\",\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{email}}\",\n  \"avatar\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Obligatorio: firebaseId. Busca el usuario por firebaseId, luego por email, y si no existe lo crea."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 Usuario",
+      "item": [
+        {
+          "name": "Actualizar moneda preferida",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/preferred-currency",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "preferred-currency"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"preferred_currency\": \"ARS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar sueldo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/sueldo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "sueldo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sueldo\": 1000000,\n  \"sueldo_currency\": \"ARS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "sueldo debe ser un número mayor o igual a 0. sueldo_currency es opcional."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener token de push",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/push-token?user_id={{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "push-token"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{userId}}"
+                }
+              ]
+            },
+            "description": "Responde { token } sin envolver en data. user_id debe ser el de la sesión."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar idioma de push",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/push-language",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "push-language"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"language\": \"es\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Valores: es, en."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 Entidades financieras",
+      "item": [
+        {
+          "name": "Listar entidades",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== undefined && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== null) pm.collectionVariables.set('entityId', String((Array.isArray(data) && data[0] ? data[0].id : undefined)));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras"
+              ]
+            },
+            "description": "Devuelve activas y eliminadas con el campo deleted. Guarda la primera en entityId."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear entidad",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.id !== undefined && data.id !== null) pm.collectionVariables.set('entityId', String(data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Banco Demo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener entidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar entidad",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Banco Demo editado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar entidad favorita",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}/favorito",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}",
+                "favorito"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"favorite\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vincular usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}/vincular-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}",
+                "vincular-usuario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{linkedUserEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desvincular usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}/vincular-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}",
+                "vincular-usuario"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar entidad",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}"
+              ]
+            },
+            "description": "Baja lógica. También da de baja sus gastos y quita el vínculo con otro usuario."
+          },
+          "response": []
+        },
+        {
+          "name": "Restaurar entidad",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}/restaurar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}",
+                "restaurar"
+              ]
+            },
+            "description": "Restaura solo los gastos dados de baja con la entidad que nunca fueron compartidos. No recupera el vínculo."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 Dashboard",
+      "item": [
+        {
+          "name": "Obtener dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 Categorías",
+      "item": [
+        {
+          "name": "Listar categorías",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== undefined && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== null) pm.collectionVariables.set('categoryId', String((Array.isArray(data) && data[0] ? data[0].id : undefined)));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoría",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.id !== undefined && data.id !== null) pm.collectionVariables.set('categoryId', String(data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Supermercado\",\n  \"color\": \"#22C55E\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 Gastos",
+      "description": "Requieren entityId. Crear gasto guarda gastoId.",
+      "item": [
+        {
+          "name": "Crear gasto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.id !== undefined && data.id !== null) pm.collectionVariables.set('gastoId', String(data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"financial_entity_id\": {{entityId}},\n  \"name\": \"Heladera\",\n  \"amount\": 300000,\n  \"number_of_quotas\": 3,\n  \"currency_type\": \"ARS\",\n  \"fixed_expense\": false,\n  \"image_url\": null,\n  \"type\": \"EGRESO\",\n  \"payed_quotas\": 0,\n  \"category_ids\": [],\n  \"payment_entity_id\": null,\n  \"postponed\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Obligatorios: financial_entity_id, name, amount, currency_type. type: EGRESO o INGRESO. Máximo 360 cuotas si no es fijo."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener gasto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}"
+              ]
+            },
+            "description": "Incluye movements, categories y edit_locks."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar gasto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Heladera nueva\",\n  \"amount\": 320000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Los campos omitidos no cambian. Un campo bloqueado responde 409 GASTO_CAMPO_NO_EDITABLE."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar categorías del gasto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_ids\": [\n    {{categoryId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Postergar gasto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/postergar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "postergar"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postponed\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar gasto favorito",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/favorito",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "favorito"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"favorite\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pagar cuota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/settle-quota",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "settle-quota"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"direct\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "direct: true registra el pago en el momento. Con {} y una sesión de cuentas abierta, solo marca el gasto."
+          },
+          "response": []
+        },
+        {
+          "name": "Pagar cuotas en lote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/settle-lote",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "settle-lote"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"purchase_ids\": [\n    {{gastoId}}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Requiere una sesión de cuentas abierta. Sin ella responde 409 SETTLEMENT_REQUIRED."
+          },
+          "response": []
+        },
+        {
+          "name": "Revertir última cuota",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/refund-cuota",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "refund-cuota"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revertir pago",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/pagos/{{movementId}}/revertir",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "pagos",
+                "{{movementId}}",
+                "revertir"
+              ]
+            },
+            "description": "Según el pago, lo revierte, lo retira o pide la reversión a la otra persona."
+          },
+          "response": []
+        },
+        {
+          "name": "Compartir gasto",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/compartir",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "compartir"
+              ]
+            },
+            "description": "Requiere una entidad vinculada. Si no cumple las condiciones responde GASTO_NO_COMPARTIBLE."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar gasto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delete_linked\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Baja lógica. delete_linked: true también elimina el gasto vinculado."
+          },
+          "response": []
+        },
+        {
+          "name": "Restaurar gasto",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gastos/{{gastoId}}/restaurar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gastos",
+                "{{gastoId}}",
+                "restaurar"
+              ]
+            },
+            "description": "Un gasto que fue compartido no se puede restaurar."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 Modo hacer cuentas",
+      "item": [
+        {
+          "name": "Obtener sesión",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Iniciar sesión de cuentas",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session"
+              ]
+            },
+            "description": "Responde 201 si la crea y 200 si ya había una abierta."
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar un gasto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"purchase_id\": {{gastoId}},\n  \"checked\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar varios gastos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"purchase_ids\": [\n    {{gastoId}}\n  ],\n  \"checked\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Finalizar sesión",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.id !== undefined && data.id !== null) pm.collectionVariables.set('snapshotId', String(data.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session/finish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session",
+                "finish"
+              ]
+            },
+            "description": "Registra los pagos reales y genera un snapshot."
+          },
+          "response": []
+        },
+        {
+          "name": "Descartar sesión",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/session",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "session"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar snapshots",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== undefined && (Array.isArray(data) && data[0] ? data[0].id : undefined) !== null) pm.collectionVariables.set('snapshotId', String((Array.isArray(data) && data[0] ? data[0].id : undefined)));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/snapshots",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "snapshots"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener snapshot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/snapshots/{{snapshotId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "snapshots",
+                "{{snapshotId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "09 Notificaciones",
+      "item": [
+        {
+          "name": "Listar notificaciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && (data.items && data.items[0] ? data.items[0].id : undefined) !== undefined && (data.items && data.items[0] ? data.items[0].id : undefined) !== null) pm.collectionVariables.set('notificationId', String((data.items && data.items[0] ? data.items[0].id : undefined)));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones?limit=30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "30"
+                },
+                {
+                  "key": "before",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Devuelve items, unread_count y next_before. limit: 30 por defecto, 100 como máximo."
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar notificación leída",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/{{notificationId}}/leer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "{{notificationId}}",
+                "leer"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar todas como leídas",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/leer-todas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "leer-todas"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10 Compartidos",
+      "description": "Acciones entre dos usuarios vinculados. Cada una debe ejecutarla la parte que corresponde, con su propio token.",
+      "item": [
+        {
+          "name": "Solicitudes",
+          "item": [
+            {
+              "name": "Listar pendientes",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Aprobar gasto compartido",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/{{sharedGastoId}}/aprobar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "{{sharedGastoId}}",
+                    "aprobar"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"financial_entity_id\": {{entityId}}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Enviar financial_entity_id o new_entity_name."
+              },
+              "response": []
+            },
+            {
+              "name": "Rechazar gasto compartido",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/{{sharedGastoId}}/rechazar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "{{sharedGastoId}}",
+                    "rechazar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reintentar gasto rechazado",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/{{sharedGastoId}}/reintentar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "{{sharedGastoId}}",
+                    "reintentar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Descartar gasto rechazado",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/{{sharedGastoId}}/descartar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "{{sharedGastoId}}",
+                    "descartar"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"delete_linked\": false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "delete_linked es obligatorio si hay un espejo activo."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Pagos",
+          "item": [
+            {
+              "name": "Confirmar pago",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/confirmar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "confirmar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Rechazar pago",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/rechazar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "rechazar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Retirar pago",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/retirar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "retirar"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Reversiones",
+          "item": [
+            {
+              "name": "Aceptar reversión",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/reversion/aceptar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "reversion",
+                    "aceptar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Rechazar reversión",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/reversion/rechazar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "reversion",
+                    "rechazar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancelar reversión",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/pagos/{{movementId}}/reversion/cancelar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "pagos",
+                    "{{movementId}}",
+                    "reversion",
+                    "cancelar"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Ediciones",
+          "item": [
+            {
+              "name": "Solicitar edición",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();",
+                      "const data = body && body.data;",
+                      "if (pm.response.code < 300 && data && data.id !== undefined && data.id !== null) pm.collectionVariables.set('editId', String(data.id));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/gastos/{{gastoId}}/edicion",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "gastos",
+                    "{{gastoId}}",
+                    "edicion"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Heladera compartida\",\n  \"amount\": 350000,\n  \"currency_type\": \"ARS\",\n  \"type\": \"EGRESO\",\n  \"fixed_expense\": false,\n  \"number_of_quotas\": 3\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Enviar solo los campos que cambian."
+              },
+              "response": []
+            },
+            {
+              "name": "Aprobar edición",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/ediciones/{{editId}}/aprobar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "ediciones",
+                    "{{editId}}",
+                    "aprobar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Rechazar edición",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/ediciones/{{editId}}/rechazar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "ediciones",
+                    "{{editId}}",
+                    "rechazar"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cancelar edición",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/notificaciones/pendientes/ediciones/{{editId}}/cancelar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "pendientes",
+                    "ediciones",
+                    "{{editId}}",
+                    "cancelar"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "usuario@example.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "CambiarEsta123",
+      "type": "string"
+    },
+    {
+      "key": "firebaseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "linkedUserEmail",
+      "value": "otro.usuario@example.com",
+      "type": "string"
+    },
+    {
+      "key": "entityId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "gastoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sharedGastoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "movementId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "editId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "snapshotId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

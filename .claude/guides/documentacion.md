@@ -12,6 +12,7 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | Guía de arquitectura de la app Flutter | `d:\proyectos_flutter\app_expense_manager\.claude\guides\arquitectura-flutter.md` |
 | Guía de arquitectura de la API | `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\arquitectura-api.md` |
 | Resumen operativo de cada repo | `CLAUDE.md` en la raíz de cada uno de los tres repos |
+| Colección de Postman de la API | `d:\proyectos_react\web-plataformas-de-desarrollo\postman\plataforma-gestion-deudas.postman_collection.json` |
 
 ## Qué actualizar según el cambio
 
@@ -21,6 +22,7 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | agrega, modifica o quita un comportamiento visible para el usuario | `docs/requerimientos-funcionales.md` + el `CU` afectado en `docs/casos-de-uso.md` |
 | agrega o quita un caso de uso, un actor o una relación `«include»` / `«extend»` | lo anterior + el catálogo de `docs/casos-de-uso.md` + el `.svg` del módulo y `00_general.svg` en `docs/diagramas/` |
 | cambia una regla de negocio (validación, estado, quién puede hacer qué) | el `RF` y los flujos alternativos del `CU`; si cambia un flujo de estados, también los diagramas de comportamiento al final de `docs/casos-de-uso.md` |
+| agrega, modifica o elimina un endpoint (método, ruta, query params, body, autenticación o datos de respuesta que leen sus scripts) | la colección de Postman, que debe seguir cubriendo todas las rutas de la API |
 | agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` (repo de la API) si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
 | cambia seguridad, rendimiento, tolerancia a fallos, dependencias externas o entornos | `docs/requerimientos-no-funcionales.md` |
 | corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había); si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |

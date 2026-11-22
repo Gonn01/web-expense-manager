@@ -23,6 +23,7 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 1. `docs/` in this repo — system overview/objectives/scope (`descripcion-general.md`), requirements, use cases and diagrams. `descripcion-general.md` must be updated whenever a change adds/removes a module, changes what a module is for, adds a platform/language/currency/external service, or moves something into or out of scope. `mision-vision-valores.md` must be updated when a change alters, fixes or breaks a commitment listed in its values table, or renumbers an RF/RNF it cites.
 2. The architecture guide of the affected project, in that project's own repo (`.claude/guides/arquitectura-<web|flutter|api>.md`).
 3. The `CLAUDE.md` of the affected repo(s), if a command, folder, layer or convention changed.
+4. The Postman collection `postman/plataforma-gestion-deudas.postman_collection.json` in this repo, whenever an API endpoint is added, removed or changed (method, path, query params, body, auth or response data its scripts read). It must keep covering every route of the API.
 
 `docs/` applies even when the code change is entirely in the Flutter or API repo: the functional docs to update are still the ones here (`c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\docs`).
 
