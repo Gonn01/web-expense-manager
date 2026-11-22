@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import useAuth from '@/store/use-auth-store';
-import { updatePreferredCurrency, updateSueldo } from '@/services/api';
+import {
+    fetchPasswordStatus,
+    updatePassword,
+    updatePreferredCurrency,
+    updateSueldo,
+} from '@/services/api';
 import { Currency } from '@/utils/enums';
 import { t } from '@/i18n';
 
@@ -17,6 +22,29 @@ export function useConfiguracionData() {
         setPreview(user.avatar || '');
         setNombreVisible(user.name || user.nombre || t('configuracion.user'));
     }, [user]);
+
+    const [hasPassword, setHasPassword] = useState(null);
+
+    useEffect(() => {
+        if (!token) return undefined;
+        let active = true;
+        fetchPasswordStatus(token)
+            .then((status) => {
+                if (active) setHasPassword(status.has_password);
+            })
+            .catch(() => {});
+        return () => {
+            active = false;
+        };
+    }, [token]);
+
+    const guardarPassword = useCallback(
+        async (passwords) => {
+            const status = await updatePassword(passwords, token);
+            setHasPassword(status.has_password);
+        },
+        [token],
+    );
 
     const monedaActual = CURRENCY_VALUES.includes(user?.preferred_currency)
         ? user.preferred_currency
@@ -56,5 +84,7 @@ export function useConfiguracionData() {
         sueldoMonedaActual,
         guardarMoneda,
         guardarSueldo,
+        hasPassword,
+        guardarPassword,
     };
 }

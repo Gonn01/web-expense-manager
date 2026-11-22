@@ -1,6 +1,7 @@
 import Snackbar from '@/components/Snackbar';
 import { AparienciaCard } from './components/AparienciaCard';
 import { IdiomaCard } from './components/IdiomaCard';
+import { PasswordCard } from './components/PasswordCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
 import { SueldoCard } from './components/SueldoCard';
@@ -25,6 +26,10 @@ export default function Configuracion() {
         setSueldoMoneda,
         loadingSueldo,
         onSaveSueldo,
+
+        hasPassword,
+        loadingPassword,
+        onSavePassword,
 
         themeMode,
 
@@ -63,6 +68,12 @@ export default function Configuracion() {
                     setMoneda={setMoneda}
                     loading={loadingMoneda}
                     onSave={onSaveMoneda}
+                />
+
+                <PasswordCard
+                    hasPassword={hasPassword}
+                    loading={loadingPassword}
+                    onSave={onSavePassword}
                 />
 
                 <AparienciaCard themeMode={themeMode} setThemeMode={setThemeMode} />

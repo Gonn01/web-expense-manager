@@ -14,6 +14,8 @@ export function useConfiguracionUI() {
         sueldoMonedaActual,
         guardarMoneda,
         guardarSueldo,
+        hasPassword,
+        guardarPassword,
     } = useConfiguracionData();
 
     const themeMode = useUIStore((s) => s.themeMode);
@@ -27,6 +29,7 @@ export function useConfiguracionUI() {
     const [sueldoMoneda, setSueldoMoneda] = useState(sueldoMonedaActual);
     const [loadingMoneda, setLoadingMoneda] = useState(false);
     const [loadingSueldo, setLoadingSueldo] = useState(false);
+    const [loadingPassword, setLoadingPassword] = useState(false);
     const [snackbar, setSnackbar] = useState(null);
     const [languagePreference, setLanguagePreferenceState] = useState(getLanguagePreference);
 
@@ -81,6 +84,20 @@ export function useConfiguracionUI() {
         }
     };
 
+    const onSavePassword = async (passwords) => {
+        try {
+            setLoadingPassword(true);
+            await guardarPassword(passwords);
+            showSnackbar(t('configuracion.passwordUpdated'));
+            return true;
+        } catch (err) {
+            console.error('Error guardando contraseña:', err.code);
+            return false;
+        } finally {
+            setLoadingPassword(false);
+        }
+    };
+
     return {
         user,
         preview,
@@ -97,6 +114,10 @@ export function useConfiguracionUI() {
         setSueldoMoneda,
         loadingSueldo,
         onSaveSueldo,
+
+        hasPassword,
+        loadingPassword,
+        onSavePassword,
 
         themeMode,
 

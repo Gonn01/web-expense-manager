@@ -70,4 +70,4 @@ un reload puede ser intencional):
 - [ ] Entidad como tarjeta para saber cuando vencen
 - [ ] Agrupar gastos por grupos
 - [x] Ser consistente a la hora de usar el tipo de moneda: enum `currency` en la base, misma lista de 36 códigos en API, web y Flutter, y validación 400 en toda entrada del API
-- [ ] Ser consistente en la sincronizacion de cuentas registro y logeo con google
+- [x] Ser consistente en la sincronizacion de cuentas registro y logeo con google: una sola cuenta por email, token de Google verificado en la API y contraseña definible desde Configuración

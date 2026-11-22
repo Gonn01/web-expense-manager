@@ -2,13 +2,14 @@ import BrandHeader from '../components/BrandHeader';
 import LoginForm from './components/LoginForm';
 import SessionExpiredNotice from './components/SessionExpiredNotice';
 import GoogleButton from '../components/GoogleButton';
+import GoogleLinkDialog from '../components/GoogleLinkDialog';
 import { useLogin } from './hooks/use-login';
 import { useGoogleAuth } from '../hooks/use-google-auth';
 import { t } from '@/i18n';
 
 export default function Login() {
     const { loading, error, setError, sessionExpired, handleLogin } = useLogin();
-    const { loginGoogle, loading: loadingGoogle, googleAvailable } = useGoogleAuth();
+    const { loginGoogle, loading: loadingGoogle, googleAvailable, linkDialog } = useGoogleAuth();
 
     return (
         <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-8 sm:py-16 font-display">
@@ -56,6 +57,7 @@ export default function Login() {
                     </a>
                 </p>
             </div>
+            <GoogleLinkDialog {...linkDialog} />
         </div>
     );
 }

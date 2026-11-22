@@ -79,6 +79,24 @@
             "EMAIL_YA_REGISTRADO": {
                 "message": "An account with that email already exists."
             },
+            "EMAIL_REGISTRADO_CON_GOOGLE": {
+                "message": "This email already has a Google account. Sign in with Google and set your password in Settings."
+            },
+            "GOOGLE_TOKEN_INVALIDO": {
+                "message": "We couldn't validate your Google sign-in. Try again."
+            },
+            "GOOGLE_EMAIL_NO_VERIFICADO": {
+                "message": "Your Google account doesn't have a verified email."
+            },
+            "GOOGLE_NO_CONFIGURADO": {
+                "message": "Google sign-in isn't available right now."
+            },
+            "VINCULACION_REQUIERE_CONTRASENA": {
+                "message": "You already have an account with this email. Enter your password to link Google."
+            },
+            "CONTRASENA_INCORRECTA": {
+                "message": "The password is incorrect."
+            },
             "NO_AUTORIZADO": {
                 "message": "You don't have permission to do this.",
                 "title": "Action not allowed"
@@ -405,6 +423,18 @@
         "goToStep": "Go to step {{step}} of {{total}}"
     },
     "configuracion": {
+        "passwordTitle": "Password",
+        "passwordDefineHint": "Your account signs in with Google. Set a password to also sign in with your email.",
+        "passwordChangeHint": "You can sign in with your email and password, and also with Google.",
+        "passwordCurrent": "Current password",
+        "passwordNew": "New password",
+        "passwordConfirm": "Repeat new password",
+        "passwordDefineAction": "Set password",
+        "passwordChangeAction": "Change password",
+        "passwordUpdated": "Password updated.",
+        "passwordTooShort": "The password must be at least 6 characters.",
+        "passwordMismatch": "The passwords don't match.",
+        "passwordCurrentRequired": "Enter your current password.",
         "appearance": "Appearance",
         "apply": "Apply",
         "applyRaise": "Apply raise (%)",
@@ -630,6 +660,13 @@
         "fixed": "· Fixed"
     },
     "auth": {
+        "linkGoogleTitle": "Link Google",
+        "linkGoogleMessage": "You already have an account with this email. Enter your password to link Google. We only ask this once.",
+        "linkGoogleAction": "Link",
+        "linkGoogleForgot": "I don't remember it",
+        "linkGoogleForgotTitle": "Link without the password?",
+        "linkGoogleForgotMessage": "You'll sign in with Google and your current password will stop working. You can create a new one in Settings.",
+        "linkGoogleForgotConfirm": "Link and remove it",
         "continueWithGoogle": "Continue with Google",
         "googleSignInUnavailable": "Google sign-in isn't available. You can use your email and password.",
         "takeControlOfYourPersonalFinances": "Take control of your personal finances",

@@ -11,7 +11,7 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-const SILENT_PATHS = ['/auth/login', '/auth/register'];
+const SILENT_PATHS = ['/auth/login', '/auth/register', '/auth/firebase-login'];
 
 let sessionExpiredHandled = false;
 
@@ -73,6 +73,22 @@ export const updateSueldo = async (sueldo, sueldoCurrency, token) => {
     const { data } = await api.put(
         '/user/sueldo',
         { sueldo, sueldo_currency: sueldoCurrency },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const fetchPasswordStatus = async (token) => {
+    const { data } = await api.get('/user/password-status', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const updatePassword = async ({ currentPassword, newPassword }, token) => {
+    const { data } = await api.put(
+        '/user/password',
+        { current_password: currentPassword, new_password: newPassword },
         { headers: { Authorization: `Bearer ${token}` } },
     );
     return data.data;

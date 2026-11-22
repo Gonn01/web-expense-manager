@@ -16,7 +16,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [mision-vision-valores.md](mision-vision-valores.md) | Misión, visión y valores centrales de la organización, y cómo se reflejan en el sistema |
 | [requerimientos-funcionales.md](requerimientos-funcionales.md) | Qué hace el sistema, por módulo (`RF-<módulo>-NN`) |
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
-| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-48` |
+| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-49` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 
 Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).

@@ -90,7 +90,7 @@ src/
 **API layer is centralized**: all HTTP calls go through the single axios instance in `src/services/api.js`. Its response interceptor:
 
 - Normalizes every error via `error-handler.js` + `utils/error-catalog.js`.
-- Automatically shows a global snackbar/dialog on failure, **except** for `SILENT_PATHS` (`/auth/login`, `/auth/register`), where the calling form handles the error inline instead.
+- Automatically shows a global snackbar/dialog on failure, **except** for `SILENT_PATHS` (`/auth/login`, `/auth/register`, `/auth/firebase-login`), where the calling form or hook handles the error instead.
 - Auto-logs out and redirects to `/login` on 401 (guarded by a `sessionExpiredHandled` flag to avoid double-handling).
 - Auth token is passed explicitly as `Authorization: Bearer <token>` per call (no axios default header) — it's threaded through hooks/stores as an argument.
 

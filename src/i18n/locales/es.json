@@ -79,6 +79,24 @@
             "EMAIL_YA_REGISTRADO": {
                 "message": "Ya existe una cuenta con ese email."
             },
+            "EMAIL_REGISTRADO_CON_GOOGLE": {
+                "message": "Este email ya tiene una cuenta con Google. Entrá con Google y definí tu contraseña en Configuración."
+            },
+            "GOOGLE_TOKEN_INVALIDO": {
+                "message": "No pudimos validar el inicio de sesión con Google. Intentá de nuevo."
+            },
+            "GOOGLE_EMAIL_NO_VERIFICADO": {
+                "message": "Tu cuenta de Google no tiene un email verificado."
+            },
+            "GOOGLE_NO_CONFIGURADO": {
+                "message": "El inicio de sesión con Google no está disponible en este momento."
+            },
+            "VINCULACION_REQUIERE_CONTRASENA": {
+                "message": "Ya tenés una cuenta con este email. Ingresá tu contraseña para vincular Google."
+            },
+            "CONTRASENA_INCORRECTA": {
+                "message": "La contraseña es incorrecta."
+            },
             "NO_AUTORIZADO": {
                 "message": "No tenés permiso para hacer esto.",
                 "title": "Acción no permitida"
@@ -405,6 +423,18 @@
         "goToStep": "Ir al paso {{step}} de {{total}}"
     },
     "configuracion": {
+        "passwordTitle": "Contraseña",
+        "passwordDefineHint": "Tu cuenta entra con Google. Definí una contraseña para entrar también con tu email.",
+        "passwordChangeHint": "Podés entrar con tu email y contraseña, y también con Google.",
+        "passwordCurrent": "Contraseña actual",
+        "passwordNew": "Contraseña nueva",
+        "passwordConfirm": "Repetir contraseña nueva",
+        "passwordDefineAction": "Definir contraseña",
+        "passwordChangeAction": "Cambiar contraseña",
+        "passwordUpdated": "Contraseña actualizada.",
+        "passwordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+        "passwordMismatch": "Las contraseñas no coinciden.",
+        "passwordCurrentRequired": "Ingresá tu contraseña actual.",
         "appearance": "Apariencia",
         "apply": "Aplicar",
         "applyRaise": "Aplicar aumento (%)",
@@ -630,6 +660,13 @@
         "fixed": "· Fijo"
     },
     "auth": {
+        "linkGoogleTitle": "Vincular Google",
+        "linkGoogleMessage": "Ya tenés una cuenta con este email. Ingresá tu contraseña para vincular Google. Solo te la pedimos esta vez.",
+        "linkGoogleAction": "Vincular",
+        "linkGoogleForgot": "No la recuerdo",
+        "linkGoogleForgotTitle": "¿Vincular sin la contraseña?",
+        "linkGoogleForgotMessage": "Vas a entrar con Google y la contraseña actual dejará de funcionar. Después podés crear otra en Configuración.",
+        "linkGoogleForgotConfirm": "Vincular y borrarla",
         "continueWithGoogle": "Continuar con Google",
         "googleSignInUnavailable": "El inicio con Google no está disponible. Podés usar tu email y contraseña.",
         "takeControlOfYourPersonalFinances": "Controla tus finanzas personales",

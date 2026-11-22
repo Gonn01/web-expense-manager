@@ -109,6 +109,30 @@ export const ERROR_PRESENTATION = Object.freeze({
         messageKey: 'errors.codes.EMAIL_YA_REGISTRADO.message',
         variant: 'snackbar',
     },
+    EMAIL_REGISTRADO_CON_GOOGLE: {
+        messageKey: 'errors.codes.EMAIL_REGISTRADO_CON_GOOGLE.message',
+        variant: 'snackbar',
+    },
+    GOOGLE_TOKEN_INVALIDO: {
+        messageKey: 'errors.codes.GOOGLE_TOKEN_INVALIDO.message',
+        variant: 'snackbar',
+    },
+    GOOGLE_EMAIL_NO_VERIFICADO: {
+        messageKey: 'errors.codes.GOOGLE_EMAIL_NO_VERIFICADO.message',
+        variant: 'snackbar',
+    },
+    GOOGLE_NO_CONFIGURADO: {
+        messageKey: 'errors.codes.GOOGLE_NO_CONFIGURADO.message',
+        variant: 'snackbar',
+    },
+    VINCULACION_REQUIERE_CONTRASENA: {
+        messageKey: 'errors.codes.VINCULACION_REQUIERE_CONTRASENA.message',
+        variant: 'snackbar',
+    },
+    CONTRASENA_INCORRECTA: {
+        messageKey: 'errors.codes.CONTRASENA_INCORRECTA.message',
+        variant: 'snackbar',
+    },
 
     NO_AUTORIZADO: {
         messageKey: 'errors.codes.NO_AUTORIZADO.message',

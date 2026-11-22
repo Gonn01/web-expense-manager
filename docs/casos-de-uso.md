@@ -74,6 +74,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-46 | Pedir y responder edición de un gasto compartido | Usuario, Contraparte | 05 |
 | CU-47 | Elegir idioma | Usuario | 01 |
 | CU-48 | Compartir gasto existente | Usuario, Contraparte | 05 |
+| CU-49 | Definir o cambiar contraseña | Usuario | 01 |
 
 **Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
@@ -86,7 +87,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-01 — Registrarse
 
 - **Actor**: Visitante
-- **Requerimientos**: RF-AUT-01, RF-AUT-02
+- **Requerimientos**: RF-AUT-01, RF-AUT-02, RF-AUT-10
 - **Precondición**: el visitante no tiene sesión iniciada.
 - **Flujo principal**
     1. El visitante abre la pantalla de registro.
@@ -96,13 +97,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     5. El sistema lleva al visitante al inicio de sesión.
 - **Flujos alternativos**
     - 2a. El nombre tiene menos de 2 caracteres, el email no es válido o la contraseña tiene menos de 6 caracteres: el cliente muestra el error en el formulario y no envía nada.
-    - 3a. El email ya pertenece a una cuenta: el sistema muestra el error en el formulario y no crea la cuenta.
+    - 3a. El email ya pertenece a una cuenta con contraseña: el sistema muestra el error en el formulario y no crea la cuenta.
+    - 3b. El email pertenece a una cuenta que solo entra con Google: el sistema no le agrega la contraseña e indica entrar con Google y definirla en Configuración (CU-49).
 - **Postcondición**: existe una cuenta nueva. El visitante todavía no tiene sesión.
 
 ### CU-02 — Iniciar sesión con email
 
 - **Actor**: Visitante
-- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09
+- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09, RF-AUT-10
 - **Flujo principal**
     1. El visitante ingresa email y contraseña.
     2. El sistema valida las credenciales.
@@ -116,17 +118,21 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-03 — Iniciar sesión con Google
 
 - **Actores**: Visitante, Firebase
-- **Requerimientos**: RF-AUT-04, RF-AUT-05, RF-AUT-06
+- **Requerimientos**: RF-AUT-04, RF-AUT-05, RF-AUT-06, RF-AUT-10
 - **Flujo principal**
     1. El visitante elige "Continuar con Google".
-    2. Firebase autentica al visitante y devuelve su identidad (nombre, email, foto, identificador).
-    3. El sistema busca una cuenta asociada a esa identidad de Google y la encuentra.
+    2. Firebase autentica al visitante y entrega un ID token, que el cliente envía a la API.
+    3. La API verifica el token, toma de él la identidad, y encuentra la cuenta asociada a esa identidad de Google.
     4. El sistema emite el token y devuelve los datos del usuario, incluida su foto; el cliente los guarda y muestra el dashboard.
 - **Flujos alternativos**
     - 1a. Firebase no está configurado en el cliente: "Continuar con Google" aparece deshabilitado y el visitante puede usar email y contraseña.
     - 2a. El visitante cancela o Firebase falla: no se inicia sesión.
-    - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email, creada con credenciales. El sistema asocia la identidad de Google a esa cuenta, guarda la foto de Google si la cuenta no tenía una, y continúa en 4.
-    - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña, con la foto de Google, y continúa en 4.
+    - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email. Si tiene contraseña, el sistema la pide una sola vez y, si coincide, la conserva. El sistema asocia la identidad de Google a la cuenta, completa el nombre y la foto si faltaban, y continúa en 4.
+        - 3a.1. La contraseña no coincide: el sistema muestra el error y permite reintentar.
+        - 3a.2. El visitante indica que no la recuerda y confirma: el sistema vincula la cuenta, elimina esa contraseña y continúa en 4.
+        - 3a.3. El visitante cancela: no se vincula ni se inicia sesión.
+    - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña, con los datos del token, y continúa en 4.
+    - 3c. El token es inválido, o hay que crear o vincular una cuenta y Google no verificó el email: el sistema rechaza el ingreso.
 - **Postcondición**: sesión iniciada. Nunca quedan dos cuentas con el mismo email.
 
 ### CU-04 — Cerrar sesión
@@ -149,6 +155,19 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario abre Configuración.
     2. El sistema muestra su foto, nombre y email, su moneda preferida y su sueldo.
+
+### CU-49 — Definir o cambiar contraseña
+
+- **Actor**: Usuario
+- **Requerimientos**: RF-CFG-07, RF-AUT-10
+- **Flujo principal**
+    1. El usuario abre Configuración y el sistema indica si su cuenta ya tiene contraseña.
+    2. Ingresa la contraseña nueva y la repite. Si ya tiene una, ingresa también la actual.
+    3. El sistema valida los datos y guarda la contraseña cifrada.
+- **Flujos alternativos**
+    - 2a. Falta la contraseña actual, la nueva tiene menos de 6 caracteres o la repetición no coincide: el cliente muestra el error y no envía nada.
+    - 3a. La contraseña actual no coincide: el sistema muestra el error y no cambia nada.
+- **Postcondición**: la cuenta puede entrar con email y contraseña, y con Google si lo tiene vinculado.
 
 ### CU-06 — Cambiar moneda preferida
 
@@ -393,7 +412,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     2. Modifica nombre, monto, moneda, tipo, modalidad, cuotas, entidad y/o categorías. Los campos bloqueados se ven deshabilitados, con el motivo.
     3. El sistema valida los datos y guarda los cambios en el historial del gasto. Si cambió el nombre, lo registra en el historial de la entidad.
 - **Flujos alternativos**
-    - 1a. El usuario elige **Transferir** en lugar de editar: el sistema le ofrece las entidades a las que se puede mover el gasto; el usuario elige una (en la app móvil, además, confirma) y el sistema cambia solo la entidad, como en 3d, sin tocar el espejo. Si el gasto no se puede mover (bloqueo de RF-GAS-15 o entidad vinculada a otro usuario), la acción aparece atenuada y, al elegirla, el sistema muestra el motivo en un snackbar, por ejemplo que el gasto está compartido con otro usuario.
+    - 1a. El usuario elige **Transferir** en lugar de editar: el sistema le ofrece las entidades a las que se puede mover el gasto; el usuario elige una (en la app móvil, además, confirma) y el sistema cambia solo la entidad, como en 3d, sin tocar el espejo. Si el gasto no se puede mover (bloqueo de RF-GAS-15 o entidad vinculada a otro usuario), la acción aparece atenuada y, al elegirla, el sistema muestra el motivo (en un snackbar en la web y en un diálogo en la app móvil), por ejemplo que el gasto está compartido con otro usuario.
     - 2a. Faltan datos obligatorios o son inválidos (RF-GAS-17): el sistema no guarda e indica qué falta, igual que en CU-17 (2b).
     - 3a. El gasto tiene espejo y el usuario eligió aplicar los cambios a ambos: el sistema actualiza también el espejo, manteniéndole su entidad y el tipo opuesto.
     - 3b. El usuario intenta cambiar un campo bloqueado (gasto con pagos, finalizado, compartido o marcado en la sesión de cuentas): el sistema rechaza la edición y explica el motivo.

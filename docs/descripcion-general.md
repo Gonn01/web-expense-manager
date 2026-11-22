@@ -59,7 +59,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 | Módulo | Qué cubre |
 | --- | --- |
-| AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google; sesión persistente; cierre de sesión y expiración. |
+| AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google, sobre una sola cuenta por email; sesión persistente; cierre de sesión y expiración. |
 | CFG — Configuración | Perfil, moneda preferida, sueldo, tema de la interfaz (claro, oscuro o el del sistema) e idioma (español, inglés o el del sistema). |
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
 | ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración. |

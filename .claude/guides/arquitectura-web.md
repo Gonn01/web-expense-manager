@@ -54,7 +54,7 @@ El interceptor de respuesta, para **toda** request fallida:
 3. Ante 401: cierra la sesión y redirige a `/login` (una sola vez, por el flag `sessionExpiredHandled`). Como la redirección recarga la página, el aviso no puede ser un diálogo: `markSessionExpired()` (`utils/session-expired.js`) deja una marca en `sessionStorage` y la pantalla de login muestra el cartel "Tu sesión venció".
 4. Re-lanza el error normalizado, para que el `catch` local pueda revertir estado.
 
-Excepción: los `SILENT_PATHS` (`/auth/login`, `/auth/register`), cuyo formulario muestra el error en línea.
+Excepción: los `SILENT_PATHS` (`/auth/login`, `/auth/register`, `/auth/firebase-login`). Los dos primeros muestran el error en su formulario. `use-google-auth.js` maneja el tercero: envía solo el ID token de Firebase, abre `GoogleLinkDialog` ante `VINCULACION_REQUIERE_CONTRASENA` y pasa el resto de los errores a `notifyError`.
 
 Consecuencias:
 

@@ -1,5 +1,6 @@
 import BrandHeader from '../components/BrandHeader';
 import GoogleButton from '../components/GoogleButton';
+import GoogleLinkDialog from '../components/GoogleLinkDialog';
 import RegisterForm from './components/RegisterForm';
 import { useRegister } from './hooks/use-register';
 import { useGoogleAuth } from '../hooks/use-google-auth';
@@ -7,7 +8,7 @@ import { t } from '@/i18n';
 
 export default function Register() {
     const { loading, error, setError, handleRegister } = useRegister();
-    const { loginGoogle, loading: loadingGoogle, googleAvailable } = useGoogleAuth();
+    const { loginGoogle, loading: loadingGoogle, googleAvailable, linkDialog } = useGoogleAuth();
 
     return (
         <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-16 font-display">
@@ -47,6 +48,7 @@ export default function Register() {
                     </a>
                 </p>
             </div>
+            <GoogleLinkDialog {...linkDialog} />
         </div>
     );
 }

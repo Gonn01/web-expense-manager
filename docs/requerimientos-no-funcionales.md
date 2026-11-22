@@ -23,9 +23,13 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-10 | La API solo acepta peticiones de navegador (CORS) desde los orígenes de la web: producción y dev en Vercel, y `http://localhost:5173` para desarrollo local. La app móvil no está sujeta a CORS. | API, Web |
 | RNF-SEG-11 | La API no expone la tecnología del servidor: las respuestas no llevan el encabezado `X-Powered-By`. | API |
 | RNF-SEG-12 | Las notificaciones push se dirigen a usuarios autenticados de Pusher Beams: la API solo emite el token de Beams para el usuario de la sesión. Su contenido no incluye montos ni nombres de gastos. | API, App |
+| RNF-SEG-13 | El inicio de sesión con Google solo confía en un ID token de Firebase verificado por la API contra el proyecto de `FIREBASE_PROJECT_ID`. La identidad y el email nunca se toman de datos enviados por el cliente. | API, Web, App |
+| RNF-SEG-14 | Vincular Google a una cuenta con contraseña exige esa contraseña o eliminarla, para que nadie conserve acceso a una cuenta creada de antemano con un email ajeno. | API, Web, App |
 
 **Limitaciones conocidas**
 
+- El registro con email y contraseña no verifica que el correo pertenezca a quien se registra. RNF-SEG-14 protege al dueño real cuando entra con Google.
+- Cambiar la contraseña no cierra las sesiones ya abiertas: sus tokens siguen válidos hasta vencer.
 - Los canales de Pusher (`notificaciones-<userId>`) son públicos: no hay autenticación de canal. Los eventos solo llevan identificadores y nombres, no montos.
 
 ## CON — Consistencia entre clientes

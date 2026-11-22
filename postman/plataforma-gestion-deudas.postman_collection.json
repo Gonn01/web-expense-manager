@@ -78,7 +78,7 @@
                 }
               }
             },
-            "description": "Obligatorios: name, email, password. Opcional: firebaseId."
+            "description": "Obligatorios: name, email, password."
           },
           "response": []
         },
@@ -171,14 +171,14 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firebaseId\": \"{{firebaseId}}\",\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{email}}\",\n  \"avatar\": null\n}",
+              "raw": "{\n  \"idToken\": \"{{firebaseIdToken}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
             },
-            "description": "Obligatorio: firebaseId. Busca el usuario por firebaseId, luego por email, y si no existe lo crea."
+            "description": "Obligatorio: idToken, el ID token de Firebase de un login real con Google. La API lo verifica y toma de él la identidad. Opcionales para vincular una cuenta que ya tiene contraseña: password, o discardPassword: true para eliminarla. Sin ellos responde 409 VINCULACION_REQUIERE_CONTRASENA."
           },
           "response": []
         }
@@ -249,6 +249,58 @@
               }
             },
             "description": "sueldo debe ser un número mayor o igual a 0. sueldo_currency es opcional."
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar si tiene contraseña",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/password-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "password-status"
+              ]
+            },
+            "description": "Responde { has_password }."
+          },
+          "response": []
+        },
+        {
+          "name": "Definir o cambiar contraseña",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"actual\",\n  \"new_password\": \"nueva123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "new_password: mínimo 6 caracteres. current_password es obligatorio solo si la cuenta ya tiene contraseña."
           },
           "response": []
         },
@@ -1766,7 +1818,7 @@
       "type": "string"
     },
     {
-      "key": "firebaseId",
+      "key": "firebaseIdToken",
       "value": "",
       "type": "string"
     },
