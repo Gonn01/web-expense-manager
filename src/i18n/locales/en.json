@@ -121,6 +121,9 @@
             },
             "SNAPSHOT_NOT_FOUND": {
                 "message": "We couldn't find that settlement session."
+            },
+            "PUSH_NO_CONFIGURADO": {
+                "message": "Push notifications are not configured."
             }
         },
         "status": {

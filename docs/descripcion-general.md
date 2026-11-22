@@ -30,7 +30,7 @@ El sistema está formado por tres proyectos sobre un mismo modelo de datos:
 | Web | React (SPA) | Cliente para navegador. |
 | App móvil | Flutter | Cliente para Android e iOS. |
 
-Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (inicio con Google), Pusher Channels (tiempo real) y la API de Estadísticas Cambiarias del BCRA (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
+Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (inicio con Google), Pusher Channels (tiempo real), Pusher Beams con Firebase Cloud Messaging (push en Android) y la API de Estadísticas Cambiarias del BCRA (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
 
 ### Usuarios
 
@@ -68,7 +68,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 | CAT — Categorías | Categorías propias con nombre y color, asignables a los gastos. |
 | CTA — Hacer cuentas | Sesión de cierre persistida en el servidor, marcado de gastos, finalización con registro de pagos y snapshot, descarte, historial de cierres con el estado actual de cada pago compartido, y resumen para WhatsApp. |
 | CMP — Compartidos | Gastos compartidos recibidos y emitidos: compartir un gasto existente de una entidad vinculada, aprobar, rechazar, reintentar y descartar; confirmar, rechazar o retirar pagos pendientes; pedir, responder o cancelar la reversión de un pago confirmado. |
-| NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas. |
+| NOT — Notificaciones | Avisos en tiempo real de los eventos de gastos y pagos compartidos, con actualización automática de las pantallas afectadas, y notificaciones push en la app Android. |
 
 **Plataformas**: navegadores modernos (web) y Android / iOS (app móvil). **Idiomas**: español rioplatense e inglés en ambos clientes, a elección del usuario o según el idioma del navegador o del dispositivo.
 

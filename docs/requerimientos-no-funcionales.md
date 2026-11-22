@@ -22,6 +22,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-09 | En producción, la comunicación entre clientes y API es por HTTPS, y la conexión con Pusher usa TLS. | Todos |
 | RNF-SEG-10 | La API solo acepta peticiones de navegador (CORS) desde los orígenes de la web: producción y dev en Vercel, y `http://localhost:5173` para desarrollo local. La app móvil no está sujeta a CORS. | API, Web |
 | RNF-SEG-11 | La API no expone la tecnología del servidor: las respuestas no llevan el encabezado `X-Powered-By`. | API |
+| RNF-SEG-12 | Las notificaciones push se dirigen a usuarios autenticados de Pusher Beams: la API solo emite el token de Beams para el usuario de la sesión. Su contenido no incluye montos ni nombres de gastos. | API, App |
 
 **Limitaciones conocidas**
 
@@ -78,6 +79,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-DIS-06 | La app móvil arranca y funciona aunque Firebase no esté configurado: el inicio con Google queda deshabilitado y la analítica no hace nada. | App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
 | RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. | API |
+| RNF-DIS-09 | Sin Pusher Beams configurado o disponible, la operación de origen y el tiempo real siguen funcionando. Si el dispositivo no pudo registrarse, la app Flutter usa la notificación local mientras su proceso siga activo. | API, App |
 
 *Limitación conocida* (RNF-DIS-04): en la web, si falta la variable `VITE_PUSHER_KEY`, el cliente de Pusher falla al cargarse y la aplicación entera queda en blanco, incluido el inicio de sesión. En producción la variable está configurada; afecta a entornos locales o de prueba sin ella.
 
@@ -126,6 +128,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando |
 | Pusher Channels | Notificaciones en tiempo real | RNF-DIS-04 |
+| Pusher Beams + Firebase Cloud Messaging | Notificaciones push en Android | RNF-DIS-09 |
 | API de Estadísticas Cambiarias del BCRA | Cotización de las 35 monedas extranjeras soportadas | RNF-DIS-05 |
 | Firebase Analytics | Registro de errores de la app móvil | RNF-DIS-06 |
 

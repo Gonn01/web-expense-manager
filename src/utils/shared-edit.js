@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 function frequencyLabel(fixed, quotas) {
     if (fixed) return t('common.fixed');
     return Number(quotas) > 1
-        ? t('sharedEdit.installments', { count: quotas })
+        ? t('sharedEdit.installments', { count: Number(quotas) })
         : t('sharedEdit.singlePayment');
 }
 

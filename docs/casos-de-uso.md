@@ -16,7 +16,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | **Usuario** | Primario | Persona con sesión iniciada. Gestiona sus entidades, gastos, pagos y sesiones de cuentas. |
 | **Contraparte** | Primario | Otro usuario de la plataforma vinculado a una entidad del Usuario. Aprueba o rechaza los gastos que le comparten y confirma o rechaza los pagos. Es un Usuario visto desde el otro lado de la relación. |
 | **Firebase** | Sistema externo | Autentica la identidad de Google del visitante. |
-| **Pusher** | Sistema externo | Entrega las notificaciones en tiempo real a los clientes. |
+| **Pusher** | Sistema externo | Entrega las notificaciones en tiempo real a los clientes (Channels) y las push a la app Android (Beams). |
 
 ## Diagrama general
 
@@ -703,8 +703,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-38 — Recibir notificaciones en tiempo real
 
 - **Actores**: Usuario, Contraparte, Pusher
-- **Requerimientos**: RF-NOT-01, RF-NOT-02, RF-NOT-03
-- **Precondición**: el cliente está abierto y suscrito al canal del usuario.
+- **Requerimientos**: RF-NOT-01, RF-NOT-02, RF-NOT-03, RF-NOT-04
+- **Precondición**: el cliente está abierto y suscrito al canal del usuario, o la app Android tiene una sesión iniciada y push activas.
 - **Flujo principal**
     1. Otro usuario realiza una acción que afecta al actor.
     2. El sistema publica un evento en el canal del actor a través de Pusher.
@@ -735,8 +735,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 
 - **Flujos alternativos**
     - 2a. Pusher no está disponible: la acción de origen igual se completa; el actor verá el cambio al recargar o navegar.
-    - 5a. La app Flutter está en segundo plano: el aviso es una notificación local del sistema. Al tocarla, la app abre Compartidos.
-    - 5b. El sistema cerró la app o cortó su conexión: el evento no llega y el actor verá el cambio al volver a abrirla.
+    - 5a. La app Android está en segundo plano o cerrada y tiene push activas: el aviso llega como notificación push. Al tocarla, la app abre Compartidos.
+    - 5b. La app Flutter está en segundo plano sin push activas: el aviso es una notificación local del sistema. Al tocarla, la app abre Compartidos.
+    - 5c. La app no tiene push activas y el sistema la cerró o cortó su conexión: el evento no llega y el actor verá el cambio al volver a abrirla.
 
 ### CU-40 — Retirar pago compartido
 
