@@ -10,21 +10,27 @@ import {
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
+
+const CACHE_KEY = 'entidades';
+const NO_ENTITIES = [];
 
 export function useEntidadesData() {
     const { token } = useAuth();
-    const [allEntities, setAllEntities] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [allEntities, setAllEntities, cached] = useCachedState(CACHE_KEY, NO_ENTITIES);
+    const [loading, setLoading] = useState(!cached);
     const { addEntity, removeEntity } = useEntitiesStore();
 
     const entities = useMemo(() => allEntities.filter((e) => !e.deleted), [allEntities]);
     const deletedEntities = useMemo(() => allEntities.filter((e) => e.deleted), [allEntities]);
 
     const loadEntities = useCallback(async () => {
+        const isLatest = beginScreenRequest(CACHE_KEY);
         try {
-            setLoading(true);
+            if (!hasScreenCache(CACHE_KEY)) setLoading(true);
 
             const data = await fetchFinancialEntities(token);
+            if (!isLatest()) return;
 
             const normalized = data.map((e) => ({
                 ...e,
@@ -37,9 +43,9 @@ export function useEntidadesData() {
         } catch (err) {
             console.error('Error fetching entities:', err);
         } finally {
-            setLoading(false);
+            if (isLatest()) setLoading(false);
         }
-    }, [token]);
+    }, [token, setAllEntities]);
 
     useEffect(() => {
         if (!token) return;

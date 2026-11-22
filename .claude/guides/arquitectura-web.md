@@ -37,7 +37,7 @@ services/api.js               única puerta a HTTP
 ```
 
 - **Separación data / ui por pantalla.** Al agregar una pantalla, respetar los dos hooks; no juntar todo en uno.
-- **Un store solo para estado que comparten varias pantallas** (auth, entidades, categorías, sesión de cuentas, contadores de compartidos, notificaciones, snackbar, diálogo, preferencias de UI). El estado de una sola pantalla vive en su hook de datos.
+- **Un store solo para estado que comparten varias pantallas** (auth, entidades, categorías, sesión de cuentas, contadores de compartidos, notificaciones, snackbar, diálogo, preferencias de UI). El estado de una sola pantalla vive en su hook de datos, salvo los datos del servidor de los módulos principales, que usan el cache de pantallas (sección 4).
 - Los componentes no importan `axios` ni llaman a `fetch` contra la API propia.
 
 ## 3. Capa de API
@@ -78,6 +78,7 @@ Consecuencias:
     - Favorito y postergar en el dashboard: `busyKeys` de `use-dashboard-data.js` (claves `postpone:<id>`, `favGasto:<id>`, `favEntidad:<id>`).
     - Marcar y desmarcar en la sesión de cuentas: `pendingIds` de `use-settlement-store.js`, o `loadingSettleIds` del dashboard para el diálogo de pago. Después del diálogo, las marcas se toman de la respuesta del POST (`applyMarked`), sin volver a pedir la sesión. Al eliminar una entidad, sus gastos se desmarcan con `applyUnmarked(deleted_purchase_ids)` de la respuesta del DELETE.
 - **Evitar recargas completas**: tras una mutación puntual, aplicar la respuesta del endpoint al estado local en lugar de volver a pedir toda la pantalla. Al crear un gasto, `POST /gastos` devuelve sus cuotas pagas reales y, si tiene entidad de pago, el espejo en `mirror`: el dashboard (`addCreatedToGroups` en `use-dashboard-data.js`) y el detalle de entidad los insertan donde corresponde. Si hace falta volver a pedir, hacerlo sin el loader de pantalla completa (`{ silent: true }`).
+- **Cache de pantallas**: dashboard, entidades, compartidos e historial de cuentas guardan sus datos con `useCachedState(clave, inicial)` (`store/use-screen-cache-store.js`), que sobrevive al desmontar la página. La primera visita muestra el loader; al volver, la pantalla se pinta con los datos guardados y se actualiza en segundo plano. Cada carga llama a `beginScreenRequest(clave)` y descarta su respuesta si ya no es la última. El cache vive solo en memoria, se vacía cuando cambia el token e ignora escrituras de un token anterior, para que una cuenta nunca vea datos de otra. El valor `inicial` debe ser una constante estable. Los detalles (`entidades/:id`, `gastos/:id`, `settlement/:id`) no se cachean.
 
 ## 5. Tiempo real
 
@@ -113,7 +114,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 - **Textos e idioma**: todo texto visible va en `src/i18n/locales/es.json` y `en.json`, con las mismas claves, variables y etiquetas (lo verifica `utils/locale-catalog.test.js`). Se usa `t` de `@/i18n`, también fuera de React; `<Trans>` para texto con marcado, y claves `_one`/`_other` para plurales. No se arman oraciones concatenando fragmentos. Para `Intl` y `toLocale*` se usa `getIntlLocale()`. El idioma es una preferencia por navegador (RF-CFG-06: `system`, `es`, `en`; clave `ui:language`, `IdiomaCard` en Configuración, `getLanguagePreference` y `setLanguagePreference` de `@/i18n`). `system` sigue al navegador (primer idioma soportado; si no hay, inglés). Cambiar el idioma activo recarga la app, porque algunas etiquetas se calculan al cargar el módulo. Los valores de datos de la API (`EGRESO`, `INGRESO`, estados) no se traducen.
 - Variables de entorno con prefijo `VITE_` en `.env` (no versionado): `VITE_API_BASE_URL`, `VITE_FIREBASE_*`, `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER`.
 - `npm run lint` y `npm run format` antes de dar por terminado un cambio.
-- Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/`, `services/error-handler.js` y `store/use-settlement-store.js`, sin red ni DOM; no hay entorno `jsdom` configurado.
+- Pruebas unitarias con Vitest (`npm test`): el archivo `<nombre>.test.js` va junto al que prueba (`utils/convert-currency.test.js`), con imports explícitos de `vitest` (`describe`, `it`, `expect`) y descripciones en español. Se prueban funciones puras de `utils/`, `services/error-handler.js`, `store/use-settlement-store.js` y `store/use-screen-cache-store.js`, sin red ni DOM; no hay entorno `jsdom` configurado.
 - `npm test` antes de dar por terminado un cambio que toque lógica cubierta por pruebas.
 
 ## 8. Checklist: feature nueva de punta a punta

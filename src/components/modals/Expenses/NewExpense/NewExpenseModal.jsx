@@ -144,7 +144,7 @@ export default function NewExpenseModal({
         amount !== '' ||
         currency !== 'ARS' ||
         installments !== '' ||
-        paidInstallments !== '0' ||
+        paidInstallments !== '' ||
         isFixed ||
         isInstallment ||
         isPaid ||

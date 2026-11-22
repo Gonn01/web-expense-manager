@@ -21,6 +21,7 @@ import { useCompartidosStore } from '@/store/use-compartidos-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
+import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import {
     CompartidoAction,
@@ -29,6 +30,7 @@ import {
 } from '@/utils/compartidos-actions';
 import { t } from '@/i18n';
 
+const CACHE_KEY = 'compartidos';
 const EMPTY_GROUP = { porConfirmar: [], esperando: [] };
 const EMPTY_DATA = {
     compartidos: { recibidos: [], emitidos: [] },
@@ -41,9 +43,9 @@ export function useCompartidos() {
     const { token, user } = useAuth();
     const { setPendingCount, setPendingPaymentsCount } = useCompartidosStore();
 
-    const [data, setData] = useState(EMPTY_DATA);
+    const [data, setData, cached] = useCachedState(CACHE_KEY, EMPTY_DATA);
     const { compartidos, pagos, reversiones, ediciones } = data;
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!cached);
     const [loadingActions, setLoadingActions] = useState([]);
 
     const startAction = useCallback((id, kind) => {
@@ -64,9 +66,11 @@ export function useCompartidos() {
     const load = useCallback(
         async ({ silent = false } = {}) => {
             if (!token) return;
+            const isLatest = beginScreenRequest(CACHE_KEY);
             try {
-                if (!silent) setLoading(true);
+                if (!silent && !hasScreenCache(CACHE_KEY)) setLoading(true);
                 const response = await fetchCompartidos(token);
+                if (!isLatest()) return;
                 const next = {
                     compartidos: {
                         recibidos: response.recibidos ?? [],
@@ -81,10 +85,10 @@ export function useCompartidos() {
             } catch (err) {
                 console.error('Error cargando compartidos', err);
             } finally {
-                if (!silent) setLoading(false);
+                if (isLatest()) setLoading(false);
             }
         },
-        [token, publishCounters],
+        [token, publishCounters, setData],
     );
 
     const applyLocal = useCallback(
@@ -95,7 +99,7 @@ export function useCompartidos() {
                 return next;
             });
         },
-        [publishCounters],
+        [publishCounters, setData],
     );
 
     const reloadInBackground = useCallback(() => {

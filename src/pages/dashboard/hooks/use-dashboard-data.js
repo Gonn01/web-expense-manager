@@ -13,6 +13,7 @@ import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { Currency, ExpenseStatus } from '@/utils/enums';
 import { useEntitiesStore } from '@/store/use-entities-store';
+import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
 import {
     addCreatedToGroups,
     buildDashboardGroups,
@@ -23,16 +24,18 @@ import {
 const getEntityById = (id) => useEntitiesStore.getState().getEntityById(id);
 
 const CURRENCY_VALUES = Object.values(Currency);
+const GROUPS_CACHE_KEY = 'dashboard.groups';
+const PENDING_CACHE_KEY = 'dashboard.pendingTotal';
+const NO_GROUPS = [];
 
 export function useDashboardData() {
     const { token, user } = useAuth();
     const { handleConfirm } = useSettlements(token);
 
-    const [loaded, setLoaded] = useState(false);
-    const [groups, setGroups] = useState([]);
+    const [groups, setGroups, loaded] = useCachedState(GROUPS_CACHE_KEY, NO_GROUPS);
     const groupsRef = useRef(groups);
-    const [pendingTotal, setPendingTotal] = useState(0);
-    const [loading, setLoading] = useState(false);
+    const [pendingTotal, setPendingTotal] = useCachedState(PENDING_CACHE_KEY, 0);
+    const [loading, setLoading] = useState(!loaded);
     const [busyKeys, setBusyKeys] = useState(() => new Set());
 
     const runBusy = useCallback(async (key, fn) => {
@@ -48,16 +51,19 @@ export function useDashboardData() {
         }
     }, []);
 
-    const patchGasto = useCallback((gastoId, patch) => {
-        setGroups((prev) =>
-            prev.map((g) => ({
-                ...g,
-                items: g.items.map((it) =>
-                    String(it.id) === String(gastoId) ? { ...it, ...patch } : it,
-                ),
-            })),
-        );
-    }, []);
+    const patchGasto = useCallback(
+        (gastoId, patch) => {
+            setGroups((prev) =>
+                prev.map((g) => ({
+                    ...g,
+                    items: g.items.map((it) =>
+                        String(it.id) === String(gastoId) ? { ...it, ...patch } : it,
+                    ),
+                })),
+            );
+        },
+        [setGroups],
+    );
 
     const summaryByCurrency = useMemo(() => {
         if (!loaded) return null;
@@ -106,23 +112,24 @@ export function useDashboardData() {
         async ({ silent = false } = {}) => {
             if (!token) return;
 
+            const isLatest = beginScreenRequest(GROUPS_CACHE_KEY);
             try {
-                if (!silent) setLoading(true);
+                if (!silent && !hasScreenCache(GROUPS_CACHE_KEY)) setLoading(true);
                 const entities = await fetchDashboardData(token);
+                if (!isLatest()) return;
 
                 setPendingTotal(
                     entities.reduce((sum, e) => sum + (Number(e.pending_count) || 0), 0),
                 );
 
                 setGroups(buildDashboardGroups(entities));
-                setLoaded(true);
             } catch (err) {
                 console.error('Error cargando dashboard:', err);
             } finally {
-                if (!silent) setLoading(false);
+                if (isLatest()) setLoading(false);
             }
         },
-        [token],
+        [token, setGroups, setPendingTotal],
     );
 
     const reloadSilently = useCallback(() => loadDashboard({ silent: true }), [loadDashboard]);
@@ -163,7 +170,7 @@ export function useDashboardData() {
 
             setGroups(newGroups);
         },
-        [groups],
+        [groups, setGroups],
     );
 
     const settleQuotas = useCallback(
@@ -191,7 +198,7 @@ export function useDashboardData() {
             if (gasto.status === ExpenseStatus.PENDING_APPROVAL) setPendingTotal((t) => t + 1);
             return created;
         },
-        [token, groups, loadDashboard],
+        [token, groups, loadDashboard, setGroups, setPendingTotal],
     );
 
     const postergarGasto = useCallback(
@@ -241,7 +248,7 @@ export function useDashboardData() {
                     console.error('Error marcando favorito de entidad:', err);
                 }
             }),
-        [token, runBusy],
+        [token, runBusy, setGroups],
     );
 
     useEffect(() => {
@@ -256,7 +263,7 @@ export function useDashboardData() {
             }
             reloadSilently();
         },
-        [reloadSilently],
+        [reloadSilently, setGroups, setPendingTotal],
     );
 
     const onPagoPendiente = useCallback(
@@ -285,7 +292,7 @@ export function useDashboardData() {
                 })),
             );
         },
-        [reloadSilently],
+        [reloadSilently, setGroups],
     );
 
     const pusherEvents = useMemo(

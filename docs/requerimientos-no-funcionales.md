@@ -64,6 +64,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-04 | Varios componentes suscritos al mismo canal de tiempo real comparten una única suscripción. | Web |
 | RNF-REN-05 | Las operaciones sobre varios gastos (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión de cuentas, eliminar una entidad, compartir un gasto con pagos previos) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones que generan se envían en paralelo después de guardar, sin demorar la respuesta. | API |
 | RNF-REN-06 | La web descarga el código de cada pantalla de la aplicación recién cuando se navega a ella: las pantallas de inicio de sesión y registro no cargan el código del dashboard, los gráficos ni el resto de las pantallas privadas. | Web |
+| RNF-REN-07 | Al volver a un módulo principal (dashboard, entidades, compartidos, historial de cuentas) ya visitado en la sesión, sus datos se muestran de inmediato, sin el indicador de carga de pantalla completa, y se actualizan en segundo plano. Los datos guardados se conservan solo en memoria y se descartan al cambiar la sesión. | Web, App |
 
 *Limitación conocida*: las acciones de compartidos todavía recargan la pantalla completa (crear un gasto desde compartidos la vuelve a pedir en segundo plano, sin el loader) (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 

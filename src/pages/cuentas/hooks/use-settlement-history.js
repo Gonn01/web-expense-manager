@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { fetchSettlementSnapshots, fetchSettlementSnapshotById } from '@/services/api';
+import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { getIntlLocale } from '@/i18n';
+
+const HISTORY_CACHE_KEY = 'settlementHistory';
+const NO_SNAPSHOTS = [];
 
 const PAYMENT_STATUS_EVENTS = [
     'pago.confirmado',
@@ -24,23 +28,25 @@ function usePaymentStatusEvents(userId, onEvent) {
 
 export function useSettlementHistoryList() {
     const { token, user } = useAuth();
-    const [snapshots, setSnapshots] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [snapshots, setSnapshots, cached] = useCachedState(HISTORY_CACHE_KEY, NO_SNAPSHOTS);
+    const [loading, setLoading] = useState(!cached);
 
     const load = useCallback(
         async ({ silent = false } = {}) => {
             if (!token) return;
-            if (!silent) setLoading(true);
+            const isLatest = beginScreenRequest(HISTORY_CACHE_KEY);
+            if (!silent && !hasScreenCache(HISTORY_CACHE_KEY)) setLoading(true);
             try {
                 const data = await fetchSettlementSnapshots(token);
+                if (!isLatest()) return;
                 setSnapshots(Array.isArray(data) ? data : []);
             } catch (err) {
                 console.error('Error cargando snapshots de cuentas:', err);
             } finally {
-                if (!silent) setLoading(false);
+                if (isLatest()) setLoading(false);
             }
         },
-        [token],
+        [token, setSnapshots],
     );
 
     useEffect(() => {
