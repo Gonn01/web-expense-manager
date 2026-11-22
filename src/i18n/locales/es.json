@@ -798,6 +798,7 @@
         "pendingBanner_other": "{{count}} gastos que creaste esperan que los apruebe {{name}}"
     },
     "charts": {
+        "noData": "No hay gastos activos para graficar.",
         "percentOfTotal": "{{percent}} del total",
         "percentOfSalary": "{{percent}} del sueldo",
         "categoriesTitle": "Gastos por categoría del mes",

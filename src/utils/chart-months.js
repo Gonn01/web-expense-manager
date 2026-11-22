@@ -1,4 +1,5 @@
 import { getIntlLocale } from '@/i18n';
+import { ExpenseType } from './enums';
 
 export function currentMonthIndex() {
     const today = new Date();
@@ -47,6 +48,12 @@ export function pendingQuotaMonths(gasto, currentMonth = currentMonthIndex()) {
     }
     start += postponedShift(gasto);
     return { start, end: start + remaining - 1 };
+}
+
+export function hasChartData(gastos = [], currentMonth = currentMonthIndex()) {
+    return gastos.some(
+        (g) => g.type === ExpenseType.EGRESO || pendingQuotaMonths(g, currentMonth) !== null,
+    );
 }
 
 export function fixedExpenseStartMonth(gasto, currentMonth = currentMonthIndex()) {

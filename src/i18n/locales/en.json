@@ -798,6 +798,7 @@
         "pendingBanner_other": "{{count}} expenses you created are waiting for {{name}} to approve them"
     },
     "charts": {
+        "noData": "There are no active expenses to chart.",
         "percentOfTotal": "{{percent}} of total",
         "percentOfSalary": "{{percent}} of salary",
         "categoriesTitle": "Expenses by category this month",
