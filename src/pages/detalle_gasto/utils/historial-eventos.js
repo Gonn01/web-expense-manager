@@ -16,10 +16,12 @@ const LABELS = {
     DELETE: t('detalleGasto.deleted'),
     RESTORE: t('detalleGasto.restored'),
     PAYMENT_REQUESTED: t('detalleGasto.sent'),
+    PAYMENT_RECEIVED: t('detalleGasto.received'),
     PAYMENT_REVERTED: t('detalleGasto.paymentVoided'),
     REVERSAL_REQUESTED: t('detalleGasto.reversalRequested'),
     REVERSAL_CANCELLED: t('detalleGasto.reversalCancelled'),
     REVERSAL_REJECTED: t('common.reversalRejected'),
+    SHARED_SENT: t('detalleGasto.sharedEvent'),
     SHARED_APPROVED: t('common.approved'),
     SHARED_REJECTED: t('common.rejected'),
     SHARED_RETRIED: t('detalleGasto.resent'),
@@ -40,6 +42,7 @@ const PAYMENT_TYPES = new Set([
     'PAYMENT',
     'PENDING_PAYMENT',
     'PAYMENT_REQUESTED',
+    'PAYMENT_RECEIVED',
     'PAYMENT_REJECTED',
     'PAYMENT_WITHDRAWN',
     'PAYMENT_REVERTED',
@@ -48,6 +51,7 @@ const PAYMENT_TYPES = new Set([
 
 const PAYMENT_LINKED_EVENTS = new Set([
     'PAYMENT_REQUESTED',
+    'PAYMENT_RECEIVED',
     'REVERSAL_REQUESTED',
     'REVERSAL_CANCELLED',
     'REVERSAL_REJECTED',
@@ -142,6 +146,10 @@ export function eventTitle(movement, gasto, { number, counterpartyName, currentU
             });
         case 'PAYMENT_REQUESTED':
             return t('history.sentBy', { payment: cuota ?? t('common.payment'), actor });
+        case 'PAYMENT_RECEIVED':
+            return cuota
+                ? t('history.receivedFrom', { payment: cuota, name: otra })
+                : t('history.paymentReceivedFrom', { name: otra });
         case 'PAYMENT_REVERTED':
             return t('detalleGasto.paymentRecordedLaterReverted');
         case 'REVERSAL_REQUESTED':
@@ -159,6 +167,11 @@ export function eventTitle(movement, gasto, { number, counterpartyName, currentU
                 payment: cuota ?? t('common.payment'),
                 actor,
             });
+        case 'SHARED_SENT':
+            return currentUserId != null &&
+                String(movement.created_by_user_id) === String(currentUserId)
+                ? t('history.sharedSentTo', { name: otra })
+                : t('history.sharedReceivedFrom', { name: otra });
         case 'SHARED_APPROVED':
             return t('history.sharedApprovedBy', { actor });
         case 'SHARED_REJECTED':

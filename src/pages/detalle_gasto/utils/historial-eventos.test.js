@@ -90,6 +90,28 @@ describe('eventTitle', () => {
             eventTitle(enviado, gasto, { number: 3, counterpartyName: 'María', currentUserId: 1 }),
         ).toBe('Cuota 3 de 6 · enviado por María');
     });
+
+    it('muestra quién compartió el gasto según quién lo mira', () => {
+        const compartido = { movement_type: 'SHARED_SENT', created_by_user_id: 2 };
+
+        expect(eventTitle(compartido, gasto, { counterpartyName: 'María', currentUserId: 2 })).toBe(
+            'Gasto compartido con María',
+        );
+        expect(eventTitle(compartido, gasto, { counterpartyName: 'María', currentUserId: 1 })).toBe(
+            'María te compartió este gasto',
+        );
+    });
+
+    it('muestra el pago recibido con su cuota solo cuando ya está confirmado', () => {
+        const recibido = { movement_type: 'PAYMENT_RECEIVED', created_by_user_id: 2 };
+
+        expect(eventTitle(recibido, gasto, { number: 3, counterpartyName: 'María' })).toBe(
+            'Cuota 3 de 6 · recibido de María',
+        );
+        expect(eventTitle(recibido, gasto, { counterpartyName: 'María' })).toBe(
+            'Pago recibido de María',
+        );
+    });
 });
 
 describe('filterEventsByDate', () => {

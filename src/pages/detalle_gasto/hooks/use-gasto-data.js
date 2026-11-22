@@ -33,7 +33,7 @@ export function useGastoData() {
     const sharedRef = useRef(false);
 
     useEffect(() => {
-        sharedRef.current = Boolean(gasto?.shared_counterparty);
+        sharedRef.current = Boolean(gasto?.was_shared);
     }, [gasto]);
 
     const pusherEvents = useMemo(() => {
@@ -46,6 +46,9 @@ export function useGastoData() {
             }
         };
         return {
+            'compartido.nuevo': refreshIfShared,
+            'compartido.aprobado': refreshIfShared,
+            'compartido.rechazado': refreshIfShared,
             'compartido.desvinculado': refreshIfShared,
             'pago.pendiente': refreshIfShared,
             'pago.confirmado': refreshIfShared,
@@ -79,7 +82,8 @@ export function useGastoData() {
 
     async function actualizar(payload) {
         if (!gasto) return;
-        const changes = gasto.shared_edit_locks ? sharedEditChanges(gasto, payload) : null;
+        const vigente = await fetchGastoById(gasto.id, token);
+        const changes = vigente.shared_edit_locks ? sharedEditChanges(gasto, payload) : null;
         if (!changes) {
             const updated = await updateGasto(gasto.id, payload, token);
             setGasto(updated);

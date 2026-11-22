@@ -25,6 +25,7 @@ import {
     recibidoGroup,
     reversionGroup,
 } from './utils/group-by-entity';
+import { countPagosByPurchase } from '@/utils/compartidos-pending';
 import { t } from '@/i18n';
 
 export default function Compartidos() {
@@ -102,6 +103,8 @@ export default function Compartidos() {
         (e) => e.copy_status === 'PENDING_APPROVAL',
     );
     const emitidosRechazados = compartidos.emitidos.filter((e) => e.copy_status === 'REJECTED');
+    const porConfirmarByPurchase = countPagosByPurchase(pagos.porConfirmar);
+    const esperandoByPurchase = countPagosByPurchase(pagos.esperando);
 
     const needsAction = [
         ...pagos.porConfirmar.map((p) => ({
@@ -111,6 +114,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="porConfirmar"
+                    pendingCount={porConfirmarByPurchase.get(p.purchase_id)}
                     loading={actionFor(`movement-${p.movement_id}`)}
                     onConfirmar={(id) => confirmarPago(id)}
                     onRechazar={(id) => rechazarPago(id)}
@@ -189,6 +193,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="esperando"
+                    pendingCount={esperandoByPurchase.get(p.purchase_id)}
                     loading={actionFor(`movement-${p.movement_id}`)}
                     onRetirar={(id) => retirarPago(id)}
                 />

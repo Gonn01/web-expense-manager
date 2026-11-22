@@ -10,6 +10,7 @@ import { Trans } from 'react-i18next';
 export default function PagoCompartidoCard({
     pago,
     variant,
+    pendingCount = 1,
     onConfirmar,
     onRechazar,
     onRetirar,
@@ -56,13 +57,15 @@ export default function PagoCompartidoCard({
                             }}
                         />
                         {pago.number_of_quotas > 0 &&
-                            t('shared.quotaSuffix', {
-                                number: Math.min(
-                                    pago.quota_number ?? (pago.payed_quotas ?? 0) + 1,
-                                    pago.number_of_quotas,
-                                ),
-                                total: pago.number_of_quotas,
-                            })}
+                            (pendingCount > 1
+                                ? t('shared.oneOfPendingQuotas', { total: pendingCount })
+                                : t('shared.quotaSuffix', {
+                                      number: Math.min(
+                                          pago.quota_number ?? (pago.payed_quotas ?? 0) + 1,
+                                          pago.number_of_quotas,
+                                      ),
+                                      total: pago.number_of_quotas,
+                                  }))}
                     </p>
                 </div>
                 <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold px-2 py-1">

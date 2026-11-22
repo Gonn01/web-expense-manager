@@ -630,6 +630,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     4. El sistema asigna la copia a esa entidad y activa tanto la copia como el gasto original.
     5. El sistema registra el gasto en el historial de la entidad del receptor y notifica al emisor (CU-38).
 - **Flujos alternativos**
+    - 2a. El receptor no tiene entidades: el sistema no muestra el selector y propone crear una entidad con el nombre del emisor (o su email si no tiene nombre), que el receptor puede editar. Continúa en 3a.
     - 3a. El receptor indica el nombre de una entidad nueva: el sistema la crea, la vincula al emisor y continúa en 4.
     - 4a. La entidad existente elegida no está vinculada a nadie y el receptor no tiene otra entidad vinculada al emisor: el sistema la vincula al emisor y lo registra en su historial. Los demás gastos pendientes de ese emisor pasan a sugerir esta entidad.
     - 3b. No elige entidad ni indica nombre: el sistema lo informa.
@@ -846,7 +847,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-CMP-19
 - **Precondición**: el gasto está activo, su entidad está vinculada a la contraparte y nunca fue compartido.
 - **Flujo principal**
-    1. En el detalle del gasto, el usuario elige "Compartir gasto".
+    1. En el detalle del gasto, el usuario elige "Sincronizar con <nombre de la contraparte>".
     2. El sistema pide confirmación, indicando quién recibe la copia y que el gasto queda pendiente hasta que la acepte.
     3. El usuario confirma; el sistema crea la copia con las mismas cuotas pagas y deja el original y la copia pendientes de aprobación.
     4. Si el gasto estaba marcado en la sesión de cuentas abierta, el sistema quita la marca.

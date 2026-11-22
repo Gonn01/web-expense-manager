@@ -68,8 +68,10 @@ export default function HeaderDetalle({
                         ...(gasto.can_share
                             ? [
                                   {
-                                      icon: 'group_add',
-                                      label: t('detalleGasto.shareExpense'),
+                                      icon: 'sync',
+                                      label: t('detalleGasto.syncExpenseWith', {
+                                          name: gasto.share_target_name ?? t('people.otherPerson'),
+                                      }),
                                       onClick: abrirCompartir,
                                   },
                               ]

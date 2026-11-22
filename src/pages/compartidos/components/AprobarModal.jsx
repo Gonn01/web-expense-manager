@@ -9,25 +9,36 @@ import { t } from '@/i18n';
 
 export default function AprobarModal({ open, gasto, onClose, onConfirm, loading }) {
     const { token } = useAuth();
-    const { entities, loadEntities } = useEntitiesStore();
+    const { entities, loading: loadingEntities, loadEntities } = useEntitiesStore();
 
-    const [mode, setMode] = useState('existing');
+    const [selectedMode, setSelectedMode] = useState('existing');
     const [selectedEntityId, setSelectedEntityId] = useState('');
-    const [newEntityName, setNewEntityName] = useState('');
+    const [typedEntityName, setTypedEntityName] = useState(null);
 
     useEffect(() => {
         if (!open) return;
         const suggestedId = gasto?.suggested_entity_id;
-        if (suggestedId && !useEntitiesStore.getState().getEntityById(suggestedId)) {
+        const store = useEntitiesStore.getState();
+        if (store.entities.length === 0 || (suggestedId && !store.getEntityById(suggestedId))) {
             loadEntities(token);
         }
-        setNewEntityName('');
+        setTypedEntityName(null);
         setSelectedEntityId(gasto?.suggested_entity_id?.toString() || '');
-        setMode('existing');
-    }, [open, gasto?.suggested_entity_id, loadEntities, token]);
+        setSelectedMode('existing');
+    }, [open, gasto?.id, gasto?.suggested_entity_id, loadEntities, token]);
+
+    const hasEntities = entities.length > 0;
+    const checkingEntities = !hasEntities && loadingEntities;
+    const mode = hasEntities ? selectedMode : 'new';
+    const defaultEntityName = hasEntities
+        ? ''
+        : (gasto?.sender_name || gasto?.sender_email || '').trim();
+    const newEntityName = typedEntityName ?? defaultEntityName;
 
     const initialEntityId = gasto?.suggested_entity_id?.toString() || '';
-    const dirty = newEntityName.trim() !== '' || selectedEntityId !== initialEntityId;
+    const dirty =
+        newEntityName.trim() !== defaultEntityName ||
+        (hasEntities && selectedEntityId !== initialEntityId);
     const requestClose = useDiscardGuard(dirty, onClose, { busy: loading });
 
     useEffect(() => {
@@ -39,10 +50,10 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
 
     if (!open) return null;
 
-    const hasEntities = entities.length > 0;
-
     const canConfirm =
-        !loading && (mode === 'existing' ? !!selectedEntityId : newEntityName.trim().length > 0);
+        !loading &&
+        !checkingEntities &&
+        (mode === 'existing' ? !!selectedEntityId : newEntityName.trim().length > 0);
 
     const handleConfirm = () => {
         if (mode === 'existing') {
@@ -71,58 +82,59 @@ export default function AprobarModal({ open, gasto, onClose, onConfirm, loading 
                     {gasto?.currency_type} {Number(gasto?.amount).toLocaleString(getIntlLocale())}
                 </p>
 
-                <div className="flex gap-2 mb-4">
-                    <button
-                        onClick={() => setMode('existing')}
-                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
-                            mode === 'existing'
-                                ? 'bg-primary text-background-dark border-primary'
-                                : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
-                        }`}
-                    >
-                        {t('compartidos.existingEntity')}
-                    </button>
-                    <button
-                        onClick={() => setMode('new')}
-                        className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
-                            mode === 'new'
-                                ? 'bg-primary text-background-dark border-primary'
-                                : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
-                        }`}
-                    >
-                        {t('compartidos.createNew')}
-                    </button>
-                </div>
-
-                {mode === 'existing' && (
-                    <div>
-                        {hasEntities ? (
-                            <Select
-                                value={selectedEntityId}
-                                onChange={setSelectedEntityId}
-                                placeholder={t('compartidos.selectAnEntity')}
-                                aria-label={t('common.entity')}
-                                className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-white text-sm cursor-pointer"
-                                options={entities.map((e) => ({ value: e.id, label: e.name }))}
-                            />
-                        ) : (
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                {t('compartidos.youDonTHaveAnyEntitiesCreate')}
-                            </p>
-                        )}
+                {hasEntities && (
+                    <div className="flex gap-2 mb-4">
+                        <button
+                            onClick={() => setSelectedMode('existing')}
+                            className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
+                                mode === 'existing'
+                                    ? 'bg-primary text-background-dark border-primary'
+                                    : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
+                            }`}
+                        >
+                            {t('compartidos.existingEntity')}
+                        </button>
+                        <button
+                            onClick={() => setSelectedMode('new')}
+                            className={`flex-1 py-2 text-sm rounded-lg font-medium border transition-colors ${
+                                mode === 'new'
+                                    ? 'bg-primary text-background-dark border-primary'
+                                    : 'border-zinc-300 dark:border-zinc-700 dark:text-white'
+                            }`}
+                        >
+                            {t('compartidos.createNew')}
+                        </button>
                     </div>
                 )}
 
+                {mode === 'existing' && (
+                    <Select
+                        value={selectedEntityId}
+                        onChange={setSelectedEntityId}
+                        placeholder={t('compartidos.selectAnEntity')}
+                        aria-label={t('common.entity')}
+                        className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-white text-sm cursor-pointer"
+                        options={entities.map((e) => ({ value: e.id, label: e.name }))}
+                    />
+                )}
+
                 {mode === 'new' && (
-                    <div>
+                    <label className="block">
+                        {!hasEntities && (
+                            <span className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-200">
+                                {t('compartidos.entityName')}
+                            </span>
+                        )}
                         <input
                             type="text"
+                            aria-label={t('compartidos.entityName')}
                             placeholder={`Ej: ${gasto?.sender_name || t('compartidos.entityName')}`}
                             value={newEntityName}
-                            onChange={(e) => setNewEntityName(e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-transparent dark:text-white text-sm"
+                            disabled={checkingEntities}
+                            onChange={(e) => setTypedEntityName(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 bg-transparent dark:text-white text-sm disabled:opacity-50"
                         />
-                    </div>
+                    </label>
                 )}
 
                 <div className="flex justify-between mt-6">

@@ -29,7 +29,7 @@ export default function HistorialEvento({
     onCancelReversion,
 }) {
     const [cancelling, setCancelling] = useState(false);
-    const counterpartyName = gasto.shared_counterparty?.name ?? null;
+    const counterpartyName = gasto.shared_counterparty?.name ?? gasto.shared_partner_name ?? null;
     const config = eventConfig(movement, gasto);
     const tone = TONES[config.tone];
     const type = movement.movement_type;

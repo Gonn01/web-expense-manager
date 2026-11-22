@@ -71,10 +71,10 @@ export default function DetalleGasto() {
     const confirmarCompartir = () => {
         const name = gasto.share_target_name ?? t('people.otherPerson');
         useDialogStore.getState().confirm({
-            title: t('detalleGasto.shareExpense'),
+            title: t('detalleGasto.syncExpenseWith', { name }),
             message: t('detalleGasto.shareExpenseMessage', { name, expense: gasto.name }),
             tone: 'primary',
-            confirmLabel: t('detalleGasto.shareExpense'),
+            confirmLabel: t('detalleGasto.syncExpense'),
             onConfirm: compartir,
         });
     };

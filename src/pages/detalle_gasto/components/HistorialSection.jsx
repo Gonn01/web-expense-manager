@@ -19,10 +19,7 @@ export default function HistorialSection({
 
     const movements = useMemo(() => gasto.movements ?? [], [gasto.movements]);
     const eventos = useMemo(
-        () =>
-            [...movements].sort(
-                (a, b) => new Date(b.created_at) - new Date(a.created_at) || b.id - a.id,
-            ),
+        () => [...movements].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
         [movements],
     );
     const visibles = useMemo(() => filterEventsByDate(eventos, range), [eventos, range]);
