@@ -33,6 +33,7 @@ export default function ActividadTab() {
         markAllRead,
     } = useNotificacionesStore();
     const [markingAll, setMarkingAll] = useState(false);
+    const [markingIds, setMarkingIds] = useState(() => new Set());
 
     const handleMarkAll = async () => {
         setMarkingAll(true);
@@ -46,10 +47,17 @@ export default function ActividadTab() {
     };
 
     const handleMarkRead = async (id) => {
+        setMarkingIds((prev) => new Set(prev).add(id));
         try {
             await markRead(id, token);
         } catch (err) {
             console.error('Error marcando notificación', err);
+        } finally {
+            setMarkingIds((prev) => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
         }
     };
 
@@ -97,9 +105,17 @@ export default function ActividadTab() {
                     type="button"
                     onClick={handleMarkAll}
                     disabled={markingAll}
-                    className="cursor-pointer self-end text-sm font-semibold text-primary hover:underline disabled:opacity-50"
+                    aria-busy={markingAll}
+                    className="relative cursor-pointer self-end text-sm font-semibold text-primary hover:underline disabled:cursor-wait"
                 >
-                    {t('notifications.markAllRead')}
+                    <span className={markingAll ? 'invisible' : ''}>
+                        {t('notifications.markAllRead')}
+                    </span>
+                    {markingAll && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
+                        </span>
+                    )}
                 </button>
             )}
 
@@ -152,11 +168,20 @@ export default function ActividadTab() {
                                 <button
                                     type="button"
                                     onClick={() => handleMarkRead(item.id)}
+                                    disabled={markingAll || markingIds.has(item.id)}
+                                    aria-busy={markingIds.has(item.id)}
                                     aria-label={t('notifications.markRead')}
                                     title={t('notifications.markRead')}
-                                    className="cursor-pointer flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:bg-black/5 hover:text-primary dark:text-zinc-400 dark:hover:bg-white/10"
+                                    className="cursor-pointer flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:bg-black/5 hover:text-primary dark:text-zinc-400 dark:hover:bg-white/10 disabled:cursor-wait"
                                 >
-                                    <Icon name="done" className="text-xl" />
+                                    <Icon
+                                        name={
+                                            markingIds.has(item.id) ? 'progress_activity' : 'done'
+                                        }
+                                        className={`text-xl ${
+                                            markingIds.has(item.id) ? 'animate-spin' : ''
+                                        }`}
+                                    />
                                 </button>
                             )}
                         </li>
@@ -169,9 +194,17 @@ export default function ActividadTab() {
                     type="button"
                     onClick={() => loadMore(token)}
                     disabled={loadingMore}
-                    className="cursor-pointer self-center h-10 px-4 rounded-lg border border-zinc-300 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
+                    aria-busy={loadingMore}
+                    className="relative cursor-pointer self-center h-10 px-4 rounded-lg border border-zinc-300 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 disabled:cursor-wait dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
                 >
-                    {t('notifications.loadMore')}
+                    <span className={loadingMore ? 'invisible' : ''}>
+                        {t('notifications.loadMore')}
+                    </span>
+                    {loadingMore && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
+                        </span>
+                    )}
                 </button>
             )}
         </div>

@@ -170,6 +170,7 @@ export default function ActiveExpenses({
                 items={settleModal.modalItems}
                 onCancel={() => settleModal.setModalOpen(false)}
                 onConfirm={onConfirmSettle}
+                loading={loadingSettleIds.size > 0}
             />
         </div>
     );

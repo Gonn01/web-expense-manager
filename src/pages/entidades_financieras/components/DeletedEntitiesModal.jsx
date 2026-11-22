@@ -19,10 +19,10 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
 
     useEffect(() => {
         if (!isOpen) return;
-        const onKey = (e) => e.key === 'Escape' && onClose?.();
+        const onKey = (e) => e.key === 'Escape' && restoringId === null && onClose?.();
         document.addEventListener('keydown', onKey);
         return () => document.removeEventListener('keydown', onKey);
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, restoringId]);
 
     const confirmRestore = async () => {
         if (!selected) return;
@@ -127,7 +127,6 @@ export default function DeletedEntitiesModal({ isOpen, deletedEntities = [], onC
                 confirmLabel={t('common.confirm')}
                 tone="primary"
                 loading={restoringId !== null}
-                loadingLabel="Restaurando..."
                 onCancel={() => setSelected(null)}
                 onConfirm={confirmRestore}
             />

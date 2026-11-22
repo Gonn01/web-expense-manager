@@ -44,7 +44,13 @@ export function useCompartidos() {
     const [data, setData] = useState(EMPTY_DATA);
     const { compartidos, pagos, reversiones, ediciones } = data;
     const [loading, setLoading] = useState(true);
-    const [loadingAction, setLoadingAction] = useState(null);
+    const [loadingActions, setLoadingActions] = useState([]);
+
+    const startAction = useCallback((id, kind) => {
+        const action = { id, kind };
+        setLoadingActions((prev) => [...prev, action]);
+        return () => setLoadingActions((prev) => prev.filter((a) => a !== action));
+    }, []);
 
     const publishCounters = useCallback(
         (state) => {
@@ -127,7 +133,7 @@ export function useCompartidos() {
 
     const aprobar = useCallback(
         async (gastoId, financialEntityId, newEntityName) => {
-            setLoadingAction({ id: gastoId, kind: 'aprobar' });
+            const finishAction = startAction(`gasto-${gastoId}`, 'aprobar');
             try {
                 const approved = await aprobarCompartido(
                     gastoId,
@@ -169,43 +175,43 @@ export function useCompartidos() {
                 applyLocal(CompartidoAction.APROBAR, gastoId);
                 reloadInBackground();
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground, compartidos.recibidos],
+        [token, startAction, applyLocal, reloadInBackground, compartidos.recibidos],
     );
 
     const rechazar = useCallback(
         async (gastoId) => {
-            setLoadingAction({ id: gastoId, kind: 'rechazar' });
+            const finishAction = startAction(`gasto-${gastoId}`, 'rechazar');
             try {
                 await rechazarCompartido(gastoId, token);
                 applyLocal(CompartidoAction.RECHAZAR, gastoId);
                 reloadInBackground();
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const reintentar = useCallback(
         async (gastoId) => {
-            setLoadingAction({ id: gastoId, kind: 'reintentar' });
+            const finishAction = startAction(`gasto-${gastoId}`, 'reintentar');
             try {
                 await reintentarCompartido(gastoId, token);
                 applyLocal(CompartidoAction.REINTENTAR, gastoId);
                 reloadInBackground();
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const descartar = useCallback(
         async (gastoId, deleteLinked) => {
-            setLoadingAction({ id: gastoId, kind: 'descartar' });
+            const finishAction = startAction(`gasto-${gastoId}`, 'descartar');
             try {
                 const result = await descartarCompartido(gastoId, deleteLinked, token);
                 useSnackbarStore.getState().show(t('compartidos.expenseDiscarded'), 'success');
@@ -220,15 +226,15 @@ export function useCompartidos() {
                 console.error('Error descartando gasto', err);
                 return false;
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const responderPago = useCallback(
         async (movementId, kind, action, apiCall, successMessage) => {
-            setLoadingAction({ id: movementId, kind });
+            const finishAction = startAction(`movement-${movementId}`, kind);
             try {
                 await apiCall(movementId, token);
                 applyLocal(action, movementId);
@@ -238,10 +244,10 @@ export function useCompartidos() {
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const confirmarPago = useCallback(
@@ -270,7 +276,7 @@ export function useCompartidos() {
 
     const runPagoAction = useCallback(
         async (movementId, kind, action, apiCall, successMessage) => {
-            setLoadingAction({ id: movementId, kind });
+            const finishAction = startAction(`movement-${movementId}`, kind);
             try {
                 await apiCall(movementId, token);
                 applyLocal(action, movementId);
@@ -279,10 +285,10 @@ export function useCompartidos() {
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const retirarPago = useCallback(
@@ -335,7 +341,7 @@ export function useCompartidos() {
 
     const runEdicionAction = useCallback(
         async (editId, kind, action, apiCall, successMessage) => {
-            setLoadingAction({ id: `edicion-${editId}`, kind });
+            const finishAction = startAction(`edicion-${editId}`, kind);
             try {
                 await apiCall(editId, token);
                 applyLocal(action, editId);
@@ -344,10 +350,10 @@ export function useCompartidos() {
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
-                setLoadingAction(null);
+                finishAction();
             }
         },
-        [token, applyLocal, reloadInBackground],
+        [token, startAction, applyLocal, reloadInBackground],
     );
 
     const aprobarEdicion = useCallback(
@@ -403,7 +409,7 @@ export function useCompartidos() {
         rechazarEdicion,
         cancelarEdicion,
         loading,
-        loadingAction,
+        loadingActions,
         aprobar,
         rechazar,
         reintentar,

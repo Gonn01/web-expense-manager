@@ -54,17 +54,19 @@ export function useEntidadUI() {
 
     async function onConfirmSettle() {
         if (!settleModalItem) return;
-        setSettleModalOpen(false);
         setLoadingPayIds((prev) => new Set([...prev, settleModalItem.id]));
 
-        await settleQuota(settleModalItem);
-
-        setLoadingPayIds((prev) => {
-            const next = new Set(prev);
-            next.delete(settleModalItem.id);
-            return next;
-        });
-        setPayModalItem(null);
+        try {
+            await settleQuota(settleModalItem);
+        } finally {
+            setLoadingPayIds((prev) => {
+                const next = new Set(prev);
+                next.delete(settleModalItem.id);
+                return next;
+            });
+            setSettleModalOpen(false);
+            setPayModalItem(null);
+        }
     }
 
     async function onCreateExpense(payload) {

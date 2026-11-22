@@ -64,8 +64,6 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     };
 
     async function onConfirmSettle(itemsOverride) {
-        settleModal.setModalOpen(false);
-
         const itemsToPay =
             Array.isArray(itemsOverride) && itemsOverride.length
                 ? itemsOverride
@@ -73,9 +71,12 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
         const ids = itemsToPay.map((i) => i.id);
         setLoadingPayIds((prev) => new Set([...prev, ...ids]));
 
-        await settleQuotas(itemsToPay);
-
-        setLoadingPayIds(new Set());
+        try {
+            await settleQuotas(itemsToPay);
+        } finally {
+            setLoadingPayIds(new Set());
+            settleModal.setModalOpen(false);
+        }
     }
 
     const requestTogglePostpone = useCallback(

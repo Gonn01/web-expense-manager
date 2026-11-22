@@ -185,14 +185,11 @@ export function useGastoData() {
 
     async function eliminar(deleteLinked = false) {
         if (!gasto) return false;
-        setLoading(true);
         try {
             await deleteGasto(gasto.id, token, { deleteLinked });
             return true;
         } catch {
             return false;
-        } finally {
-            setLoading(false);
         }
     }
 

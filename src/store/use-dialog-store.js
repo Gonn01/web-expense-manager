@@ -53,11 +53,15 @@ export const useDialogStore = create((set, get) => ({
         }
 
         set({ current: { ...current, busy: true } });
+        let succeeded = false;
         try {
             await current.onConfirm();
+            succeeded = true;
+        } catch (err) {
+            console.error('Error en la acción confirmada', err);
         } finally {
             if (get().current?.id === current.id) set({ current: null });
-            current.resolve?.(true);
+            current.resolve?.(succeeded);
         }
     },
 

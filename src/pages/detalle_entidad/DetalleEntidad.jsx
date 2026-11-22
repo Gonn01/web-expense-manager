@@ -44,6 +44,7 @@ export default function EntidadDetalle() {
         onCreateExpense,
         loadingCreatingExpense,
         onUpdateEntity,
+        loadingUpdatingEntity,
         onVincular,
         onDesvincular,
         loadingVincular,
@@ -326,6 +327,7 @@ export default function EntidadDetalle() {
                 items={settleModalItem ? [settleModalItem] : []}
                 onCancel={() => setSettleModalOpen(false)}
                 onConfirm={onConfirmSettle}
+                loading={Boolean(settleModalItem && loadingSettleIds.has(settleModalItem.id))}
                 settlementActive={false}
                 showSettlementWarning={false}
             />
@@ -335,7 +337,7 @@ export default function EntidadDetalle() {
                     entity={entity}
                     onClose={() => setOpenEditEntity(false)}
                     onSave={onUpdateEntity}
-                    saving={loadingCreatingExpense}
+                    saving={loadingUpdatingEntity}
                     onVincular={onVincular}
                     onDesvincular={onDesvincular}
                     loadingVincular={loadingVincular}

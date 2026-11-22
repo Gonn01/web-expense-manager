@@ -15,8 +15,8 @@ export default function PagoCompartidoCard({
     onRetirar,
     loading,
 }) {
-    const isLoading = loading?.id === pago.movement_id;
-    const loadingKind = isLoading ? loading.kind : null;
+    const isLoading = Boolean(loading);
+    const loadingKind = loading?.kind ?? null;
     const porConfirmar = variant === 'porConfirmar';
     const marcadoEnSesion = useSettlementStore(
         (s) =>
@@ -25,8 +25,8 @@ export default function PagoCompartidoCard({
             Boolean(s.checkedExpenses[String(pago.sibling_purchase_id)]),
     );
 
-    const handleRetirar = async () => {
-        const ok = await useDialogStore.getState().confirm({
+    const handleRetirar = () =>
+        useDialogStore.getState().confirm({
             title: t('common.withdrawThePayment'),
             message: t('shared.withdrawMessage', {
                 expense: pago.gasto_name,
@@ -34,9 +34,8 @@ export default function PagoCompartidoCard({
             }),
             tone: 'danger',
             confirmLabel: t('common.withdraw'),
+            onConfirm: () => onRetirar?.(pago.movement_id),
         });
-        if (ok) onRetirar?.(pago.movement_id);
-    };
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">

@@ -6,8 +6,8 @@ import { getIntlLocale } from '@/i18n';
 import { t } from '@/i18n';
 
 export default function EmitidoCard({ item, onReintentar, onDescartar, loading }) {
-    const isLoading = loading?.id === item.id;
-    const loadingKind = isLoading ? loading.kind : null;
+    const isLoading = Boolean(loading);
+    const loadingKind = loading?.kind ?? null;
     const isRejected = item.copy_status === ExpenseStatus.REJECTED;
     const canRetry = item.can_retry !== false;
     const receiver = item.receiver_name ?? item.receiver_email ?? t('common.theOtherPerson');

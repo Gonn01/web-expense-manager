@@ -11,6 +11,7 @@ export default function DeleteExpenseModal({
     onDelete,
 }) {
     const [deleteLinked, setDeleteLinked] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const close = () => {
         setDeleteLinked(false);
@@ -41,10 +42,16 @@ export default function DeleteExpenseModal({
             }
             confirmLabel={t('common.delete')}
             cancelLabel={t('common.cancel')}
+            loading={deleting}
             onCancel={close}
-            onConfirm={() => {
-                onDelete(deleteLinked);
-                close();
+            onConfirm={async () => {
+                setDeleting(true);
+                try {
+                    await onDelete(deleteLinked);
+                } finally {
+                    setDeleting(false);
+                    close();
+                }
             }}
         />
     );

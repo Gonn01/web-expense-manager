@@ -15,16 +15,23 @@ export default function EntitiesList({
 }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selected, setSelected] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     const openDelete = (entity) => {
         setSelected(entity);
         setModalOpen(true);
     };
 
-    const confirmDelete = () => {
-        if (selected) onDelete(selected);
-        setModalOpen(false);
-        setSelected(null);
+    const confirmDelete = async () => {
+        if (!selected) return;
+        setDeleting(true);
+        try {
+            await onDelete(selected);
+        } finally {
+            setDeleting(false);
+            setModalOpen(false);
+            setSelected(null);
+        }
     };
 
     const containerClass =
@@ -58,6 +65,7 @@ export default function EntitiesList({
                 title={t('common.deleteEntity')}
                 message={t('entity.confirmDelete', { name: selected?.name })}
                 confirmLabel={t('common.deleteEntity')}
+                loading={deleting}
                 onCancel={() => setModalOpen(false)}
                 onConfirm={confirmDelete}
             />

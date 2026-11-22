@@ -29,14 +29,14 @@ export default function ConfirmInstallmentPaymentModal({
         const prev = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
 
-        const onKey = (e) => e.key === 'Escape' && onCancel?.();
+        const onKey = (e) => e.key === 'Escape' && !loading && onCancel?.();
         document.addEventListener('keydown', onKey);
 
         return () => {
             document.body.style.overflow = prev;
             document.removeEventListener('keydown', onKey);
         };
-    }, [open, onCancel]);
+    }, [open, loading, onCancel]);
 
     const itemsKey = items.map((it) => it.id).join(',');
     useEffect(() => {
@@ -82,7 +82,7 @@ export default function ConfirmInstallmentPaymentModal({
         : t('modals.itSRecordedNowInThisExpense');
 
     return createPortal(
-        <ModalOverlay onClose={onCancel}>
+        <ModalOverlay onClose={loading ? undefined : onCancel}>
             <ModalContainer>
                 <ModalHeader
                     icon="payments"
@@ -92,23 +92,23 @@ export default function ConfirmInstallmentPaymentModal({
                                 ? t('modals.markInstallmentPayment')
                                 : t('modals.markInstallmentPayments')
                             : isSingle
-                              ? t('modals.recordInstallmentPayment')
-                              : t('modals.recordInstallmentPayments')
+                                ? t('modals.recordInstallmentPayment')
+                                : t('modals.recordInstallmentPayments')
                     }
                     description={
                         isSingle
                             ? t('payment.singleDescription', {
-                                  verb: verbo,
-                                  name: single.name,
-                                  entity: entityName,
-                                  detail: registraMsg,
-                              })
+                                verb: verbo,
+                                name: single.name,
+                                entity: entityName,
+                                detail: registraMsg,
+                            })
                             : t('payment.multiDescription', {
-                                  count: activeItems.length,
-                                  verb: verbo,
-                                  entity: entityName,
-                                  detail: registraMsg,
-                              })
+                                count: activeItems.length,
+                                verb: verbo,
+                                entity: entityName,
+                                detail: registraMsg,
+                            })
                     }
                 />
 

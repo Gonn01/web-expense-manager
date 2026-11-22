@@ -16,7 +16,6 @@ export default function ConfirmDeleteModal({
     tone = 'danger',
     loading = false,
     confirmDisabled = false,
-    loadingLabel = 'Procesando...',
     onConfirm,
     onCancel,
 }) {
@@ -66,11 +65,17 @@ export default function ConfirmDeleteModal({
                     <button
                         onClick={onConfirm}
                         disabled={loading || confirmDisabled}
-                        className={`cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                        aria-busy={loading}
+                        className={`relative cursor-pointer h-10 px-4 rounded-lg text-white text-sm font-bold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
                             TONE[tone] ?? TONE.danger
                         }`}
                     >
-                        {loading ? loadingLabel : confirmLabel}
+                        <span className={loading ? 'invisible' : ''}>{confirmLabel}</span>
+                        {loading && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
+                            </span>
+                        )}
                     </button>
                 </div>
             </div>

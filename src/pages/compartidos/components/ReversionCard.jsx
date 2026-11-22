@@ -14,20 +14,19 @@ export default function ReversionCard({
     onCancelar,
     loading,
 }) {
-    const isLoading = loading?.id === reversion.movement_id;
-    const loadingKind = isLoading ? loading.kind : null;
+    const isLoading = Boolean(loading);
+    const loadingKind = loading?.kind ?? null;
     const porConfirmar = variant === 'porConfirmar';
     const requester = reversion.requester_name ?? t('common.theOtherPerson');
 
-    const handleAceptar = async () => {
-        const ok = await useDialogStore.getState().confirm({
+    const handleAceptar = () =>
+        useDialogStore.getState().confirm({
             title: t('compartidos.revertThePayment'),
             message: t('shared.revertMessage', { expense: reversion.gasto_name }),
             tone: 'danger',
             confirmLabel: t('common.revert'),
+            onConfirm: () => onAceptar(reversion.movement_id),
         });
-        if (ok) onAceptar(reversion.movement_id);
-    };
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex flex-col gap-3">

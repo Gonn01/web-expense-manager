@@ -74,7 +74,7 @@ export default function GlobalDialog() {
                         </span>
                         {current.busy && (
                             <span className="absolute inset-0 flex items-center justify-center">
-                                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                                <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
                             </span>
                         )}
                     </button>

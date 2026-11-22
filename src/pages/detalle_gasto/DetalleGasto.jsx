@@ -159,9 +159,12 @@ export default function DetalleGasto() {
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={async () => {
                     setConfirmLoading(true);
-                    await settleQuota();
-                    setConfirmLoading(false);
-                    setConfirmOpen(false);
+                    try {
+                        await settleQuota();
+                    } finally {
+                        setConfirmLoading(false);
+                        setConfirmOpen(false);
+                    }
                 }}
                 loading={confirmLoading}
                 items={gasto ? [gasto] : []}

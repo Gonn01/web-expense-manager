@@ -40,9 +40,17 @@ export default function PendingEditBanner({ gasto, onCancel }) {
                     type="button"
                     disabled={cancelling}
                     onClick={handleCancel}
-                    className="mt-2 font-semibold underline cursor-pointer disabled:opacity-50"
+                    aria-busy={cancelling}
+                    className="relative mt-2 font-semibold underline cursor-pointer disabled:cursor-wait"
                 >
-                    {cancelling ? 'Cancelando…' : t('common.cancelRequest')}
+                    <span className={cancelling ? 'invisible' : ''}>
+                        {t('common.cancelRequest')}
+                    </span>
+                    {cancelling && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-4 h-4 border-2 border-current/40 border-t-current rounded-full animate-spin" />
+                        </span>
+                    )}
                 </button>
             ) : (
                 <p className="mt-2 font-semibold">{t('detalleGasto.respondInShared2')}</p>

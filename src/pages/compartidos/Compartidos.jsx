@@ -37,7 +37,7 @@ export default function Compartidos() {
         rechazarEdicion,
         cancelarEdicion,
         loading,
-        loadingAction,
+        loadingActions,
         aprobar,
         rechazar,
         reintentar,
@@ -58,14 +58,15 @@ export default function Compartidos() {
     const [savingExpense, setSavingExpense] = useState(false);
     const [tab, setTab] = useState('actividad');
     const unreadCount = useNotificacionesStore((s) => s.unreadCount);
+    const actionFor = (key) => loadingActions.find((action) => action.id === key);
 
     const handleAprobar = async (entityId, newEntityName) => {
         await aprobar(aprobarTarget.id, entityId, newEntityName);
         setAprobarTarget(null);
     };
 
-    const handleRechazar = async (item) => {
-        const confirmed = await useDialogStore.getState().confirm({
+    const handleRechazar = (item) =>
+        useDialogStore.getState().confirm({
             title: t('compartidos.rejectExpense'),
             message: t('shared.rejectConfirm', {
                 name: item.name,
@@ -73,9 +74,8 @@ export default function Compartidos() {
             }),
             tone: 'danger',
             confirmLabel: t('compartidos.reject'),
+            onConfirm: () => rechazar(item.id),
         });
-        if (confirmed) await rechazar(item.id);
-    };
 
     const handleDescartar = async (deleteLinked) => {
         const done = await descartar(descartarTarget.id, deleteLinked);
@@ -111,7 +111,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="porConfirmar"
-                    loading={loadingAction}
+                    loading={actionFor(`movement-${p.movement_id}`)}
                     onConfirmar={(id) => confirmarPago(id)}
                     onRechazar={(id) => rechazarPago(id)}
                 />
@@ -124,7 +124,7 @@ export default function Compartidos() {
                 <ReversionCard
                     reversion={r}
                     variant="porConfirmar"
-                    loading={loadingAction}
+                    loading={actionFor(`movement-${r.movement_id}`)}
                     onAceptar={(id) => aceptarReversion(id)}
                     onRechazar={(id) => rechazarReversion(id)}
                 />
@@ -137,7 +137,7 @@ export default function Compartidos() {
                 <EdicionCard
                     edicion={e}
                     variant="porConfirmar"
-                    loading={loadingAction}
+                    loading={actionFor(`edicion-${e.id}`)}
                     onAprobar={aprobarEdicion}
                     onRechazar={rechazarEdicion}
                 />
@@ -149,7 +149,7 @@ export default function Compartidos() {
             element: (
                 <RecibidoCard
                     item={item}
-                    loading={loadingAction}
+                    loading={actionFor(`gasto-${item.id}`)}
                     onAprobar={(g) => setAprobarTarget(g)}
                     onRechazar={() => handleRechazar(item)}
                 />
@@ -161,7 +161,7 @@ export default function Compartidos() {
             element: (
                 <EmitidoCard
                     item={item}
-                    loading={loadingAction}
+                    loading={actionFor(`gasto-${item.id}`)}
                     onReintentar={(id) => reintentar(id)}
                     onDescartar={(g) => setDescartarTarget(g)}
                 />
@@ -176,7 +176,7 @@ export default function Compartidos() {
             element: (
                 <EmitidoCard
                     item={item}
-                    loading={loadingAction}
+                    loading={actionFor(`gasto-${item.id}`)}
                     onReintentar={(id) => reintentar(id)}
                     onDescartar={(g) => setDescartarTarget(g)}
                 />
@@ -189,7 +189,7 @@ export default function Compartidos() {
                 <PagoCompartidoCard
                     pago={p}
                     variant="esperando"
-                    loading={loadingAction}
+                    loading={actionFor(`movement-${p.movement_id}`)}
                     onRetirar={(id) => retirarPago(id)}
                 />
             ),
@@ -201,7 +201,7 @@ export default function Compartidos() {
                 <ReversionCard
                     reversion={r}
                     variant="esperando"
-                    loading={loadingAction}
+                    loading={actionFor(`movement-${r.movement_id}`)}
                     onCancelar={(id) => cancelarReversion(id)}
                 />
             ),
@@ -213,7 +213,7 @@ export default function Compartidos() {
                 <EdicionCard
                     edicion={e}
                     variant="esperando"
-                    loading={loadingAction}
+                    loading={actionFor(`edicion-${e.id}`)}
                     onCancelar={cancelarEdicion}
                 />
             ),
@@ -226,7 +226,7 @@ export default function Compartidos() {
         element: (
             <RecibidoCard
                 item={item}
-                loading={loadingAction}
+                loading={actionFor(`gasto-${item.id}`)}
                 onAprobar={(g) => setAprobarTarget(g)}
                 onRechazar={() => handleRechazar(item)}
             />
@@ -310,9 +310,7 @@ export default function Compartidos() {
                 <AprobarModal
                     open={true}
                     gasto={aprobarTarget}
-                    loading={
-                        loadingAction?.id === aprobarTarget.id && loadingAction?.kind === 'aprobar'
-                    }
+                    loading={actionFor(`gasto-${aprobarTarget.id}`)?.kind === 'aprobar'}
                     onClose={() => setAprobarTarget(null)}
                     onConfirm={handleAprobar}
                 />
@@ -322,10 +320,7 @@ export default function Compartidos() {
                 <DescartarModal
                     key={descartarTarget.id}
                     item={descartarTarget}
-                    loading={
-                        loadingAction?.id === descartarTarget.id &&
-                        loadingAction?.kind === 'descartar'
-                    }
+                    loading={actionFor(`gasto-${descartarTarget.id}`)?.kind === 'descartar'}
                     onClose={() => setDescartarTarget(null)}
                     onConfirm={handleDescartar}
                 />
