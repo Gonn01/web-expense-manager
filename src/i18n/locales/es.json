@@ -121,6 +121,9 @@
             },
             "SNAPSHOT_NOT_FOUND": {
                 "message": "No encontramos esa sesión de cuentas."
+            },
+            "PUSH_NO_CONFIGURADO": {
+                "message": "Las notificaciones push no están configuradas."
             }
         },
         "status": {

@@ -172,6 +172,10 @@ export const ERROR_PRESENTATION = Object.freeze({
         messageKey: 'errors.codes.SNAPSHOT_NOT_FOUND.message',
         variant: 'snackbar',
     },
+    PUSH_NO_CONFIGURADO: {
+        messageKey: 'errors.codes.PUSH_NO_CONFIGURADO.message',
+        variant: 'snackbar',
+    },
 });
 
 export const STATUS_PRESENTATION = Object.freeze({

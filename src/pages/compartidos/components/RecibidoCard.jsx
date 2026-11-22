@@ -22,8 +22,8 @@ export default function RecibidoCard({ item, onAprobar, onRechazar, loading }) {
                         <span className="font-medium text-zinc-700 dark:text-zinc-200">
                             {Number(item.amount).toLocaleString(getIntlLocale())}
                         </span>
-                        {item.number_of_quotas > 0 &&
-                            t('shared.quotasSuffix', { count: item.number_of_quotas })}
+                        {Number(item.number_of_quotas) > 0 &&
+                            t('shared.quotasSuffix', { count: Number(item.number_of_quotas) })}
                     </p>
                 </div>
                 <StatusBadge status={item.status} />

@@ -79,7 +79,8 @@
 - [x] dEFINIR TEMA MARKETING
 - [ ] Notificaciones de cuando tenes que pagar cosas
 - [x] avisos de los eventos en tiempo real en la app Flutter: snackbar con la app abierta y notificación local en segundo plano
-- [ ] notificaciones push para recibir eventos con la app cerrada
+- [x] notificaciones push para recibir eventos con la app cerrada en Android (Pusher Beams)
+- [ ] notificaciones push en iOS
 - [ ] [REVISAR] como hacemos para explicarle al usuario como usar el sistema: ya hay un tutorial de bienvenida en web y app (CU-44), falta decidir si alcanza
 - [ ] [REVISAR]el grafico del dashboard debe tener en cuenta si el usuario ya hizo las cuentas este mes, para saber en que mes empieza el grafico
 

@@ -290,6 +290,7 @@ export function useDashboardData() {
 
     const pusherEvents = useMemo(
         () => ({
+            'compartido.nuevo': reloadSilently,
             'compartido.aprobado': onCompartidoRespondido,
             'compartido.rechazado': onCompartidoRespondido,
             'compartido.descartado': reloadSilently,
