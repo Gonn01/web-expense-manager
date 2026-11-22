@@ -24,7 +24,7 @@ export default function OnboardingActions({ isFirst, isLast, onBack, onNext }) {
                 onClick={onNext}
                 className="cursor-pointer inline-flex h-11 items-center gap-1 px-5 rounded-lg text-sm font-bold bg-primary text-background-dark hover:bg-primary/90 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-                {isLast ? t('onboarding.letSGo') : t('onboarding.next')}
+                {isLast ? t('onboarding.finish') : t('onboarding.next')}
                 {!isLast && <Icon name="arrow_forward" className="text-lg" />}
             </button>
         </div>

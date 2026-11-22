@@ -29,7 +29,7 @@
                 "message": "Este gasto no se puede compartir: tiene que estar activo, en una entidad vinculada y no haber sido compartido antes."
             },
             "GASTO_NO_ACTIVO": {
-                "message": "Este gasto no está activo: la otra persona todavía no lo aceptó."
+                "message": "Este gasto no está activo: la otra persona lo rechazó."
             },
             "GASTO_YA_SALDADO": {
                 "message": "Ese gasto ya tiene todas sus cuotas pagas."
@@ -398,7 +398,7 @@
         "next": "Siguiente",
         "addARelativeOrAFriendAnd": "Sumá a un familiar o a un amigo y sabé a quién le debés o quién te debe.",
         "yourInstallmentsClearAndInOnePlace": "Tus cuotas, claras y en un solo lugar.",
-        "letSGo": "¡Empezar!",
+        "finish": "Finalizar",
         "hiWelcomeToExpenseManager": "¡Hola! Bienvenido/a a Expense Manager",
         "canTMakeItThisMonthPostpone": "¿No llegás este mes? Postergá un pago y lo pagás en el próximo período de cuentas.",
         "stepOf": "Paso {{step}} de {{total}}",
@@ -820,6 +820,7 @@
         "pendingBanner_other": "{{count}} gastos que creaste esperan que los apruebe {{name}}"
     },
     "charts": {
+        "noData": "No hay gastos activos para graficar.",
         "percentOfTotal": "{{percent}} del total",
         "percentOfSalary": "{{percent}} del sueldo",
         "categoriesTitle": "Gastos por categoría del mes",
@@ -875,6 +876,8 @@
         "verbMark": "marcar",
         "verbRecord": "registrar",
         "noSessionWarning": "No hay una sesión de «Hacer cuentas» abierta. Este pago va a quedar en el <strong>historial del gasto</strong>, pero <strong>no en el historial de cuentas</strong>.",
+        "awaitingApprovalWarning": "La otra persona todavía no aceptó este gasto. El pago va a quedar <strong>pendiente</strong> hasta que lo acepte y lo confirme.",
+        "sharedPaidQuotasStayPending": "Esta entidad está vinculada a otra persona: las cuotas que marques como pagadas van a quedar pendientes hasta que acepte el gasto y confirme cada pago.",
         "ofAmount": "de {{amount}}",
         "amountToPay": "Monto a pagar ({{currency}})",
         "inCurrency": "En {{currency}}"

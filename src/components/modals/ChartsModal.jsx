@@ -3,6 +3,7 @@ import Icon from '@/components/Icon';
 import CuotasChart from '@/components/CuotasChart';
 import MontoChart from '@/components/MontoChart';
 import CategoriaChart from '@/components/CategoriaChart';
+import { hasChartData } from '@/utils/chart-months';
 import { t } from '@/i18n';
 
 export default function ChartsModal({ gastos, onClose }) {
@@ -25,11 +26,21 @@ export default function ChartsModal({ gastos, onClose }) {
                         <Icon name="close" />
                     </button>
                 </header>
-                <div className="p-3 sm:p-6 grid grid-cols-1 gap-4">
-                    <CuotasChart gastos={gastos} />
-                    <MontoChart gastos={gastos} />
-                    <CategoriaChart gastos={gastos} />
-                </div>
+                {hasChartData(gastos) ? (
+                    <div className="p-3 sm:p-6 grid grid-cols-1 gap-4">
+                        <CuotasChart gastos={gastos} />
+                        <MontoChart gastos={gastos} />
+                        <CategoriaChart gastos={gastos} />
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center gap-2 px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <Icon
+                            name="bar_chart"
+                            className="text-4xl text-slate-300 dark:text-slate-600"
+                        />
+                        <p className="text-sm">{t('charts.noData')}</p>
+                    </div>
+                )}
             </div>
         </div>,
         document.body,
