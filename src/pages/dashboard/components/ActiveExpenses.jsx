@@ -3,7 +3,6 @@ import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentMo
 import ActiveFinancialEntity from './ActiveFinancialEntity';
 
 import { useNavigate } from 'react-router-dom';
-import { Currency } from '@/utils/enums';
 import { t } from '@/i18n';
 
 export default function ActiveExpenses({
@@ -12,11 +11,8 @@ export default function ActiveExpenses({
     groups,
     filteredGroups,
     currency,
-    onCurrencyChange,
-    typeFilter,
-    onTypeFilterChange,
-    fixedFilter,
-    onFixedFilterChange,
+    activeFiltersCount,
+    onOpenFilters,
     preferredCurrency,
     rates,
     settleModal,
@@ -29,21 +25,6 @@ export default function ActiveExpenses({
 }) {
     const navigate = useNavigate();
 
-    const countByCurrency = Object.values(Currency).reduce((acc, cur) => {
-        acc[cur] = groups.reduce(
-            (sum, g) => sum + g.items.filter((it) => it.currency_type === cur).length,
-            0,
-        );
-        return acc;
-    }, {});
-    const totalCount = groups.reduce((sum, g) => sum + g.items.length, 0);
-    const countByFixed = [true, false].reduce((acc, val) => {
-        acc[val] = groups.reduce(
-            (sum, g) => sum + g.items.filter((it) => it.fixed_expense === val).length,
-            0,
-        );
-        return acc;
-    }, {});
     const visibleEntities = filteredGroups.length;
     const visibleExpenses = filteredGroups.reduce((sum, g) => sum + g.items.length, 0);
 
@@ -59,82 +40,43 @@ export default function ActiveExpenses({
                         {t('entity.activeExpenses', { count: visibleExpenses })}
                     </p>
                 </div>
-                <div className="relative w-full sm:max-w-xs">
-                    <Icon
-                        name="search"
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    />
-                    <input
-                        className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
-                        placeholder={t('dashboard.searchExpenseEGPersonalLoan')}
-                        type="text"
-                        value={query}
-                        onChange={(e) => onQueryChange?.(e.target.value)}
-                    />
-                </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2 border-y border-black/10 dark:border-white/10">
-                <FilterGroup label={t('common.currency')}>
-                    <ToggleButton
-                        active={currency === null}
-                        onClick={() => onCurrencyChange?.(null)}
+                <div className="flex items-center gap-2 w-full sm:max-w-md">
+                    <div className="relative flex-1 min-w-0">
+                        <Icon
+                            name="search"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                        />
+                        <input
+                            className="w-full h-10 rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 py-2 pl-10 pr-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
+                            placeholder={t('dashboard.searchExpenseEGPersonalLoan')}
+                            type="text"
+                            value={query}
+                            onChange={(e) => onQueryChange?.(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onOpenFilters}
+                        aria-label={
+                            activeFiltersCount > 0
+                                ? t('dashboard.filtersActive', { count: activeFiltersCount })
+                                : t('dashboard.filters')
+                        }
+                        className={`cursor-pointer shrink-0 flex items-center gap-2 h-10 px-3 rounded-lg border text-sm font-bold transition-colors ${
+                            activeFiltersCount > 0
+                                ? 'border-primary bg-primary/15 text-slate-900 dark:text-white'
+                                : 'border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5'
+                        }`}
                     >
-                        {t('dashboard.allCount', { count: totalCount })}
-                    </ToggleButton>
-
-                    {Object.values(Currency)
-                        .filter((cur) => countByCurrency[cur] > 0 || currency === cur)
-                        .map((cur) => (
-                            <ToggleButton
-                                key={cur}
-                                active={currency === cur}
-                                onClick={() => onCurrencyChange?.(cur)}
-                            >
-                                {cur} ({countByCurrency[cur]})
-                            </ToggleButton>
-                        ))}
-                </FilterGroup>
-
-                <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
-
-                <FilterGroup label={t('dashboard.type')}>
-                    {[
-                        { value: null, label: t('dashboard.all') },
-                        { value: 'EGRESO', label: t('common.expense') },
-                        { value: 'INGRESO', label: t('common.income') },
-                    ].map(({ value, label }) => (
-                        <ToggleButton
-                            key={label}
-                            active={typeFilter === value}
-                            onClick={() => onTypeFilterChange(value)}
-                        >
-                            {label}
-                        </ToggleButton>
-                    ))}
-                </FilterGroup>
-
-                <div className="hidden sm:block w-px h-5 bg-black/10 dark:bg-white/10 shrink-0" />
-
-                <FilterGroup label={t('dashboard.frequency')}>
-                    {[
-                        { value: null, label: t('dashboard.all'), count: totalCount },
-                        { value: true, label: t('dashboard.fixed'), count: countByFixed[true] },
-                        {
-                            value: false,
-                            label: t('dashboard.variable'),
-                            count: countByFixed[false],
-                        },
-                    ].map(({ value, label, count }) => (
-                        <ToggleButton
-                            key={label}
-                            active={fixedFilter === value}
-                            onClick={() => onFixedFilterChange(value)}
-                        >
-                            {label} ({count})
-                        </ToggleButton>
-                    ))}
-                </FilterGroup>
+                        <Icon name="filter_alt" />
+                        <span className="hidden sm:inline">{t('dashboard.filters')}</span>
+                        {activeFiltersCount > 0 && (
+                            <span className="flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-primary text-[#111714] text-xs font-bold">
+                                {activeFiltersCount}
+                            </span>
+                        )}
+                    </button>
+                </div>
             </div>
 
             <div className="flex flex-col gap-3 lg:overflow-y-auto lg:pr-2 flex-1 lg:min-h-0">
@@ -173,34 +115,5 @@ export default function ActiveExpenses({
                 loading={loadingSettleIds.size > 0}
             />
         </div>
-    );
-}
-
-function FilterGroup({ label, children }) {
-    return (
-        <div className="flex items-center gap-2 max-w-full">
-            <span className="text-xs font-medium text-slate-400 dark:text-slate-500 shrink-0 w-16 sm:w-auto">
-                {label}
-            </span>
-            <div className="flex flex-wrap gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-white/5">
-                {children}
-            </div>
-        </div>
-    );
-}
-
-function ToggleButton({ active, onClick, children }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
-                active
-                    ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-            }`}
-        >
-            {children}
-        </button>
     );
 }

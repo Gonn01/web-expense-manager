@@ -600,7 +600,11 @@
         "copyEntity": "Copy summary of {{name}}",
         "copiedFilteredMany": "Copied with active filters: {{count}} expenses were left out.",
         "pendingApproval_one": "{{count}} expense awaiting response",
-        "pendingApproval_other": "{{count}} expenses awaiting response"
+        "pendingApproval_other": "{{count}} expenses awaiting response",
+        "filters": "Filters",
+        "applyFilters": "Filter",
+        "filtersActive_one": "Filters: {{count}} active",
+        "filtersActive_other": "Filters: {{count}} active"
     },
     "cuentas": {
         "eachTimeYouFinishASettlementWe": "Each time you finish a settlement we save a summary so you can compare months.",

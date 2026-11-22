@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
 import StatCards from './components/StatCards';
 import ActiveExpenses from './components/ActiveExpenses';
+import DashboardFiltersModal from './components/DashboardFiltersModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
 import { SettlementToggle, SettlementBar } from './components/SettlementBar';
 import { useDashboardUI } from './hooks/use-dashboard-ui';
@@ -139,11 +140,8 @@ export default function Dashboard() {
                         groups={data.groups}
                         filteredGroups={ui.filteredGroups}
                         currency={ui.currency}
-                        onCurrencyChange={ui.setCurrency}
-                        typeFilter={ui.typeFilter}
-                        onTypeFilterChange={ui.setTypeFilter}
-                        fixedFilter={ui.fixedFilter}
-                        onFixedFilterChange={ui.setFixedFilter}
+                        activeFiltersCount={ui.activeFiltersCount}
+                        onOpenFilters={() => ui.setOpenFilters(true)}
                         preferredCurrency={ui.preferredCurrency}
                         rates={rates}
                         settleModal={ui.settleModal}
@@ -162,6 +160,19 @@ export default function Dashboard() {
                     onClose={() => ui.setOpenNewExpense(false)}
                     onSave={handleCreateExpense}
                     saving={ui.loadingCreatingExpense}
+                />
+            )}
+
+            {ui.openFilters && (
+                <DashboardFiltersModal
+                    groups={data.groups}
+                    filters={{
+                        currency: ui.currency,
+                        typeFilter: ui.typeFilter,
+                        fixedFilter: ui.fixedFilter,
+                    }}
+                    onApply={ui.applyFilters}
+                    onClose={ui.closeFilters}
                 />
             )}
 

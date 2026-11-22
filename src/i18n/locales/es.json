@@ -600,7 +600,11 @@
         "copyEntity": "Copiar resumen de {{name}}",
         "copiedFilteredMany": "Copiado con filtros activos: quedaron afuera {{count}} gastos.",
         "pendingApproval_one": "{{count}} gasto esperando respuesta",
-        "pendingApproval_other": "{{count}} gastos esperando respuesta"
+        "pendingApproval_other": "{{count}} gastos esperando respuesta",
+        "filters": "Filtros",
+        "applyFilters": "Filtrar",
+        "filtersActive_one": "Filtros: {{count}} activo",
+        "filtersActive_other": "Filtros: {{count}} activos"
     },
     "cuentas": {
         "eachTimeYouFinishASettlementWe": "Cada vez que terminás de hacer las cuentas guardamos un resumen para comparar meses.",

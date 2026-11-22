@@ -17,6 +17,7 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
     const [typeFilter, setTypeFilter] = useState(null);
     const [fixedFilter, setFixedFilter] = useState(null);
+    const [openFilters, setOpenFilters] = useState(false);
     const [loadingSettleIds, setLoadingPayIds] = useState(new Set());
 
     const settlementActive = useSettlementStore((s) => s.active);
@@ -37,6 +38,19 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
             }),
         [groups, currency, query, typeFilter, fixedFilter, settlementActive],
     );
+
+    const activeFiltersCount = [currency, typeFilter, fixedFilter].filter(
+        (value) => value !== null,
+    ).length;
+
+    const closeFilters = useCallback(() => setOpenFilters(false), []);
+
+    const applyFilters = useCallback((filters) => {
+        setCurrency(filters.currency);
+        setTypeFilter(filters.typeFilter);
+        setFixedFilter(filters.fixedFilter);
+        setOpenFilters(false);
+    }, []);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalEntity, setModalEntity] = useState('');
@@ -104,7 +118,6 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
     return {
         requestTogglePostpone,
         currency,
-        setCurrency,
         preferredCurrency,
         query,
         setQuery,
@@ -114,10 +127,13 @@ export function useDashboardUI(groups = [], settleQuotas, postergarGasto) {
         setLoadingCreatingExpense,
 
         typeFilter,
-        setTypeFilter,
         fixedFilter,
-        setFixedFilter,
         filteredGroups,
+        activeFiltersCount,
+        openFilters,
+        setOpenFilters,
+        closeFilters,
+        applyFilters,
 
         settleModal,
         loadingSettleIds,
