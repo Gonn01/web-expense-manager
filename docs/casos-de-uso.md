@@ -365,7 +365,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente con el tipo opuesto para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
     - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-17): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
-    - 2b. Faltan datos obligatorios: el sistema lo informa.
+    - 2c. La API recibe un monto que no es mayor a 0 o, en un gasto no fijo, una cantidad de cuotas que no es un entero entre 1 y 360: responde 400 `VALIDATION_ERROR` con un mensaje claro y no crea nada.
     - 3a. El gasto llega postergado y con todas sus cuotas pagas: el sistema lo rechaza (`GASTO_PAGADO_NO_POSTERGABLE`) y no crea nada.
 - **Postcondición**: el gasto existe; según el caso, también su espejo y/o la copia de la contraparte.
 
