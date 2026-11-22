@@ -631,6 +631,7 @@
     },
     "auth": {
         "continueWithGoogle": "Continuar con Google",
+        "googleSignInUnavailable": "El inicio con Google no está disponible. Podés usar tu email y contraseña.",
         "takeControlOfYourPersonalFinances": "Controla tus finanzas personales",
         "createYourNewAccount": "Crea tu cuenta nueva.",
         "eGJohnSmith": "Ej: Juan Pérez",

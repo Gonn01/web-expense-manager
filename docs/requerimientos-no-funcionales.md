@@ -13,7 +13,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | --- | --- | --- |
 | RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
 | RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. | Todos |
-| RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
+| RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` y `/api/health` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
 | RNF-SEG-04 | El usuario que opera se toma siempre del token, nunca de un dato enviado por el cliente. Toda lectura o modificación de entidades, gastos, categorías, sesiones y snapshots se restringe al dueño. | API |
 | RNF-SEG-05 | El inicio de sesión no revela si el email existe: email inexistente y contraseña incorrecta producen la misma respuesta. | API |
 | RNF-SEG-06 | Los secretos (`JWT_SECRET`, `DATABASE_URL`, credenciales de Pusher y Firebase) se leen de variables de entorno y no se versionan. | Todos |
@@ -47,9 +47,9 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-USA-03 | El mismo mensaje de error no se muestra dos veces dentro de una ventana de 4 segundos. | Web |
 | RNF-USA-04 | Los formularios de inicio de sesión y registro muestran sus errores dentro del propio formulario, no como aviso global. | Web, App |
 | RNF-USA-05 | Toda acción destructiva o irreversible (eliminar, desvincular, cerrar sesión, descartar sesión de cuentas) pide confirmación. | Web, App |
-| RNF-USA-06 | Las acciones de un solo campo (favorito, postergar, marcar en la sesión) se reflejan en pantalla de inmediato y se revierten si el servidor las rechaza. | Web, App |
+| RNF-USA-06 | Las acciones de un solo campo (favorito, postergar, marcar en la sesión) se aplican en pantalla recién cuando responde el servidor, sin recargar todo. Mientras tanto la acción muestra que está en curso; si el servidor la rechaza, no hay nada que revertir y se muestra el error. | Web, App |
 | RNF-USA-07 | Toda carga de datos muestra un indicador de progreso. | Web, App |
-| RNF-USA-08 | Las preferencias de interfaz se recuerdan entre sesiones en el dispositivo: el tema (claro, oscuro o el del sistema) y, por usuario, si ya vio el tutorial de bienvenida, en la web y en la app; la barra lateral colapsada, los balances ocultos y la vista en lista o grilla, solo en la web. | Web, App |
+| RNF-USA-08 | Las preferencias de interfaz se recuerdan entre sesiones en el dispositivo: el tema (claro, oscuro o el del sistema), el idioma y, por usuario, si ya vio el tutorial de bienvenida, en la web y en la app; la barra lateral colapsada, los balances ocultos y la vista en lista o grilla, solo en la web. | Web, App |
 | RNF-USA-09 | Todas las pantallas se pueden usar en tema claro y oscuro: cada color de fondo, texto y borde tiene su variante para los dos temas, y los colores de acento usados como texto (ingresos, egresos, advertencias) se oscurecen en el tema claro para mantener el contraste. | Web, App |
 | RNF-USA-10 | Un formulario con datos faltantes o inválidos no deshabilita el botón de guardar sin explicación: al intentar guardar marca cada campo con error con un mensaje concreto y muestra un resumen siempre visible, sin necesidad de scrollear. Los avisos globales se muestran por encima de los modales. | Web, App (formularios de gasto) |
 | RNF-USA-11 | Cerrar un formulario con datos cargados y sin guardar (con el botón de cerrar o cancelar, tocando afuera, con Escape o con el botón atrás del sistema) pide confirmación para descartarlos. Un formulario sin cambios se cierra directamente. Aplica a crear y editar gasto, crear entidad, renombrar y vincular entidad, y aprobar gasto compartido. | Web, App |
@@ -66,7 +66,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-06 | La web descarga el código de cada pantalla de la aplicación recién cuando se navega a ella: las pantallas de inicio de sesión y registro no cargan el código del dashboard, los gráficos ni el resto de las pantallas privadas. | Web |
 | RNF-REN-07 | Al volver a un módulo principal (dashboard, entidades, compartidos, historial de cuentas) ya visitado en la sesión, sus datos se muestran de inmediato, sin el indicador de carga de pantalla completa, y se actualizan en segundo plano. Los datos guardados se conservan solo en memoria y se descartan al cambiar la sesión. | Web, App |
 
-*Limitación conocida*: las acciones de compartidos todavía recargan la pantalla completa (crear un gasto desde compartidos la vuelve a pedir en segundo plano, sin el loader) (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
+*Limitación conocida*: las acciones de compartidos actualizan la tarjeta afectada al instante, pero después vuelven a pedir todo el listado en segundo plano, sin el loader. Cuando la otra persona aprueba o rechaza un gasto, el dashboard también se vuelve a pedir completo en segundo plano (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 
 ## DIS — Disponibilidad y tolerancia a fallos
 
@@ -75,14 +75,12 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-DIS-01 | Un fallo al emitir una notificación en tiempo real no hace fallar la operación que la originó. La notificación se guarda y se emite solo después de que la operación se guardó, y nunca si se deshizo. Un fallo al guardarla tampoco hace fallar la operación. La respuesta espera a que se guarde y se emita, porque la API corre en funciones de Vercel, con un límite de 5 segundos: si se supera, la operación responde igual y el aviso puede perderse. | API |
 | RNF-DIS-02 | Un fallo al escribir el historial de una entidad no hace fallar la operación que lo originó. | API |
 | RNF-DIS-03 | Un error no previsto en la API se registra y devuelve un 500 genérico, sin tumbar el servidor ni filtrar el detalle interno. | API |
-| RNF-DIS-04 | Sin servicio de tiempo real, los clientes siguen funcionando; los datos y las notificaciones guardadas se actualizan al recargar o navegar. | Web, App |
+| RNF-DIS-04 | Sin servicio de tiempo real, los clientes siguen funcionando; los datos y las notificaciones guardadas se actualizan al recargar o navegar. En la web esto incluye que falten `VITE_PUSHER_KEY` o `VITE_PUSHER_CLUSTER`: no se crea el cliente de Pusher y se avisa en la consola. | Web, App |
 | RNF-DIS-05 | Sin el servicio de cotizaciones, la aplicación sigue funcionando sin mostrar equivalencias. | Web, App |
-| RNF-DIS-06 | La app móvil arranca y funciona aunque Firebase no esté configurado: el inicio con Google queda deshabilitado y la analítica no hace nada. | App |
+| RNF-DIS-06 | Los clientes arrancan y funcionan aunque Firebase no esté configurado: el botón de inicio con Google queda deshabilitado y email y contraseña siguen disponibles. En la app móvil, además, la analítica no hace nada. | Web, App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
 | RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. | API |
 | RNF-DIS-09 | Sin Pusher Beams configurado o disponible, la operación de origen y el tiempo real siguen funcionando. Si el dispositivo no pudo registrarse, la app Flutter usa la notificación local mientras su proceso siga activo. | API, App |
-
-*Limitación conocida* (RNF-DIS-04): en la web, si falta la variable `VITE_PUSHER_KEY`, el cliente de Pusher falla al cargarse y la aplicación entera queda en blanco, incluido el inicio de sesión. En producción la variable está configurada; afecta a entornos locales o de prueba sin ella.
 
 ## INT — Integridad y auditoría
 
@@ -111,7 +109,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
 
-*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, del manejo de errores de la API y del store de la sesión de cuentas, no de componentes ni hooks. En la API no tienen pruebas unitarias los services de categorías, dashboard y usuario.
+*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, del manejo de errores de la API, del inicio de los clientes de tiempo real y de Firebase, y de los stores de la sesión de cuentas, del caché de pantallas y de los diálogos, no de componentes ni hooks. En la API no tienen pruebas unitarias los services de categorías, dashboard y usuario.
 
 ## POR — Portabilidad y entorno
 
@@ -127,7 +125,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | Servicio | Uso | Si no está disponible |
 | --- | --- | --- |
-| Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando |
+| Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando (RNF-DIS-06) |
 | Pusher Channels | Notificaciones en tiempo real | RNF-DIS-04 |
 | Pusher Beams + Firebase Cloud Messaging | Notificaciones push en Android | RNF-DIS-09 |
 | API de Estadísticas Cambiarias del BCRA | Cotización de las 35 monedas extranjeras soportadas | RNF-DIS-05 |
@@ -144,4 +142,4 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-LOC-05 | Salvo que el usuario elija un idioma (RF-CFG-06), se toma del navegador o del dispositivo: se usa el primero de sus idiomas preferidos que esté soportado y, si ninguno lo está, inglés. | Web, App |
 | RNF-LOC-06 | Las fechas, los números y los montos se muestran con el formato del idioma activo (`es-AR` o `en-US`). | Web, App |
 
-*Limitación conocida*: los textos que redacta la API (mensajes de error sin traducción en el catálogo del cliente y detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés.
+*Limitación conocida*: los textos que redacta la API (mensajes de error sin traducción en el catálogo del cliente y detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés. En la app Flutter, los errores de validación de los formularios de inicio de sesión y registro están escritos en el código, en español y sin tildes, así que incumplen RNF-LOC-02.

@@ -66,19 +66,16 @@
 
 ## Metricas
 
-- [ ] egreso ingreso por categoria y cuanto de el sueldo ingresado representa
+- [ ] ingresos por categoria y cuanto del sueldo representan (egresos ya esta)
 - [x] Gráficos en web y app Flutter: cuotas, montos y categorías con cuota mensual (solo egresos, convertido a moneda preferida) + "% del sueldo" total y por categoría.
 
 ## Adicionales
 
 - [ ] imagenes para entidades y para gastos
 - [ ] integrar mp mediante link
-- [ ] modo daltonismo
-- [ ] posibilidad de marcar entidades como privadas y que al querer ver datos de la misma haya que poner una contraseña
 - [ ] MODO simple/usuario avanzado que muestre mas o menos cosas, checkear FITIA
 - [x] dEFINIR TEMA MARKETING
-- [ ] Notificaciones de cuando tenes que pagar cosas
-- [x] avisos de los eventos en tiempo real en la app Flutter: snackbar con la app abierta y notificación local en segundo plano
+- [x] avisos de los eventos en tiempo real en la app Flutter: notificación local del sistema con la app abierta o en segundo plano
 - [x] notificaciones push para recibir eventos con la app cerrada en Android (Pusher Beams)
 - [ ] notificaciones push en iOS
 - [ ] [REVISAR] como hacemos para explicarle al usuario como usar el sistema: ya hay un tutorial de bienvenida en web y app (CU-44), falta decidir si alcanza

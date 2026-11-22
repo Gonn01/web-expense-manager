@@ -1,8 +1,9 @@
 import { convertCurrency } from '@/utils/convert-currency';
+import { Currency } from '@/utils/enums';
 import { formatMoney } from '@/utils/FormatMoney';
 
 export default function GroupBalance({ items, preferredCurrency, rates }) {
-    const cur = preferredCurrency ?? 'ARS';
+    const cur = preferredCurrency ?? Currency.ARS;
     const balance = items.reduce((sum, it) => {
         if (it.is_postponed) return sum;
         const quota =

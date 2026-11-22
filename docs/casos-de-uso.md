@@ -123,6 +123,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El sistema busca una cuenta asociada a esa identidad de Google y la encuentra.
     4. El sistema emite el token y devuelve los datos del usuario, incluida su foto; el cliente los guarda y muestra el dashboard.
 - **Flujos alternativos**
+    - 1a. Firebase no está configurado en el cliente: "Continuar con Google" aparece deshabilitado y el visitante puede usar email y contraseña.
     - 2a. El visitante cancela o Firebase falla: no se inicia sesión.
     - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email, creada con credenciales. El sistema asocia la identidad de Google a esa cuenta, guarda la foto de Google si la cuenta no tenía una, y continúa en 4.
     - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña, con la foto de Google, y continúa en 4.
@@ -224,8 +225,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden. Una entidad con gastos esperando respuesta sigue visible con cualquier filtro de moneda, tipo o frecuencia; con el filtro por texto, solo si coincide su nombre.
     - 5e. Una entidad solo tiene gastos esperando respuesta: el sistema la muestra con una tarjeta que lo indica, sin balance ni acciones de pago.
     - 5f. La otra persona aprueba o rechaza un gasto compartido mientras el dashboard está abierto: el sistema actualiza el contador y los gastos sin recargar (CU-38).
-    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó (solo web); el usuario puede pasar a los meses siguientes con cuotas pendientes.
-    - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia.
+    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó; el usuario puede pasar a los meses siguientes con cuotas pendientes.
+    - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia (solo en la web).
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
 
 ---
@@ -244,8 +245,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El usuario escribe en el buscador; el sistema filtra por nombre.
 - **Flujos alternativos**
     - 2a. No tiene entidades: el sistema muestra un estado vacío con la opción de crear una.
-    - 2b. El usuario alterna entre vista de lista y de grilla.
-    - 2c. El usuario elige "Ver eliminadas": el sistema muestra las entidades eliminadas ya traídas en el paso 2, sin otra consulta. Al elegir restaurar una y confirmar, el sistema la reactiva y la entidad vuelve al listado de activas, sin vínculo. En la app Flutter se restaura sin el paso de confirmación (cumplimiento parcial de RF-ENT-13).
+    - 2b. El usuario alterna entre vista de lista y de grilla (solo en la web).
+    - 2c. El usuario elige "Ver eliminadas": el sistema muestra las entidades eliminadas ya traídas en el paso 2, sin otra consulta. Al elegir restaurar una y confirmar, el sistema la reactiva y la entidad vuelve al listado de activas, sin vínculo.
 
 ### CU-10 — Crear entidad
 
@@ -292,9 +293,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-ENT-06
 - **Flujo principal**
     1. El usuario toca la estrella de una entidad.
-    2. El cliente refleja el cambio de inmediato y lo envía al sistema.
+    2. El cliente envía el cambio al sistema y lo refleja cuando este responde.
 - **Flujos alternativos**
-    - 2a. El sistema rechaza el cambio: el cliente lo revierte.
+    - 2a. El sistema rechaza el cambio: el cliente muestra el error y el estado no cambia.
 - **Postcondición**: la entidad favorita aparece primero y se muestra en el dashboard aunque no tenga gastos activos.
 
 ### CU-14 — Ver detalle de entidad
@@ -473,7 +474,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     3. El sistema marca el gasto como postergado y lo registra en el historial del gasto y de la entidad.
 - **Flujos alternativos**
     - 1a. El usuario quita la postergación: el sistema la revierte y lo registra.
-    - 3a. El sistema rechaza el cambio: el cliente lo revierte en pantalla.
+    - 3a. El sistema rechaza el cambio: el gasto no se posterga y el cliente muestra el error.
     - 3b. El gasto ya tiene todas sus cuotas pagas: el sistema rechaza la postergación (`GASTO_PAGADO_NO_POSTERGABLE`).
 - **Postcondición**: el gasto sigue visible pero no puede marcarse en la sesión. La postergación termina sola al finalizar la sesión (CU-28) o al pagarlo de forma directa (CU-21).
 
@@ -483,9 +484,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-GAS-12
 - **Flujo principal**
     1. El usuario toca la estrella de un gasto.
-    2. El cliente refleja el cambio de inmediato y lo envía al sistema.
+    2. El cliente envía el cambio al sistema y lo refleja cuando este responde.
 - **Flujos alternativos**
-    - 2a. El sistema rechaza el cambio: el cliente lo revierte.
+    - 2a. El sistema rechaza el cambio: el cliente muestra el error y el estado no cambia.
 - **Postcondición**: el gasto favorito aparece primero dentro de su entidad, hasta que se finalice.
 
 ### CU-25 — Gestionar categorías
@@ -525,9 +526,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Precondición**: hay una sesión de cuentas abierta.
 - **Flujo principal**
     1. El usuario marca un gasto del dashboard.
-    2. El cliente refleja la marca de inmediato y la envía al sistema.
+    2. El cliente envía la marca al sistema.
     3. El sistema guarda la marca en la sesión y devuelve el estado actualizado.
-    4. La barra de la sesión actualiza el contador de marcados.
+    4. El cliente muestra la marca y la barra de la sesión actualiza el contador de marcados.
 - **Flujos alternativos**
     - 1a. El usuario desmarca un gasto: el sistema quita la marca.
     - 1b. *Marcar gastos en lote* («extend»): el usuario marca o desmarca todos los gastos de una entidad; el sistema procesa todos juntos. Los postergados quedan fuera de la selección.
@@ -536,7 +537,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1e. Las cuotas que quedan del gasto ya están cubiertas por pagos propios pendientes de confirmación: el sistema no lo marca; en un lote, lo omite y marca el resto.
     - 1f. El gasto es compartido y la otra persona ya registró un pago: el dashboard lo indica, y marcarlo confirma ese pago al finalizar (CU-28, 2d).
     - 1g. El gasto es compartido y fue rechazado: el sistema no lo marca (`GASTO_NO_ACTIVO`); en un lote, lo omite y marca el resto. Si la otra persona todavía no lo aprobó, lo marca: al terminar las cuentas, el pago queda pendiente de confirmación.
-    - 3a. El sistema rechaza la marca: el cliente la revierte.
+    - 3a. El sistema rechaza la marca: el gasto queda como estaba y el cliente muestra el error.
 - **Postcondición**: las marcas quedan guardadas. No se registró ningún pago.
 
 ### CU-28 — Finalizar sesión de cuentas
@@ -791,7 +792,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1a. La contraparte rechaza la solicitud: el pago se mantiene, la solicitud se borra y se notifica a quien la pidió.
     - 1b. El actor es quien pidió la reversión: el sistema lo impide.
     - 3a. La solicitud ya no está pendiente: el sistema lo informa.
-    - 3b. El pago no tiene pago vinculado en la copia: se elimina solo ese pago (limitación conocida de RF-CMP-14).
+    - 3b. El pago no tiene pago vinculado en la copia: se revierte solo ese pago (limitación conocida de RF-CMP-14).
 - **Postcondición**: si se aceptó, la cuota vuelve a quedar sin pagar en los dos gastos y los snapshots que la incluían la muestran como revertida.
 
 ### CU-43 — Cancelar pedido de reversión

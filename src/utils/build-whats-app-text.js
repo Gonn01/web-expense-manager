@@ -67,7 +67,7 @@ export function buildWhatsAppText(group, selectedCurrency, preferredCurrency, ra
         return buf.join('');
     }
 
-    const cur = preferredCurrency ?? 'ARS';
+    const cur = preferredCurrency ?? Currency.ARS;
     const egresos = activeItems.filter((i) => i.type !== 'INGRESO');
     const ingresos = activeItems.filter((i) => i.type === 'INGRESO');
 

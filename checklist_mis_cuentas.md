@@ -9,7 +9,7 @@
 ## ENTIDADES FINANCIERAS
 
 - [x] Agregar spinner de carga al obtener entidades.
-- [ ] Al crear una entidad, volver a la lista.
+- [x] Al crear una entidad, volver a la lista.
 - [x] Corregir el layout de la lupa en el buscador.
 
 ## DETALLE DE ENTIDAD
@@ -61,13 +61,13 @@ acciones del detalle de entidad (nombre, vincular, desvincular, pagar cuota dire
 restaurar). Quedan pendientes de evaluar (afectan datos agregados de otras pantallas,
 un reload puede ser intencional):
 
-- [ ] `CompartidosCubit` (Flutter, `packages/em_services/lib/src/services/compartidos/compartidos_cubit.dart`) y las acciones de compartidos en la web: aprobar/rechazar/reintentar/confirmar pago/rechazar pago recargan todo `/compartidos` después de cada una. Puede afectar el badge de pendientes en otras pantallas (dashboard, shell) — evaluar si conviene parchear local + revalidar ese badge aparte.
+- [ ] `CompartidosCubit` (Flutter, `packages/em_services/lib/src/services/compartidos/compartidos_cubit.dart`) y las acciones de compartidos en la web: ya actualizan la tarjeta y los contadores al instante, pero después de cada acción vuelven a pedir todo `/notificaciones/pendientes` en segundo plano. Evaluar si esa revalidación se puede achicar.
 - [x] `crearGasto` del dashboard y del detalle de entidad (web y Flutter): el gasto creado (y su espejo, que `POST /gastos` devuelve en `mirror`) se inserta en el grupo/lista que corresponde. Solo si su entidad todavía no tiene grupo en el dashboard se vuelve a pedir, en segundo plano.
-- [ ] `onCompartidoAprobado` (web, `use-dashboard-data.js`, evento de Pusher): recarga todo el dashboard cuando el otro usuario aprueba un gasto compartido. Es la única fuente que trae ese gasto nuevo al estado local, así que un reload es más justificable acá — revisar si alcanza con traer solo esa entidad/gasto en vez del dashboard entero.
+- [ ] `onCompartidoRespondido` (web, `use-dashboard-data.js`, eventos de Pusher): recarga todo el dashboard en segundo plano cuando el otro usuario aprueba o rechaza un gasto compartido. Es la única fuente que trae ese gasto nuevo al estado local, así que un reload es más justificable acá — revisar si alcanza con traer solo esa entidad/gasto en vez del dashboard entero.
 
 ## EXTRAS
 
 - [ ] Entidad como tarjeta para saber cuando vencen
 - [ ] Agrupar gastos por grupos
-- [ ] Ser consistente a la hora de usar el tipo de moneda(tambien cambiar a enum en la db)
+- [x] Ser consistente a la hora de usar el tipo de moneda: enum `currency` en la base, misma lista de 36 códigos en API, web y Flutter, y validación 400 en toda entrada del API
 - [ ] Ser consistente en la sincronizacion de cuentas registro y logeo con google

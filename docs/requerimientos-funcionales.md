@@ -12,10 +12,10 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 
 | ID | Requerimiento | CU |
 | --- | --- | --- |
-| RF-AUT-01 | El sistema permite registrarse con nombre (mínimo 2 caracteres), email y contraseña (mínimo 6 caracteres). | CU-01 |
+| RF-AUT-01 | El sistema permite registrarse con nombre (mínimo 2 caracteres), email y contraseña (mínimo 6 caracteres). *Limitación conocida*: esos mínimos y el formato del email solo los validan los clientes; la API exige que los tres campos lleguen, pero no valida su longitud ni su formato. | CU-01 |
 | RF-AUT-02 | El sistema rechaza el registro si el email ya pertenece a una cuenta (`EMAIL_YA_REGISTRADO`). | CU-01 |
 | RF-AUT-03 | El sistema permite iniciar sesión con email y contraseña. Ante email inexistente, contraseña incorrecta o una cuenta creada con Google que no tiene contraseña responde el mismo error (`CREDENCIALES_INVALIDAS`), sin revelar el motivo. | CU-02 |
-| RF-AUT-04 | El sistema permite iniciar sesión con una cuenta de Google (Firebase Authentication). Si no existe una cuenta para esa identidad, la crea. | CU-03 |
+| RF-AUT-04 | El sistema permite iniciar sesión con una cuenta de Google (Firebase Authentication). Si no existe una cuenta para esa identidad, la crea. Si Firebase no está configurado en el cliente, la opción aparece deshabilitada. | CU-03 |
 | RF-AUT-05 | Si se inicia sesión con Google y ya existe una cuenta creada con credenciales para el mismo email, el sistema vincula la identidad de Google a esa cuenta en lugar de crear una duplicada. | CU-03 |
 | RF-AUT-06 | Al autenticarse, por cualquier vía, el sistema entrega un token de sesión y los mismos datos del usuario (id, nombre, email, foto, moneda preferida y sueldo); el cliente los conserva para mantener la sesión entre reinicios. | CU-02, CU-03 |
 | RF-AUT-07 | Todas las pantallas y operaciones, salvo registro e inicio de sesión, requieren una sesión válida. Sin sesión, el cliente redirige al inicio de sesión. | — |
@@ -52,7 +52,7 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 
 | ID | Requerimiento | CU |
 | --- | --- | --- |
-| RF-ENT-01 | El usuario puede listar sus entidades activas, con la cantidad de gastos y de pendientes de cada una, y buscarlas por nombre. El orden es el mismo que en el dashboard. | CU-09 |
+| RF-ENT-01 | El usuario puede listar sus entidades activas, con la cantidad de gastos y de pendientes de cada una, y buscarlas por nombre. Se muestran primero las favoritas y, a igualdad, las que tienen más gastos. | CU-09 |
 | RF-ENT-02 | El usuario puede crear una entidad indicando su nombre. No puede haber dos entidades activas con el mismo nombre para un mismo usuario (`ENTIDAD_YA_EXISTE`). | CU-10 |
 | RF-ENT-03 | Al crear una entidad se puede indicar el email de otro usuario para dejarla vinculada en el mismo paso. | CU-10, CU-15 |
 | RF-ENT-04 | El usuario puede renombrar una entidad, respetando la unicidad de nombre. El cambio queda en el historial de la entidad. | CU-11 |
@@ -64,13 +64,13 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 | RF-ENT-10 | El usuario puede desvincular una entidad, previa confirmación. La otra persona recibe una notificación y conserva su propio vínculo (RF-NOT-06). La entidad muestra en todo momento a quién está vinculada. | CU-15 |
 | RF-ENT-11 | El usuario puede ver los gastos eliminados de una entidad y restaurarlos. | CU-16 |
 | RF-ENT-12 | Un usuario solo puede ver y operar sobre sus propias entidades. | — |
-| RF-ENT-13 | El listado de entidades muestra solo las activas; un botón permite ver las eliminadas y restaurarlas, previa confirmación. Una entidad restaurada vuelve sin vínculo (RF-ENT-05). El listado se obtiene en una sola consulta que trae activas y eliminadas (campo `deleted`) y el cliente las separa. *Cumplimiento parcial*: la app Flutter restaura la entidad sin pedir confirmación. | CU-09 |
+| RF-ENT-13 | El listado de entidades muestra solo las activas; un botón permite ver las eliminadas y restaurarlas, previa confirmación. Una entidad restaurada vuelve sin vínculo (RF-ENT-05). El listado se obtiene en una sola consulta que trae activas y eliminadas (campo `deleted`) y el cliente las separa. | CU-09 |
 
 ## GAS — Gastos
 
 | ID | Requerimiento | CU |
 | --- | --- | --- |
-| RF-GAS-01 | El usuario puede crear un gasto indicando: entidad, nombre, monto, moneda (una de las 36 soportadas), tipo (egreso/ingreso) y modalidad: pago único, en cuotas (cantidad de cuotas) o gasto fijo. | CU-17 |
+| RF-GAS-01 | El usuario puede crear un gasto indicando: entidad, nombre, monto, moneda (una de las 36 soportadas), tipo (egreso/ingreso) y modalidad: pago único, en cuotas (cantidad de cuotas) o gasto fijo. El sistema guarda la moneda en mayúsculas y rechaza un código que no esté en la lista. | CU-17 |
 | RF-GAS-02 | Al crear un gasto se puede indicar cuántas cuotas ya están pagas; el sistema registra un pago por cada una. | CU-17 |
 | RF-GAS-03 | Al crear un gasto se puede crear en el mismo paso la entidad a la que pertenece y, si eligió pagar con otra entidad (RF-GAS-04), también la entidad de pago; la entidad creada queda seleccionada en el campo desde el que se creó. | CU-10, CU-17 |
 | RF-GAS-04 | Al crear un gasto se puede elegir "pagar con otra entidad" propia. El sistema crea un **gasto espejo** en esa entidad: mismos datos, cuotas y categorías, con el tipo opuesto, y deja ambos gastos enlazados. | CU-17 |
@@ -170,6 +170,6 @@ Módulos: [AUT](#aut--autenticación) · [CFG](#cfg--configuración-del-usuario)
 Funcionalidad conversada pero **no implementada**. No son requerimientos vigentes; se listan para no confundirlos con comportamiento existente. Detalle en `checklist_mis_cuentas.md` y `checklits_expense_manager.md`.
 
 - Imágenes adjuntas para gastos y entidades.
-- Métricas de ingresos/egresos por categoría.
+- Métricas de ingresos por categoría (los gráficos actuales cubren solo egresos, ver RF-DSH-07).
 - Notificaciones push en iOS (ver RF-NOT-04).
-- Notificaciones de vencimientos, integración con Mercado Pago, entidades privadas con contraseña, modo daltonismo, modo simple/avanzado.
+- Integración con Mercado Pago, modo simple/avanzado.

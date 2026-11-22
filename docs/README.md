@@ -5,8 +5,8 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | Proyecto | Ubicación | Rol |
 | --- | --- | --- |
 | Web (React) | `web-plataformas-de-desarrollo` (este repo) | Cliente web |
-| App móvil (Flutter) | `d:\proyectos_flutter\app_expense_manager` | Cliente Android / iOS |
-| API (Node/Express) | `d:\proyectos_node\api-plataformas-desarrollo` | Backend compartido por ambos clientes |
+| App móvil (Flutter) | `app_expense_manager` | Cliente Android / iOS |
+| API (Node/Express) | `api-plataformas-desarrollo` | Backend compartido por ambos clientes |
 
 ## Contenido
 
@@ -16,7 +16,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [mision-vision-valores.md](mision-vision-valores.md) | Misión, visión y valores centrales de la organización, y cómo se reflejan en el sistema |
 | [requerimientos-funcionales.md](requerimientos-funcionales.md) | Qué hace el sistema, por módulo (`RF-<módulo>-NN`) |
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
-| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-38` |
+| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-48` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 
 Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).
@@ -34,7 +34,7 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 | **Movimiento** | Registro de historial de un gasto o de una entidad (creación, pago, reembolso, edición, etc.). Algunos solo registran un paso del historial, como el envío o la reversión de un pago compartido, y no cuentan como cuotas. |
 | **Gasto espejo** | Copia de un gasto con el tipo opuesto, creada en otra entidad propia al usar "pagar con otra entidad". |
 | **Entidad vinculada** | Entidad asociada a otro usuario de la plataforma (la *contraparte*) mediante su email. |
-| **Gasto compartido** | Gasto creado en una entidad vinculada: genera una copia con el tipo opuesto para la contraparte, que debe aprobarla. |
+| **Gasto compartido** | Gasto creado en una entidad vinculada, o compartido después desde su detalle: genera una copia con el tipo opuesto para la contraparte, que debe aprobarla. |
 | **Pago pendiente** | Pago de un gasto compartido que espera la confirmación de la contraparte. |
 | **Pago vinculado** | Al confirmarse un pago compartido, el pago que se registra en la copia de la contraparte. Los dos se revierten juntos. |
 | **Solicitud de reversión** | Pedido de una de las partes para revertir un pago compartido ya confirmado; la otra parte lo acepta o lo rechaza. |

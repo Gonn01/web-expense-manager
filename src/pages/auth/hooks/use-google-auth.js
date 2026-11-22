@@ -9,7 +9,11 @@ export function useGoogleAuth() {
     const nav = useNavigate();
     const { loginWithFirebase } = useAuth();
 
+    const googleAvailable = Boolean(auth);
+
     const loginGoogle = async () => {
+        if (!googleAvailable) return;
+
         try {
             setLoading(true);
             const result = await signInWithPopup(auth, googleProvider);
@@ -30,5 +34,5 @@ export function useGoogleAuth() {
         }
     };
 
-    return { loginGoogle, loading };
+    return { loginGoogle, loading, googleAvailable };
 }

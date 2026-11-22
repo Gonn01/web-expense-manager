@@ -7,7 +7,7 @@ import { t } from '@/i18n';
 
 export default function Register() {
     const { loading, error, setError, handleRegister } = useRegister();
-    const { loginGoogle, loading: loadingGoogle } = useGoogleAuth();
+    const { loginGoogle, loading: loadingGoogle, googleAvailable } = useGoogleAuth();
 
     return (
         <div className="min-h-dvh w-full flex justify-center items-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white px-4 py-16 font-display">
@@ -33,7 +33,11 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <GoogleButton loading={loadingGoogle} onClick={loginGoogle} />
+                    <GoogleButton
+                        loading={loadingGoogle}
+                        available={googleAvailable}
+                        onClick={loginGoogle}
+                    />
                 </div>
 
                 <p className="mt-6 text-center text-sm text-emerald-700 dark:text-emerald-300/70">

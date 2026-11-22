@@ -52,8 +52,8 @@ VITE_PUSHER_CLUSTER=sa1
 | Variable | Para qué se usa |
 | --- | --- |
 | `VITE_API_BASE_URL` | URL base de la API, incluido el prefijo `/api`. En local: `http://localhost:3000/api`. |
-| `VITE_FIREBASE_*` | Configuración web de Firebase (consola de Firebase → Configuración del proyecto → Tus apps). Se usa para el inicio de sesión con Google. |
-| `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER` | Key pública y cluster de la app de Pusher Channels. |
+| `VITE_FIREBASE_*` | Configuración web de Firebase (consola de Firebase → Configuración del proyecto → Tus apps). Se usa para el inicio de sesión con Google. Son opcionales: si falta `API_KEY`, `AUTH_DOMAIN`, `PROJECT_ID` o `APP_ID`, la web funciona con email y contraseña y el botón de Google queda deshabilitado. |
+| `VITE_PUSHER_KEY`, `VITE_PUSHER_CLUSTER` | Key pública y cluster de la app de Pusher Channels. Son opcionales: si falta alguna, la web funciona sin tiempo real, avisa en la consola del navegador y los datos se actualizan al recargar o navegar. |
 
 Después de cambiar el `.env` hay que reiniciar el servidor de desarrollo.
 
@@ -79,7 +79,7 @@ La app queda en `http://localhost:5173`.
 | `npm run format` | Formatea el código con Prettier |
 | `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
 
-Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Cubren funciones puras de `utils/`, el manejo de errores de la API y el store de la sesión de cuentas (no hay pruebas de componentes).
+Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Cubren funciones puras de `utils/`, el manejo de errores de la API y los stores de la sesión de cuentas, del caché de pantallas y de los diálogos (no hay pruebas de componentes).
 
 ### Despliegue
 

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 React 19 SPA ("Plataforma de Gestión de Deudas" — personal debt/expense tracker), built with Vite (using the Rolldown-based `rolldown-vite` package aliased as `vite`), JavaScript/JSX (no TypeScript), Tailwind CSS 4, react-router-dom 7, zustand for state, axios for HTTP, Firebase for Google auth, Pusher for realtime, i18next/react-i18next for translations.
 
-It is one of two frontend clients on a shared backend: the sibling repo `d:\proyectos_node\api-plataformas-desarrollo` (Node/Express API). The other client is the Flutter app `d:\proyectos_flutter\app_expense_manager`. Backend contract changes (routes, error codes, response shapes) affect both clients.
+It is one of two frontend clients on a shared backend: the sibling repo `api-plataformas-desarrollo` (Node/Express API). The other client is the Flutter app `app_expense_manager`. Backend contract changes (routes, error codes, response shapes) affect both clients.
 
 The README.md is the human-facing entry point (setup, env vars, scripts, architecture summary, main libraries) for the web and summarizes the backend; the API and Flutter repos have their own README. Keep it in sync when a command, env var or main dependency changes.
 
@@ -14,7 +14,7 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 
 - `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case diagrams in `docs/diagramas/`. It lives in this repo but covers all three projects.
 - `.claude/guides/` — development guides of this repo: `arquitectura-web.md` (this project's architecture) and `documentacion.md` (what to update after a change, for all three projects).
-- Each project keeps its own architecture guide in its own repo: `d:\proyectos_flutter\app_expense_manager\.claude\guides\arquitectura-flutter.md` and `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\arquitectura-api.md`. Read the guide for the project you are about to change before writing code.
+- Each project keeps its own architecture guide in its own repo: `.claude/guides/arquitectura-flutter.md` in the Flutter repo and `.claude/guides/arquitectura-api.md` in the API repo. Read the guide for the project you are about to change before writing code.
 
 ## Documentation update rule
 
@@ -25,9 +25,11 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 3. The `CLAUDE.md` of the affected repo(s), if a command, folder, layer or convention changed.
 4. The Postman collection `postman/plataforma-gestion-deudas.postman_collection.json` in this repo, whenever an API endpoint is added, removed or changed (method, path, query params, body, auth or response data its scripts read). It must keep covering every route of the API.
 
-`docs/` applies even when the code change is entirely in the Flutter or API repo: the functional docs to update are still the ones here (`c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\docs`).
+`docs/` applies even when the code change is entirely in the Flutter or API repo: the functional docs to update are still the ones here (`docs/`).
 
 `.claude/guides/documentacion.md` has the table of what to update for each kind of change — follow it. Purely visual changes and internal refactors that alter no layer or convention need no update. Document what the code actually does: a rule the API does not enforce is recorded as a known limitation, not as fulfilled.
+
+**No absolute paths in documentation**: each team member clones the repos in a different location, so never write machine-specific paths. Use paths relative to the repo root, and refer to another project by its repo name (e.g. `docs/` in the web repo).
 
 At the end of every task, state which documentation files were updated, or say explicitly that none needed updating and why.
 
@@ -37,7 +39,7 @@ At the end of every task, state which documentation files were updated, or say e
 
 ## Feature parity rule
 
-Any functional/business-logic change made here (new feature, changed behavior, new field, new validation, new endpoint usage) **must also be implemented in the Flutter app** (`d:\proyectos_flutter\app_expense_manager`), and vice versa. The two clients are meant to mirror each other on top of the same API.
+Any functional/business-logic change made here (new feature, changed behavior, new field, new validation, new endpoint usage) **must also be implemented in the Flutter app** (`app_expense_manager`), and vice versa. The two clients are meant to mirror each other on top of the same API.
 
 **Exception**: purely visual/layout/UI changes are exempt — screen sizes and interaction patterns differ between web and mobile, so layout, spacing, component choice, and navigation chrome can legitimately diverge. The parity rule applies to _what the app does_, not _how it looks_.
 
@@ -64,9 +66,9 @@ npm test             # vitest run (unit tests)
 npm run test:watch   # vitest in watch mode
 ```
 
-Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/`, plus `services/error-handler.js`, `store/use-settlement-store.js` and `store/use-screen-cache-store.js` — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first. Do not use `vi.mock` with the `@/` alias: on Windows the mock is ignored when the working directory has a lowercase drive (`d:\`, as VS Code opens it). Replace store actions with `setState`, and fake HTTP by setting `axios.defaults.adapter` before dynamically importing the module (see `use-settlement-store.test.js`).
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/`, plus `lib/create-pusher-client.js`, `lib/create-firebase-auth.js`, `services/error-handler.js`, `store/use-settlement-store.js`, `store/use-screen-cache-store.js` and `store/use-dialog-store.js` — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first. Do not use `vi.mock` with the `@/` alias: on Windows the mock is ignored when the working directory has a lowercase drive (`d:\`, as VS Code opens it). Replace store actions with `setState`, and fake HTTP by setting `axios.defaults.adapter` before dynamically importing the module (see `use-settlement-store.test.js`).
 
-`.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`, Firebase `VITE_FIREBASE_*` vars, and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER`.
+`.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`. Optional: Firebase `VITE_FIREBASE_*` vars (without them `auth` is `null` and the Google button is disabled) and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER` (without either one, `pusherClient` is `null` and the app runs without realtime).
 
 ## Architecture
 
@@ -78,7 +80,7 @@ src/
   pages/<feature>/  # one folder per screen: <Feature>.jsx + components/ + hooks/
   services/      # api.js (single axios instance + all API calls), error-handler.js
   store/         # zustand stores, one per domain
-  lib/           # third-party client singletons (pusher.js)
+  lib/           # third-party client singletons (pusher.js, null without its env vars)
   i18n/          # i18next setup and locales/es.json + locales/en.json
   utils/         # formatting, enums, error-catalog
 ```

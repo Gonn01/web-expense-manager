@@ -8,7 +8,7 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useDialogStore } from '@/store/use-dialog-store';
 import { useDiscardGuard } from '@/hooks/use-discard-guard';
 import { vincularUsuarioEntidad } from '@/services/api';
-import { ExpenseType } from '@/utils/enums';
+import { Currency, ExpenseType } from '@/utils/enums';
 import { useCategoriesStore } from '@/store/use-categories-store';
 import ExpenseTypeSelector from '../components/ExpenseTypeSelector';
 import EntitySelector from '../components/EntitySelector';
@@ -35,7 +35,7 @@ export default function NewExpenseModal({
     const [entity, setEntity] = useState(defaultEntityId || '');
 
     const [amount, setAmount] = useState('');
-    const [currency, setCurrency] = useState('ARS');
+    const [currency, setCurrency] = useState(Currency.ARS);
 
     const [installments, setInstallments] = useState('');
 
@@ -142,7 +142,7 @@ export default function NewExpenseModal({
         name.trim() !== '' ||
         String(entity) !== String(defaultEntityId || '') ||
         amount !== '' ||
-        currency !== 'ARS' ||
+        currency !== Currency.ARS ||
         installments !== '' ||
         paidInstallments !== '' ||
         isFixed ||

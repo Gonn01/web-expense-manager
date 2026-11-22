@@ -20,7 +20,7 @@ function release(channelName) {
 
 export function usePusherChannel(channelName, events) {
     useEffect(() => {
-        if (!channelName) return;
+        if (!channelName || !pusherClient) return;
 
         const channel = acquire(channelName);
 

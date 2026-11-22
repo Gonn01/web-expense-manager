@@ -11,6 +11,7 @@ import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
+import { Currency } from '@/utils/enums';
 
 const CACHE_KEY = 'entidades';
 const NO_ENTITIES = [];
@@ -34,7 +35,7 @@ export function useEntidadesData() {
 
             const normalized = data.map((e) => ({
                 ...e,
-                balances: e.balances ?? [{ currency: 'ARS', amount: 0 }],
+                balances: e.balances ?? [{ currency: Currency.ARS, amount: 0 }],
                 activeExpenses: e.activeExpenses ?? 0,
                 type: e.type ?? 'bank',
             }));

@@ -6,13 +6,15 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 
 | Qué | Dónde |
 | --- | --- |
-| Documentación funcional | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\docs\` |
-| Esta guía | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\.claude\guides\documentacion.md` |
-| Guía de arquitectura de la web | `c:\Users\gonza\Desktop\web-plataformas-de-desarrollo\.claude\guides\arquitectura-web.md` |
-| Guía de arquitectura de la app Flutter | `d:\proyectos_flutter\app_expense_manager\.claude\guides\arquitectura-flutter.md` |
-| Guía de arquitectura de la API | `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\arquitectura-api.md` |
+| Documentación funcional | `docs/` del repo de la web |
+| Esta guía | `.claude/guides/documentacion.md` del repo de la web |
+| Guía de arquitectura de la web | `.claude/guides/arquitectura-web.md` del repo de la web |
+| Guía de arquitectura de la app Flutter | `.claude/guides/arquitectura-flutter.md` del repo de la app Flutter |
+| Guía de arquitectura de la API | `.claude/guides/arquitectura-api.md` del repo de la API |
 | Resumen operativo de cada repo | `CLAUDE.md` en la raíz de cada uno de los tres repos |
-| Colección de Postman de la API | `d:\proyectos_react\web-plataformas-de-desarrollo\postman\plataforma-gestion-deudas.postman_collection.json` |
+| Colección de Postman de la API | `postman/plataforma-gestion-deudas.postman_collection.json` del repo de la web |
+
+**Sin rutas absolutas en la documentación**: cada integrante clona los repos en una ubicación distinta, así que nunca se escriben rutas de una máquina en particular. Se usan rutas relativas a la raíz del repo y a los otros proyectos se los nombra por su repo (por ejemplo, `docs/` del repo de la web).
 
 ## Qué actualizar según el cambio
 

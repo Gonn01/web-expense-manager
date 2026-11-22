@@ -631,6 +631,7 @@
     },
     "auth": {
         "continueWithGoogle": "Continue with Google",
+        "googleSignInUnavailable": "Google sign-in isn't available. You can use your email and password.",
         "takeControlOfYourPersonalFinances": "Take control of your personal finances",
         "createYourNewAccount": "Create your new account.",
         "eGJohnSmith": "e.g. John Smith",

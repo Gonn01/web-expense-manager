@@ -5,8 +5,8 @@ Guías para trabajar en los tres proyectos de la Plataforma de Gestión de Deuda
 | Guía | Dónde está | Cuándo leerla |
 | --- | --- | --- |
 | [arquitectura-web.md](arquitectura-web.md) | este repo | Cualquier cambio en `web-plataformas-de-desarrollo` |
-| `arquitectura-flutter.md` | `d:\proyectos_flutter\app_expense_manager\.claude\guides\` | Cualquier cambio en la app Flutter |
-| `arquitectura-api.md` | `d:\proyectos_node\api-plataformas-desarrollo\.claude\guides\` | Cualquier cambio en la API |
+| `arquitectura-flutter.md` | `.claude/guides/` del repo de la app Flutter | Cualquier cambio en la app Flutter |
+| `arquitectura-api.md` | `.claude/guides/` del repo de la API | Cualquier cambio en la API |
 | [documentacion.md](documentacion.md) | este repo | Al terminar cualquier cambio, en cualquiera de los tres proyectos: qué documentación y qué guías hay que actualizar |
 
 Qué describe cada cosa:
