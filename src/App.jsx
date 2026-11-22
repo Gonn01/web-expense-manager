@@ -47,7 +47,7 @@ export default function App() {
                         <Route path="entidades" element={<EntidadesFinancieras />} />
                         <Route path="entidades/:id" element={<EntidadDetalle />} />
                         <Route path="gastos/:id" element={<DetalleGasto />} />
-                        <Route path="compartidos" element={<Compartidos />} />
+                        <Route path="notificaciones" element={<Compartidos />} />
                         <Route path="configuracion" element={<Configuracion />} />
                     </Route>
                 </Routes>

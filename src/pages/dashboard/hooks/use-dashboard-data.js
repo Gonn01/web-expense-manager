@@ -305,7 +305,7 @@ export function useDashboardData() {
         [onCompartidoRespondido, onPagoPendiente, reloadSilently],
     );
 
-    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
+    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
 
     return {
         groups,

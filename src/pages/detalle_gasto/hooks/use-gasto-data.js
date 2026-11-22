@@ -62,7 +62,7 @@ export function useGastoData() {
         };
     }, [id, token]);
 
-    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
+    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
 
     async function load(silent = false) {
         try {
@@ -86,8 +86,8 @@ export function useGastoData() {
             return;
         }
         await solicitarEdicionCompartida(gasto.id, changes, token);
-        const { name, image_url, category_ids } = payload;
-        const updated = await updateGasto(gasto.id, { name, image_url, category_ids }, token);
+        const { image_url, category_ids } = payload;
+        const updated = await updateGasto(gasto.id, { image_url, category_ids }, token);
         setGasto(updated);
         const otra = gasto.shared_counterparty?.name ?? t('people.otherPerson');
         useSnackbarStore

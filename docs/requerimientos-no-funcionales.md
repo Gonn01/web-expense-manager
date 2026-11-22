@@ -26,7 +26,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 **Limitaciones conocidas**
 
-- Los canales de Pusher (`compartidos-<userId>`) son públicos: no hay autenticación de canal. Los eventos solo llevan identificadores y nombres, no montos.
+- Los canales de Pusher (`notificaciones-<userId>`) son públicos: no hay autenticación de canal. Los eventos solo llevan identificadores y nombres, no montos.
 
 ## CON — Consistencia entre clientes
 
@@ -71,10 +71,10 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-DIS-01 | Un fallo al emitir una notificación en tiempo real no hace fallar la operación que la originó. La notificación se emite solo después de que la operación se guardó, y nunca si se deshizo. | API |
+| RNF-DIS-01 | Un fallo al emitir una notificación en tiempo real no hace fallar la operación que la originó. La notificación se guarda y se emite solo después de que la operación se guardó, y nunca si se deshizo. Un fallo al guardarla tampoco hace fallar la operación. La respuesta espera a que se guarde y se emita, porque la API corre en funciones de Vercel, con un límite de 5 segundos: si se supera, la operación responde igual y el aviso puede perderse. | API |
 | RNF-DIS-02 | Un fallo al escribir el historial de una entidad no hace fallar la operación que lo originó. | API |
 | RNF-DIS-03 | Un error no previsto en la API se registra y devuelve un 500 genérico, sin tumbar el servidor ni filtrar el detalle interno. | API |
-| RNF-DIS-04 | Sin servicio de tiempo real, los clientes siguen funcionando; los datos se actualizan al recargar o navegar. | Web, App |
+| RNF-DIS-04 | Sin servicio de tiempo real, los clientes siguen funcionando; los datos y las notificaciones guardadas se actualizan al recargar o navegar. | Web, App |
 | RNF-DIS-05 | Sin el servicio de cotizaciones, la aplicación sigue funcionando sin mostrar equivalencias. | Web, App |
 | RNF-DIS-06 | La app móvil arranca y funciona aunque Firebase no esté configurado: el inicio con Google queda deshabilitado y la analítica no hace nada. | App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |

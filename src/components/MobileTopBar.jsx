@@ -4,12 +4,16 @@ import UserAvatar from './UserAvatar';
 import useAuth from '@/store/use-auth-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
+import { useNotificacionesStore } from '@/store/use-notificaciones-store';
+import { navBadgeCount } from '@/utils/notifications';
 import { t } from '@/i18n';
 
 export default function MobileTopBar() {
     const { user } = useAuth();
     const setMobileOpen = useUIStore((s) => s.setMobileSidebarOpen);
-    const pendingCount = useCompartidosStore((s) => s.pendingCount + s.pendingPaymentsCount);
+    const pendingActions = useCompartidosStore((s) => s.pendingCount + s.pendingPaymentsCount);
+    const unreadCount = useNotificacionesStore((s) => s.unreadCount);
+    const pendingCount = navBadgeCount(pendingActions, unreadCount);
 
     return (
         <header className="lg:hidden sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-black/10 dark:border-white/10 bg-white/80 dark:bg-background-dark/90 backdrop-blur px-3">

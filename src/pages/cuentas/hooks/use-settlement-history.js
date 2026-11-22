@@ -19,7 +19,7 @@ function usePaymentStatusEvents(userId, onEvent) {
         () => Object.fromEntries(PAYMENT_STATUS_EVENTS.map((name) => [name, onEvent])),
         [onEvent],
     );
-    usePusherChannel(userId ? `compartidos-${userId}` : null, events);
+    usePusherChannel(userId ? `notificaciones-${userId}` : null, events);
 }
 
 export function useSettlementHistoryList() {

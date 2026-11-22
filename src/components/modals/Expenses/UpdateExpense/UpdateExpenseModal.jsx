@@ -250,15 +250,17 @@ export default function UpdateExpenseModal({ gasto, onClose, onSave }) {
                         <ExpenseTypeSelector type={type} setType={setType} />
                     </LockedField>
 
-                    <div data-field="name">
-                        <TextInput
-                            label={t('modals.expenseName')}
-                            placeholder={t('modals.eGPersonalLoan')}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            error={visibleErrors.name}
-                        />
-                    </div>
+                    <LockedField reason={locks.name}>
+                        <div data-field="name">
+                            <TextInput
+                                label={t('modals.expenseName')}
+                                placeholder={t('modals.eGPersonalLoan')}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                error={visibleErrors.name}
+                            />
+                        </div>
+                    </LockedField>
 
                     <ExpenseAmountSection
                         amount={amount}

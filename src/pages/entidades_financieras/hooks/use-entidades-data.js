@@ -68,7 +68,19 @@ export function useEntidadesData() {
     async function eliminarEntidad(id) {
         const deleted = await deleteFinancialEntity(id, token);
         useSettlementStore.getState().applyUnmarked(deleted?.deleted_purchase_ids);
-        setAllEntities((prev) => prev.map((e) => (e.id === id ? { ...e, deleted: true } : e)));
+        setAllEntities((prev) =>
+            prev.map((e) =>
+                e.id === id
+                    ? {
+                          ...e,
+                          deleted: true,
+                          linked_user_id: null,
+                          linked_user_name: null,
+                          linked_user_email: null,
+                      }
+                    : e,
+            ),
+        );
         removeEntity(id);
     }
 

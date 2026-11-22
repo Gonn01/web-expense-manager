@@ -64,7 +64,7 @@ export function useEntidadData() {
         };
     }, [loadEntity]);
 
-    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
+    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
 
     const stats = useMemo(() => {
         if (!entity) return { amount: 0, debts: 0, fixed: 0, finalized: 0, pending: 0 };

@@ -14,6 +14,8 @@ function typeLabel(type) {
 
 export function sharedEditChanges(gasto, payload) {
     const changes = {};
+    const name = payload.name?.trim();
+    if (name && name !== String(gasto.name ?? '').trim()) changes.name = name;
     if (Number(payload.amount) !== Number(gasto.amount)) changes.amount = Number(payload.amount);
     if (payload.currency_type !== gasto.currency_type)
         changes.currency_type = payload.currency_type;
@@ -32,6 +34,11 @@ export function sharedEditChanges(gasto, payload) {
 
 export function describeSharedEdit(changes, gasto) {
     const lines = [];
+    if (changes.name) {
+        lines.push(
+            `${t('sharedEdit.name')}: "${gasto.name ?? gasto.gasto_name}" → "${changes.name}"`,
+        );
+    }
     if (changes.amount !== undefined) {
         lines.push(
             `${t('sharedEdit.amount')}: ${formatMoney(gasto.amount, gasto.currency_type)} → ${formatMoney(

@@ -4,6 +4,7 @@ import EmitidoCard from './components/EmitidoCard';
 import PagoCompartidoCard from './components/PagoCompartidoCard';
 import ReversionCard from './components/ReversionCard';
 import EdicionCard from './components/EdicionCard';
+import ActividadTab from './components/ActividadTab';
 import AprobarModal from './components/AprobarModal';
 import DescartarModal from './components/DescartarModal';
 import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseModal';
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import useAuth from '@/store/use-auth-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useDialogStore } from '@/store/use-dialog-store';
+import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import {
     edicionGroup,
     emitidoGroup,
@@ -54,6 +56,8 @@ export default function Compartidos() {
     const entities = useEntitiesStore((s) => s.entities);
     const [openNewExpense, setOpenNewExpense] = useState(false);
     const [savingExpense, setSavingExpense] = useState(false);
+    const [tab, setTab] = useState('actividad');
+    const unreadCount = useNotificacionesStore((s) => s.unreadCount);
 
     const handleAprobar = async (entityId, newEntityName) => {
         await aprobar(aprobarTarget.id, entityId, newEntityName);
@@ -241,27 +245,48 @@ export default function Compartidos() {
                     <InfoTooltip align="start" text={t('shared.info')} />
                 </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                    {t('compartidos.sharedExpensesAndPaymentsThatAreStill')}
+                    {t('notifications.subtitle')}
                 </p>
             </div>
 
-            {isEmpty ? (
-                <EmptyState onNewExpense={() => setOpenNewExpense(true)} />
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                    <SubSection
-                        title={t('compartidos.needsYourAction')}
-                        icon="priority_high"
-                        items={needsAction}
-                    />
+            <div
+                role="tablist"
+                className="mb-6 flex gap-1 border-b border-zinc-200 dark:border-zinc-700"
+            >
+                <TabButton
+                    label={t('notifications.activity')}
+                    count={unreadCount}
+                    active={tab === 'actividad'}
+                    onClick={() => setTab('actividad')}
+                />
+                <TabButton
+                    label={t('notifications.pending')}
+                    count={needsAction.length}
+                    active={tab === 'pendientes'}
+                    onClick={() => setTab('pendientes')}
+                />
+            </div>
 
-                    <SubSection
-                        title={t('compartidos.waitingOnTheOtherPerson')}
-                        icon="hourglass_top"
-                        items={waitingOther}
-                    />
-                </div>
-            )}
+            {tab === 'actividad' && <ActividadTab />}
+
+            {tab === 'pendientes' &&
+                (isEmpty ? (
+                    <EmptyState onNewExpense={() => setOpenNewExpense(true)} />
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                        <SubSection
+                            title={t('compartidos.needsYourAction')}
+                            icon="priority_high"
+                            items={needsAction}
+                        />
+
+                        <SubSection
+                            title={t('compartidos.waitingOnTheOtherPerson')}
+                            icon="hourglass_top"
+                            items={waitingOther}
+                        />
+                    </div>
+                ))}
 
             {openNewExpense && (
                 <NewExpenseModal
@@ -271,7 +296,7 @@ export default function Compartidos() {
                 />
             )}
 
-            {rejected.length > 0 && (
+            {tab === 'pendientes' && rejected.length > 0 && (
                 <div className="mt-6">
                     <SubSection
                         title={t('compartidos.rejectedByYou')}
@@ -306,6 +331,29 @@ export default function Compartidos() {
                 />
             )}
         </>
+    );
+}
+
+function TabButton({ label, count, active, onClick }) {
+    return (
+        <button
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={onClick}
+            className={`cursor-pointer -mb-px flex h-11 items-center gap-2 border-b-2 px-4 text-sm font-bold transition-colors ${
+                active
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100'
+            }`}
+        >
+            {label}
+            {count > 0 && (
+                <span className="text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 bg-emerald-700 text-white">
+                    {count}
+                </span>
+            )}
+        </button>
     );
 }
 

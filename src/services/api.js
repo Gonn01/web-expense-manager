@@ -308,14 +308,40 @@ export const fetchSettlementSnapshotById = async (id, token) => {
 };
 
 export const fetchCompartidos = async (token) => {
-    const { data } = await api.get('/compartidos', {
+    const { data } = await api.get('/notificaciones/pendientes', {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
 };
 
+export const fetchNotificaciones = async ({ before } = {}, token) => {
+    const { data } = await api.get('/notificaciones', {
+        params: before ? { before } : undefined,
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
+export const marcarNotificacionLeida = async (id, token) => {
+    const { data } = await api.post(
+        `/notificaciones/${id}/leer`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
+export const marcarNotificacionesLeidas = async (token) => {
+    const { data } = await api.post(
+        '/notificaciones/leer-todas',
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const aprobarCompartido = async (gastoId, payload, token) => {
-    const { data } = await api.post(`/compartidos/${gastoId}/aprobar`, payload, {
+    const { data } = await api.post(`/notificaciones/pendientes/${gastoId}/aprobar`, payload, {
         headers: { Authorization: `Bearer ${token}` },
     });
     return data.data;
@@ -323,7 +349,7 @@ export const aprobarCompartido = async (gastoId, payload, token) => {
 
 export const rechazarCompartido = async (gastoId, token) => {
     const { data } = await api.post(
-        `/compartidos/${gastoId}/rechazar`,
+        `/notificaciones/pendientes/${gastoId}/rechazar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -332,7 +358,7 @@ export const rechazarCompartido = async (gastoId, token) => {
 
 export const reintentarCompartido = async (gastoId, token) => {
     const { data } = await api.post(
-        `/compartidos/${gastoId}/reintentar`,
+        `/notificaciones/pendientes/${gastoId}/reintentar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -341,7 +367,7 @@ export const reintentarCompartido = async (gastoId, token) => {
 
 export const descartarCompartido = async (gastoId, deleteLinked, token) => {
     const { data } = await api.post(
-        `/compartidos/${gastoId}/descartar`,
+        `/notificaciones/pendientes/${gastoId}/descartar`,
         { delete_linked: deleteLinked },
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -350,7 +376,7 @@ export const descartarCompartido = async (gastoId, deleteLinked, token) => {
 
 export const confirmarPago = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/confirmar`,
+        `/notificaciones/pendientes/pagos/${movementId}/confirmar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -359,7 +385,7 @@ export const confirmarPago = async (movementId, token) => {
 
 export const rechazarPago = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/rechazar`,
+        `/notificaciones/pendientes/pagos/${movementId}/rechazar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -368,7 +394,7 @@ export const rechazarPago = async (movementId, token) => {
 
 export const retirarPago = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/retirar`,
+        `/notificaciones/pendientes/pagos/${movementId}/retirar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -377,7 +403,7 @@ export const retirarPago = async (movementId, token) => {
 
 export const aceptarReversion = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/reversion/aceptar`,
+        `/notificaciones/pendientes/pagos/${movementId}/reversion/aceptar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -386,7 +412,7 @@ export const aceptarReversion = async (movementId, token) => {
 
 export const rechazarReversion = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/reversion/rechazar`,
+        `/notificaciones/pendientes/pagos/${movementId}/reversion/rechazar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -401,20 +427,20 @@ const postEdicion = async (url, body, token) => {
 };
 
 export const solicitarEdicionCompartida = (gastoId, changes, token) =>
-    postEdicion(`/compartidos/gastos/${gastoId}/edicion`, changes, token);
+    postEdicion(`/notificaciones/pendientes/gastos/${gastoId}/edicion`, changes, token);
 
 export const aprobarEdicionCompartida = (editId, token) =>
-    postEdicion(`/compartidos/ediciones/${editId}/aprobar`, {}, token);
+    postEdicion(`/notificaciones/pendientes/ediciones/${editId}/aprobar`, {}, token);
 
 export const rechazarEdicionCompartida = (editId, token) =>
-    postEdicion(`/compartidos/ediciones/${editId}/rechazar`, {}, token);
+    postEdicion(`/notificaciones/pendientes/ediciones/${editId}/rechazar`, {}, token);
 
 export const cancelarEdicionCompartida = (editId, token) =>
-    postEdicion(`/compartidos/ediciones/${editId}/cancelar`, {}, token);
+    postEdicion(`/notificaciones/pendientes/ediciones/${editId}/cancelar`, {}, token);
 
 export const cancelarReversion = async (movementId, token) => {
     const { data } = await api.post(
-        `/compartidos/pagos/${movementId}/reversion/cancelar`,
+        `/notificaciones/pendientes/pagos/${movementId}/reversion/cancelar`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
     );

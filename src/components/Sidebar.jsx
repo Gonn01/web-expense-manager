@@ -3,7 +3,10 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import Icon from './Icon';
 import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
+import { useEntitiesStore } from '@/store/use-entities-store';
+import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import { useUIStore } from '@/store/use-ui-store';
+import { buildNotification, navBadgeCount } from '@/utils/notifications';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
@@ -26,6 +29,9 @@ export default function Sidebar() {
         setPendingPaymentsCount,
         loadPendingCount,
     } = useCompartidosStore();
+    const unreadCount = useNotificacionesStore((s) => s.unreadCount);
+    const loadNotificaciones = useNotificacionesStore((s) => s.load);
+    const resetNotificaciones = useNotificacionesStore((s) => s.reset);
     const isDesktop = useMediaQuery(DESKTOP_QUERY);
     const collapsedPreference = useUIStore((s) => s.sidebarCollapsed);
     const collapsed = collapsedPreference && isDesktop;
@@ -39,6 +45,11 @@ export default function Sidebar() {
     useEffect(() => {
         loadPendingCount(token);
     }, [token, loadPendingCount]);
+
+    useEffect(() => {
+        resetNotificaciones();
+        loadNotificaciones(token);
+    }, [token, resetNotificaciones, loadNotificaciones]);
 
     useEffect(() => {
         if (isDesktop) closeMobile();
@@ -202,8 +213,30 @@ export default function Sidebar() {
             .show(t('realtime.editRejected', { who: quien, expense: que }), 'error');
     }, []);
 
+    const handleNotificacionNueva = useCallback(() => {
+        loadNotificaciones(token);
+    }, [loadNotificaciones, token]);
+
+    const showNotice = useCallback((event, data) => {
+        const notice = buildNotification(event, data);
+        if (notice) useSnackbarStore.getState().show(notice.message, notice.tone, notice.icon);
+    }, []);
+
+    const handleVinculo = useCallback(
+        (event, data) => {
+            useEntitiesStore.getState().loadEntities(token);
+            showNotice(event, data);
+        },
+        [showNotice, token],
+    );
+
     const pusherEvents = useMemo(
         () => ({
+            'notificacion.nueva': handleNotificacionNueva,
+            'entidad.vinculada': (data) => handleVinculo('entidad.vinculada', data),
+            'entidad.desvinculada': (data) => handleVinculo('entidad.desvinculada', data),
+            'gasto.postergado': (data) => showNotice('gasto.postergado', data),
+            'gasto.postergacion_quitada': (data) => showNotice('gasto.postergacion_quitada', data),
             'compartido.nuevo': handleNuevo,
             'compartido.aprobado': handleAprobado,
             'compartido.rechazado': handleRechazado,
@@ -223,6 +256,9 @@ export default function Sidebar() {
             'edicion.rechazada': handleEdicionRechazada,
         }),
         [
+            handleNotificacionNueva,
+            handleVinculo,
+            showNotice,
             handleEdicionSolicitada,
             handleEdicionCancelada,
             handleEdicionAprobada,
@@ -243,7 +279,7 @@ export default function Sidebar() {
         ],
     );
 
-    usePusherChannel(user?.id ? `compartidos-${user.id}` : null, pusherEvents);
+    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
 
     const handleLogout = () => {
         logout();
@@ -264,10 +300,10 @@ export default function Sidebar() {
         { to: '/app/entidades', icon: 'account_balance', label: t('common.financialEntities') },
         { to: '/app/settlement', icon: 'history', label: t('common.settlementHistory') },
         {
-            to: '/app/compartidos',
-            icon: 'group',
+            to: '/app/notificaciones',
+            icon: 'notifications',
             label: t('common.shared'),
-            badge: pendingCount + pendingPaymentsCount,
+            badge: navBadgeCount(pendingCount + pendingPaymentsCount, unreadCount),
         },
     ];
 
