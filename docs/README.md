@@ -34,7 +34,7 @@ Las guías de arquitectura para desarrollar (cómo se construye una feature en c
 | **Movimiento** | Registro de historial de un gasto o de una entidad (creación, pago, reembolso, edición, etc.). Algunos solo registran un paso del historial, como el envío o la reversión de un pago compartido, y no cuentan como cuotas. |
 | **Gasto espejo** | Copia de un gasto con el tipo opuesto, creada en otra entidad propia al usar "pagar con otra entidad". |
 | **Entidad vinculada** | Entidad asociada a otro usuario de la plataforma (la *contraparte*) mediante su email. |
-| **Gasto compartido** | Gasto creado en una entidad vinculada: genera una copia para la contraparte, que debe aprobarla. |
+| **Gasto compartido** | Gasto creado en una entidad vinculada: genera una copia con el tipo opuesto para la contraparte, que debe aprobarla. |
 | **Pago pendiente** | Pago de un gasto compartido que espera la confirmación de la contraparte. |
 | **Pago vinculado** | Al confirmarse un pago compartido, el pago que se registra en la copia de la contraparte. Los dos se revierten juntos. |
 | **Solicitud de reversión** | Pedido de una de las partes para revertir un pago compartido ya confirmado; la otra parte lo acepta o lo rechaza. |

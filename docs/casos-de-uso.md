@@ -362,7 +362,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 2a. La entidad no existe todavía: el usuario la crea en el mismo formulario (CU-10).
     - 5a. *Pagar con otra entidad (espejo)* («extend»): el usuario eligió otra entidad propia como medio de pago; si no existe todavía, la crea en el mismo formulario (CU-10) y queda elegida como entidad de pago. El sistema verifica esa entidad y crea además un gasto espejo en ella, con el tipo opuesto y los mismos datos, y enlaza ambos.
-    - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
+    - 5b. *Compartir con la contraparte* («extend»): la entidad está vinculada. El gasto se crea pendiente de aprobación, el sistema genera una copia pendiente con el tipo opuesto para la contraparte y la notifica (CU-38). El gasto no aparece como activo hasta que sea aprobado (CU-33).
     - 4a. La entidad, o la entidad de pago, no existe o fue eliminada: el sistema lo informa y no crea nada.
     - 2b. Faltan datos obligatorios o son inválidos (RF-GAS-17): el sistema no crea el gasto, marca cada campo con error con un mensaje concreto, lleva la vista al primero y muestra un resumen de lo que falta, siempre visible. Los mensajes se actualizan a medida que el usuario corrige.
     - 2b. Faltan datos obligatorios: el sistema lo informa.
@@ -849,7 +849,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. En el detalle del gasto, el usuario elige "Sincronizar con <nombre de la contraparte>".
     2. El sistema pide confirmación, indicando quién recibe la copia y que el gasto queda pendiente hasta que la acepte.
-    3. El usuario confirma; el sistema crea la copia con las mismas cuotas pagas y deja el original y la copia pendientes de aprobación.
+    3. El usuario confirma; el sistema crea la copia con el tipo opuesto y las mismas cuotas pagas, y deja el original y la copia pendientes de aprobación.
     4. Si el gasto estaba marcado en la sesión de cuentas abierta, el sistema quita la marca.
     5. El sistema notifica a la contraparte (CU-38), que puede aprobarlo (CU-33) o rechazarlo (CU-34).
 - **Flujos alternativos**
