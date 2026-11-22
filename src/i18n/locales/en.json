@@ -29,7 +29,7 @@
                 "message": "This expense can't be shared: it must be active, in a linked entity and never shared before."
             },
             "GASTO_NO_ACTIVO": {
-                "message": "This expense isn't active: the other person hasn't accepted it yet."
+                "message": "This expense isn't active: the other person rejected it."
             },
             "GASTO_YA_SALDADO": {
                 "message": "That expense already has all its installments paid."
@@ -398,7 +398,7 @@
         "next": "Next",
         "addARelativeOrAFriendAnd": "Add a relative or a friend and know who you owe or who owes you.",
         "yourInstallmentsClearAndInOnePlace": "Your installments, clear and in one place.",
-        "letSGo": "Let's go!",
+        "finish": "Finish",
         "hiWelcomeToExpenseManager": "Hi! Welcome to Expense Manager",
         "canTMakeItThisMonthPostpone": "Can't make it this month? Postpone a payment and pay it in the next settlement period.",
         "stepOf": "Step {{step}} of {{total}}",
@@ -801,6 +801,7 @@
         "pendingBanner_other": "{{count}} expenses you created are waiting for {{name}} to approve them"
     },
     "charts": {
+        "noData": "There are no active expenses to chart.",
         "percentOfTotal": "{{percent}} of total",
         "percentOfSalary": "{{percent}} of salary",
         "categoriesTitle": "Expenses by category this month",
@@ -856,6 +857,8 @@
         "verbMark": "mark",
         "verbRecord": "record",
         "noSessionWarning": "There's no open settlement session. This payment will appear in the <strong>expense history</strong>, but <strong>not in the settlement history</strong>.",
+        "awaitingApprovalWarning": "The other person hasn't accepted this expense yet. The payment will stay <strong>pending</strong> until they accept and confirm it.",
+        "sharedPaidQuotasStayPending": "This entity is linked to another person: the installments you mark as paid will stay pending until they accept the expense and confirm each payment.",
         "ofAmount": "of {{amount}}",
         "amountToPay": "Amount to pay ({{currency}})",
         "inCurrency": "In {{currency}}"

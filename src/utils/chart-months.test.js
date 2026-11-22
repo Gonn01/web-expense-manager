@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fixedExpenseStartMonth, keyFromMonthIndex, pendingQuotaMonths } from './chart-months';
+import {
+    fixedExpenseStartMonth,
+    hasChartData,
+    keyFromMonthIndex,
+    pendingQuotaMonths,
+} from './chart-months';
 
 const NOVIEMBRE_2026 = 2026 * 12 + 10;
 
@@ -89,5 +94,38 @@ describe('fixedExpenseStartMonth', () => {
                 fixedExpenseStartMonth({ fixed_expense: true, is_postponed: true }, NOVIEMBRE_2026),
             ),
         ).toBe('2026-12');
+    });
+});
+
+describe('hasChartData', () => {
+    it('sin gastos no hay nada para graficar', () => {
+        expect(hasChartData([], NOVIEMBRE_2026)).toBe(false);
+    });
+
+    it('un egreso alcanza para el gráfico de categorías, aunque sea fijo', () => {
+        expect(
+            hasChartData([{ type: 'EGRESO', fixed_expense: true, amount: 100 }], NOVIEMBRE_2026),
+        ).toBe(true);
+    });
+
+    it('un ingreso con cuotas pendientes alcanza para los gráficos por mes', () => {
+        expect(
+            hasChartData(
+                [{ type: 'INGRESO', number_of_quotas: 3, payed_quotas: 1 }],
+                NOVIEMBRE_2026,
+            ),
+        ).toBe(true);
+    });
+
+    it('solo ingresos sin cuotas pendientes no tienen datos', () => {
+        expect(
+            hasChartData(
+                [
+                    { type: 'INGRESO', number_of_quotas: 2, payed_quotas: 2 },
+                    { type: 'INGRESO', fixed_expense: true, amount: 100 },
+                ],
+                NOVIEMBRE_2026,
+            ),
+        ).toBe(false);
     });
 });

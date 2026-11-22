@@ -190,7 +190,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario inicia sesión y entra a la app por primera vez en ese dispositivo.
     2. El cliente muestra el tutorial en el primer paso.
-    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca ¡Empezar!.
+    3. El usuario avanza con Siguiente (o deslizando en la app, o con las flechas del teclado en la web) hasta el último paso y toca Finalizar.
     4. El cliente cierra el tutorial y guarda en el dispositivo que ese usuario ya lo vio.
 - **Flujos alternativos**
     - 3a. El usuario toca Saltar (o Escape en la web, o atrás en la app): el tutorial se cierra y se da por visto.
@@ -436,7 +436,8 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1d. El gasto no es de una entidad del usuario: el sistema lo impide.
     - 1e. El gasto no es fijo y ya tiene todas sus cuotas pagas: el sistema lo impide, tanto para el pago directo como para el diferido.
     - 1f. El gasto es compartido y las cuotas que quedan ya están cubiertas por pagos propios pendientes de confirmación: el sistema lo impide (`GASTO_CUOTAS_CUBIERTAS`).
-    - 1g. El gasto es compartido y está pendiente o rechazado: el sistema lo impide (`GASTO_NO_ACTIVO`).
+    - 1g. El gasto es compartido y fue rechazado: el sistema lo impide (`GASTO_NO_ACTIVO`).
+    - 1h. El gasto es compartido y la otra persona todavía no lo aprobó: el sistema avisa que el pago va a quedar pendiente hasta que lo acepte y lo confirme; si el usuario sigue, continúa como en 3b, pero sin notificar a la contraparte hasta que apruebe el gasto.
     - 3a. Pago directo de un gasto postergado: el sistema quita la postergación, lo registra en el historial y continúa.
     - 3b. *Registrar pago pendiente de confirmación* («extend»): el gasto es compartido. El pago se registra como pendiente, se notifica a la contraparte (CU-38) y la cuota no cuenta como paga hasta que la confirme (CU-36).
     - 3c. El gasto es compartido y la contraparte ya registró un pago pendiente sobre él: en lugar de crear otro pendiente, el sistema confirma el más antiguo de la contraparte, como en CU-36, y se lo notifica.
@@ -534,7 +535,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1d. El gasto, o alguno de los del lote, no es de una entidad del usuario: el sistema lo impide y no marca ninguno.
     - 1e. Las cuotas que quedan del gasto ya están cubiertas por pagos propios pendientes de confirmación: el sistema no lo marca; en un lote, lo omite y marca el resto.
     - 1f. El gasto es compartido y la otra persona ya registró un pago: el dashboard lo indica, y marcarlo confirma ese pago al finalizar (CU-28, 2d).
-    - 1g. El gasto es compartido y está pendiente o rechazado: el sistema no lo marca (`GASTO_NO_ACTIVO`); en un lote, lo omite y marca el resto.
+    - 1g. El gasto es compartido y fue rechazado: el sistema no lo marca (`GASTO_NO_ACTIVO`); en un lote, lo omite y marca el resto. Si la otra persona todavía no lo aprobó, lo marca: al terminar las cuentas, el pago queda pendiente de confirmación.
     - 3a. El sistema rechaza la marca: el cliente la revierte.
 - **Postcondición**: las marcas quedan guardadas. No se registró ningún pago.
 
@@ -551,7 +552,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     5. *Liberar gastos postergados* («include»): todos los gastos postergados del usuario dejan de estarlo.
     6. La aplicación sale del modo "Hacer cuentas" y muestra el snapshot generado.
 - **Flujos alternativos**
-    - 2a. Un gasto marcado fue eliminado, no es del usuario, es compartido y está pendiente o rechazado, está postergado, ya está saldado o es compartido con las cuotas restantes cubiertas por pagos propios pendientes: el sistema lo quita de la sesión y no lo incluye en el snapshot.
+    - 2a. Un gasto marcado fue eliminado, no es del usuario, es compartido y fue rechazado, está postergado, ya está saldado o es compartido con las cuotas restantes cubiertas por pagos propios pendientes: el sistema lo quita de la sesión y no lo incluye en el snapshot.
     - 2d. Un gasto marcado es compartido y la contraparte ya registró un pago pendiente sobre él: el sistema confirma ese pago en lugar de crear otro (CU-36, sin pasar por Compartidos) y el snapshot lo muestra como la confirmación del pago de la otra persona.
     - 2e. La contraparte cierra su sesión al mismo tiempo con el mismo gasto marcado: uno de los cierres espera al otro; el primero registra el pendiente y el segundo lo confirma.
     - 2b. Falla cualquier paso del cierre (pagos, snapshot o cierre de la sesión): no se guarda nada, porque todo el cierre es una transacción. El sistema informa el error y la sesión sigue abierta para reintentar.

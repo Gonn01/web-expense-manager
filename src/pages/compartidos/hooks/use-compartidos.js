@@ -22,47 +22,79 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
-import { countGastosPorResolver } from '@/utils/compartidos-pending';
+import {
+    CompartidoAction,
+    applyCompartidoAction,
+    compartidosCounters,
+} from '@/utils/compartidos-actions';
 import { t } from '@/i18n';
+
+const EMPTY_GROUP = { porConfirmar: [], esperando: [] };
+const EMPTY_DATA = {
+    compartidos: { recibidos: [], emitidos: [] },
+    pagos: EMPTY_GROUP,
+    reversiones: EMPTY_GROUP,
+    ediciones: EMPTY_GROUP,
+};
 
 export function useCompartidos() {
     const { token, user } = useAuth();
     const { setPendingCount, setPendingPaymentsCount } = useCompartidosStore();
 
-    const [compartidos, setCompartidos] = useState({ recibidos: [], emitidos: [] });
-    const [pagos, setPagos] = useState({ porConfirmar: [], esperando: [] });
-    const [reversiones, setReversiones] = useState({ porConfirmar: [], esperando: [] });
-    const [ediciones, setEdiciones] = useState({ porConfirmar: [], esperando: [] });
+    const [data, setData] = useState(EMPTY_DATA);
+    const { compartidos, pagos, reversiones, ediciones } = data;
     const [loading, setLoading] = useState(true);
     const [loadingAction, setLoadingAction] = useState(null);
+
+    const publishCounters = useCallback(
+        (state) => {
+            const counters = compartidosCounters(state);
+            setPendingCount(counters.gastos);
+            setPendingPaymentsCount(counters.pagos);
+        },
+        [setPendingCount, setPendingPaymentsCount],
+    );
 
     const load = useCallback(
         async ({ silent = false } = {}) => {
             if (!token) return;
             try {
                 if (!silent) setLoading(true);
-                const data = await fetchCompartidos(token);
-                const pagosData = data.pagos ?? { porConfirmar: [], esperando: [] };
-                const reversionesData = data.reversiones ?? { porConfirmar: [], esperando: [] };
-                const edicionesData = data.ediciones ?? { porConfirmar: [], esperando: [] };
-                setCompartidos({ recibidos: data.recibidos, emitidos: data.emitidos });
-                setPagos(pagosData);
-                setReversiones(reversionesData);
-                setEdiciones(edicionesData);
-                setPendingCount(countGastosPorResolver(data));
-                setPendingPaymentsCount(
-                    pagosData.porConfirmar.length +
-                        reversionesData.porConfirmar.length +
-                        edicionesData.porConfirmar.length,
-                );
+                const response = await fetchCompartidos(token);
+                const next = {
+                    compartidos: {
+                        recibidos: response.recibidos ?? [],
+                        emitidos: response.emitidos ?? [],
+                    },
+                    pagos: response.pagos ?? EMPTY_GROUP,
+                    reversiones: response.reversiones ?? EMPTY_GROUP,
+                    ediciones: response.ediciones ?? EMPTY_GROUP,
+                };
+                setData(next);
+                publishCounters(next);
             } catch (err) {
                 console.error('Error cargando compartidos', err);
             } finally {
                 if (!silent) setLoading(false);
             }
         },
-        [token, setPendingCount, setPendingPaymentsCount],
+        [token, publishCounters],
     );
+
+    const applyLocal = useCallback(
+        (kind, id) => {
+            setData((prev) => {
+                const next = applyCompartidoAction(prev, kind, id);
+                publishCounters(next);
+                return next;
+            });
+        },
+        [publishCounters],
+    );
+
+    const reloadInBackground = useCallback(() => {
+        load({ silent: true });
+    }, [load]);
 
     useEffect(() => {
         load();
@@ -134,12 +166,13 @@ export function useCompartidos() {
                 ) {
                     updateEntity(entityId, senderLink);
                 }
-                await load({ silent: true });
+                applyLocal(CompartidoAction.APROBAR, gastoId);
+                reloadInBackground();
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, load, compartidos.recibidos],
+        [token, applyLocal, reloadInBackground, compartidos.recibidos],
     );
 
     const rechazar = useCallback(
@@ -147,18 +180,13 @@ export function useCompartidos() {
             setLoadingAction({ id: gastoId, kind: 'rechazar' });
             try {
                 await rechazarCompartido(gastoId, token);
-                setCompartidos((prev) => ({
-                    ...prev,
-                    recibidos: prev.recibidos.map((r) =>
-                        r.id === gastoId ? { ...r, status: 'REJECTED' } : r,
-                    ),
-                }));
-                setPendingCount((c) => Math.max(0, c - 1));
+                applyLocal(CompartidoAction.RECHAZAR, gastoId);
+                reloadInBackground();
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, setPendingCount],
+        [token, applyLocal, reloadInBackground],
     );
 
     const reintentar = useCallback(
@@ -166,12 +194,13 @@ export function useCompartidos() {
             setLoadingAction({ id: gastoId, kind: 'reintentar' });
             try {
                 await reintentarCompartido(gastoId, token);
-                await load({ silent: true });
+                applyLocal(CompartidoAction.REINTENTAR, gastoId);
+                reloadInBackground();
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, applyLocal, reloadInBackground],
     );
 
     const descartar = useCallback(
@@ -180,7 +209,8 @@ export function useCompartidos() {
             try {
                 const result = await descartarCompartido(gastoId, deleteLinked, token);
                 useSnackbarStore.getState().show(t('compartidos.expenseDiscarded'), 'success');
-                await load({ silent: true });
+                applyLocal(CompartidoAction.DESCARTAR, gastoId);
+                reloadInBackground();
                 if (result?.mirror_deleted) {
                     useSettlementStore.getState().loadSession();
                     useEntitiesStore.getState().loadEntities(token);
@@ -193,20 +223,17 @@ export function useCompartidos() {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, applyLocal, reloadInBackground],
     );
 
     const responderPago = useCallback(
-        async (movementId, kind, apiCall, successMessage) => {
+        async (movementId, kind, action, apiCall, successMessage) => {
             setLoadingAction({ id: movementId, kind });
             try {
                 await apiCall(movementId, token);
-                setPagos((prev) => ({
-                    ...prev,
-                    porConfirmar: prev.porConfirmar.filter((p) => p.movement_id !== movementId),
-                }));
+                applyLocal(action, movementId);
                 useSnackbarStore.getState().show(successMessage, 'success');
-                load({ silent: true });
+                reloadInBackground();
                 useSettlementStore.getState().loadSession();
             } catch (err) {
                 console.error(successMessage, err);
@@ -214,7 +241,7 @@ export function useCompartidos() {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, applyLocal, reloadInBackground],
     );
 
     const confirmarPago = useCallback(
@@ -222,6 +249,7 @@ export function useCompartidos() {
             responderPago(
                 movementId,
                 'confirmar',
+                CompartidoAction.CONFIRMAR_PAGO,
                 confirmarPagoApi,
                 t('compartidos.paymentConfirmed'),
             ),
@@ -230,35 +258,54 @@ export function useCompartidos() {
 
     const rechazarPago = useCallback(
         (movementId) =>
-            responderPago(movementId, 'rechazar', rechazarPagoApi, t('common.paymentRejected')),
+            responderPago(
+                movementId,
+                'rechazar',
+                CompartidoAction.RECHAZAR_PAGO,
+                rechazarPagoApi,
+                t('common.paymentRejected'),
+            ),
         [responderPago],
     );
 
     const runPagoAction = useCallback(
-        async (movementId, kind, apiCall, successMessage) => {
+        async (movementId, kind, action, apiCall, successMessage) => {
             setLoadingAction({ id: movementId, kind });
             try {
                 await apiCall(movementId, token);
+                applyLocal(action, movementId);
                 useSnackbarStore.getState().show(successMessage, 'success');
-                await load({ silent: true });
+                reloadInBackground();
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, applyLocal, reloadInBackground],
     );
 
     const retirarPago = useCallback(
         (movementId) =>
-            runPagoAction(movementId, 'retirar', retirarPagoApi, t('common.paymentWithdrawn')),
+            runPagoAction(
+                movementId,
+                'retirar',
+                CompartidoAction.RETIRAR_PAGO,
+                retirarPagoApi,
+                t('common.paymentWithdrawn'),
+            ),
         [runPagoAction],
     );
 
     const aceptarReversion = useCallback(
         (movementId) =>
-            runPagoAction(movementId, 'aceptar', aceptarReversionApi, t('common.paymentReverted')),
+            runPagoAction(
+                movementId,
+                'aceptar',
+                CompartidoAction.ACEPTAR_REVERSION,
+                aceptarReversionApi,
+                t('common.paymentReverted'),
+            ),
         [runPagoAction],
     );
 
@@ -267,6 +314,7 @@ export function useCompartidos() {
             runPagoAction(
                 movementId,
                 'rechazar',
+                CompartidoAction.RECHAZAR_REVERSION,
                 rechazarReversionApi,
                 t('common.reversalRejected'),
             ),
@@ -278,6 +326,7 @@ export function useCompartidos() {
             runPagoAction(
                 movementId,
                 'cancelar',
+                CompartidoAction.CANCELAR_REVERSION,
                 cancelarReversionApi,
                 t('compartidos.reversalRequestCancelled'),
             ),
@@ -285,24 +334,31 @@ export function useCompartidos() {
     );
 
     const runEdicionAction = useCallback(
-        async (editId, kind, apiCall, successMessage) => {
+        async (editId, kind, action, apiCall, successMessage) => {
             setLoadingAction({ id: `edicion-${editId}`, kind });
             try {
                 await apiCall(editId, token);
+                applyLocal(action, editId);
                 useSnackbarStore.getState().show(successMessage, 'success');
-                await load({ silent: true });
+                reloadInBackground();
             } catch (err) {
                 console.error(successMessage, err);
             } finally {
                 setLoadingAction(null);
             }
         },
-        [token, load],
+        [token, applyLocal, reloadInBackground],
     );
 
     const aprobarEdicion = useCallback(
         (editId) =>
-            runEdicionAction(editId, 'aprobar', aprobarEdicionCompartida, t('common.editApproved')),
+            runEdicionAction(
+                editId,
+                'aprobar',
+                CompartidoAction.APROBAR_EDICION,
+                aprobarEdicionCompartida,
+                t('common.editApproved'),
+            ),
         [runEdicionAction],
     );
 
@@ -311,6 +367,7 @@ export function useCompartidos() {
             runEdicionAction(
                 editId,
                 'rechazar',
+                CompartidoAction.RECHAZAR_EDICION,
                 rechazarEdicionCompartida,
                 t('common.editRejected'),
             ),
@@ -322,6 +379,7 @@ export function useCompartidos() {
             runEdicionAction(
                 editId,
                 'cancelar',
+                CompartidoAction.CANCELAR_EDICION,
                 cancelarEdicionCompartida,
                 t('compartidos.editRequestCancelled'),
             ),
