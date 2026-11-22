@@ -493,6 +493,39 @@
           "response": []
         },
         {
+          "name": "Actualizar alias de Mercado Pago",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/entidades-financieras/{{entityId}}/alias-mercado-pago",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "entidades-financieras",
+                "{{entityId}}",
+                "alias-mercado-pago"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alias\": \"banco.demo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Marcar entidad favorita",
           "request": {
             "method": "PUT",

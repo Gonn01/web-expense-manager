@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/Icon';
 import Loader from '@/components/Loader';
 import { desvincularUsuarioEntidad } from '@/services/api';
@@ -7,7 +8,7 @@ import { useDialogStore } from '@/store/use-dialog-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
-import { buildNotification, linkedEntityToUnlink } from '@/utils/notifications';
+import { buildNotification, linkedEntityToUnlink, notificationTarget } from '@/utils/notifications';
 import { getIntlLocale, t } from '@/i18n';
 
 const TONE_CLASSES = {
@@ -19,8 +20,9 @@ const DEFAULT_TONE = 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-
 const formatDate = (value) =>
     new Date(value).toLocaleString(getIntlLocale(), { dateStyle: 'short', timeStyle: 'short' });
 
-export default function ActividadTab() {
+export default function NotificationsList({ onNavigate }) {
     const { token } = useAuth();
+    const navigate = useNavigate();
     const entities = useEntitiesStore((s) => s.entities);
     const {
         items,
@@ -61,6 +63,13 @@ export default function ActividadTab() {
         }
     };
 
+    const handleOpen = (item, target) => {
+        if (!item.read_at) handleMarkRead(item.id);
+        if (!target) return;
+        onNavigate?.();
+        navigate(target);
+    };
+
     const handleUnlink = (notification, entity) =>
         useDialogStore.getState().confirm({
             title: t('notifications.unlinkTooTitle'),
@@ -86,7 +95,7 @@ export default function ActividadTab() {
 
     if (items.length === 0) {
         return (
-            <div className="flex flex-col items-center text-center gap-3 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 px-6 py-10">
+            <div className="flex flex-col items-center text-center gap-3 px-4 py-10">
                 <Icon name="notifications" className="text-4xl text-zinc-400 dark:text-zinc-500" />
                 <p className="text-lg font-bold text-zinc-800 dark:text-white">
                     {t('notifications.emptyTitle')}
@@ -99,7 +108,7 @@ export default function ActividadTab() {
     }
 
     return (
-        <div className="flex flex-col gap-3 max-w-3xl">
+        <div className="flex flex-col gap-3">
             {unreadCount > 0 && (
                 <button
                     type="button"
@@ -125,63 +134,61 @@ export default function ActividadTab() {
                     if (!notification) return null;
                     const unread = !item.read_at;
                     const entityToUnlink = linkedEntityToUnlink(item, entities);
+                    const target = notificationTarget(item, entities);
+                    const marking = markingIds.has(item.id);
 
                     return (
                         <li
                             key={item.id}
-                            className={`flex items-start gap-3 rounded-xl border p-3 ${
+                            className={`rounded-xl border p-3 ${
                                 unread
                                     ? 'border-primary/40 bg-primary/5 dark:bg-primary/10'
                                     : 'border-zinc-200 bg-white/60 dark:border-[#29382f] dark:bg-white/[0.02]'
                             }`}
                         >
-                            <span
-                                className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
-                                    TONE_CLASSES[notification.tone] ?? DEFAULT_TONE
-                                }`}
+                            <button
+                                type="button"
+                                onClick={() => handleOpen(item, target)}
+                                disabled={!unread && !target}
+                                className="flex w-full items-start gap-3 rounded-lg text-left enabled:cursor-pointer enabled:hover:opacity-80"
                             >
-                                <Icon name={notification.icon} className="text-lg" />
-                            </span>
-                            <div className="min-w-0 flex-1">
-                                <p
-                                    className={`text-sm break-words text-zinc-800 dark:text-zinc-100 ${
-                                        unread ? 'font-semibold' : ''
+                                <span
+                                    className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
+                                        TONE_CLASSES[notification.tone] ?? DEFAULT_TONE
                                     }`}
                                 >
-                                    {notification.message}
-                                </p>
-                                <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                                    {formatDate(item.created_at)}
-                                </p>
-                                {entityToUnlink && (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleUnlink(item, entityToUnlink)}
-                                        className="cursor-pointer mt-2 inline-flex min-h-9 items-center gap-1 rounded-lg border border-zinc-300 px-3 text-xs font-bold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
+                                    <Icon
+                                        name={marking ? 'progress_activity' : notification.icon}
+                                        className={`text-lg ${marking ? 'animate-spin' : ''}`}
+                                    />
+                                </span>
+                                <span className="min-w-0 flex-1">
+                                    <span
+                                        className={`block text-sm break-words text-zinc-800 dark:text-zinc-100 ${
+                                            unread ? 'font-semibold' : ''
+                                        }`}
                                     >
-                                        <Icon name="link_off" className="text-base" />
-                                        {t('notifications.unlinkToo')}
-                                    </button>
+                                        {notification.message}
+                                    </span>
+                                    <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+                                        {formatDate(item.created_at)}
+                                    </span>
+                                </span>
+                                {target && (
+                                    <Icon
+                                        name="chevron_right"
+                                        className="shrink-0 self-center text-xl text-zinc-400 dark:text-zinc-500"
+                                    />
                                 )}
-                            </div>
-                            {unread && (
+                            </button>
+                            {entityToUnlink && (
                                 <button
                                     type="button"
-                                    onClick={() => handleMarkRead(item.id)}
-                                    disabled={markingAll || markingIds.has(item.id)}
-                                    aria-busy={markingIds.has(item.id)}
-                                    aria-label={t('notifications.markRead')}
-                                    title={t('notifications.markRead')}
-                                    className="cursor-pointer flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:bg-black/5 hover:text-primary dark:text-zinc-400 dark:hover:bg-white/10 disabled:cursor-wait"
+                                    onClick={() => handleUnlink(item, entityToUnlink)}
+                                    className="cursor-pointer mt-2 ml-12 inline-flex min-h-9 items-center gap-1 rounded-lg border border-zinc-300 px-3 text-xs font-bold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
                                 >
-                                    <Icon
-                                        name={
-                                            markingIds.has(item.id) ? 'progress_activity' : 'done'
-                                        }
-                                        className={`text-xl ${
-                                            markingIds.has(item.id) ? 'animate-spin' : ''
-                                        }`}
-                                    />
+                                    <Icon name="link_off" className="text-base" />
+                                    {t('notifications.unlinkToo')}
                                 </button>
                             )}
                         </li>

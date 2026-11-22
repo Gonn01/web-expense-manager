@@ -131,7 +131,22 @@ export function buildNotification(event, data = {}) {
     };
 }
 
-export const navBadgeCount = (pendingActions, unread) => Math.max(pendingActions, unread);
+const ACTION_EVENTS = new Set([
+    'compartido.nuevo',
+    'compartido.rechazado',
+    'pago.pendiente',
+    'pago.reversion_solicitada',
+    'edicion.solicitada',
+]);
+
+export function notificationTarget(notification, entities) {
+    const { event, data = {} } = notification;
+    if (ACTION_EVENTS.has(event)) return '/app/compartidos';
+    if (data.ownGastoId != null) return `/app/gastos/${data.ownGastoId}`;
+    if (!event.startsWith('entidad.') || data.entityId == null) return null;
+    const exists = entities.some((entity) => String(entity.id) === String(data.entityId));
+    return exists ? `/app/entidades/${data.entityId}` : null;
+}
 
 export function linkedEntityToUnlink(notification, entities) {
     if (notification.event !== 'entidad.desvinculada') return null;

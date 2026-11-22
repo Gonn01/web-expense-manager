@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import MobileTopBar from '@/components/MobileTopBar';
+import DesktopTopBar from '@/components/DesktopTopBar';
+import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import OnboardingDialog from '@/components/onboarding/OnboardingDialog';
 import { useOnboardingAutoOpen } from '@/hooks/use-onboarding';
 import useAuth from '@/store/use-auth-store';
@@ -15,6 +17,7 @@ export default function AppLayout() {
     const { loadEntities } = useEntitiesStore();
     const { loadCategories } = useCategoriesStore();
     const loadSettlementSession = useSettlementStore((s) => s.loadSession);
+    const isDesktop = useMediaQuery(DESKTOP_QUERY);
 
     useOnboardingAutoOpen();
 
@@ -32,7 +35,7 @@ export default function AppLayout() {
                 <Sidebar />
 
                 <div className="flex flex-1 min-w-0 flex-col">
-                    <MobileTopBar />
+                    {isDesktop ? <DesktopTopBar /> : <MobileTopBar />}
 
                     <main className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] flex flex-col px-3 py-4 sm:p-4 lg:p-5">
                         <div className="mx-auto max-w-7xl w-full flex-1 min-h-0 flex flex-col">

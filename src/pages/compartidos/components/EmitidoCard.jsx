@@ -1,6 +1,6 @@
 import Icon from '@/components/Icon';
-import StatusBadge from './StatusBadge';
-import TypeBadge from './TypeBadge';
+import StatusBadge from '@/components/compartidos/StatusBadge';
+import TypeBadge from '@/components/compartidos/TypeBadge';
 import { ExpenseStatus } from '@/utils/enums';
 import { getIntlLocale } from '@/i18n';
 import { t } from '@/i18n';

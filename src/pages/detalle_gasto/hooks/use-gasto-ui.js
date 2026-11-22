@@ -18,7 +18,10 @@ export function useGastoUI() {
         cancelarReversion,
         cancelarEdicion,
         eliminar,
+        load,
         loading,
+        shared,
+        pendingResponses,
     } = useGastoData();
     const entities = useEntitiesStore((s) => s.entities);
 
@@ -66,5 +69,8 @@ export function useGastoUI() {
         eliminar,
         onSeleccionAdjuntos,
         volverALista,
+        shared,
+        pendingResponses,
+        reloadSilently: () => load(true),
     };
 }

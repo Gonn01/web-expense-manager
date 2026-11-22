@@ -7,6 +7,7 @@ import ProgresoPago from './components/ProgresoPago';
 import HistorialSection from './components/HistorialSection';
 import DeleteExpenseModal from './components/DeleteExpenseModal';
 import PendingEditBanner from './components/PendingEditBanner';
+import PendingResponsesSection from '@/components/compartidos/PendingResponsesSection';
 import { useGastoUI } from './hooks/use-gasto-ui';
 import Loader from '@/components/Loader';
 import { useEntitiesStore } from '@/store/use-entities-store';
@@ -37,6 +38,9 @@ export default function DetalleGasto() {
         eliminar,
         loading,
         volverALista,
+        shared,
+        pendingResponses,
+        reloadSilently,
     } = useGastoUI();
     const { getEntityById } = useEntitiesStore();
     const settlementActive = useSettlementStore((s) => s.active);
@@ -98,7 +102,14 @@ export default function DetalleGasto() {
                             revertLastDisabled={ultimoPago?.reversal_requested_by_user_id != null}
                         />
                     ) : null}
-                    <PendingEditBanner gasto={gasto} onCancel={cancelarEdicion} />
+                    <PendingResponsesSection
+                        shared={shared}
+                        responses={pendingResponses}
+                        onResolved={reloadSilently}
+                    />
+                    {pendingResponses.ediciones.length === 0 && (
+                        <PendingEditBanner gasto={gasto} onCancel={cancelarEdicion} />
+                    )}
                     <div className="bg-white dark:bg-[#111714] rounded-xl p-4 sm:p-6 shadow-sm flex flex-col gap-6">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 sm:gap-y-6">
                             <InfoItem

@@ -131,6 +131,15 @@ export const updateFinancialEntity = async (id, name, token) => {
     return data.data;
 };
 
+export const updateEntityMercadoPagoAlias = async (id, alias, token) => {
+    const { data } = await api.put(
+        `/entidades-financieras/${id}/alias-mercado-pago`,
+        { alias },
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const deleteFinancialEntity = async (id, token) => {
     const { data } = await api.delete(`/entidades-financieras/${id}`, {
         headers: { Authorization: `Bearer ${token}` },

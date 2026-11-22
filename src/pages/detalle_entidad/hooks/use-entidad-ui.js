@@ -11,12 +11,16 @@ export function useEntidadUI() {
         loading,
         crearGastoEntidad,
         actualizarEntidad,
+        actualizarAliasMercadoPago,
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
         settleQuota,
         gastosEliminados,
         restaurarGasto,
+        shared,
+        pendingResponses,
+        reloadSilently,
     } = useEntidadData();
 
     const [tab, setTab] = useState('activos');
@@ -42,6 +46,8 @@ export function useEntidadUI() {
     const [loadingCreatingExpense, setLoadingCreatingExpense] = useState(false);
     const [loadingUpdatingEntity, setLoadingUpdatingEntity] = useState(false);
     const [loadingVincular, setLoadingVincular] = useState(false);
+    const [openMercadoPagoAlias, setOpenMercadoPagoAlias] = useState(false);
+    const [savingMercadoPagoAlias, setSavingMercadoPagoAlias] = useState(false);
 
     const [settleModalOpen, setSettleModalOpen] = useState(false);
     const [settleModalItem, setPayModalItem] = useState(null);
@@ -91,6 +97,18 @@ export function useEntidadUI() {
         }
     }
 
+    async function onSaveMercadoPagoAlias(alias) {
+        setSavingMercadoPagoAlias(true);
+        try {
+            await actualizarAliasMercadoPago(alias);
+            setOpenMercadoPagoAlias(false);
+        } catch (err) {
+            console.error('Error guardando alias de Mercado Pago', err);
+        } finally {
+            setSavingMercadoPagoAlias(false);
+        }
+    }
+
     async function onDeleteEntity() {
         await eliminarEntidad();
         navigate('/app/entidades');
@@ -133,6 +151,11 @@ export function useEntidadUI() {
         onUpdateEntity,
         loadingUpdatingEntity,
 
+        openMercadoPagoAlias,
+        setOpenMercadoPagoAlias,
+        onSaveMercadoPagoAlias,
+        savingMercadoPagoAlias,
+
         onVincular,
         onDesvincular,
         loadingVincular,
@@ -149,6 +172,10 @@ export function useEntidadUI() {
         gastosEliminados,
         onRestaurarGasto,
         restoringIds,
+
+        shared,
+        pendingResponses,
+        reloadSilently,
 
         navigate,
     };

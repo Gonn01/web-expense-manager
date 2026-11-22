@@ -8,6 +8,7 @@ import NewExpenseModal from '@/components/modals/Expenses/NewExpense/NewExpenseM
 import ConfirmInstallmentPaymentModal from '@/components/modals/ConfirmPaymentModal/ConfirmPaymentModal';
 import ConfirmDeleteModal from '@/components/modals/ConfirmDeleteModal';
 import ExpenseCard from '@/components/ExpenseCard';
+import PendingResponsesSection from '@/components/compartidos/PendingResponsesSection';
 
 import { TabHeader } from './components/TabHeader';
 import { ListContainer } from './components/ListContainer';
@@ -15,6 +16,8 @@ import GastoItem from './components/GastoItem';
 import { StatCard } from './components/StatCard';
 import EditEntityModal from './components/EditEntityModal';
 import LinkUserDialog from './components/LinkUserDialog';
+import MercadoPagoCard from './components/MercadoPagoCard';
+import MercadoPagoAliasModal from './components/MercadoPagoAliasModal';
 import ActionsMenu from '@/components/ActionsMenu';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 
@@ -45,6 +48,10 @@ export default function EntidadDetalle() {
         loadingCreatingExpense,
         onUpdateEntity,
         loadingUpdatingEntity,
+        openMercadoPagoAlias,
+        setOpenMercadoPagoAlias,
+        onSaveMercadoPagoAlias,
+        savingMercadoPagoAlias,
         onVincular,
         onDesvincular,
         loadingVincular,
@@ -59,6 +66,9 @@ export default function EntidadDetalle() {
         gastosEliminados,
         onRestaurarGasto,
         restoringIds,
+        shared,
+        pendingResponses,
+        reloadSilently,
     } = useEntidadUI();
 
     const [showCharts, setShowCharts] = useState(false);
@@ -101,6 +111,7 @@ export default function EntidadDetalle() {
     const counterparty =
         entity.linked_user_name || entity.linked_user_email || t('people.otherPerson');
     const isLinked = !!entity.linked_user_id;
+    const receivedPending = pendingResponses.recibidos.length;
 
     const confirmDeleteEntity = () =>
         useDialogStore.getState().confirm({
@@ -192,6 +203,20 @@ export default function EntidadDetalle() {
                 loading={loadingVincular}
             />
 
+            <MercadoPagoCard
+                alias={entity.mercado_pago_alias}
+                onEdit={() => setOpenMercadoPagoAlias(true)}
+            />
+
+            {openMercadoPagoAlias && (
+                <MercadoPagoAliasModal
+                    initialAlias={entity.mercado_pago_alias}
+                    onClose={() => setOpenMercadoPagoAlias(false)}
+                    onSave={onSaveMercadoPagoAlias}
+                    saving={savingMercadoPagoAlias}
+                />
+            )}
+
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
                 <StatCard
                     label={t('detalleEntidad.activeExpenses2')}
@@ -212,6 +237,23 @@ export default function EntidadDetalle() {
                 )}
             </div>
 
+            {receivedPending > 0 && (
+                <button
+                    type="button"
+                    onClick={() => setTab('pendientes')}
+                    className="mb-3 flex w-full items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-2.5 text-left text-sm font-medium text-emerald-800 dark:text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+                >
+                    <Icon name="priority_high" className="text-base" />
+                    <span className="flex-1">
+                        {t('entity.receivedPendingBanner', {
+                            count: receivedPending,
+                            name: counterparty,
+                        })}
+                    </span>
+                    <Icon name="chevron_right" className="text-base" />
+                </button>
+            )}
+
             {stats.pending > 0 && (
                 <button
                     type="button"
@@ -226,7 +268,7 @@ export default function EntidadDetalle() {
                 </button>
             )}
 
-            <TabHeader tab={tab} setTab={setTab} pendingCount={stats.pending} />
+            <TabHeader tab={tab} setTab={setTab} pendingCount={stats.pending + receivedPending} />
 
             {tab === 'activos' && (
                 <ListContainer
@@ -267,24 +309,33 @@ export default function EntidadDetalle() {
             )}
 
             {tab === 'pendientes' && (
-                <ListContainer
-                    empty={(entity.gastos_pendientes ?? []).length === 0}
-                    emptyLabel={t('detalleEntidad.noPendingExpenses')}
-                >
-                    <p className="mb-2 text-xs text-zinc-500 dark:text-zinc-400">
-                        {t('entity.pendingExplain', { name: counterparty })}
-                    </p>
-                    {[...(entity.gastos_pendientes ?? [])]
-                        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                        .map((g) => (
-                            <ExpenseCard
-                                counterpartyName={counterparty}
-                                key={g.id}
-                                gasto={g}
-                                onClick={() => navigate(`/app/gastos/${g.id}`)}
-                            />
-                        ))}
-                </ListContainer>
+                <div className="flex flex-col gap-4">
+                    <PendingResponsesSection
+                        shared={shared}
+                        responses={pendingResponses}
+                        onResolved={reloadSilently}
+                    />
+                    {(stats.pending > 0 || receivedPending === 0) && (
+                        <ListContainer
+                            empty={stats.pending === 0}
+                            emptyLabel={t('detalleEntidad.noPendingExpenses')}
+                        >
+                            <p className="mb-2 text-xs text-zinc-500 dark:text-zinc-400">
+                                {t('entity.pendingExplain', { name: counterparty })}
+                            </p>
+                            {[...(entity.gastos_pendientes ?? [])]
+                                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                                .map((g) => (
+                                    <ExpenseCard
+                                        counterpartyName={counterparty}
+                                        key={g.id}
+                                        gasto={g}
+                                        onClick={() => navigate(`/app/gastos/${g.id}`)}
+                                    />
+                                ))}
+                        </ListContainer>
+                    )}
+                </div>
             )}
 
             {tab === 'eliminados' && (

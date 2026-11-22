@@ -3,7 +3,7 @@ import {
     buildNotification,
     linkedEntityToUnlink,
     mergeFirstPage,
-    navBadgeCount,
+    notificationTarget,
 } from './notifications';
 
 const EVENTS = [
@@ -51,10 +51,31 @@ describe('buildNotification', () => {
     });
 });
 
-describe('navBadgeCount', () => {
-    it('no suma dos veces lo pendiente y lo no leído', () => {
-        expect(navBadgeCount(2, 3)).toBe(3);
-        expect(navBadgeCount(4, 1)).toBe(4);
+describe('notificationTarget', () => {
+    it.each([
+        'compartido.nuevo',
+        'compartido.rechazado',
+        'pago.pendiente',
+        'pago.reversion_solicitada',
+        'edicion.solicitada',
+    ])('lleva a Compartidos si %s requiere una acción', (event) => {
+        expect(notificationTarget({ event, data: { ownGastoId: 8 } }, [])).toBe('/app/compartidos');
+    });
+
+    it('lleva al gasto propio en los avisos informativos', () => {
+        expect(notificationTarget({ event: 'pago.confirmado', data: { ownGastoId: 8 } }, [])).toBe(
+            '/app/gastos/8',
+        );
+    });
+
+    it('lleva a la entidad solo si sigue existiendo', () => {
+        const notification = { event: 'entidad.vinculada', data: { entityId: '7' } };
+        expect(notificationTarget(notification, [{ id: 7 }])).toBe('/app/entidades/7');
+        expect(notificationTarget(notification, [])).toBeNull();
+    });
+
+    it('no navega si una notificación vieja no tiene el gasto propio', () => {
+        expect(notificationTarget({ event: 'pago.confirmado', data: {} }, [])).toBeNull();
     });
 });
 

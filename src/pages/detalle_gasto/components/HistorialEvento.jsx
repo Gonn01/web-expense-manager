@@ -108,7 +108,7 @@ export default function HistorialEvento({
                 {reversalPending && (
                     <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 flex flex-wrap items-center gap-x-2">
                         {t('common.reversalPending')}
-                        {reversalIsMine ? (
+                        {reversalIsMine && (
                             <button
                                 type="button"
                                 disabled={cancelling}
@@ -117,10 +117,6 @@ export default function HistorialEvento({
                             >
                                 {cancelling ? 'Cancelando…' : t('common.cancelRequest')}
                             </button>
-                        ) : (
-                            <span className="font-normal text-slate-500 dark:text-[#9eb7a8]">
-                                {t('detalleGasto.respondInShared')}
-                            </span>
                         )}
                     </p>
                 )}

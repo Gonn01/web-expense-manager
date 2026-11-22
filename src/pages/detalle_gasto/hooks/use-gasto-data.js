@@ -13,7 +13,9 @@ import {
     cancelarEdicionCompartida,
 } from '@/services/api';
 import { sharedEditChanges } from '@/utils/shared-edit';
+import { pendingResponsesForGasto } from '@/utils/pending-responses';
 import { isSettlementActive } from '@/hooks/use-settlements';
+import { useCompartidos } from '@/hooks/use-compartidos';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
@@ -25,6 +27,8 @@ export function useGastoData() {
     const navigate = useNavigate();
     const [gasto, setGasto] = useState(null);
     const [loading, setLoading] = useState(false);
+    const shared = useCompartidos();
+    const pendingResponses = pendingResponsesForGasto(shared, gasto);
 
     useEffect(() => {
         load();
@@ -209,5 +213,7 @@ export function useGastoData() {
         eliminar,
         load,
         loading,
+        shared,
+        pendingResponses,
     };
 }

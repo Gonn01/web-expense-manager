@@ -320,7 +320,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-14 — Ver detalle de entidad
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-ENT-07, RF-ENT-08
+- **Requerimientos**: RF-ENT-07, RF-ENT-08, RF-ENT-14, RF-CMP-20
 - **Precondición**: la entidad pertenece al usuario.
 - **Flujo principal**
     1. El usuario abre una entidad.
@@ -329,6 +329,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujos alternativos**
     - 3a. *Filtrar por rango de fechas* («extend»): el usuario indica desde y hasta; el sistema muestra solo los movimientos de ese período.
     - 2a. El usuario copia el resumen de la entidad (CU-31), agrega un gasto (CU-17) o paga una cuota (CU-21, siempre directo).
+    - 2b. El usuario carga, cambia o quita el alias de Mercado Pago: el sistema valida el formato, lo guarda y registra el cambio en el historial. Si el formato es inválido, lo informa y no cambia nada.
+    - 2d. La persona vinculada envió gastos pendientes: el usuario los aprueba (CU-33) o rechaza (CU-34) desde la pestaña Pendientes.
+    - 2c. Con un alias cargado, el usuario elige **Transferir**: el sistema copia el alias y abre Mercado Pago, donde el usuario completa la transferencia. Si no puede copiarlo, lo informa y no abre Mercado Pago en la web. En la app, si no puede abrir Mercado Pago, avisa que el alias quedó copiado. La transferencia no registra un pago.
     - 1a. La entidad no existe o no es suya: el sistema informa que no la encuentra.
 
 ### CU-15 — Vincular / desvincular usuario
@@ -478,7 +481,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 1b. El pago no existe o es de otro gasto: el sistema lo informa.
     - 3a. *Pedir reversión de un pago compartido* («extend»): el gasto es compartido y el pago está confirmado. El sistema no lo elimina: pide la reversión a la otra persona (CU-41).
     - 3b. *Retirar pago compartido* («extend»): el gasto es compartido y el pago es propio y está pendiente de confirmación. El sistema lo retira (CU-40).
-    - 3c. El pago es un pendiente que registró la contraparte: el sistema lo impide e indica que se confirme o rechace desde Notificaciones.
+    - 3c. El pago es un pendiente que registró la contraparte: el sistema lo impide e indica que se confirme o rechace desde Compartidos o desde el detalle del gasto.
     - 3d. El pago ya tiene una reversión pendiente: la interfaz no ofrece revertirlo hasta que se resuelva.
 - **Postcondición**: la reversión es inmediata aun con una sesión de cuentas abierta. Los snapshots que incluían ese pago lo muestran como revertido (RF-CTA-12).
 
@@ -573,7 +576,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. La aplicación sale del modo "Hacer cuentas" y muestra el snapshot generado.
 - **Flujos alternativos**
     - 2a. Un gasto marcado fue eliminado, no es del usuario, es compartido y fue rechazado, está postergado, ya está saldado o es compartido con las cuotas restantes cubiertas por pagos propios pendientes: el sistema lo quita de la sesión y no lo incluye en el snapshot.
-    - 2d. Un gasto marcado es compartido y la contraparte ya registró un pago pendiente sobre él: el sistema confirma ese pago en lugar de crear otro (CU-36, sin pasar por Notificaciones) y el snapshot lo muestra como la confirmación del pago de la otra persona.
+    - 2d. Un gasto marcado es compartido y la contraparte ya registró un pago pendiente sobre él: el sistema confirma ese pago en lugar de crear otro (CU-36, sin pasar por Compartidos) y el snapshot lo muestra como la confirmación del pago de la otra persona.
     - 2e. La contraparte cierra su sesión al mismo tiempo con el mismo gasto marcado: uno de los cierres espera al otro; el primero registra el pendiente y el segundo lo confirma.
     - 2b. Falla cualquier paso del cierre (pagos, snapshot o cierre de la sesión): no se guarda nada, porque todo el cierre es una transacción. El sistema informa el error y la sesión sigue abierta para reintentar.
     - 1c. Se pide terminar la misma sesión dos veces a la vez (por ejemplo, desde dos dispositivos): el segundo pedido espera al primero y responde que no hay sesión abierta. Los pagos se registran una sola vez.
@@ -634,17 +637,17 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Actor**: Usuario
 - **Requerimientos**: RF-CMP-02, RF-CMP-11, RF-DSH-08
 - **Flujo principal**
-    1. El usuario abre Notificaciones.
+    1. El usuario abre Compartidos.
     2. El sistema muestra los gastos recibidos y los emitidos, con su estado, los pagos "por confirmar" y "esperando", y las solicitudes de reversión por responder y las propias.
     3. El sistema actualiza los contadores de pendientes de la navegación.
 
 ### CU-33 — Aprobar gasto compartido
 
 - **Actores**: Contraparte (receptor); Usuario (emisor)
-- **Requerimientos**: RF-CMP-03, RF-CMP-04, RF-CMP-07
+- **Requerimientos**: RF-CMP-03, RF-CMP-04, RF-CMP-07, RF-CMP-20
 - **Precondición**: el gasto fue compartido con el actor y está pendiente de aprobación.
 - **Flujo principal**
-    1. El receptor elige aprobar un gasto recibido.
+    1. El receptor elige aprobar un gasto recibido, desde Compartidos, el detalle de la entidad vinculada o el detalle del gasto.
     2. El sistema le pide elegir a qué entidad propia asignarlo.
     3. El receptor elige una entidad existente.
     4. El sistema asigna la copia a esa entidad y activa tanto la copia como el gasto original.
@@ -662,10 +665,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-34 — Rechazar gasto compartido
 
 - **Actores**: Contraparte (receptor); Usuario (emisor)
-- **Requerimientos**: RF-CMP-05, RF-CMP-07
+- **Requerimientos**: RF-CMP-05, RF-CMP-07, RF-CMP-20
 - **Precondición**: el gasto fue compartido con el actor y está pendiente de aprobación.
 - **Flujo principal**
-    1. El receptor elige rechazar un gasto recibido.
+    1. El receptor elige rechazar un gasto recibido, desde Compartidos, el detalle de la entidad vinculada o el detalle del gasto.
     2. El sistema pide confirmación, explicando que no se puede deshacer.
     3. El receptor confirma; el sistema marca como rechazados la copia y el gasto original.
     4. El sistema notifica al emisor (CU-38).
@@ -692,10 +695,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-36 — Confirmar pago compartido
 
 - **Actores**: Contraparte; Usuario (quien registró el pago)
-- **Requerimientos**: RF-CMP-08, RF-CMP-10
+- **Requerimientos**: RF-CMP-08, RF-CMP-10, RF-CMP-20
 - **Precondición**: existe un pago pendiente registrado por el otro usuario sobre un gasto compartido con el actor.
 - **Flujo principal**
-    1. La contraparte elige confirmar un pago de la lista "por confirmar".
+    1. La contraparte elige confirmar un pago desde la lista "por confirmar" de Compartidos o desde el detalle del gasto.
     2. El sistema convierte el pago pendiente en un pago efectivo.
     3. El sistema registra el mismo pago en la copia del gasto de la contraparte y vincula los dos pagos.
     4. Si alguno de los dos gastos queda saldado, deja de ser favorito.
@@ -703,7 +706,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     6. El sistema notifica a quien registró el pago (CU-38).
 - **Flujos alternativos**
     - 1a. El actor es quien registró el pago, o no es la contraparte del gasto: el sistema lo impide.
-    - 1b. La contraparte marca su copia en la sesión de cuentas en lugar de confirmar desde Notificaciones: la confirmación ocurre al finalizar la sesión (CU-28, 2d).
+    - 1b. La contraparte marca su copia en la sesión de cuentas en lugar de confirmar desde Compartidos: la confirmación ocurre al finalizar la sesión (CU-28, 2d).
     - 2a. El pago pendiente ya no existe: el sistema lo informa.
     - 3a. La copia de la contraparte ya está saldada: no se le registra el pago.
 - **Postcondición**: la cuota cuenta como paga en los dos gastos.
@@ -711,10 +714,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-37 — Rechazar pago compartido
 
 - **Actores**: Contraparte; Usuario (quien registró el pago)
-- **Requerimientos**: RF-CMP-09, RF-CMP-10
+- **Requerimientos**: RF-CMP-09, RF-CMP-10, RF-CMP-20
 - **Precondición**: igual que CU-36.
 - **Flujo principal**
-    1. La contraparte elige rechazar un pago de la lista "por confirmar".
+    1. La contraparte elige rechazar un pago desde la lista "por confirmar" de Compartidos o desde el detalle del gasto.
     2. El sistema deja el pago como rechazado.
     3. Si la contraparte tenía su copia marcada en la sesión de cuentas abierta, el sistema quita la marca.
     4. El sistema notifica a quien registró el pago (CU-38).
@@ -725,14 +728,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 
 - **Actores**: Usuario, Contraparte, Pusher
 - **Requerimientos**: RF-NOT-01, RF-NOT-02, RF-NOT-03, RF-NOT-04, RF-NOT-05, RF-NOT-06
-- **Precondición**: para el aviso inmediato, el cliente está abierto y suscrito al canal del usuario, o la app Android tiene una sesión iniciada y push activas. La pestaña Actividad no lo requiere.
+- **Precondición**: para el aviso inmediato, el cliente está abierto y suscrito al canal del usuario, o la app Android tiene una sesión iniciada y push activas. El historial de la campana no lo requiere.
 - **Flujo principal**
     1. Otro usuario realiza una acción que afecta al actor.
     2. El sistema guarda la notificación del actor y publica el evento en su canal a través de Pusher.
     3. Pusher entrega el evento al cliente.
     4. El cliente vuelve a obtener los datos de las pantallas afectadas y actualiza los contadores.
-    5. El cliente avisa quién hizo la acción (snackbar en la web, notificación del sistema en la app) y la notificación aparece sin leer en Notificaciones > Actividad.
-    6. El actor la marca como leída, una por una o todas juntas.
+    5. El cliente avisa quién hizo la acción (snackbar en la web, notificación del sistema en la app) y la notificación aparece sin leer en la campana de notificaciones.
+    6. El actor toca la notificación: queda leída y el cliente lo lleva a Compartidos si requiere una acción, o al gasto o la entidad relacionados. También puede marcar todas como leídas.
 - **Eventos**
 
     | Evento | Lo origina | Lo recibe |
@@ -758,13 +761,13 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     | `entidad.desvinculada` | CU-12, CU-15 | Usuario desvinculado |
     | `gasto.postergado` | CU-23 | La otra parte |
     | `gasto.postergacion_quitada` | CU-23 | La otra parte |
-    | `notificacion.nueva` | Cualquiera de los anteriores, si se guardó | Destinatario (solo para refrescar Actividad) |
+    | `notificacion.nueva` | Cualquiera de los anteriores, si se guardó | Destinatario (solo para refrescar la campana) |
 
 - **Flujos alternativos**
     - 2a. Pusher no está disponible: la acción de origen igual se completa; el actor verá el cambio al recargar o navegar.
     - 5a. La app Android está en segundo plano o cerrada y tiene push activas: el aviso llega como notificación push. Al tocarla, la app abre Notificaciones.
     - 5b. La app Flutter está en primer plano, o en segundo plano sin push activas: el aviso es una notificación local del sistema. Al tocarla, la app abre Notificaciones.
-    - 5c. La app no tiene push activas y el sistema la cerró o cortó su conexión: el aviso inmediato no llega; el actor ve la notificación en Actividad al volver a abrirla.
+    - 5c. La app no tiene push activas y el sistema la cerró o cortó su conexión: el aviso inmediato no llega; el actor ve la notificación en la campana al volver a abrirla.
     - 5d. La notificación es `entidad.desvinculada` y el actor sigue vinculado a esa persona: puede elegir "Desvincular también" y confirmar (RF-NOT-06).
 
 ### CU-40 — Retirar pago compartido
@@ -773,7 +776,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-CMP-12
 - **Precondición**: el usuario registró un pago de un gasto compartido que sigue pendiente de confirmación.
 - **Flujo principal**
-    1. El usuario elige retirar el pago desde la lista "esperando" de Notificaciones o desde el detalle del gasto (CU-22).
+    1. El usuario elige retirar el pago desde la lista "esperando" de Compartidos o desde el detalle del gasto (CU-22).
     2. El sistema pide confirmación.
     3. El usuario confirma; el sistema deja el pago como retirado.
     4. El sistema notifica a la contraparte (CU-38).
@@ -800,10 +803,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-42 — Responder reversión de un pago
 
 - **Actores**: Contraparte; Usuario (quien pidió la reversión)
-- **Requerimientos**: RF-CMP-14
+- **Requerimientos**: RF-CMP-14, RF-CMP-20
 - **Precondición**: la otra parte pidió revertir un pago de un gasto compartido con el actor.
 - **Flujo principal**
-    1. La contraparte elige aceptar la solicitud desde Notificaciones.
+    1. La contraparte elige aceptar la solicitud desde Compartidos o desde el detalle del gasto.
     2. El sistema pide confirmación.
     3. La contraparte confirma; el sistema deja de contar el pago y su pago vinculado, conserva una línea del pago revertido y registra un reembolso en el historial de cada gasto.
     4. El sistema notifica a quien pidió la reversión (CU-38).
@@ -820,7 +823,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Requerimientos**: RF-CMP-15
 - **Precondición**: el usuario pidió revertir un pago y la otra parte todavía no respondió.
 - **Flujo principal**
-    1. El usuario elige cancelar el pedido desde la lista "esperando" de Notificaciones o desde el detalle del gasto.
+    1. El usuario elige cancelar el pedido desde la lista "esperando" de Compartidos o desde el detalle del gasto.
     2. El sistema borra la solicitud.
     3. El sistema notifica a la otra parte (CU-38).
 - **Flujos alternativos**
@@ -848,12 +851,12 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-46 — Pedir y responder edición de un gasto compartido
 
 - **Actores**: Usuario (quien pide); Contraparte (quien responde)
-- **Requerimientos**: RF-CMP-18, RF-GAS-15
+- **Requerimientos**: RF-CMP-18, RF-CMP-20, RF-GAS-15
 - **Precondición**: el gasto está compartido, activo y sin otra solicitud de edición pendiente.
 - **Flujo principal**
     1. El usuario edita nombre, monto, moneda, tipo, frecuencia o cuotas y guarda.
     2. El sistema registra la solicitud sin modificar los gastos y notifica a la contraparte (CU-38).
-    3. La contraparte ve los cambios en Notificaciones y los aprueba, previa confirmación.
+    3. La contraparte ve los cambios en Compartidos o en el detalle del gasto y los aprueba, previa confirmación.
     4. El sistema aplica los cambios en los dos gastos, lo registra en ambos historiales y notifica a las dos partes.
 - **Flujos alternativos**
     - 3a. La contraparte rechaza: los gastos no cambian y se notifica a quien pidió la edición.

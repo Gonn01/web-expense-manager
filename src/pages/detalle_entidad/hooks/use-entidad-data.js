@@ -3,6 +3,7 @@ import {
     fetchFinancialEntityById,
     createGasto,
     updateFinancialEntity,
+    updateEntityMercadoPagoAlias,
     deleteFinancialEntity,
     vincularUsuarioEntidad,
     desvincularUsuarioEntidad,
@@ -15,6 +16,8 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useParams } from 'react-router-dom';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { useCompartidos } from '@/hooks/use-compartidos';
+import { pendingResponsesForEntity } from '@/utils/pending-responses';
 import { t } from '@/i18n';
 
 export function useEntidadData() {
@@ -23,6 +26,8 @@ export function useEntidadData() {
 
     const [entity, setEntity] = useState(null);
     const [loading, setLoading] = useState(true);
+    const shared = useCompartidos();
+    const pendingResponses = pendingResponsesForEntity(shared, entity);
 
     const loadEntity = useCallback(
         async ({ silent = false } = {}) => {
@@ -154,6 +159,22 @@ export function useEntidadData() {
         [id, token],
     );
 
+    const actualizarAliasMercadoPago = useCallback(
+        async (alias) => {
+            const data = await updateEntityMercadoPagoAlias(id, alias, token);
+            setEntity((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          mercado_pago_alias: data.mercado_pago_alias ?? null,
+                          movements: data.movements ?? prev.movements,
+                      }
+                    : prev,
+            );
+        },
+        [id, token],
+    );
+
     const eliminarEntidad = useCallback(async () => {
         const deleted = await deleteFinancialEntity(id, token);
         useSettlementStore.getState().applyUnmarked(deleted?.deleted_purchase_ids);
@@ -261,6 +282,7 @@ export function useEntidadData() {
         loading,
         crearGastoEntidad,
         actualizarEntidad,
+        actualizarAliasMercadoPago,
         eliminarEntidad,
         vincularUsuario,
         desvincularUsuario,
@@ -268,5 +290,8 @@ export function useEntidadData() {
         setEntity,
         gastosEliminados: entity?.gastos_eliminados ?? [],
         restaurarGasto,
+        shared,
+        pendingResponses,
+        reloadSilently: () => loadEntity({ silent: true }),
     };
 }

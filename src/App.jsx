@@ -47,7 +47,11 @@ export default function App() {
                         <Route path="entidades" element={<EntidadesFinancieras />} />
                         <Route path="entidades/:id" element={<EntidadDetalle />} />
                         <Route path="gastos/:id" element={<DetalleGasto />} />
-                        <Route path="notificaciones" element={<Compartidos />} />
+                        <Route path="compartidos" element={<Compartidos />} />
+                        <Route
+                            path="notificaciones"
+                            element={<Navigate to="/app/compartidos" replace />}
+                        />
                         <Route path="configuracion" element={<Configuracion />} />
                     </Route>
                 </Routes>

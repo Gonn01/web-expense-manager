@@ -6,7 +6,7 @@ import { useCompartidosStore } from '@/store/use-compartidos-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import { useUIStore } from '@/store/use-ui-store';
-import { buildNotification, navBadgeCount } from '@/utils/notifications';
+import { buildNotification } from '@/utils/notifications';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
@@ -29,7 +29,6 @@ export default function Sidebar() {
         setPendingPaymentsCount,
         loadPendingCount,
     } = useCompartidosStore();
-    const unreadCount = useNotificacionesStore((s) => s.unreadCount);
     const loadNotificaciones = useNotificacionesStore((s) => s.load);
     const resetNotificaciones = useNotificacionesStore((s) => s.reset);
     const isDesktop = useMediaQuery(DESKTOP_QUERY);
@@ -300,10 +299,10 @@ export default function Sidebar() {
         { to: '/app/entidades', icon: 'account_balance', label: t('common.financialEntities') },
         { to: '/app/settlement', icon: 'history', label: t('common.settlementHistory') },
         {
-            to: '/app/notificaciones',
-            icon: 'notifications',
+            to: '/app/compartidos',
+            icon: 'group',
             label: t('common.shared'),
-            badge: navBadgeCount(pendingCount + pendingPaymentsCount, unreadCount),
+            badge: pendingCount + pendingPaymentsCount,
         },
     ];
 
