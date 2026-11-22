@@ -62,7 +62,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-02 | El dashboard y el listado de entidades se resuelven con una única consulta agregada cada uno, no con una consulta por entidad. | API |
 | RNF-REN-03 | Una mutación puntual actualiza el estado local con la respuesta del servidor; se evita recargar la pantalla completa. | Web, App |
 | RNF-REN-04 | Varios componentes suscritos al mismo canal de tiempo real comparten una única suscripción. | Web |
-| RNF-REN-05 | Las operaciones sobre varios gastos de una sesión de cuentas (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones en tiempo real que generan se envían en paralelo. | API |
+| RNF-REN-05 | Las operaciones sobre varios gastos (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión de cuentas, eliminar una entidad, compartir un gasto con pagos previos) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones que generan se envían en paralelo después de guardar, sin demorar la respuesta. | API |
 | RNF-REN-06 | La web descarga el código de cada pantalla de la aplicación recién cuando se navega a ella: las pantallas de inicio de sesión y registro no cargan el código del dashboard, los gráficos ni el resto de las pantallas privadas. | Web |
 
 *Limitación conocida*: las acciones de compartidos todavía recargan la pantalla completa (crear un gasto desde compartidos la vuelve a pedir en segundo plano, sin el loader) (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
@@ -97,7 +97,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 **Limitaciones conocidas**
 
 - Las fechas se muestran con un corrimiento de 3 horas respecto de la hora local (pendiente en `checklist_mis_cuentas.md`).
-- La base solo acepta `ARS`, `USD` y `EUR` hasta ejecutar `migrations/manual/2026-11-21_monedas_bcra.sql`. Esa migración no agrega `BRL`, `CLP` ni `UYU`, así que crear un gasto en esas monedas responde 500.
+- Una base que todavía no ejecutó `migrations/manual/2026-11-21_monedas_bcra.sql` puede rechazar con un 500 las monedas que le falten. La migración agrega todas las monedas soportadas y se puede ejecutar más de una vez.
 
 ## MAN — Mantenibilidad
 
