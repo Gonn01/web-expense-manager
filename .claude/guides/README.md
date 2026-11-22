@@ -1,6 +1,6 @@
 # Guías de desarrollo
 
-Guías para trabajar en los tres proyectos de la Plataforma de Gestión de Deudas. Cada proyecto tiene su guía de arquitectura en su propio repo, en `.claude/guides/`. Leé la del proyecto que vayas a tocar **antes** de escribir código; si el cambio cruza proyectos, leé las de todos los afectados.
+Guías para trabajar en los tres proyectos de Expense Manager. Cada proyecto tiene su guía de arquitectura en su propio repo, en `.claude/guides/`. Leé la del proyecto que vayas a tocar **antes** de escribir código; si el cambio cruza proyectos, leé las de todos los afectados.
 
 | Guía | Dónde está | Cuándo leerla |
 | --- | --- | --- |

@@ -1,4 +1,4 @@
-# Documentación — Plataforma de Gestión de Deudas
+# Documentación — Expense Manager
 
 Documentación funcional del sistema completo. Aunque vive en el repo de la web, describe **los tres proyectos**, porque comparten un mismo comportamiento:
 
@@ -18,6 +18,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-49` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
+| [diagramas/der.svg](diagramas/der.svg) | Diagrama entidad-relación de la base de datos: tablas, columnas, claves foráneas y relaciones lógicas sin FK ([PNG](diagramas/der.png)) |
 
 Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).
 

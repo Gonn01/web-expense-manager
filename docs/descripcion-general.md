@@ -1,6 +1,6 @@
 # Descripción general del sistema
 
-**Plataforma de Gestión de Deudas** — sistema para registrar y saldar deudas, créditos y gastos personales, organizados por persona o institución, y compartidos con otros usuarios de la plataforma.
+**Expense Manager** — sistema para registrar y saldar deudas, créditos y gastos personales, organizados por persona o institución, y compartidos con otros usuarios de la plataforma.
 
 Este documento es la puerta de entrada a la documentación: dice qué es el sistema, para qué existe y hasta dónde llega. El detalle de cada comportamiento está en [requerimientos-funcionales.md](requerimientos-funcionales.md), las restricciones de calidad en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) y los flujos en [casos-de-uso.md](casos-de-uso.md). Los términos del dominio se definen en el glosario de [README.md](README.md). La misión, la visión y los valores de la organización están en [mision-vision-valores.md](mision-vision-valores.md).
 

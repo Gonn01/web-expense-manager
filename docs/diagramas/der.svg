@@ -1,0 +1,549 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2470" height="1060" viewBox="0 0 2470 1060" font-family="Helvetica, Arial, sans-serif">
+<rect width="2470" height="1060" fill="white"/>
+<text x="1235.0" y="36" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F4E79">Diagrama Entidad-Relación — Expense Manager</text>
+<polyline points="370,193.0 530,193.0 530,171.0 570,171.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M370 187.0 L382 193.0 L370 199.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="387" cy="193.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="562" y1="165.0" x2="562" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="554" y1="165.0" x2="554" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="370,403.0 500,403.0 500,184.0 570,184.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M370 397.0 L382 403.0 L370 409.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="387" cy="403.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="562" y1="178.0" x2="562" y2="190.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="554" y1="178.0" x2="554" y2="190.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="570,587.0 470,587.0 470,197.0 570,197.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M570 581.0 L558 587.0 L570 593.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="553" cy="587.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="562" y1="191.0" x2="562" y2="203.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="554" y1="191.0" x2="554" y2="203.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="570,609.0 450,609.0 450,210.0 570,210.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M570 603.0 L558 609.0 L570 615.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="553" cy="609.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="562" y1="204.0" x2="562" y2="216.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="554" y1="204.0" x2="554" y2="216.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="570,631.0 430,631.0 430,223.0 570,223.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M570 625.0 L558 631.0 L570 637.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="553" cy="631.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="562" y1="217.0" x2="562" y2="229.0" stroke="#475569" stroke-width="1.4"/>
+<circle cx="553" cy="223.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<polyline points="70,623.0 35,623.0 35,381.0 70,381.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M70 617.0 L58 623.0 L70 629.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="53" cy="623.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="62" y1="375.0" x2="62" y2="387.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="54" y1="375.0" x2="54" y2="387.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="370,601.0 400,601.0 400,880 1035,880 1035,471.0 1070,471.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M370 595.0 L382 601.0 L370 607.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="387" cy="601.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="1062" y1="465.0" x2="1062" y2="477.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="1054" y1="465.0" x2="1054" y2="477.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1570,425.0 1545,425.0 1545,90 820,90 820,130" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M1570 419.0 L1558 425.0 L1570 431.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="1553" cy="425.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(820 130) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="-17" cy="0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="1570,469.0 1530,469.0 1530,105 840,105 840,130" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M1570 463.0 L1558 469.0 L1570 475.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="1553" cy="469.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(840 130) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="-17" cy="0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="2070,193.0 2040,193.0 2040,60 780,60 780,130" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M2070 187.0 L2058 193.0 L2070 199.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="2053" cy="193.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(780 130) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<line x1="-16" y1="-6" x2="-16" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="2070,613.0 2020,613.0 2020,75 800,75 800,130" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M2070 607.0 L2058 613.0 L2070 619.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="2053" cy="613.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(800 130) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<line x1="-16" y1="-6" x2="-16" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="1070,193.0 960,193.0 960,171.0 870,171.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1070 187.0 L1058 193.0 L1070 199.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1053" cy="193.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="878" y1="165.0" x2="878" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="886" y1="165.0" x2="886" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1070,215.0 975,215.0 975,184.0 870,184.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1070 209.0 L1058 215.0 L1070 221.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1053" cy="215.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="878" y1="178.0" x2="878" y2="190.0" stroke="#475569" stroke-width="1.4"/>
+<circle cx="887" cy="184.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1070,515.0 990,515.0 990,197.0 870,197.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1070 509.0 L1058 515.0 L1070 521.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1053" cy="515.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="878" y1="191.0" x2="878" y2="203.0" stroke="#475569" stroke-width="1.4"/>
+<circle cx="887" cy="197.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<polyline points="870,543.0 1005,543.0 1005,484.0 1070,484.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M870 537.0 L882 543.0 L870 549.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="887" cy="543.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="1062" y1="478.0" x2="1062" y2="490.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="1054" y1="478.0" x2="1054" y2="490.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="870,565.0 1020,565.0 1020,497.0 1070,497.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M870 559.0 L882 565.0 L870 571.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="887" cy="565.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="1062" y1="491.0" x2="1062" y2="503.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="1054" y1="491.0" x2="1054" y2="503.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1370,493.0 1400,493.0 1400,171.0 1370,171.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1370 487.0 L1382 493.0 L1370 499.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1387" cy="493.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="1378" y1="165.0" x2="1378" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1387" cy="171.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1570,193.0 1480,193.0 1480,184.0 1370,184.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1570 187.0 L1558 193.0 L1570 199.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1553" cy="193.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="1378" y1="178.0" x2="1378" y2="190.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="1386" y1="178.0" x2="1386" y2="190.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1370,537.0 1420,537.0 1420,386 1340,386 1340,430" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1370 531.0 L1382 537.0 L1370 543.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1387" cy="537.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<g transform="translate(1340 430) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#475569" stroke-width="1.4"/>
+<circle cx="-17" cy="0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+</g>
+<polyline points="1370,559.0 1440,559.0 1440,374 1320,374 1320,430" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<line x1="1378" y1="553.0" x2="1378" y2="565.0" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="1387" cy="559.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(1320 430) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="-17" cy="0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="1570,403.0 1500,403.0 1500,350 1280,350 1280,430" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M1570 397.0 L1558 403.0 L1570 409.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1553" cy="403.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<g transform="translate(1280 430) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#475569" stroke-width="1.4"/>
+<line x1="-16" y1="-6" x2="-16" y2="6" stroke="#475569" stroke-width="1.4"/>
+</g>
+<polyline points="2070,415.0 2000,415.0 2000,900 1460,900 1460,362 1300,362 1300,430" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M2070 409.0 L2058 415.0 L2070 421.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="2053" cy="415.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<g transform="translate(1300 430) rotate(90)">
+<line x1="-8" y1="-6" x2="-8" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+<line x1="-16" y1="-6" x2="-16" y2="6" stroke="#9333EA" stroke-width="1.4"/>
+</g>
+<polyline points="1870,447.0 1900,447.0 1900,381.0 1870,381.0" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M1870 441.0 L1882 447.0 L1870 453.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="1887" cy="447.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<line x1="1878" y1="375.0" x2="1878" y2="387.0" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="1887" cy="381.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<polyline points="2370,393.0 2410,393.0 2410,171.0 2370,171.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<path d="M2370 387.0 L2382 393.0 L2370 399.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="2387" cy="393.0" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<line x1="2378" y1="165.0" x2="2378" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<line x1="2386" y1="165.0" x2="2386" y2="177.0" stroke="#475569" stroke-width="1.4"/>
+<polyline points="2370,635.0 2435,635.0 2435,184.0 2370,184.0" fill="none" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/>
+<path d="M2370 629.0 L2382 635.0 L2370 641.0" fill="none" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="2387" cy="635.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<line x1="2378" y1="178.0" x2="2378" y2="190.0" stroke="#9333EA" stroke-width="1.4"/>
+<circle cx="2387" cy="184.0" r="4" fill="white" stroke="#9333EA" stroke-width="1.4"/>
+<rect x="70" y="130" width="300" height="162" rx="6" fill="white" stroke="#B45309" stroke-width="1.6"/>
+<path d="M70 160 V136 a6 6 0 0 1 6 -6 H364 a6 6 0 0 1 6 6 V160 Z" fill="#B45309"/>
+<text x="220.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">notifications</text>
+<text x="78" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="116" y="175" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="362" y="175" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="71" y="182" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="197" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="116" y="197" font-size="12" fill="#1F2937">user_id</text>
+<text x="362" y="197" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="78" y="219" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="219" font-size="12" fill="#1F2937">event</text>
+<text x="362" y="219" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<rect x="71" y="226" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="241" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="241" font-size="12" fill="#1F2937">data</text>
+<text x="362" y="241" font-size="11" text-anchor="end" fill="#64748B">jsonb</text>
+<text x="78" y="263" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="263" font-size="12" fill="#1F2937">read_at</text>
+<text x="362" y="263" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="71" y="270" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="285" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="285" font-size="12" fill="#1F2937">created_at</text>
+<text x="362" y="285" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="70" y="340" width="300" height="162" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<path d="M70 370 V346 a6 6 0 0 1 6 -6 H364 a6 6 0 0 1 6 6 V370 Z" fill="#1F4E79"/>
+<text x="220.0" y="360" font-size="14" font-weight="bold" text-anchor="middle" fill="white">user_categories</text>
+<text x="78" y="385" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="116" y="385" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="362" y="385" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="71" y="392" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="407" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="116" y="407" font-size="12" fill="#1F2937">user_id</text>
+<text x="362" y="407" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="78" y="429" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="429" font-size="12" fill="#1F2937">name</text>
+<text x="362" y="429" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<rect x="71" y="436" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="451" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="451" font-size="12" fill="#1F2937">color</text>
+<text x="362" y="451" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<text x="78" y="473" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="473" font-size="12" fill="#1F2937">deleted</text>
+<text x="362" y="473" font-size="11" text-anchor="end" fill="#64748B">boolean ?</text>
+<rect x="71" y="480" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="495" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="495" font-size="12" fill="#1F2937">created_at</text>
+<text x="362" y="495" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="70" y="560" width="300" height="96" rx="6" fill="white" stroke="#0F766E" stroke-width="1.6"/>
+<path d="M70 590 V566 a6 6 0 0 1 6 -6 H364 a6 6 0 0 1 6 6 V590 Z" fill="#0F766E"/>
+<text x="220.0" y="580" font-size="14" font-weight="bold" text-anchor="middle" fill="white">purchases_categories</text>
+<text x="78" y="605" font-size="10" font-weight="bold" fill="#B45309">PK·FK</text>
+<text x="116" y="605" font-size="12" font-weight="bold" fill="#1F2937">purchase_id</text>
+<text x="362" y="605" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="71" y="612" width="298" height="22" fill="#F4F6F9"/>
+<text x="78" y="627" font-size="10" font-weight="bold" fill="#B45309">PK·FK</text>
+<text x="116" y="627" font-size="12" font-weight="bold" fill="#1F2937">category_id</text>
+<text x="362" y="627" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="78" y="649" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="116" y="649" font-size="12" fill="#1F2937">created_at</text>
+<text x="362" y="649" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="570" y="130" width="300" height="272" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<path d="M570 160 V136 a6 6 0 0 1 6 -6 H864 a6 6 0 0 1 6 6 V160 Z" fill="#1F4E79"/>
+<text x="720.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">users</text>
+<text x="578" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="616" y="175" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="862" y="175" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="571" y="182" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="197" font-size="10" font-weight="bold" fill="#0F766E">UQ</text>
+<text x="616" y="197" font-size="12" fill="#1F2937">email</text>
+<text x="862" y="197" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<text x="578" y="219" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="219" font-size="12" fill="#1F2937">name</text>
+<text x="862" y="219" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<rect x="571" y="226" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="241" font-size="10" font-weight="bold" fill="#0F766E">UQ</text>
+<text x="616" y="241" font-size="12" fill="#1F2937">firebase_user_id</text>
+<text x="862" y="241" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<text x="578" y="263" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="263" font-size="12" fill="#1F2937">password</text>
+<text x="862" y="263" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<rect x="571" y="270" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="285" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="285" font-size="12" fill="#1F2937">avatar</text>
+<text x="862" y="285" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<text x="578" y="307" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="307" font-size="12" fill="#1F2937">preferred_currency</text>
+<text x="862" y="307" font-size="11" text-anchor="end" fill="#64748B">currency ?</text>
+<rect x="571" y="314" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="329" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="329" font-size="12" fill="#1F2937">sueldo</text>
+<text x="862" y="329" font-size="11" text-anchor="end" fill="#64748B">numeric ?</text>
+<text x="578" y="351" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="351" font-size="12" fill="#1F2937">sueldo_currency</text>
+<text x="862" y="351" font-size="11" text-anchor="end" fill="#64748B">currency ?</text>
+<rect x="571" y="358" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="373" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="373" font-size="12" fill="#1F2937">push_language</text>
+<text x="862" y="373" font-size="11" text-anchor="end" fill="#64748B">varchar(2)</text>
+<text x="578" y="395" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="395" font-size="12" fill="#1F2937">created_at</text>
+<text x="862" y="395" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="570" y="480" width="300" height="250" rx="6" fill="white" stroke="#0F766E" stroke-width="1.6"/>
+<path d="M570 510 V486 a6 6 0 0 1 6 -6 H864 a6 6 0 0 1 6 6 V510 Z" fill="#0F766E"/>
+<text x="720.0" y="500" font-size="14" font-weight="bold" text-anchor="middle" fill="white">purchase_edit_requests</text>
+<text x="578" y="525" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="616" y="525" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="862" y="525" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="571" y="532" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="547" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="616" y="547" font-size="12" fill="#1F2937">purchase_id</text>
+<text x="862" y="547" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="578" y="569" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="616" y="569" font-size="12" fill="#1F2937">sibling_purchase_id</text>
+<text x="862" y="569" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="571" y="576" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="591" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="616" y="591" font-size="12" fill="#1F2937">requested_by_user_id</text>
+<text x="862" y="591" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="578" y="613" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="616" y="613" font-size="12" fill="#1F2937">counterparty_user_id</text>
+<text x="862" y="613" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="571" y="620" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="635" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="616" y="635" font-size="12" fill="#1F2937">resolved_by_user_id</text>
+<text x="862" y="635" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<text x="578" y="657" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="657" font-size="12" fill="#1F2937">changes</text>
+<text x="862" y="657" font-size="11" text-anchor="end" fill="#64748B">jsonb</text>
+<rect x="571" y="664" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="679" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="679" font-size="12" fill="#1F2937">status</text>
+<text x="862" y="679" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<text x="578" y="701" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="701" font-size="12" fill="#1F2937">created_at</text>
+<text x="862" y="701" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="571" y="708" width="298" height="22" fill="#F4F6F9"/>
+<text x="578" y="723" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="616" y="723" font-size="12" fill="#1F2937">resolved_at</text>
+<text x="862" y="723" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="1070" y="130" width="300" height="206" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<path d="M1070 160 V136 a6 6 0 0 1 6 -6 H1364 a6 6 0 0 1 6 6 V160 Z" fill="#1F4E79"/>
+<text x="1220.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">financial_entities</text>
+<text x="1078" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="1116" y="175" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="1362" y="175" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="1071" y="182" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="197" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1116" y="197" font-size="12" fill="#1F2937">user_id</text>
+<text x="1362" y="197" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="1078" y="219" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1116" y="219" font-size="12" fill="#1F2937">linked_user_id</text>
+<text x="1362" y="219" font-size="11" text-anchor="end" fill="#64748B">bigint ?</text>
+<rect x="1071" y="226" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="241" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="241" font-size="12" fill="#1F2937">name</text>
+<text x="1362" y="241" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<text x="1078" y="263" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="263" font-size="12" fill="#1F2937">mercado_pago_alias</text>
+<text x="1362" y="263" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<rect x="1071" y="270" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="285" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="285" font-size="12" fill="#1F2937">is_favorite</text>
+<text x="1362" y="285" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<text x="1078" y="307" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="307" font-size="12" fill="#1F2937">deleted</text>
+<text x="1362" y="307" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<rect x="1071" y="314" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="329" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="329" font-size="12" fill="#1F2937">created_at</text>
+<text x="1362" y="329" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="1070" y="430" width="300" height="426" rx="6" fill="white" stroke="#0F766E" stroke-width="1.6"/>
+<path d="M1070 460 V436 a6 6 0 0 1 6 -6 H1364 a6 6 0 0 1 6 6 V460 Z" fill="#0F766E"/>
+<text x="1220.0" y="450" font-size="14" font-weight="bold" text-anchor="middle" fill="white">purchases</text>
+<text x="1078" y="475" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="1116" y="475" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="1362" y="475" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="1071" y="482" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="497" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1116" y="497" font-size="12" fill="#1F2937">financial_entity_id</text>
+<text x="1362" y="497" font-size="11" text-anchor="end" fill="#64748B">bigint ?</text>
+<text x="1078" y="519" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1116" y="519" font-size="12" fill="#1F2937">receiver_user_id</text>
+<text x="1362" y="519" font-size="11" text-anchor="end" fill="#64748B">bigint ?</text>
+<rect x="1071" y="526" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="541" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1116" y="541" font-size="12" fill="#1F2937">shared_from_id</text>
+<text x="1362" y="541" font-size="11" text-anchor="end" fill="#64748B">bigint ?</text>
+<text x="1078" y="563" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="1116" y="563" font-size="12" fill="#1F2937">linked_purchase_id</text>
+<text x="1362" y="563" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<rect x="1071" y="570" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="585" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="585" font-size="12" fill="#1F2937">name</text>
+<text x="1362" y="585" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<text x="1078" y="607" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="607" font-size="12" fill="#1F2937">amount</text>
+<text x="1362" y="607" font-size="11" text-anchor="end" fill="#64748B">numeric</text>
+<rect x="1071" y="614" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="629" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="629" font-size="12" fill="#1F2937">number_of_quotas</text>
+<text x="1362" y="629" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="1078" y="651" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="651" font-size="12" fill="#1F2937">currency_type</text>
+<text x="1362" y="651" font-size="11" text-anchor="end" fill="#64748B">currency</text>
+<rect x="1071" y="658" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="673" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="673" font-size="12" fill="#1F2937">type</text>
+<text x="1362" y="673" font-size="11" text-anchor="end" fill="#64748B">expense_type ?</text>
+<text x="1078" y="695" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="695" font-size="12" fill="#1F2937">status</text>
+<text x="1362" y="695" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<rect x="1071" y="702" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="717" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="717" font-size="12" fill="#1F2937">fixed_expense</text>
+<text x="1362" y="717" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<text x="1078" y="739" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="739" font-size="12" fill="#1F2937">is_postponed</text>
+<text x="1362" y="739" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<rect x="1071" y="746" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="761" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="761" font-size="12" fill="#1F2937">is_favorite</text>
+<text x="1362" y="761" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<text x="1078" y="783" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="783" font-size="12" fill="#1F2937">deleted</text>
+<text x="1362" y="783" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<rect x="1071" y="790" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="805" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="805" font-size="12" fill="#1F2937">deleted_with_entity</text>
+<text x="1362" y="805" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<text x="1078" y="827" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="827" font-size="12" fill="#1F2937">image_url</text>
+<text x="1362" y="827" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<rect x="1071" y="834" width="298" height="22" fill="#F4F6F9"/>
+<text x="1078" y="849" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1116" y="849" font-size="12" fill="#1F2937">created_at</text>
+<text x="1362" y="849" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="1570" y="130" width="300" height="140" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<path d="M1570 160 V136 a6 6 0 0 1 6 -6 H1864 a6 6 0 0 1 6 6 V160 Z" fill="#1F4E79"/>
+<text x="1720.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">financial_entities_movements</text>
+<text x="1578" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="1616" y="175" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="1862" y="175" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="1571" y="182" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="197" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1616" y="197" font-size="12" fill="#1F2937">financial_entity_id</text>
+<text x="1862" y="197" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="1578" y="219" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="219" font-size="12" fill="#1F2937">movement_type</text>
+<text x="1862" y="219" font-size="11" text-anchor="end" fill="#64748B">movement_type ?</text>
+<rect x="1571" y="226" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="241" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="241" font-size="12" fill="#1F2937">detail</text>
+<text x="1862" y="241" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<text x="1578" y="263" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="263" font-size="12" fill="#1F2937">created_at</text>
+<text x="1862" y="263" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="1570" y="340" width="300" height="272" rx="6" fill="white" stroke="#0F766E" stroke-width="1.6"/>
+<path d="M1570 370 V346 a6 6 0 0 1 6 -6 H1864 a6 6 0 0 1 6 6 V370 Z" fill="#0F766E"/>
+<text x="1720.0" y="360" font-size="14" font-weight="bold" text-anchor="middle" fill="white">purchases_movements</text>
+<text x="1578" y="385" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="1616" y="385" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="1862" y="385" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<rect x="1571" y="392" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="407" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="1616" y="407" font-size="12" fill="#1F2937">purchase_id</text>
+<text x="1862" y="407" font-size="11" text-anchor="end" fill="#64748B">bigint</text>
+<text x="1578" y="429" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="1616" y="429" font-size="12" fill="#1F2937">created_by_user_id</text>
+<text x="1862" y="429" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<rect x="1571" y="436" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="451" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="1616" y="451" font-size="12" fill="#1F2937">paired_movement_id</text>
+<text x="1862" y="451" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<text x="1578" y="473" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="1616" y="473" font-size="12" fill="#1F2937">reversal_requested_by_user_id</text>
+<text x="1862" y="473" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<rect x="1571" y="480" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="495" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="495" font-size="12" fill="#1F2937">movement_type</text>
+<text x="1862" y="495" font-size="11" text-anchor="end" fill="#64748B">movement_type ?</text>
+<text x="1578" y="517" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="517" font-size="12" fill="#1F2937">amount</text>
+<text x="1862" y="517" font-size="11" text-anchor="end" fill="#64748B">numeric ?</text>
+<rect x="1571" y="524" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="539" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="539" font-size="12" fill="#1F2937">detail</text>
+<text x="1862" y="539" font-size="11" text-anchor="end" fill="#64748B">text ?</text>
+<text x="1578" y="561" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="561" font-size="12" fill="#1F2937">payment_date</text>
+<text x="1862" y="561" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="1571" y="568" width="298" height="22" fill="#F4F6F9"/>
+<text x="1578" y="583" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="583" font-size="12" fill="#1F2937">reversal_requested_at</text>
+<text x="1862" y="583" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<text x="1578" y="605" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="1616" y="605" font-size="12" fill="#1F2937">created_at</text>
+<text x="1862" y="605" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="2070" y="130" width="300" height="140" rx="6" fill="white" stroke="#7C3AED" stroke-width="1.6"/>
+<path d="M2070 160 V136 a6 6 0 0 1 6 -6 H2364 a6 6 0 0 1 6 6 V160 Z" fill="#7C3AED"/>
+<text x="2220.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">settlement_sessions</text>
+<text x="2078" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="2116" y="175" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="2362" y="175" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="2071" y="182" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="197" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="2116" y="197" font-size="12" fill="#1F2937">user_id</text>
+<text x="2362" y="197" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="2078" y="219" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="219" font-size="12" fill="#1F2937">status</text>
+<text x="2362" y="219" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<rect x="2071" y="226" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="241" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="241" font-size="12" fill="#1F2937">started_at</text>
+<text x="2362" y="241" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<text x="2078" y="263" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="263" font-size="12" fill="#1F2937">finished_at</text>
+<text x="2362" y="263" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
+<rect x="2070" y="330" width="300" height="162" rx="6" fill="white" stroke="#7C3AED" stroke-width="1.6"/>
+<path d="M2070 360 V336 a6 6 0 0 1 6 -6 H2364 a6 6 0 0 1 6 6 V360 Z" fill="#7C3AED"/>
+<text x="2220.0" y="350" font-size="14" font-weight="bold" text-anchor="middle" fill="white">settlement_session_items</text>
+<text x="2078" y="375" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="2116" y="375" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="2362" y="375" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="2071" y="382" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="397" font-size="10" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="2116" y="397" font-size="12" fill="#1F2937">session_id</text>
+<text x="2362" y="397" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="2078" y="419" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="2116" y="419" font-size="12" fill="#1F2937">purchase_id</text>
+<text x="2362" y="419" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="2071" y="426" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="441" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="441" font-size="12" fill="#1F2937">quota_number</text>
+<text x="2362" y="441" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<text x="2078" y="463" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="463" font-size="12" fill="#1F2937">auto</text>
+<text x="2362" y="463" font-size="11" text-anchor="end" fill="#64748B">boolean</text>
+<rect x="2071" y="470" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="485" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="485" font-size="12" fill="#1F2937">checked_at</text>
+<text x="2362" y="485" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="2070" y="550" width="300" height="228" rx="6" fill="white" stroke="#7C3AED" stroke-width="1.6"/>
+<path d="M2070 580 V556 a6 6 0 0 1 6 -6 H2364 a6 6 0 0 1 6 6 V580 Z" fill="#7C3AED"/>
+<text x="2220.0" y="570" font-size="14" font-weight="bold" text-anchor="middle" fill="white">settlement_snapshots</text>
+<text x="2078" y="595" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="2116" y="595" font-size="12" font-weight="bold" fill="#1F2937">id</text>
+<text x="2362" y="595" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<rect x="2071" y="602" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="617" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="2116" y="617" font-size="12" fill="#1F2937">user_id</text>
+<text x="2362" y="617" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="2078" y="639" font-size="10" font-weight="bold" fill="#9333EA">LG</text>
+<text x="2116" y="639" font-size="12" fill="#1F2937">session_id</text>
+<text x="2362" y="639" font-size="11" text-anchor="end" fill="#64748B">integer ?</text>
+<rect x="2071" y="646" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="661" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="661" font-size="12" fill="#1F2937">month</text>
+<text x="2362" y="661" font-size="11" text-anchor="end" fill="#64748B">text</text>
+<text x="2078" y="683" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="683" font-size="12" fill="#1F2937">started_at</text>
+<text x="2362" y="683" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="2071" y="690" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="705" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="705" font-size="12" fill="#1F2937">finished_at</text>
+<text x="2362" y="705" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<text x="2078" y="727" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="727" font-size="12" fill="#1F2937">totals</text>
+<text x="2362" y="727" font-size="11" text-anchor="end" fill="#64748B">jsonb</text>
+<rect x="2071" y="734" width="298" height="22" fill="#F4F6F9"/>
+<text x="2078" y="749" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="749" font-size="12" fill="#1F2937">items</text>
+<text x="2362" y="749" font-size="11" text-anchor="end" fill="#64748B">jsonb</text>
+<text x="2078" y="771" font-size="10" font-weight="bold" fill="#64748B"></text>
+<text x="2116" y="771" font-size="12" fill="#1F2937">created_at</text>
+<text x="2362" y="771" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="70" y="945" width="2300" height="86" rx="6" fill="#FBFCFE" stroke="#CBD5E1"/>
+<text x="90" y="969" font-size="13" font-weight="bold" fill="#1F4E79">Referencias</text>
+<text x="90" y="995" font-size="11" font-weight="bold" fill="#B45309">PK</text>
+<text x="116" y="995" font-size="12" fill="#1F2937">clave primaria</text>
+<text x="239.60000000000002" y="995" font-size="11" font-weight="bold" fill="#1D4ED8">FK</text>
+<text x="265.6" y="995" font-size="12" fill="#1F2937">clave foránea declarada</text>
+<text x="446.80000000000007" y="995" font-size="11" font-weight="bold" fill="#9333EA">LG</text>
+<text x="472.80000000000007" y="995" font-size="12" fill="#1F2937">relación lógica, sin FK en la base</text>
+<text x="724.4000000000001" y="995" font-size="11" font-weight="bold" fill="#0F766E">UQ</text>
+<text x="750.4000000000001" y="995" font-size="12" fill="#1F2937">valor único</text>
+<text x="854.8000000000001" y="995" font-size="11" font-weight="bold" fill="#64748B">?</text>
+<text x="880.8000000000001" y="995" font-size="12" fill="#1F2937">admite NULL</text>
+<line x1="1010" y1="991" x2="1060" y2="991" stroke="#475569" stroke-width="1.4"/><text x="1070" y="995" font-size="12" fill="#1F2937">FK real</text>
+<line x1="1140" y1="991" x2="1190" y2="991" stroke="#9333EA" stroke-width="1.4" stroke-dasharray="7 5"/><text x="1200" y="995" font-size="12" fill="#1F2937">relación lógica</text>
+<path d="M1340 985 L1352 991 L1340 997" fill="none" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1357" cy="991" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<text x="1370" y="995" font-size="12" fill="#1F2937">cero o muchos</text>
+<line x1="1508" y1="985" x2="1508" y2="997" stroke="#475569" stroke-width="1.4"/>
+<line x1="1516" y1="985" x2="1516" y2="997" stroke="#475569" stroke-width="1.4"/>
+<text x="1530" y="995" font-size="12" fill="#1F2937">exactamente uno</text>
+<line x1="1688" y1="985" x2="1688" y2="997" stroke="#475569" stroke-width="1.4"/>
+<circle cx="1697" cy="991" r="4" fill="white" stroke="#475569" stroke-width="1.4"/>
+<text x="1710" y="995" font-size="12" fill="#1F2937">cero o uno</text>
+<rect x="1830" y="982" width="14" height="14" rx="3" fill="#1F4E79"/><text x="1850" y="994" font-size="12" fill="#1F2937">Núcleo</text>
+<rect x="1922" y="982" width="14" height="14" rx="3" fill="#0F766E"/><text x="1942" y="994" font-size="12" fill="#1F2937">Gastos</text>
+<rect x="2014" y="982" width="14" height="14" rx="3" fill="#7C3AED"/><text x="2034" y="994" font-size="12" fill="#1F2937">Hacer cuentas</text>
+<rect x="2155" y="982" width="14" height="14" rx="3" fill="#B45309"/><text x="2175" y="994" font-size="12" fill="#1F2937">Avisos</text>
+<text x="90" y="1018" font-size="12" fill="#64748B">Enums: currency (36 monedas), expense_type (EGRESO, INGRESO), movement_type (26 valores). Estados: purchase_edit_requests.status = PENDING, APPROVED, REJECTED, CANCELLED. Índices únicos parciales: una sesión OPEN por usuario y una solicitud PENDING por par de gastos.</text>
+</svg>

@@ -1,6 +1,6 @@
 # Misión, visión y valores
 
-Identidad de la organización que desarrolla la **Plataforma de Gestión de Deudas**. Complementa la [descripción general](descripcion-general.md): allí están el problema que resuelve el sistema, sus objetivos y su alcance; acá, el propósito y los principios con los que se construye y se opera.
+Identidad de la organización que desarrolla **Expense Manager**. Complementa la [descripción general](descripcion-general.md): allí están el problema que resuelve el sistema, sus objetivos y su alcance; acá, el propósito y los principios con los que se construye y se opera.
 
 ## Misión
 

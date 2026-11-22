@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Plataforma de Gestión de Deudas API",
+    "name": "Expense Manager API",
     "description": "Todos los endpoints de la API. Configurar baseUrl, email y password en las variables de la colección, ejecutar Auth > Iniciar sesión y el token se aplica a todas las demás requests. Las requests de creación y listado guardan los ids en variables.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

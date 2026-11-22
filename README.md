@@ -1,4 +1,4 @@
-# Plataforma de Gestión de Deudas — Web
+# Expense Manager — Web
 
 Aplicación web para registrar y saldar deudas, créditos y gastos personales, organizados por persona o institución (**entidades financieras**) y compartidos con otros usuarios de la plataforma. Proyecto de la materia Plataformas de Desarrollo.
 
