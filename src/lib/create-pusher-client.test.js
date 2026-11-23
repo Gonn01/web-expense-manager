@@ -28,8 +28,43 @@ describe('createPusherClient', () => {
 
         expect(client).toBeInstanceOf(FakePusher);
         expect(client.key).toBe('clave');
-        expect(client.options).toEqual({ cluster: 'sa1' });
+        expect(client.options.cluster).toBe('sa1');
         expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('autoriza el canal privado con la respuesta de la API', async () => {
+        const authorize = vi.fn(async () => ({ auth: 'clave:firma' }));
+        const client = createPusherClient(FakePusher, { key: 'clave', cluster: 'sa1', authorize });
+
+        const result = await new Promise((resolve) => {
+            client.options.channelAuthorization.customHandler(
+                { socketId: '1.2', channelName: 'private-notificaciones-7' },
+                (error, authorization) => resolve({ error, authorization }),
+            );
+        });
+
+        expect(authorize).toHaveBeenCalledWith('1.2', 'private-notificaciones-7');
+        expect(result).toEqual({ error: null, authorization: { auth: 'clave:firma' } });
+    });
+
+    it('informa a Pusher si la API rechaza la autorización', async () => {
+        const failure = new Error('sin permiso');
+        const client = createPusherClient(FakePusher, {
+            key: 'clave',
+            cluster: 'sa1',
+            authorize: async () => {
+                throw failure;
+            },
+        });
+
+        const result = await new Promise((resolve) => {
+            client.options.channelAuthorization.customHandler(
+                { socketId: '1.2', channelName: 'private-notificaciones-8' },
+                (error, authorization) => resolve({ error, authorization }),
+            );
+        });
+
+        expect(result).toEqual({ error: failure, authorization: null });
     });
 
     it.each([

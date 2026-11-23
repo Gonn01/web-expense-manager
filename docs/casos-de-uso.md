@@ -728,7 +728,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 
 - **Actores**: Usuario, Contraparte, Pusher
 - **Requerimientos**: RF-NOT-01, RF-NOT-02, RF-NOT-03, RF-NOT-04, RF-NOT-05, RF-NOT-06
-- **Precondición**: para el aviso inmediato, el cliente está abierto y suscrito al canal del usuario, o la app Android tiene una sesión iniciada y push activas. El historial de la campana no lo requiere.
+- **Precondición**: para el aviso inmediato, el cliente está abierto y suscrito al canal privado del usuario, con la suscripción autorizada por la API, o la app Android tiene una sesión iniciada y push activas. El historial de la campana no lo requiere.
 - **Flujo principal**
     1. Otro usuario realiza una acción que afecta al actor.
     2. El sistema guarda la notificación del actor y publica el evento en su canal a través de Pusher.

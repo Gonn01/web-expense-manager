@@ -94,6 +94,15 @@ export const updatePassword = async ({ currentPassword, newPassword }, token) =>
     return data.data;
 };
 
+export const authorizeRealtimeChannel = async (socketId, channelName, token) => {
+    const { data } = await api.post(
+        '/user/realtime-auth',
+        { socket_id: socketId, channel_name: channelName },
+        { headers: { Authorization: `Bearer ${token}` }, meta: { silent: true } },
+    );
+    return data.data;
+};
+
 export const fetchDashboardData = async (token) => {
     const { data } = await api.get('/dashboard', {
         headers: { Authorization: `Bearer ${token}` },

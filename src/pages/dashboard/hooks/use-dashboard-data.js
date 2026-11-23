@@ -10,6 +10,7 @@ import {
 import useAuth from '@/store/use-auth-store';
 import { useSettlements } from '@/hooks/use-settlements';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { Currency, ExpenseStatus } from '@/utils/enums';
 import { useEntitiesStore } from '@/store/use-entities-store';
@@ -312,7 +313,7 @@ export function useDashboardData() {
         [onCompartidoRespondido, onPagoPendiente, reloadSilently],
     );
 
-    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
+    usePusherChannel(userRealtimeChannel(user?.id), pusherEvents);
 
     return {
         groups,

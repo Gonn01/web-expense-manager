@@ -17,6 +17,7 @@ import { pendingResponsesForGasto } from '@/utils/pending-responses';
 import { isSettlementActive } from '@/hooks/use-settlements';
 import { useCompartidos } from '@/hooks/use-compartidos';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { t } from '@/i18n';
@@ -69,7 +70,7 @@ export function useGastoData() {
         };
     }, [id, token]);
 
-    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
+    usePusherChannel(userRealtimeChannel(user?.id), pusherEvents);
 
     async function load(silent = false) {
         try {

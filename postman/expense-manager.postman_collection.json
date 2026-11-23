@@ -330,6 +330,34 @@
           "response": []
         },
         {
+          "name": "Autorizar canal de tiempo real",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"socket_id\": \"123.456\",\n  \"channel_name\": \"private-notificaciones-{{userId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/realtime-auth",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "realtime-auth"
+              ]
+            },
+            "description": "Responde { data: { auth } }. Solo firma el canal privado del usuario de la sesión; otro canal responde 403."
+          },
+          "response": []
+        },
+        {
           "name": "Actualizar idioma de push",
           "request": {
             "method": "PUT",

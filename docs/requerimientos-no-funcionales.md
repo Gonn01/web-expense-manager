@@ -25,12 +25,14 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-12 | Las notificaciones push se dirigen a usuarios autenticados de Pusher Beams: la API solo emite el token de Beams para el usuario de la sesión. Su contenido no incluye montos ni nombres de gastos. | API, App |
 | RNF-SEG-13 | El inicio de sesión con Google solo confía en un ID token de Firebase verificado por la API contra el proyecto de `FIREBASE_PROJECT_ID`. La identidad y el email nunca se toman de datos enviados por el cliente. | API, Web, App |
 | RNF-SEG-14 | Vincular Google a una cuenta con contraseña exige esa contraseña o eliminarla, para que nadie conserve acceso a una cuenta creada de antemano con un email ajeno. | API, Web, App |
+| RNF-SEG-15 | Las notificaciones en tiempo real viajan por un canal privado de Pusher por usuario (`private-notificaciones-<userId>`). Para suscribirse, el cliente pide la firma a `POST /user/realtime-auth` con su token, y la API solo firma el canal del usuario de la sesión. | API, Web, App |
 
 **Limitaciones conocidas**
 
 - El registro con email y contraseña no verifica que el correo pertenezca a quien se registra. RNF-SEG-14 protege al dueño real cuando entra con Google.
 - Cambiar la contraseña no cierra las sesiones ya abiertas: sus tokens siguen válidos hasta vencer.
-- Los canales de Pusher (`notificaciones-<userId>`) son públicos: no hay autenticación de canal. Los eventos solo llevan identificadores y nombres, no montos.
+- Los eventos de tiempo real llevan identificadores y nombres, no montos. Solo los recibe el dueño del canal, pero esos nombres pasan por Pusher.
+- La autorización del canal se valida al suscribirse: una conexión ya suscrita sigue recibiendo eventos hasta desconectarse, aunque su token venza.
 
 ## CON — Consistencia entre clientes
 
@@ -83,7 +85,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-DIS-05 | Sin el servicio de cotizaciones, la aplicación sigue funcionando sin mostrar equivalencias. | Web, App |
 | RNF-DIS-06 | Los clientes arrancan y funcionan aunque Firebase no esté configurado: el botón de inicio con Google queda deshabilitado y email y contraseña siguen disponibles. En la app móvil, además, la analítica no hace nada. | Web, App |
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
-| RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. | API |
+| RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. Aprobar o rechazar un gasto compartido, y solicitar, aceptar, rechazar o cancelar una reversión, bloquean las dos copias, validan el estado después del bloqueo y escriben solo si sigue vigente: entre solicitudes simultáneas gana una y las demás reciben un error, sin dejar historial ni avisos. | API |
 | RNF-DIS-09 | Sin Pusher Beams configurado o disponible, la operación de origen y el tiempo real siguen funcionando. Si el dispositivo no pudo registrarse, la app Flutter usa la notificación local mientras su proceso siga activo. | API, App |
 
 ## INT — Integridad y auditoría

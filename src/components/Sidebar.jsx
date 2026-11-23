@@ -8,6 +8,7 @@ import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { buildNotification } from '@/utils/notifications';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
 import Snackbar from './Snackbar';
@@ -278,7 +279,7 @@ export default function Sidebar() {
         ],
     );
 
-    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
+    usePusherChannel(userRealtimeChannel(user?.id), pusherEvents);
 
     const handleLogout = () => {
         logout();

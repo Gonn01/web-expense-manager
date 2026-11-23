@@ -1,4 +1,4 @@
-export function createPusherClient(PusherClient, { key, cluster } = {}) {
+export function createPusherClient(PusherClient, { key, cluster, authorize } = {}) {
     const appKey = key?.trim();
     const appCluster = cluster?.trim();
 
@@ -9,5 +9,15 @@ export function createPusherClient(PusherClient, { key, cluster } = {}) {
         return null;
     }
 
-    return new PusherClient(appKey, { cluster: appCluster });
+    return new PusherClient(appKey, {
+        cluster: appCluster,
+        channelAuthorization: {
+            customHandler: ({ socketId, channelName }, callback) => {
+                Promise.resolve()
+                    .then(() => authorize(socketId, channelName))
+                    .then((authorization) => callback(null, authorization))
+                    .catch((error) => callback(error, null));
+            },
+        },
+    });
 }

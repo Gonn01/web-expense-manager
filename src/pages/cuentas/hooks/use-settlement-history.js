@@ -3,6 +3,7 @@ import useAuth from '@/store/use-auth-store';
 import { fetchSettlementSnapshots, fetchSettlementSnapshotById } from '@/services/api';
 import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { getIntlLocale } from '@/i18n';
 
 const HISTORY_CACHE_KEY = 'settlementHistory';
@@ -23,7 +24,7 @@ function usePaymentStatusEvents(userId, onEvent) {
         () => Object.fromEntries(PAYMENT_STATUS_EVENTS.map((name) => [name, onEvent])),
         [onEvent],
     );
-    usePusherChannel(userId ? `notificaciones-${userId}` : null, events);
+    usePusherChannel(userRealtimeChannel(userId), events);
 }
 
 export function useSettlementHistoryList() {

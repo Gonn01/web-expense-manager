@@ -23,6 +23,7 @@ import { useSnackbarStore } from '@/store/use-snackbar-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { beginScreenRequest, hasScreenCache, useCachedState } from '@/store/use-screen-cache-store';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import {
     CompartidoAction,
     applyCompartidoAction,
@@ -133,7 +134,7 @@ export function useCompartidos() {
         };
     }, [load]);
 
-    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
+    usePusherChannel(userRealtimeChannel(user?.id), pusherEvents);
 
     const aprobar = useCallback(
         async (gastoId, financialEntityId, newEntityName) => {

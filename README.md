@@ -111,7 +111,7 @@ src/
 - **Capas por pantalla**: la página solo compone; `use-<feature>-data.js` pide datos y se conecta a los stores, y `use-<feature>-ui.js` maneja el estado de interfaz (modales, filtros, pestañas).
 - **Capa HTTP centralizada**: todas las llamadas pasan por `src/services/api.js`. Su interceptor normaliza los errores, los muestra como snackbar o diálogo y, ante un 401, cierra la sesión y redirige a `/login`.
 - **Estado global** con zustand (sesión, entidades, categorías, sesión de "hacer cuentas", preferencias de UI, feedback global).
-- **Tiempo real**: suscripción al canal de Pusher `notificaciones-<userId>`, con conteo de referencias para compartir el canal entre componentes.
+- **Tiempo real**: suscripción al canal privado de Pusher `private-notificaciones-<userId>`, autorizada por la API, con conteo de referencias para compartir el canal entre componentes.
 - **Responsive** desde 360 px de ancho; tema claro, oscuro o del sistema.
 - **Internacionalización** en español e inglés, a elección en Configuración o según el idioma del navegador; si no está soportado, usa inglés.
 

@@ -16,6 +16,7 @@ import { useEntitiesStore } from '@/store/use-entities-store';
 import { useSettlementStore } from '@/store/use-settlement-store';
 import { useParams } from 'react-router-dom';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
+import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { useCompartidos } from '@/hooks/use-compartidos';
 import { pendingResponsesForEntity } from '@/utils/pending-responses';
 import { t } from '@/i18n';
@@ -69,7 +70,7 @@ export function useEntidadData() {
         };
     }, [loadEntity]);
 
-    usePusherChannel(user?.id ? `notificaciones-${user.id}` : null, pusherEvents);
+    usePusherChannel(userRealtimeChannel(user?.id), pusherEvents);
 
     const stats = useMemo(() => {
         if (!entity) return { amount: 0, debts: 0, fixed: 0, finalized: 0, pending: 0 };
