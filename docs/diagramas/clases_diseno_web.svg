@@ -1,0 +1,653 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3049" height="2778" viewBox="0 0 3049 2778" font-family="Helvetica, Arial, sans-serif">
+<rect width="3049" height="2778" fill="white"/>
+<text x="1524.5" y="34" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F4E79">Diagrama de clases de diseño — Web (React)</text>
+<text x="1524.5" y="56" font-size="13" text-anchor="middle" fill="#475569">La web no usa clases: páginas, hooks, stores y módulos se modelan como clasificadores con estereotipo.</text>
+<polyline points="565.3,301.0 565.3,395.0 116.7,395.0 116.7,611.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="121.7,601.0 116.7,611.0 111.7,601.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="630.7,301.0 630.7,395.0 2095.7,395.0 2095.7,611.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="2100.7,601.0 2095.7,611.0 2090.7,601.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="818.0,256.0 818.0,431.0 339.0,431.0 339.0,611.0" fill="none" stroke="#B45309" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="344.0,601.0 339.0,611.0 334.0,601.0" fill="none" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="1005.3,331.0 1005.3,449.0 570.0,449.0 570.0,611.0" fill="none" stroke="#047857" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="575.0,601.0 570.0,611.0 565.0,601.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="1070.7,331.0 1070.7,449.0 2152.3,449.0 2152.3,611.0" fill="none" stroke="#047857" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="2157.3,601.0 2152.3,611.0 2147.3,601.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="1258.0,241.0 1258.0,467.0 746.5,467.0 746.5,611.0" fill="none" stroke="#BE123C" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="751.5,601.0 746.5,611.0 741.5,601.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="1478.0,188.0 1478.0,485.0 999.2,485.0 999.2,611.0" fill="none" stroke="#6D28D9" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1004.2,601.0 999.2,611.0 994.2,601.0" fill="none" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="1698.0,173.0 1698.0,503.0 1125.7,503.0 1125.7,611.0" fill="none" stroke="#0E7490" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1130.7,601.0 1125.7,611.0 1120.7,601.0" fill="none" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="1918.0,173.0 1918.0,521.0 1182.3,521.0 1182.3,611.0" fill="none" stroke="#4D7C0F" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1187.3,601.0 1182.3,611.0 1177.3,601.0" fill="none" stroke="#4D7C0F" stroke-width="1.4"/>
+<polyline points="2138.0,316.0 2138.0,539.0 1736.0,539.0 1736.0,611.0" fill="none" stroke="#C2410C" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1741.0,601.0 1736.0,611.0 1731.0,601.0" fill="none" stroke="#C2410C" stroke-width="1.4"/>
+<polyline points="102.5,877.0 102.5,1040.0 312.0,1040.0 312.0,1292.0" fill="none" stroke="#475569" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="317.0,1282.0 312.0,1292.0 307.0,1282.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="187.5,877.0 187.5,1040.0 1382.0,1040.0 1382.0,1292.0" fill="none" stroke="#475569" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1387.0,1282.0 1382.0,1292.0 1377.0,1282.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="145.0,877.0 145.0,1040.0 723.1,1040.0 723.1,1292.0" fill="none" stroke="#475569" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="728.1,1282.0 723.1,1292.0 718.1,1282.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="173.3,611.0 173.3,359.0 1319.7,359.0 1319.7,611.0" fill="none" stroke="#475569" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1324.7,601.0 1319.7,611.0 1314.7,601.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="296.5,757.0 296.5,1058.0 350.0,1058.0 350.0,1292.0" fill="none" stroke="#A21CAF" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="355.0,1282.0 350.0,1292.0 345.0,1282.0" fill="none" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="381.5,757.0 381.5,1058.0 1420.0,1058.0 1420.0,1292.0" fill="none" stroke="#A21CAF" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1425.0,1282.0 1420.0,1292.0 1415.0,1282.0" fill="none" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="339.0,757.0 339.0,1058.0 744.2,1058.0 744.2,1292.0" fill="none" stroke="#A21CAF" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="749.2,1282.0 744.2,1292.0 739.2,1282.0" fill="none" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="509.0,611.0 509.0,377.0 907.8,377.0 907.8,611.0" fill="none" stroke="#0369A1" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="912.8,601.0 907.8,611.0 902.8,601.0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="509.0,817.0 509.0,1076.0 388.0,1076.0 388.0,1292.0" fill="none" stroke="#0369A1" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="393.0,1282.0 388.0,1292.0 383.0,1282.0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="570.0,817.0 570.0,1076.0 765.3,1076.0 765.3,1292.0" fill="none" stroke="#0369A1" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="770.3,1282.0 765.3,1292.0 760.3,1282.0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="700.8,611.0 700.8,413.0 953.5,413.0 953.5,611.0" fill="none" stroke="#854D0E" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="958.5,601.0 953.5,611.0 948.5,601.0" fill="none" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="746.5,817.0 746.5,1094.0 786.4,1094.0 786.4,1292.0" fill="none" stroke="#854D0E" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="791.4,1282.0 786.4,1292.0 781.4,1282.0" fill="none" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="792.2,611.0 792.2,413.0 1376.3,413.0 1376.3,611.0" fill="none" stroke="#854D0E" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1381.3,601.0 1376.3,611.0 1371.3,601.0" fill="none" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="971.8,1012.0 971.8,1130.0 1042.7,1130.0 1042.7,1292.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1047.7,1282.0 1042.7,1292.0 1037.7,1282.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="898.6,1012.0 898.6,1130.0 426.0,1130.0 426.0,1292.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="431.0,1282.0 426.0,1292.0 421.0,1282.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="1008.4,1012.0 1008.4,1130.0 1458.0,1130.0 1458.0,1292.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1463.0,1282.0 1458.0,1292.0 1453.0,1282.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="935.2,1012.0 935.2,1130.0 807.6,1130.0 807.6,1292.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="812.6,1282.0 807.6,1292.0 802.6,1282.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="1154.0,727.0 1154.0,1148.0 1496.0,1148.0 1496.0,1292.0" fill="none" stroke="#B45309" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1501.0,1282.0 1496.0,1292.0 1491.0,1282.0" fill="none" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="1348.0,697.0 1348.0,1166.0 849.8,1166.0 849.8,1292.0" fill="none" stroke="#047857" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="854.8,1282.0 849.8,1292.0 844.8,1282.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="1542.0,697.0 1542.0,1184.0 870.9,1184.0 870.9,1292.0" fill="none" stroke="#BE123C" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="875.9,1282.0 870.9,1292.0 865.9,1282.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="2512.0,742.0 2512.0,1202.0 1867.0,1202.0 1867.0,1292.0" fill="none" stroke="#6D28D9" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1872.0,1282.0 1867.0,1292.0 1862.0,1282.0" fill="none" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="2900.0,674.0 2900.0,1220.0 1653.0,1220.0 1653.0,1292.0" fill="none" stroke="#0E7490" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="1658.0,1282.0 1653.0,1292.0 1648.0,1282.0" fill="none" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="828.7,1292.0 828.7,1112.0 979.3,1112.0 979.3,1292.0" fill="none" stroke="#4D7C0F" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polyline points="984.3,1282.0 979.3,1292.0 974.3,1282.0" fill="none" stroke="#4D7C0F" stroke-width="1.4"/>
+<text x="14.0" y="100.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Páginas (con su hook de interfaz)</text>
+<text x="14.0" y="601.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Hooks de datos y compartidos</text>
+<text x="14.0" y="1282.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Stores (zustand)</text>
+<text x="14.0" y="1660.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Servicios, clientes y soporte</text>
+<rect x="60" y="110" width="196" height="221" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="158.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="158.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">Login</text>
+<line x1="60" y1="150" x2="256" y2="150" stroke="#1E40AF"/>
+<text x="67" y="165" font-size="11" fill="#1E293B">ui: use-google-auth</text>
+<text x="67" y="180" font-size="11" fill="#1E293B">ui: use-login</text>
+<text x="67" y="195" font-size="11" fill="#1E293B">usa: {auth, dialog}</text>
+<line x1="60" y1="203" x2="256" y2="203" stroke="#1E40AF"/>
+<text x="67" y="218" font-size="11" fill="#1E293B">+ loginGoogle()</text>
+<text x="67" y="233" font-size="11" fill="#1E293B">+ confirmLinkWithPassword()</text>
+<text x="67" y="248" font-size="11" fill="#1E293B">+ linkDiscardingPassword()</text>
+<text x="67" y="263" font-size="11" fill="#1E293B">+ cancelLink()</text>
+<text x="67" y="278" font-size="11" fill="#1E293B">- completeLogin()</text>
+<text x="67" y="293" font-size="11" fill="#1E293B">- submitLink()</text>
+<text x="67" y="308" font-size="11" fill="#1E293B">+ handleLogin()</text>
+<text x="67" y="323" font-size="11" fill="#1E293B">- validar()</text>
+<rect x="280" y="110" width="196" height="221" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="378.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="378.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">Register</text>
+<line x1="280" y1="150" x2="476" y2="150" stroke="#1E40AF"/>
+<text x="287" y="165" font-size="11" fill="#1E293B">ui: use-google-auth</text>
+<text x="287" y="180" font-size="11" fill="#1E293B">ui: use-register</text>
+<text x="287" y="195" font-size="11" fill="#1E293B">usa: {api, auth, dialog}</text>
+<line x1="280" y1="203" x2="476" y2="203" stroke="#1E40AF"/>
+<text x="287" y="218" font-size="11" fill="#1E293B">+ loginGoogle()</text>
+<text x="287" y="233" font-size="11" fill="#1E293B">+ confirmLinkWithPassword()</text>
+<text x="287" y="248" font-size="11" fill="#1E293B">+ linkDiscardingPassword()</text>
+<text x="287" y="263" font-size="11" fill="#1E293B">+ cancelLink()</text>
+<text x="287" y="278" font-size="11" fill="#1E293B">- completeLogin()</text>
+<text x="287" y="293" font-size="11" fill="#1E293B">- submitLink()</text>
+<text x="287" y="308" font-size="11" fill="#1E293B">+ handleRegister()</text>
+<text x="287" y="323" font-size="11" fill="#1E293B">- validar()</text>
+<rect x="500" y="110" width="196" height="191" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="598.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="598.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">Dashboard</text>
+<line x1="500" y1="150" x2="696" y2="150" stroke="#1E40AF"/>
+<text x="507" y="165" font-size="11" fill="#1E293B">ui: use-dashboard-ui</text>
+<text x="507" y="180" font-size="11" fill="#1E293B">usa: {auth, dialog}</text>
+<text x="507" y="195" font-size="11" fill="#1E293B">stores: settlement, ui</text>
+<line x1="500" y1="203" x2="696" y2="203" stroke="#1E40AF"/>
+<text x="507" y="218" font-size="11" fill="#1E293B">+ closeFilters()</text>
+<text x="507" y="233" font-size="11" fill="#1E293B">+ applyFilters()</text>
+<text x="507" y="248" font-size="11" fill="#1E293B">+ onConfirmSettle()</text>
+<text x="507" y="263" font-size="11" fill="#1E293B">+ requestTogglePostpone()</text>
+<text x="507" y="278" font-size="11" fill="#1E293B">- openGroup()</text>
+<text x="507" y="293" font-size="11" fill="#1E293B">- openItem()</text>
+<rect x="720" y="110" width="196" height="146" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="818.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="818.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadesFinancieras</text>
+<line x1="720" y1="150" x2="916" y2="150" stroke="#1E40AF"/>
+<text x="727" y="165" font-size="11" fill="#1E293B">ui: use-entidades-ui</text>
+<text x="727" y="180" font-size="11" fill="#1E293B">usa: {dialog}</text>
+<text x="727" y="195" font-size="11" fill="#1E293B">stores: ui</text>
+<line x1="720" y1="203" x2="916" y2="203" stroke="#1E40AF"/>
+<text x="727" y="218" font-size="11" fill="#1E293B">+ handleSaveNew()</text>
+<text x="727" y="233" font-size="11" fill="#1E293B">+ handleDelete()</text>
+<text x="727" y="248" font-size="11" fill="#1E293B">+ handleToggleFavorite()</text>
+<rect x="940" y="110" width="196" height="221" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="1038.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="1038.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DetalleEntidad</text>
+<line x1="940" y1="150" x2="1136" y2="150" stroke="#1E40AF"/>
+<text x="947" y="165" font-size="11" fill="#1E293B">ui: use-entidad-ui</text>
+<text x="947" y="180" font-size="11" fill="#1E293B">usa: {auth, dialog, snackbar}</text>
+<line x1="940" y1="188" x2="1136" y2="188" stroke="#1E40AF"/>
+<text x="947" y="203" font-size="11" fill="#1E293B">+ onRestaurarGasto()</text>
+<text x="947" y="218" font-size="11" fill="#1E293B">+ openSettleModal()</text>
+<text x="947" y="233" font-size="11" fill="#1E293B">+ onConfirmSettle()</text>
+<text x="947" y="248" font-size="11" fill="#1E293B">+ onCreateExpense()</text>
+<text x="947" y="263" font-size="11" fill="#1E293B">+ onUpdateEntity()</text>
+<text x="947" y="278" font-size="11" fill="#1E293B">+ onSaveMercadoPagoAlias()</text>
+<text x="947" y="293" font-size="11" fill="#1E293B">+ onDeleteEntity()</text>
+<text x="947" y="308" font-size="11" fill="#1E293B">+ onVincular()</text>
+<text x="947" y="323" font-size="11" fill="#1E293B">+ onDesvincular()</text>
+<rect x="1160" y="110" width="196" height="131" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="1258.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="1258.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DetalleGasto</text>
+<line x1="1160" y1="150" x2="1356" y2="150" stroke="#1E40AF"/>
+<text x="1167" y="165" font-size="11" fill="#1E293B">ui: use-gasto-ui</text>
+<text x="1167" y="180" font-size="11" fill="#1E293B">usa: {dialog}</text>
+<text x="1167" y="195" font-size="11" fill="#1E293B">stores: entities, settlement</text>
+<line x1="1160" y1="203" x2="1356" y2="203" stroke="#1E40AF"/>
+<text x="1167" y="218" font-size="11" fill="#1E293B">+ volverALista()</text>
+<text x="1167" y="233" font-size="11" fill="#1E293B">+ onSeleccionAdjuntos()</text>
+<rect x="1380" y="110" width="196" height="78" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="1478.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="1478.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">Compartidos</text>
+<line x1="1380" y1="150" x2="1576" y2="150" stroke="#1E40AF"/>
+<text x="1387" y="165" font-size="11" fill="#1E293B">usa: {auth, dialog}</text>
+<text x="1387" y="180" font-size="11" fill="#1E293B">stores: entities</text>
+<rect x="1600" y="110" width="196" height="63" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="1698.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="1698.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementHistory</text>
+<line x1="1600" y1="150" x2="1796" y2="150" stroke="#1E40AF"/>
+<text x="1607" y="165" font-size="11" fill="#1E293B">usa: —</text>
+<rect x="1820" y="110" width="196" height="63" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="1918.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="1918.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementDetail</text>
+<line x1="1820" y1="150" x2="2016" y2="150" stroke="#1E40AF"/>
+<text x="1827" y="165" font-size="11" fill="#1E293B">usa: —</text>
+<rect x="2040" y="110" width="196" height="206" fill="#DBEAFE" stroke="#1E40AF" stroke-width="1.5"/>
+<text x="2138.0" y="124" font-size="10" text-anchor="middle" fill="#1E40AF">«page»</text>
+<text x="2138.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">Configuracion</text>
+<line x1="2040" y1="150" x2="2236" y2="150" stroke="#1E40AF"/>
+<text x="2047" y="165" font-size="11" fill="#1E293B">ui: use-configuracion-ui</text>
+<text x="2047" y="180" font-size="11" fill="#1E293B">usa: —</text>
+<text x="2047" y="195" font-size="11" fill="#1E293B">stores: onboarding, ui</text>
+<line x1="2040" y1="203" x2="2236" y2="203" stroke="#1E40AF"/>
+<text x="2047" y="218" font-size="11" fill="#1E293B">+ onOpenTutorial()</text>
+<text x="2047" y="233" font-size="11" fill="#1E293B">+ onChangeLanguage()</text>
+<text x="2047" y="248" font-size="11" fill="#1E293B">+ closeSnackbar()</text>
+<text x="2047" y="263" font-size="11" fill="#1E293B">+ onSaveMoneda()</text>
+<text x="2047" y="278" font-size="11" fill="#1E293B">+ onSaveSueldo()</text>
+<text x="2047" y="293" font-size="11" fill="#1E293B">+ onSavePassword()</text>
+<text x="2047" y="308" font-size="11" fill="#1E293B">- showSnackbar()</text>
+<rect x="60" y="611" width="170" height="266" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="145.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="145.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-dashboard-data</text>
+<line x1="60" y1="651" x2="230" y2="651" stroke="#0369A1"/>
+<text x="67" y="666" font-size="11" fill="#1E293B">usa: {api, auth, pusher}</text>
+<line x1="60" y1="674" x2="230" y2="674" stroke="#0369A1"/>
+<text x="67" y="689" font-size="11" fill="#1E293B">+ loadDashboard()</text>
+<text x="67" y="704" font-size="11" fill="#1E293B">+ settleQuotas()</text>
+<text x="67" y="719" font-size="11" fill="#1E293B">+ crearGasto()</text>
+<text x="67" y="734" font-size="11" fill="#1E293B">+ postergarGasto()</text>
+<text x="67" y="749" font-size="11" fill="#1E293B">+ favoritoGasto()</text>
+<text x="67" y="764" font-size="11" fill="#1E293B">+ favoritoEntidad()</text>
+<text x="67" y="779" font-size="11" fill="#1E293B">- runBusy()</text>
+<text x="67" y="794" font-size="11" fill="#1E293B">- patchGasto()</text>
+<text x="67" y="809" font-size="11" fill="#1E293B">- reloadSilently()</text>
+<text x="67" y="824" font-size="11" fill="#1E293B">- updateAfterPayment()</text>
+<text x="67" y="839" font-size="11" fill="#1E293B">- onCompartidoRespondido()</text>
+<text x="67" y="854" font-size="11" fill="#1E293B">- onPagoPendiente()</text>
+<text x="67" y="869" font-size="11" fill="#1E293B">- getEntityById()</text>
+<rect x="254" y="611" width="170" height="146" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="339.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="339.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-entidades-data</text>
+<line x1="254" y1="651" x2="424" y2="651" stroke="#0369A1"/>
+<text x="261" y="666" font-size="11" fill="#1E293B">usa: {api, auth}</text>
+<line x1="254" y1="674" x2="424" y2="674" stroke="#0369A1"/>
+<text x="261" y="689" font-size="11" fill="#1E293B">+ crearEntidad()</text>
+<text x="261" y="704" font-size="11" fill="#1E293B">+ eliminarEntidad()</text>
+<text x="261" y="719" font-size="11" fill="#1E293B">+ toggleFavorito()</text>
+<text x="261" y="734" font-size="11" fill="#1E293B">+ restaurarEntidad()</text>
+<text x="261" y="749" font-size="11" fill="#1E293B">- loadEntities()</text>
+<rect x="448" y="611" width="183" height="206" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="539.5" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="539.5" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-entidad-data</text>
+<line x1="448" y1="651" x2="631" y2="651" stroke="#0369A1"/>
+<text x="455" y="666" font-size="11" fill="#1E293B">usa: {api, auth, snackbar, pusher}</text>
+<line x1="448" y1="674" x2="631" y2="674" stroke="#0369A1"/>
+<text x="455" y="689" font-size="11" fill="#1E293B">+ crearGastoEntidad()</text>
+<text x="455" y="704" font-size="11" fill="#1E293B">+ actualizarEntidad()</text>
+<text x="455" y="719" font-size="11" fill="#1E293B">+ actualizarAliasMercadoPago()</text>
+<text x="455" y="734" font-size="11" fill="#1E293B">+ eliminarEntidad()</text>
+<text x="455" y="749" font-size="11" fill="#1E293B">+ restaurarGasto()</text>
+<text x="455" y="764" font-size="11" fill="#1E293B">+ vincularUsuario()</text>
+<text x="455" y="779" font-size="11" fill="#1E293B">+ desvincularUsuario()</text>
+<text x="455" y="794" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="455" y="809" font-size="11" fill="#1E293B">- loadEntity()</text>
+<rect x="655" y="611" width="183" height="206" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="746.5" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="746.5" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-gasto-data</text>
+<line x1="655" y1="651" x2="838" y2="651" stroke="#0369A1"/>
+<text x="662" y="666" font-size="11" fill="#1E293B">usa: {api, auth, snackbar, pusher}</text>
+<line x1="655" y1="674" x2="838" y2="674" stroke="#0369A1"/>
+<text x="662" y="689" font-size="11" fill="#1E293B">+ load()</text>
+<text x="662" y="704" font-size="11" fill="#1E293B">+ actualizar()</text>
+<text x="662" y="719" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<text x="662" y="734" font-size="11" fill="#1E293B">+ transferir()</text>
+<text x="662" y="749" font-size="11" fill="#1E293B">+ compartir()</text>
+<text x="662" y="764" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="662" y="779" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="662" y="794" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="662" y="809" font-size="11" fill="#1E293B">+ eliminar()</text>
+<rect x="862" y="611" width="183" height="401" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="953.5" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="953.5" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-compartidos</text>
+<line x1="862" y1="651" x2="1045" y2="651" stroke="#0369A1"/>
+<text x="869" y="666" font-size="11" fill="#1E293B">usa: {api, auth, snackbar, pusher}</text>
+<line x1="862" y1="674" x2="1045" y2="674" stroke="#0369A1"/>
+<text x="869" y="689" font-size="11" fill="#1E293B">+ aprobar()</text>
+<text x="869" y="704" font-size="11" fill="#1E293B">+ rechazar()</text>
+<text x="869" y="719" font-size="11" fill="#1E293B">+ reintentar()</text>
+<text x="869" y="734" font-size="11" fill="#1E293B">+ descartar()</text>
+<text x="869" y="749" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="869" y="764" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="869" y="779" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="869" y="794" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="869" y="809" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="869" y="824" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="869" y="839" font-size="11" fill="#1E293B">+ aprobarEdicion()</text>
+<text x="869" y="854" font-size="11" fill="#1E293B">+ rechazarEdicion()</text>
+<text x="869" y="869" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<text x="869" y="884" font-size="11" fill="#1E293B">+ crearGasto()</text>
+<text x="869" y="899" font-size="11" fill="#1E293B">- startAction()</text>
+<text x="869" y="914" font-size="11" fill="#1E293B">- publishCounters()</text>
+<text x="869" y="929" font-size="11" fill="#1E293B">- load()</text>
+<text x="869" y="944" font-size="11" fill="#1E293B">- applyLocal()</text>
+<text x="869" y="959" font-size="11" fill="#1E293B">- reloadInBackground()</text>
+<text x="869" y="974" font-size="11" fill="#1E293B">- responderPago()</text>
+<text x="869" y="989" font-size="11" fill="#1E293B">- runPagoAction()</text>
+<text x="869" y="1004" font-size="11" fill="#1E293B">- runEdicionAction()</text>
+<rect x="1069" y="611" width="170" height="116" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="1154.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="1154.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-settlement-history</text>
+<line x1="1069" y1="651" x2="1239" y2="651" stroke="#0369A1"/>
+<text x="1076" y="666" font-size="11" fill="#1E293B">usa: {api, auth, pusher}</text>
+<line x1="1069" y1="674" x2="1239" y2="674" stroke="#0369A1"/>
+<text x="1076" y="689" font-size="11" fill="#1E293B">- load()</text>
+<text x="1076" y="704" font-size="11" fill="#1E293B">- reloadSilently()</text>
+<text x="1076" y="719" font-size="11" fill="#1E293B">- usePaymentStatusEvents()</text>
+<rect x="1263" y="611" width="170" height="86" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="1348.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="1348.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-settlements</text>
+<line x1="1263" y1="651" x2="1433" y2="651" stroke="#0369A1"/>
+<text x="1270" y="666" font-size="11" fill="#1E293B">usa: {api, snackbar}</text>
+<line x1="1263" y1="674" x2="1433" y2="674" stroke="#0369A1"/>
+<text x="1270" y="689" font-size="11" fill="#1E293B">+ handleConfirm()</text>
+<rect x="1457" y="611" width="170" height="86" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="1542.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="1542.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-settlement</text>
+<line x1="1457" y1="651" x2="1627" y2="651" stroke="#0369A1"/>
+<text x="1464" y="666" font-size="11" fill="#1E293B">usa: —</text>
+<line x1="1457" y1="674" x2="1627" y2="674" stroke="#0369A1"/>
+<text x="1464" y="689" font-size="11" fill="#1E293B">- relativeSince()</text>
+<rect x="1651" y="611" width="170" height="116" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="1736.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="1736.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-configuracion-data</text>
+<line x1="1651" y1="651" x2="1821" y2="651" stroke="#0369A1"/>
+<text x="1658" y="666" font-size="11" fill="#1E293B">usa: {api, auth}</text>
+<line x1="1651" y1="674" x2="1821" y2="674" stroke="#0369A1"/>
+<text x="1658" y="689" font-size="11" fill="#1E293B">+ guardarPassword()</text>
+<text x="1658" y="704" font-size="11" fill="#1E293B">+ guardarMoneda()</text>
+<text x="1658" y="719" font-size="11" fill="#1E293B">+ guardarSueldo()</text>
+<rect x="1845" y="611" width="170" height="101" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="1930.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="1930.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-pusher-channel</text>
+<line x1="1845" y1="651" x2="2015" y2="651" stroke="#0369A1"/>
+<text x="1852" y="666" font-size="11" fill="#1E293B">usa: {pusher}</text>
+<line x1="1845" y1="674" x2="2015" y2="674" stroke="#0369A1"/>
+<text x="1852" y="689" font-size="11" fill="#1E293B">- acquire()</text>
+<text x="1852" y="704" font-size="11" fill="#1E293B">- release()</text>
+<rect x="2039" y="611" width="170" height="63" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="2124.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="2124.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-exchange-rates</text>
+<line x1="2039" y1="651" x2="2209" y2="651" stroke="#0369A1"/>
+<text x="2046" y="666" font-size="11" fill="#1E293B">usa: —</text>
+<rect x="2233" y="611" width="170" height="63" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="2318.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="2318.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-discard-guard</text>
+<line x1="2233" y1="651" x2="2403" y2="651" stroke="#0369A1"/>
+<text x="2240" y="666" font-size="11" fill="#1E293B">usa: {dialog}</text>
+<rect x="2427" y="611" width="170" height="131" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="2512.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="2512.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-onboarding</text>
+<line x1="2427" y1="651" x2="2597" y2="651" stroke="#0369A1"/>
+<text x="2434" y="666" font-size="11" fill="#1E293B">usa: {auth}</text>
+<line x1="2427" y1="674" x2="2597" y2="674" stroke="#0369A1"/>
+<text x="2434" y="689" font-size="11" fill="#1E293B">+ finish()</text>
+<text x="2434" y="704" font-size="11" fill="#1E293B">+ next()</text>
+<text x="2434" y="719" font-size="11" fill="#1E293B">+ back()</text>
+<text x="2434" y="734" font-size="11" fill="#1E293B">+ goTo()</text>
+<rect x="2621" y="611" width="170" height="63" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="2706.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="2706.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-media-query</text>
+<line x1="2621" y1="651" x2="2791" y2="651" stroke="#0369A1"/>
+<text x="2628" y="666" font-size="11" fill="#1E293B">usa: —</text>
+<rect x="2815" y="611" width="170" height="63" fill="#E0F2FE" stroke="#0369A1" stroke-width="1.5"/>
+<text x="2900.0" y="625" font-size="10" text-anchor="middle" fill="#0369A1">«hook»</text>
+<text x="2900.0" y="642" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-theme-sync</text>
+<line x1="2815" y1="651" x2="2985" y2="651" stroke="#0369A1"/>
+<text x="2822" y="666" font-size="11" fill="#1E293B">usa: —</text>
+<rect x="60" y="1292" width="190" height="146" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="155.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="155.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-auth-store</text>
+<line x1="60" y1="1332" x2="250" y2="1332" stroke="#166534"/>
+<text x="67" y="1347" font-size="11" fill="#1E293B">- error</text>
+<text x="67" y="1362" font-size="11" fill="#1E293B">- loading</text>
+<line x1="60" y1="1370" x2="250" y2="1370" stroke="#166534"/>
+<text x="67" y="1385" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="1400" font-size="11" fill="#1E293B">+ loginWithFirebase()</text>
+<text x="67" y="1415" font-size="11" fill="#1E293B">+ logout()</text>
+<text x="67" y="1430" font-size="11" fill="#1E293B">+ updateUser()</text>
+<rect x="274" y="1292" width="190" height="176" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="369.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="369.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-entities-store</text>
+<line x1="274" y1="1332" x2="464" y2="1332" stroke="#166534"/>
+<text x="281" y="1347" font-size="11" fill="#1E293B">- entities</text>
+<text x="281" y="1362" font-size="11" fill="#1E293B">- loading</text>
+<line x1="274" y1="1370" x2="464" y2="1370" stroke="#166534"/>
+<text x="281" y="1385" font-size="11" fill="#1E293B">+ addEntity()</text>
+<text x="281" y="1400" font-size="11" fill="#1E293B">+ createEntity()</text>
+<text x="281" y="1415" font-size="11" fill="#1E293B">+ getEntityById()</text>
+<text x="281" y="1430" font-size="11" fill="#1E293B">+ loadEntities()</text>
+<text x="281" y="1445" font-size="11" fill="#1E293B">+ removeEntity()</text>
+<text x="281" y="1460" font-size="11" fill="#1E293B">+ updateEntity()</text>
+<rect x="488" y="1292" width="190" height="161" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="583.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="583.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-categories-store</text>
+<line x1="488" y1="1332" x2="678" y2="1332" stroke="#166534"/>
+<text x="495" y="1347" font-size="11" fill="#1E293B">- categories</text>
+<text x="495" y="1362" font-size="11" fill="#1E293B">- loading</text>
+<line x1="488" y1="1370" x2="678" y2="1370" stroke="#166534"/>
+<text x="495" y="1385" font-size="11" fill="#1E293B">+ addCategory()</text>
+<text x="495" y="1400" font-size="11" fill="#1E293B">+ createCategory()</text>
+<text x="495" y="1415" font-size="11" fill="#1E293B">+ loadCategories()</text>
+<text x="495" y="1430" font-size="11" fill="#1E293B">+ removeCategory()</text>
+<text x="495" y="1445" font-size="11" fill="#1E293B">+ updateCategory()</text>
+<rect x="702" y="1292" width="190" height="296" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="797.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="797.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-settlement-store</text>
+<line x1="702" y1="1332" x2="892" y2="1332" stroke="#166534"/>
+<text x="709" y="1347" font-size="11" fill="#1E293B">- active</text>
+<text x="709" y="1362" font-size="11" fill="#1E293B">- checkedExpenses</text>
+<text x="709" y="1377" font-size="11" fill="#1E293B">- loaded</text>
+<text x="709" y="1392" font-size="11" fill="#1E293B">- loading</text>
+<text x="709" y="1407" font-size="11" fill="#1E293B">- pendingIds</text>
+<text x="709" y="1422" font-size="11" fill="#1E293B">- session</text>
+<line x1="702" y1="1430" x2="892" y2="1430" stroke="#166534"/>
+<text x="709" y="1445" font-size="11" fill="#1E293B">+ applyMarked()</text>
+<text x="709" y="1460" font-size="11" fill="#1E293B">+ applyUnmarked()</text>
+<text x="709" y="1475" font-size="11" fill="#1E293B">+ discardSession()</text>
+<text x="709" y="1490" font-size="11" fill="#1E293B">+ finishSession()</text>
+<text x="709" y="1505" font-size="11" fill="#1E293B">+ isChecked()</text>
+<text x="709" y="1520" font-size="11" fill="#1E293B">+ isPending()</text>
+<text x="709" y="1535" font-size="11" fill="#1E293B">+ loadSession()</text>
+<text x="709" y="1550" font-size="11" fill="#1E293B">+ setExpensesChecked()</text>
+<text x="709" y="1565" font-size="11" fill="#1E293B">+ startSession()</text>
+<text x="709" y="1580" font-size="11" fill="#1E293B">+ toggleExpense()</text>
+<rect x="916" y="1292" width="190" height="131" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1011.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="1011.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-compartidos-store</text>
+<line x1="916" y1="1332" x2="1106" y2="1332" stroke="#166534"/>
+<text x="923" y="1347" font-size="11" fill="#1E293B">- pendingCount</text>
+<text x="923" y="1362" font-size="11" fill="#1E293B">- pendingPaymentsCount</text>
+<line x1="916" y1="1370" x2="1106" y2="1370" stroke="#166534"/>
+<text x="923" y="1385" font-size="11" fill="#1E293B">+ loadPendingCount()</text>
+<text x="923" y="1400" font-size="11" fill="#1E293B">+ setPendingCount()</text>
+<text x="923" y="1415" font-size="11" fill="#1E293B">+ setPendingPaymentsCount()</text>
+<rect x="1130" y="1292" width="190" height="206" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1225.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="1225.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-notificaciones-store</text>
+<line x1="1130" y1="1332" x2="1320" y2="1332" stroke="#166534"/>
+<text x="1137" y="1347" font-size="11" fill="#1E293B">- items</text>
+<text x="1137" y="1362" font-size="11" fill="#1E293B">- loading</text>
+<text x="1137" y="1377" font-size="11" fill="#1E293B">- loadingMore</text>
+<text x="1137" y="1392" font-size="11" fill="#1E293B">- nextBefore</text>
+<text x="1137" y="1407" font-size="11" fill="#1E293B">- unreadCount</text>
+<line x1="1130" y1="1415" x2="1320" y2="1415" stroke="#166534"/>
+<text x="1137" y="1430" font-size="11" fill="#1E293B">+ load()</text>
+<text x="1137" y="1445" font-size="11" fill="#1E293B">+ loadMore()</text>
+<text x="1137" y="1460" font-size="11" fill="#1E293B">+ markAllRead()</text>
+<text x="1137" y="1475" font-size="11" fill="#1E293B">+ markRead()</text>
+<text x="1137" y="1490" font-size="11" fill="#1E293B">+ reset()</text>
+<rect x="1344" y="1292" width="190" height="101" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1439.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="1439.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-screen-cache-store</text>
+<line x1="1344" y1="1332" x2="1534" y2="1332" stroke="#166534"/>
+<text x="1351" y="1347" font-size="11" fill="#1E293B">- entries</text>
+<line x1="1344" y1="1355" x2="1534" y2="1355" stroke="#166534"/>
+<text x="1351" y="1370" font-size="11" fill="#1E293B">+ reset()</text>
+<text x="1351" y="1385" font-size="11" fill="#1E293B">+ write()</text>
+<rect x="1558" y="1292" width="190" height="191" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1653.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="1653.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-ui-store</text>
+<line x1="1558" y1="1332" x2="1748" y2="1332" stroke="#166534"/>
+<text x="1565" y="1347" font-size="11" fill="#1E293B">- balancesHidden</text>
+<text x="1565" y="1362" font-size="11" fill="#1E293B">- entitiesViewMode</text>
+<text x="1565" y="1377" font-size="11" fill="#1E293B">- mobileSidebarOpen</text>
+<text x="1565" y="1392" font-size="11" fill="#1E293B">- sidebarCollapsed</text>
+<line x1="1558" y1="1400" x2="1748" y2="1400" stroke="#166534"/>
+<text x="1565" y="1415" font-size="11" fill="#1E293B">+ setEntitiesViewMode()</text>
+<text x="1565" y="1430" font-size="11" fill="#1E293B">+ setMobileSidebarOpen()</text>
+<text x="1565" y="1445" font-size="11" fill="#1E293B">+ setThemeMode()</text>
+<text x="1565" y="1460" font-size="11" fill="#1E293B">+ toggleBalances()</text>
+<text x="1565" y="1475" font-size="11" fill="#1E293B">+ toggleSidebar()</text>
+<rect x="1772" y="1292" width="190" height="116" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1867.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="1867.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-onboarding-store</text>
+<line x1="1772" y1="1332" x2="1962" y2="1332" stroke="#166534"/>
+<text x="1779" y="1347" font-size="11" fill="#1E293B">- open</text>
+<text x="1779" y="1362" font-size="11" fill="#1E293B">- userId</text>
+<line x1="1772" y1="1370" x2="1962" y2="1370" stroke="#166534"/>
+<text x="1779" y="1385" font-size="11" fill="#1E293B">+ closeOnboarding()</text>
+<text x="1779" y="1400" font-size="11" fill="#1E293B">+ openOnboarding()</text>
+<rect x="1986" y="1292" width="190" height="131" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2081.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="2081.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-dialog-store</text>
+<line x1="1986" y1="1332" x2="2176" y2="1332" stroke="#166534"/>
+<text x="1993" y="1347" font-size="11" fill="#1E293B">- current</text>
+<line x1="1986" y1="1355" x2="2176" y2="1355" stroke="#166534"/>
+<text x="1993" y="1370" font-size="11" fill="#1E293B">+ accept()</text>
+<text x="1993" y="1385" font-size="11" fill="#1E293B">+ alert()</text>
+<text x="1993" y="1400" font-size="11" fill="#1E293B">+ close()</text>
+<text x="1993" y="1415" font-size="11" fill="#1E293B">+ confirm()</text>
+<rect x="2200" y="1292" width="190" height="101" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2295.0" y="1306" font-size="10" text-anchor="middle" fill="#166534">«zustand store»</text>
+<text x="2295.0" y="1323" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">use-snackbar-store</text>
+<line x1="2200" y1="1332" x2="2390" y2="1332" stroke="#166534"/>
+<text x="2207" y="1347" font-size="11" fill="#1E293B">- current</text>
+<line x1="2200" y1="1355" x2="2390" y2="1355" stroke="#166534"/>
+<text x="2207" y="1370" font-size="11" fill="#1E293B">+ hide()</text>
+<text x="2207" y="1385" font-size="11" fill="#1E293B">+ show()</text>
+<rect x="60" y="1670" width="240" height="956" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="180.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
+<text x="180.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">services/api.js</text>
+<line x1="60" y1="1710" x2="300" y2="1710" stroke="#475569"/>
+<text x="67" y="1725" font-size="11" fill="#1E293B">instancia única de axios</text>
+<text x="67" y="1740" font-size="11" fill="#1E293B">interceptor de respuesta</text>
+<text x="67" y="1755" font-size="11" fill="#1E293B">56 funciones por endpoint</text>
+<line x1="60" y1="1763" x2="300" y2="1763" stroke="#475569"/>
+<text x="67" y="1778" font-size="11" fill="#1E293B">+ register()</text>
+<text x="67" y="1793" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="1808" font-size="11" fill="#1E293B">+ loginWithFirebase()</text>
+<text x="67" y="1823" font-size="11" fill="#1E293B">+ updatePreferredCurrency()</text>
+<text x="67" y="1838" font-size="11" fill="#1E293B">+ updateSueldo()</text>
+<text x="67" y="1853" font-size="11" fill="#1E293B">+ fetchPasswordStatus()</text>
+<text x="67" y="1868" font-size="11" fill="#1E293B">+ updatePassword()</text>
+<text x="67" y="1883" font-size="11" fill="#1E293B">+ fetchDashboardData()</text>
+<text x="67" y="1898" font-size="11" fill="#1E293B">+ fetchFinancialEntities()</text>
+<text x="67" y="1913" font-size="11" fill="#1E293B">+ fetchFinancialEntityById()</text>
+<text x="67" y="1928" font-size="11" fill="#1E293B">+ createEntity()</text>
+<text x="67" y="1943" font-size="11" fill="#1E293B">+ updateFinancialEntity()</text>
+<text x="67" y="1958" font-size="11" fill="#1E293B">+ updateEntityMercadoPagoAlias()</text>
+<text x="67" y="1973" font-size="11" fill="#1E293B">+ deleteFinancialEntity()</text>
+<text x="67" y="1988" font-size="11" fill="#1E293B">+ restoreEntity()</text>
+<text x="67" y="2003" font-size="11" fill="#1E293B">+ vincularUsuarioEntidad()</text>
+<text x="67" y="2018" font-size="11" fill="#1E293B">+ desvincularUsuarioEntidad()</text>
+<text x="67" y="2033" font-size="11" fill="#1E293B">+ createGasto()</text>
+<text x="67" y="2048" font-size="11" fill="#1E293B">+ fetchGastoById()</text>
+<text x="67" y="2063" font-size="11" fill="#1E293B">+ updateGasto()</text>
+<text x="67" y="2078" font-size="11" fill="#1E293B">+ deleteGasto()</text>
+<text x="67" y="2093" font-size="11" fill="#1E293B">+ restaurarGasto()</text>
+<text x="67" y="2108" font-size="11" fill="#1E293B">+ compartirGasto()</text>
+<text x="67" y="2123" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="67" y="2138" font-size="11" fill="#1E293B">+ postergarGasto()</text>
+<text x="67" y="2153" font-size="11" fill="#1E293B">+ favoritoGasto()</text>
+<text x="67" y="2168" font-size="11" fill="#1E293B">+ favoritoEntidad()</text>
+<text x="67" y="2183" font-size="11" fill="#1E293B">+ fetchCategories()</text>
+<text x="67" y="2198" font-size="11" fill="#1E293B">+ createCategory()</text>
+<text x="67" y="2213" font-size="11" fill="#1E293B">+ settleQuotasLote()</text>
+<text x="67" y="2228" font-size="11" fill="#1E293B">+ fetchSettlementSession()</text>
+<text x="67" y="2243" font-size="11" fill="#1E293B">+ startSettlementSession()</text>
+<text x="67" y="2258" font-size="11" fill="#1E293B">+ setSettlementItem()</text>
+<text x="67" y="2273" font-size="11" fill="#1E293B">+ finishSettlementSession()</text>
+<text x="67" y="2288" font-size="11" fill="#1E293B">+ discardSettlementSession()</text>
+<text x="67" y="2303" font-size="11" fill="#1E293B">+ fetchSettlementSnapshots()</text>
+<text x="67" y="2318" font-size="11" fill="#1E293B">+ fetchSettlementSnapshotById()</text>
+<text x="67" y="2333" font-size="11" fill="#1E293B">+ fetchCompartidos()</text>
+<text x="67" y="2348" font-size="11" fill="#1E293B">+ fetchNotificaciones()</text>
+<text x="67" y="2363" font-size="11" fill="#1E293B">+ marcarNotificacionLeida()</text>
+<text x="67" y="2378" font-size="11" fill="#1E293B">+ marcarNotificacionesLeidas()</text>
+<text x="67" y="2393" font-size="11" fill="#1E293B">+ aprobarCompartido()</text>
+<text x="67" y="2408" font-size="11" fill="#1E293B">+ rechazarCompartido()</text>
+<text x="67" y="2423" font-size="11" fill="#1E293B">+ reintentarCompartido()</text>
+<text x="67" y="2438" font-size="11" fill="#1E293B">+ descartarCompartido()</text>
+<text x="67" y="2453" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="67" y="2468" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="67" y="2483" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="67" y="2498" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="67" y="2513" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="67" y="2528" font-size="11" fill="#1E293B">+ solicitarEdicionCompartida()</text>
+<text x="67" y="2543" font-size="11" fill="#1E293B">+ aprobarEdicionCompartida()</text>
+<text x="67" y="2558" font-size="11" fill="#1E293B">+ rechazarEdicionCompartida()</text>
+<text x="67" y="2573" font-size="11" fill="#1E293B">+ cancelarEdicionCompartida()</text>
+<text x="67" y="2588" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="67" y="2603" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="67" y="2618" font-size="11" fill="#1E293B">- postEdicion()</text>
+<rect x="324" y="1670" width="220" height="101" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="434.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
+<text x="434.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">services/error-handler.js</text>
+<line x1="324" y1="1710" x2="544" y2="1710" stroke="#475569"/>
+<text x="331" y="1725" font-size="11" fill="#1E293B">usa utils/error-catalog</text>
+<line x1="324" y1="1733" x2="544" y2="1733" stroke="#475569"/>
+<text x="331" y="1748" font-size="11" fill="#1E293B">+ normalizeApiError()</text>
+<text x="331" y="1763" font-size="11" fill="#1E293B">+ notifyError()</text>
+<rect x="568" y="1670" width="220" height="78" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="678.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«singleton»</text>
+<text x="678.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">lib/pusher.js</text>
+<line x1="568" y1="1710" x2="788" y2="1710" stroke="#475569"/>
+<text x="575" y="1725" font-size="11" fill="#1E293B">pusherClient [0..1]</text>
+<text x="575" y="1740" font-size="11" fill="#1E293B">null sin variables de entorno</text>
+<rect x="812" y="1670" width="220" height="78" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="922.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«singleton»</text>
+<text x="922.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">firebase.js</text>
+<line x1="812" y1="1710" x2="1032" y2="1710" stroke="#475569"/>
+<text x="819" y="1725" font-size="11" fill="#1E293B">auth [0..1]</text>
+<text x="819" y="1740" font-size="11" fill="#1E293B">null sin variables de entorno</text>
+<rect x="1056" y="1670" width="220" height="63" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1166.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«component»</text>
+<text x="1166.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GlobalFeedback</text>
+<line x1="1056" y1="1710" x2="1276" y2="1710" stroke="#475569"/>
+<text x="1063" y="1725" font-size="11" fill="#1E293B">snackbar + diálogo únicos</text>
+<rect x="1300" y="1670" width="260" height="78" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1430.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«component»</text>
+<text x="1430.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">App / ProtectedRoute / AppLayout</text>
+<line x1="1300" y1="1710" x2="1560" y2="1710" stroke="#475569"/>
+<text x="1307" y="1725" font-size="11" fill="#1E293B">rutas lazy, guarda de sesión,</text>
+<text x="1307" y="1740" font-size="11" fill="#1E293B">carga inicial de stores</text>
+<rect x="1584" y="1670" width="200" height="176" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1684.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
+<text x="1684.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">i18n</text>
+<line x1="1584" y1="1710" x2="1784" y2="1710" stroke="#475569"/>
+<text x="1591" y="1725" font-size="11" fill="#1E293B">locales es / en</text>
+<line x1="1584" y1="1733" x2="1784" y2="1733" stroke="#475569"/>
+<text x="1591" y="1748" font-size="11" fill="#1E293B">+ getLanguagePreference()</text>
+<text x="1591" y="1763" font-size="11" fill="#1E293B">+ setLanguagePreference()</text>
+<text x="1591" y="1778" font-size="11" fill="#1E293B">+ t()</text>
+<text x="1591" y="1793" font-size="11" fill="#1E293B">+ getIntlLocale()</text>
+<text x="1591" y="1808" font-size="11" fill="#1E293B">- browserLanguages()</text>
+<text x="1591" y="1823" font-size="11" fill="#1E293B">- activeLanguage()</text>
+<text x="1591" y="1838" font-size="11" fill="#1E293B">- syncDocumentLanguage()</text>
+<rect x="1808" y="1670" width="406" height="446" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="2011.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
+<text x="2011.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">utils/</text>
+<line x1="1808" y1="1710" x2="2214" y2="1710" stroke="#475569"/>
+<text x="1815" y="1725" font-size="11" fill="#1E293B">funciones puras de negocio</text>
+<text x="1815" y="1740" font-size="11" fill="#1E293B">enums, formato, validaciones</text>
+<line x1="1808" y1="1748" x2="2214" y2="1748" stroke="#475569"/>
+<text x="1815" y="1763" font-size="11" fill="#1E293B">+ formatDate()  + formatDateShort()  + formatDateTime()</text>
+<text x="1815" y="1778" font-size="11" fill="#1E293B">+ formatAmount()  + formatMoney()  + parseAmountInput()</text>
+<text x="1815" y="1793" font-size="11" fill="#1E293B">+ formatAmountInput()  + countSignificantChars()  + caretAfterSignificantChars()</text>
+<text x="1815" y="1808" font-size="11" fill="#1E293B">+ buildSettlementEntityText()  + buildSettlementSnapshotText()  - shortDate()</text>
+<text x="1815" y="1823" font-size="11" fill="#1E293B">- itemLine()  - groupByCurrency()  - sum()</text>
+<text x="1815" y="1838" font-size="11" fill="#1E293B">+ buildWhatsAppText()  - purchaseText()  + currentMonthIndex()</text>
+<text x="1815" y="1853" font-size="11" fill="#1E293B">+ monthIndexFromDateString()  + keyFromMonthIndex()  + labelFromKey()</text>
+<text x="1815" y="1868" font-size="11" fill="#1E293B">+ labelFromMonthIndex()  + pendingQuotaMonths()  + hasChartData()</text>
+<text x="1815" y="1883" font-size="11" fill="#1E293B">+ fixedExpenseStartMonth()  - postponedShift()  + applyCompartidoAction()</text>
+<text x="1815" y="1898" font-size="11" fill="#1E293B">+ compartidosCounters()  - withoutId()  - updateList()</text>
+<text x="1815" y="1913" font-size="11" fill="#1E293B">+ countGastosPorResolver()  + countPagosByPurchase()  + convertCurrency()</text>
+<text x="1815" y="1928" font-size="11" fill="#1E293B">+ isInvertedRange()  + orderedRange()  + inDateRange()</text>
+<text x="1815" y="1943" font-size="11" fill="#1E293B">+ deleteExpenseNotice()  + isAwaitingApproval()  + paidQuotasStayPending()</text>
+<text x="1815" y="1958" font-size="11" fill="#1E293B">+ transferBlockReason()  + transferTargets()  + resolveLanguage()</text>
+<text x="1815" y="1973" font-size="11" fill="#1E293B">+ normalizeLanguagePreference()  + resolveActiveLanguage()  + toIntlLocale()</text>
+<text x="1815" y="1988" font-size="11" fill="#1E293B">+ isValidMercadoPagoAlias()  + movementStyle()  + buildNotification()</text>
+<text x="1815" y="2003" font-size="11" fill="#1E293B">+ notificationTarget()  + linkedEntityToUnlink()  + mergeFirstPage()</text>
+<text x="1815" y="2018" font-size="11" fill="#1E293B">- quoted()  + parseExchangeRates()  + pendingResponsesForGasto()</text>
+<text x="1815" y="2033" font-size="11" fill="#1E293B">+ pendingResponsesForEntity()  + countPendingResponses()  - sameId()</text>
+<text x="1815" y="2048" font-size="11" fill="#1E293B">- isPendingReceived()  + markSessionExpired()  + isSessionExpiredMarked()</text>
+<text x="1815" y="2063" font-size="11" fill="#1E293B">+ clearSessionExpired()  + canShareText()  + shareText()</text>
+<text x="1815" y="2078" font-size="11" fill="#1E293B">+ sharedEditChanges()  + describeSharedEdit()  - frequencyLabel()</text>
+<text x="1815" y="2093" font-size="11" fill="#1E293B">- typeLabel()  + systemPrefersDark()  + resolveIsDark()</text>
+<text x="1815" y="2108" font-size="11" fill="#1E293B">+ applyTheme()  + watchSystemTheme()  + validatePasswordChange()</text>
+<text x="60" y="2726" font-size="12" fill="#334155">Se listan todas las funciones de hooks, stores y módulos (en cada página, las de su hook de interfaz): + exportada o devuelta, - interna. Flecha punteada: dependencia por import, extraída del código. Cada color agrupa las dependencias de un mismo elemento.</text>
+<text x="60" y="2744" font-size="12" fill="#334155">«usa: {api, auth, dialog, snackbar, pusher}» resume las dependencias hacia services/api.js, los stores globales y Pusher, que no se dibujan para no saturar. «stores:» lista los que la página usa directamente.</text>
+</svg>

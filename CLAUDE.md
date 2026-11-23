@@ -12,7 +12,7 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 
 ## Documentation and guides
 
-- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case diagrams in `docs/diagramas/`. It lives in this repo but covers all three projects.
+- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case, entity-relationship and UML class diagrams (domain and design) in `docs/diagramas/`. It lives in this repo but covers all three projects.
 - `.claude/guides/` — development guides of this repo: `arquitectura-web.md` (this project's architecture) and `documentacion.md` (what to update after a change, for all three projects).
 - Each project keeps its own architecture guide in its own repo: `.claude/guides/arquitectura-flutter.md` in the Flutter repo and `.claude/guides/arquitectura-api.md` in the API repo. Read the guide for the project you are about to change before writing code.
 

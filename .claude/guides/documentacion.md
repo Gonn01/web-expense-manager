@@ -33,6 +33,8 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | cambia un comando, una variable de entorno, un requisito de instalación o una librería principal | el `README.md` de ese repo |
 | introduce un patrón nuevo o deja uno en desuso | la guía de arquitectura de ese proyecto, incluido su checklist |
 | agrega un término de dominio | el glosario de `docs/README.md` |
+| cambia un concepto del negocio, un atributo, una relación o un enum del dominio | `docs/diagramas/clases_dominio.svg` (y `der.svg` si cambia el esquema) |
+| agrega, quita o renombra una clase, un service, un repository, un Cubit, un store o un hook, o cambia sus dependencias | el diagrama de diseño del proyecto: `docs/diagramas/clases_diseno_<api\|web\|flutter>.svg` |
 | implementa algo de "Pendiente / fuera de alcance", o decide sacar algo del alcance | moverlo de esa lista a un `RF` real (o al revés), revisar la sección "Alcance" de `docs/descripcion-general.md`, y marcarlo en el checklist correspondiente de la raíz de la web |
 
 No requieren actualizar nada: cambios puramente visuales (layout, espaciado, colores, elección de componentes), refactors internos que no alteran capas ni convenciones, y correcciones de bugs que hacen que el código cumpla lo que la documentación ya decía.

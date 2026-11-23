@@ -19,6 +19,10 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-49` |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 | [diagramas/der.svg](diagramas/der.svg) | Diagrama entidad-relación de la base de datos: tablas, columnas, claves foráneas y relaciones lógicas sin FK ([PNG](diagramas/der.png)) |
+| [diagramas/clases_dominio.svg](diagramas/clases_dominio.svg) | Diagrama de clases de dominio: conceptos del negocio, atributos, multiplicidades y enumeraciones ([PNG](diagramas/clases_dominio.png)) |
+| [diagramas/clases_diseno_api.svg](diagramas/clases_diseno_api.svg) | Diagrama de clases de diseño de la API: controllers, services, repositories e infraestructura ([PNG](diagramas/clases_diseno_api.png)) |
+| [diagramas/clases_diseno_web.svg](diagramas/clases_diseno_web.svg) | Diagrama de clases de diseño de la web: páginas, hooks, stores y módulos ([PNG](diagramas/clases_diseno_web.png)) |
+| [diagramas/clases_diseno_flutter.svg](diagramas/clases_diseno_flutter.svg) | Diagrama de clases de diseño de la app: Cubits, repositories, providers y core ([PNG](diagramas/clases_diseno_flutter.png)) |
 
 Las guías de arquitectura para desarrollar (cómo se construye una feature en cada proyecto) no están acá: cada proyecto tiene la suya en `.claude/guides/` de su propio repo. La de la web y el índice de las tres están en [../.claude/guides/](../.claude/guides/).
 

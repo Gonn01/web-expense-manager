@@ -1,0 +1,919 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3844" height="2850" viewBox="0 0 3844 2850" font-family="Helvetica, Arial, sans-serif">
+<rect width="3844" height="2850" fill="white"/>
+<text x="1922.0" y="34" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F4E79">Diagrama de clases de diseño — App (Flutter)</text>
+<text x="1922.0" y="56" font-size="13" text-anchor="middle" fill="#475569">Capas reales del monorepo. Cada Cubit depende solo de interfaces de repositorio.</text>
+<polyline points="165.0,316.0 165.0,941.0" fill="none" stroke="#1D4ED8" stroke-width="1.3"/>
+
+<polyline points="170.0,931.0 165.0,941.0 160.0,931.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="399.0,271.0 399.0,617.0 364.0,617.0 364.0,941.0" fill="none" stroke="#B45309" stroke-width="1.3"/>
+
+<polyline points="369.0,931.0 364.0,941.0 359.0,931.0" fill="none" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="633.0,226.0 633.0,635.0 434.0,635.0 434.0,941.0" fill="none" stroke="#047857" stroke-width="1.3"/>
+
+<polyline points="439.0,931.0 434.0,941.0 429.0,931.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="814.5,571.0 814.5,653.0 633.0,653.0 633.0,941.0" fill="none" stroke="#BE123C" stroke-width="1.3"/>
+
+<polyline points="638.0,931.0 633.0,941.0 628.0,931.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="867.0,571.0 867.0,653.0 814.5,653.0 814.5,941.0" fill="none" stroke="#BE123C" stroke-width="1.3"/>
+
+<polyline points="819.5,931.0 814.5,941.0 809.5,931.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="919.5,571.0 919.5,653.0 1038.0,653.0 1038.0,941.0" fill="none" stroke="#BE123C" stroke-width="1.3"/>
+
+<polyline points="1043.0,931.0 1038.0,941.0 1033.0,931.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="1101.0,346.0 1101.0,671.0 867.0,671.0 867.0,941.0" fill="none" stroke="#6D28D9" stroke-width="1.3"/>
+
+<polyline points="872.0,931.0 867.0,941.0 862.0,931.0" fill="none" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="1300.0,406.0 1300.0,689.0 919.5,689.0 919.5,941.0" fill="none" stroke="#0E7490" stroke-width="1.3"/>
+
+<polyline points="924.5,931.0 919.5,941.0 914.5,931.0" fill="none" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="1370.0,406.0 1370.0,689.0 1080.0,689.0 1080.0,941.0" fill="none" stroke="#0E7490" stroke-width="1.3"/>
+
+<polyline points="1085.0,931.0 1080.0,941.0 1075.0,931.0" fill="none" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="1604.0,391.0 1604.0,707.0 1300.0,707.0 1300.0,941.0" fill="none" stroke="#4D7C0F" stroke-width="1.3"/>
+
+<polyline points="1305.0,931.0 1300.0,941.0 1295.0,931.0" fill="none" stroke="#4D7C0F" stroke-width="1.4"/>
+<polyline points="1534.0,391.0 1534.0,707.0 1122.0,707.0 1122.0,941.0" fill="none" stroke="#4D7C0F" stroke-width="1.3"/>
+
+<polyline points="1127.0,931.0 1122.0,941.0 1117.0,931.0" fill="none" stroke="#4D7C0F" stroke-width="1.4"/>
+<polyline points="1838.0,526.0 1838.0,725.0 1370.0,725.0 1370.0,941.0" fill="none" stroke="#C2410C" stroke-width="1.3"/>
+
+<polyline points="1375.0,931.0 1370.0,941.0 1365.0,931.0" fill="none" stroke="#C2410C" stroke-width="1.4"/>
+<polyline points="1768.0,526.0 1768.0,725.0 1164.0,725.0 1164.0,941.0" fill="none" stroke="#C2410C" stroke-width="1.3"/>
+
+<polyline points="1169.0,931.0 1164.0,941.0 1159.0,931.0" fill="none" stroke="#C2410C" stroke-width="1.4"/>
+<polyline points="2037.0,331.0 2037.0,743.0 1534.0,743.0 1534.0,941.0" fill="none" stroke="#475569" stroke-width="1.3"/>
+
+<polyline points="1539.0,931.0 1534.0,941.0 1529.0,931.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="2271.0,271.0 2271.0,761.0 1604.0,761.0 1604.0,941.0" fill="none" stroke="#A21CAF" stroke-width="1.3"/>
+
+<polyline points="1609.0,931.0 1604.0,941.0 1599.0,931.0" fill="none" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="2505.0,271.0 2505.0,779.0 1803.0,779.0 1803.0,941.0" fill="none" stroke="#0369A1" stroke-width="1.3"/>
+
+<polyline points="1808.0,931.0 1803.0,941.0 1798.0,931.0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="2739.0,226.0 2739.0,797.0 2037.0,797.0 2037.0,941.0" fill="none" stroke="#854D0E" stroke-width="1.3"/>
+
+<polyline points="2042.0,931.0 2037.0,941.0 2032.0,931.0" fill="none" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="2973.0,196.0 2973.0,815.0 2271.0,815.0 2271.0,941.0" fill="none" stroke="#1D4ED8" stroke-width="1.3"/>
+
+<polyline points="2276.0,931.0 2271.0,941.0 2266.0,931.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="3207.0,211.0 3207.0,833.0 2452.5,833.0 2452.5,941.0" fill="none" stroke="#B45309" stroke-width="1.3"/>
+
+<polyline points="2457.5,931.0 2452.5,941.0 2447.5,931.0" fill="none" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="3441.0,226.0 3441.0,851.0 2505.0,851.0 2505.0,941.0" fill="none" stroke="#047857" stroke-width="1.3"/>
+
+<polyline points="2510.0,931.0 2505.0,941.0 2500.0,931.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="3675.0,211.0 3675.0,869.0 2557.5,869.0 2557.5,941.0" fill="none" stroke="#BE123C" stroke-width="1.3"/>
+
+<polyline points="2562.5,931.0 2557.5,941.0 2552.5,931.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="165.0,1535.0 165.0,1072.0" fill="none" stroke="#6D28D9" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="165.0,1072.0 157.0,1086.0 173.0,1086.0" fill="white" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="130.0,1681.0 130.0,1859.0 165.0,1859.0 165.0,2129.0" fill="none" stroke="#6D28D9" stroke-width="1.3"/>
+
+<polyline points="170.0,2119.0 165.0,2129.0 160.0,2119.0" fill="none" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="200.0,1681.0 200.0,1859.0 2973.0,1859.0 2973.0,2129.0" fill="none" stroke="#6D28D9" stroke-width="1.3"/>
+
+<polyline points="2978.0,2119.0 2973.0,2129.0 2968.0,2119.0" fill="none" stroke="#6D28D9" stroke-width="1.4"/>
+<polyline points="399.0,1535.0 399.0,1087.0" fill="none" stroke="#0E7490" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="399.0,1087.0 391.0,1101.0 407.0,1101.0" fill="white" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="399.0,1681.0 399.0,2129.0" fill="none" stroke="#0E7490" stroke-width="1.3"/>
+
+<polyline points="404.0,2119.0 399.0,2129.0 394.0,2119.0" fill="none" stroke="#0E7490" stroke-width="1.4"/>
+<polyline points="633.0,1535.0 633.0,1027.0" fill="none" stroke="#4D7C0F" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="633.0,1027.0 625.0,1041.0 641.0,1041.0" fill="white" stroke="#4D7C0F" stroke-width="1.4"/>
+<polyline points="633.0,1621.0 633.0,2129.0" fill="none" stroke="#4D7C0F" stroke-width="1.3"/>
+
+<polyline points="638.0,2119.0 633.0,2129.0 628.0,2119.0" fill="none" stroke="#4D7C0F" stroke-width="1.4"/>
+<polyline points="867.0,1535.0 867.0,1162.0" fill="none" stroke="#C2410C" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="867.0,1162.0 859.0,1176.0 875.0,1176.0" fill="white" stroke="#C2410C" stroke-width="1.4"/>
+<polyline points="867.0,1756.0 867.0,2129.0" fill="none" stroke="#C2410C" stroke-width="1.3"/>
+
+<polyline points="872.0,2119.0 867.0,2129.0 862.0,2119.0" fill="none" stroke="#C2410C" stroke-width="1.4"/>
+<polyline points="1101.0,1535.0 1101.0,1207.0" fill="none" stroke="#475569" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="1101.0,1207.0 1093.0,1221.0 1109.0,1221.0" fill="white" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1101.0,1801.0 1101.0,2129.0" fill="none" stroke="#475569" stroke-width="1.3"/>
+
+<polyline points="1106.0,2119.0 1101.0,2129.0 1096.0,2119.0" fill="none" stroke="#475569" stroke-width="1.4"/>
+<polyline points="1335.0,1535.0 1335.0,1237.0" fill="none" stroke="#A21CAF" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="1335.0,1237.0 1327.0,1251.0 1343.0,1251.0" fill="white" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="1335.0,1831.0 1335.0,2129.0" fill="none" stroke="#A21CAF" stroke-width="1.3"/>
+
+<polyline points="1340.0,2119.0 1335.0,2129.0 1330.0,2119.0" fill="none" stroke="#A21CAF" stroke-width="1.4"/>
+<polyline points="1569.0,1535.0 1569.0,1132.0" fill="none" stroke="#0369A1" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="1569.0,1132.0 1561.0,1146.0 1577.0,1146.0" fill="white" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="1569.0,1726.0 1569.0,2129.0" fill="none" stroke="#0369A1" stroke-width="1.3"/>
+
+<polyline points="1574.0,2119.0 1569.0,2129.0 1564.0,2119.0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+<polyline points="1803.0,1535.0 1803.0,1057.0" fill="none" stroke="#854D0E" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="1803.0,1057.0 1795.0,1071.0 1811.0,1071.0" fill="white" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="1803.0,1651.0 1803.0,2129.0" fill="none" stroke="#854D0E" stroke-width="1.3"/>
+
+<polyline points="1808.0,2119.0 1803.0,2129.0 1798.0,2119.0" fill="none" stroke="#854D0E" stroke-width="1.4"/>
+<polyline points="2037.0,1535.0 2037.0,1042.0" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="2037.0,1042.0 2029.0,1056.0 2045.0,1056.0" fill="white" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="2037.0,1636.0 2037.0,2129.0" fill="none" stroke="#1D4ED8" stroke-width="1.3"/>
+
+<polyline points="2042.0,2119.0 2037.0,2129.0 2032.0,2119.0" fill="none" stroke="#1D4ED8" stroke-width="1.4"/>
+<polyline points="2271.0,1535.0 2271.0,1027.0" fill="none" stroke="#B45309" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="2271.0,1027.0 2263.0,1041.0 2279.0,1041.0" fill="white" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="2271.0,1621.0 2271.0,2129.0" fill="none" stroke="#B45309" stroke-width="1.3"/>
+
+<polyline points="2276.0,2119.0 2271.0,2129.0 2266.0,2119.0" fill="none" stroke="#B45309" stroke-width="1.4"/>
+<polyline points="2505.0,1535.0 2505.0,1102.0" fill="none" stroke="#047857" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="2505.0,1102.0 2497.0,1116.0 2513.0,1116.0" fill="white" stroke="#047857" stroke-width="1.4"/>
+<polyline points="2505.0,1696.0 2505.0,2129.0" fill="none" stroke="#047857" stroke-width="1.3"/>
+
+<polyline points="2510.0,2119.0 2505.0,2129.0 2500.0,2119.0" fill="none" stroke="#047857" stroke-width="1.4"/>
+<polyline points="2739.0,1535.0 2739.0,1057.0" fill="none" stroke="#BE123C" stroke-width="1.3" stroke-dasharray="6 4"/>
+
+<polygon points="2739.0,1057.0 2731.0,1071.0 2747.0,1071.0" fill="white" stroke="#BE123C" stroke-width="1.4"/>
+<polyline points="2739.0,1651.0 2739.0,2129.0" fill="none" stroke="#BE123C" stroke-width="1.3"/>
+
+<polyline points="2744.0,2119.0 2739.0,2129.0 2734.0,2119.0" fill="none" stroke="#BE123C" stroke-width="1.4"/>
+<text x="14.0" y="100.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Services (Cubits, paquete em_services)</text>
+<text x="14.0" y="931.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Repositories: interfaces (em_repositories)</text>
+<text x="14.0" y="1525.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Repositories: implementaciones</text>
+<text x="14.0" y="2119.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Providers (em_http_providers, em_firebase_providers, em_core)</text>
+<text x="14.0" y="2512.0" font-size="13" font-weight="bold" text-anchor="start" fill="#1F4E79" stroke="white" stroke-width="3" paint-order="stroke">Core y aplicación</text>
+<rect x="60" y="110" width="210" height="206" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="165.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="165.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthCubit</text>
+<line x1="60" y1="150" x2="270" y2="150" stroke="#166534"/>
+<text x="67" y="165" font-size="11" fill="#1E293B">- AuthRepository</text>
+<text x="67" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="60" y1="188" x2="270" y2="188" stroke="#166534"/>
+<text x="67" y="203" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="218" font-size="11" fill="#1E293B">+ register()</text>
+<text x="67" y="233" font-size="11" fill="#1E293B">+ loginWithGoogle()</text>
+<text x="67" y="248" font-size="11" fill="#1E293B">+ confirmGoogleLink()</text>
+<text x="67" y="263" font-size="11" fill="#1E293B">+ linkGoogleDiscardingPassword()</text>
+<text x="67" y="278" font-size="11" fill="#1E293B">+ cancelGoogleLink()</text>
+<text x="67" y="293" font-size="11" fill="#1E293B">+ clearError()</text>
+<text x="67" y="308" font-size="11" fill="#1E293B">- _run()</text>
+<rect x="294" y="110" width="210" height="161" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="399.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="399.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ConfiguracionCubit</text>
+<line x1="294" y1="150" x2="504" y2="150" stroke="#166534"/>
+<text x="301" y="165" font-size="11" fill="#1E293B">- UserRepository</text>
+<text x="301" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="294" y1="188" x2="504" y2="188" stroke="#166534"/>
+<text x="301" y="203" font-size="11" fill="#1E293B">+ guardarMoneda()</text>
+<text x="301" y="218" font-size="11" fill="#1E293B">+ guardarSueldo()</text>
+<text x="301" y="233" font-size="11" fill="#1E293B">+ loadPasswordStatus()</text>
+<text x="301" y="248" font-size="11" fill="#1E293B">+ guardarPassword()</text>
+<text x="301" y="263" font-size="11" fill="#1E293B">+ clearMessage()</text>
+<rect x="528" y="110" width="210" height="116" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="633.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="633.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">PushCubit</text>
+<line x1="528" y1="150" x2="738" y2="150" stroke="#166534"/>
+<text x="535" y="165" font-size="11" fill="#1E293B">- UserRepository</text>
+<text x="535" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="528" y1="188" x2="738" y2="188" stroke="#166534"/>
+<text x="535" y="203" font-size="11" fill="#1E293B">+ syncLanguage()</text>
+<text x="535" y="218" font-size="11" fill="#1E293B">+ reset()</text>
+<rect x="762" y="110" width="210" height="461" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="867.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="867.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DashboardCubit</text>
+<line x1="762" y1="150" x2="972" y2="150" stroke="#166534"/>
+<text x="769" y="165" font-size="11" fill="#1E293B">- DashboardRepository</text>
+<text x="769" y="180" font-size="11" fill="#1E293B">- EntidadesRepository</text>
+<text x="769" y="195" font-size="11" fill="#1E293B">- GastosRepository</text>
+<text x="769" y="210" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="762" y1="218" x2="972" y2="218" stroke="#166534"/>
+<text x="769" y="233" font-size="11" fill="#1E293B">+ scheduleRealtimeRefresh()</text>
+<text x="769" y="248" font-size="11" fill="#1E293B">+ close()</text>
+<text x="769" y="263" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="769" y="278" font-size="11" fill="#1E293B">+ refreshSilently()</text>
+<text x="769" y="293" font-size="11" fill="#1E293B">+ fetchDashboard()</text>
+<text x="769" y="308" font-size="11" fill="#1E293B">+ crearGasto()</text>
+<text x="769" y="323" font-size="11" fill="#1E293B">+ postergarGasto()</text>
+<text x="769" y="338" font-size="11" fill="#1E293B">+ favoritoGasto()</text>
+<text x="769" y="353" font-size="11" fill="#1E293B">+ favoritoEntidad()</text>
+<text x="769" y="368" font-size="11" fill="#1E293B">+ settleQuotas()</text>
+<text x="769" y="383" font-size="11" fill="#1E293B">+ setCurrencyFilter()</text>
+<text x="769" y="398" font-size="11" fill="#1E293B">+ setTypeFilter()</text>
+<text x="769" y="413" font-size="11" fill="#1E293B">+ setFixedFilter()</text>
+<text x="769" y="428" font-size="11" fill="#1E293B">+ setQuery()</text>
+<text x="769" y="443" font-size="11" fill="#1E293B">- _byFavThenDate()</text>
+<text x="769" y="458" font-size="11" fill="#1E293B">- _sortItems()</text>
+<text x="769" y="473" font-size="11" fill="#1E293B">- _sortGroups()</text>
+<text x="769" y="488" font-size="11" fill="#1E293B">- _buildGroups()</text>
+<text x="769" y="503" font-size="11" fill="#1E293B">- _addCreated()</text>
+<text x="769" y="518" font-size="11" fill="#1E293B">- _mapGasto()</text>
+<text x="769" y="533" font-size="11" fill="#1E293B">- _mapEntity()</text>
+<text x="769" y="548" font-size="11" fill="#1E293B">- _applySettlements()</text>
+<text x="769" y="563" font-size="11" fill="#1E293B">- _applySettlementsToItems()</text>
+<rect x="996" y="110" width="210" height="236" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1101.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="1101.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadesCubit</text>
+<line x1="996" y1="150" x2="1206" y2="150" stroke="#166534"/>
+<text x="1003" y="165" font-size="11" fill="#1E293B">- EntidadesRepository</text>
+<text x="1003" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="996" y1="188" x2="1206" y2="188" stroke="#166534"/>
+<text x="1003" y="203" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="1003" y="218" font-size="11" fill="#1E293B">+ fetch()</text>
+<text x="1003" y="233" font-size="11" fill="#1E293B">+ crear()</text>
+<text x="1003" y="248" font-size="11" fill="#1E293B">+ agregar()</text>
+<text x="1003" y="263" font-size="11" fill="#1E293B">+ sincronizarDetalle()</text>
+<text x="1003" y="278" font-size="11" fill="#1E293B">+ eliminar()</text>
+<text x="1003" y="293" font-size="11" fill="#1E293B">+ desvincular()</text>
+<text x="1003" y="308" font-size="11" fill="#1E293B">+ restaurar()</text>
+<text x="1003" y="323" font-size="11" fill="#1E293B">+ toggleFavorito()</text>
+<text x="1003" y="338" font-size="11" fill="#1E293B">+ setQuery()</text>
+<rect x="1230" y="110" width="210" height="296" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1335.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="1335.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadDetalleCubit</text>
+<line x1="1230" y1="150" x2="1440" y2="150" stroke="#166534"/>
+<text x="1237" y="165" font-size="11" fill="#1E293B">- EntidadesRepository</text>
+<text x="1237" y="180" font-size="11" fill="#1E293B">- GastosRepository</text>
+<text x="1237" y="195" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="1230" y1="203" x2="1440" y2="203" stroke="#166534"/>
+<text x="1237" y="218" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="1237" y="233" font-size="11" fill="#1E293B">+ fetch()</text>
+<text x="1237" y="248" font-size="11" fill="#1E293B">+ refreshSilently()</text>
+<text x="1237" y="263" font-size="11" fill="#1E293B">+ crearGasto()</text>
+<text x="1237" y="278" font-size="11" fill="#1E293B">+ actualizarNombre()</text>
+<text x="1237" y="293" font-size="11" fill="#1E293B">+ actualizarAliasMercadoPago()</text>
+<text x="1237" y="308" font-size="11" fill="#1E293B">+ vincular()</text>
+<text x="1237" y="323" font-size="11" fill="#1E293B">+ desvincular()</text>
+<text x="1237" y="338" font-size="11" fill="#1E293B">+ eliminar()</text>
+<text x="1237" y="353" font-size="11" fill="#1E293B">+ settleQuotaDirecta()</text>
+<text x="1237" y="368" font-size="11" fill="#1E293B">+ restaurarGasto()</text>
+<text x="1237" y="383" font-size="11" fill="#1E293B">+ setTab()</text>
+<text x="1237" y="398" font-size="11" fill="#1E293B">- _applySettlement()</text>
+<rect x="1464" y="110" width="210" height="281" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1569.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="1569.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GastoDetalleCubit</text>
+<line x1="1464" y1="150" x2="1674" y2="150" stroke="#166534"/>
+<text x="1471" y="165" font-size="11" fill="#1E293B">- CompartidosRepository</text>
+<text x="1471" y="180" font-size="11" fill="#1E293B">- GastosRepository</text>
+<text x="1471" y="195" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="1464" y1="203" x2="1674" y2="203" stroke="#166534"/>
+<text x="1471" y="218" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="1471" y="233" font-size="11" fill="#1E293B">+ fetch()</text>
+<text x="1471" y="248" font-size="11" fill="#1E293B">+ refreshSilently()</text>
+<text x="1471" y="263" font-size="11" fill="#1E293B">+ actualizar()</text>
+<text x="1471" y="278" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<text x="1471" y="293" font-size="11" fill="#1E293B">+ transferir()</text>
+<text x="1471" y="308" font-size="11" fill="#1E293B">+ compartir()</text>
+<text x="1471" y="323" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="1471" y="338" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="1471" y="353" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="1471" y="368" font-size="11" fill="#1E293B">+ eliminar()</text>
+<text x="1471" y="383" font-size="11" fill="#1E293B">- _reload()</text>
+<rect x="1698" y="110" width="210" height="416" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="1803.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="1803.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CompartidosCubit</text>
+<line x1="1698" y1="150" x2="1908" y2="150" stroke="#166534"/>
+<text x="1705" y="165" font-size="11" fill="#1E293B">- CompartidosRepository</text>
+<text x="1705" y="180" font-size="11" fill="#1E293B">- GastosRepository</text>
+<text x="1705" y="195" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="1698" y1="203" x2="1908" y2="203" stroke="#166534"/>
+<text x="1705" y="218" font-size="11" fill="#1E293B">+ close()</text>
+<text x="1705" y="233" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="1705" y="248" font-size="11" fill="#1E293B">+ fetch()</text>
+<text x="1705" y="263" font-size="11" fill="#1E293B">+ refreshSilently()</text>
+<text x="1705" y="278" font-size="11" fill="#1E293B">+ crearGasto()</text>
+<text x="1705" y="293" font-size="11" fill="#1E293B">+ aprobar()</text>
+<text x="1705" y="308" font-size="11" fill="#1E293B">+ rechazar()</text>
+<text x="1705" y="323" font-size="11" fill="#1E293B">+ reintentar()</text>
+<text x="1705" y="338" font-size="11" fill="#1E293B">+ descartar()</text>
+<text x="1705" y="353" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="1705" y="368" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="1705" y="383" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="1705" y="398" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="1705" y="413" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="1705" y="428" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="1705" y="443" font-size="11" fill="#1E293B">+ aprobarEdicion()</text>
+<text x="1705" y="458" font-size="11" fill="#1E293B">+ rechazarEdicion()</text>
+<text x="1705" y="473" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<text x="1705" y="488" font-size="11" fill="#1E293B">- _notifyChange()</text>
+<text x="1705" y="503" font-size="11" fill="#1E293B">- _action()</text>
+<text x="1705" y="518" font-size="11" fill="#1E293B">- _withoutAction()</text>
+<rect x="1932" y="110" width="210" height="221" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2037.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="2037.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementCubit</text>
+<line x1="1932" y1="150" x2="2142" y2="150" stroke="#166534"/>
+<text x="1939" y="165" font-size="11" fill="#1E293B">- SettlementRepository</text>
+<text x="1939" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="1932" y1="188" x2="2142" y2="188" stroke="#166534"/>
+<text x="1939" y="203" font-size="11" fill="#1E293B">+ loadSession()</text>
+<text x="1939" y="218" font-size="11" fill="#1E293B">+ startSession()</text>
+<text x="1939" y="233" font-size="11" fill="#1E293B">+ finishSession()</text>
+<text x="1939" y="248" font-size="11" fill="#1E293B">+ discardSession()</text>
+<text x="1939" y="263" font-size="11" fill="#1E293B">+ toggleExpense()</text>
+<text x="1939" y="278" font-size="11" fill="#1E293B">+ setExpensesChecked()</text>
+<text x="1939" y="293" font-size="11" fill="#1E293B">+ applyMarked()</text>
+<text x="1939" y="308" font-size="11" fill="#1E293B">+ refreshAfterPayment()</text>
+<text x="1939" y="323" font-size="11" fill="#1E293B">- _fromData()</text>
+<rect x="2166" y="110" width="210" height="161" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2271.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="2271.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementHistoryCubit</text>
+<line x1="2166" y1="150" x2="2376" y2="150" stroke="#166534"/>
+<text x="2173" y="165" font-size="11" fill="#1E293B">- SettlementRepository</text>
+<text x="2173" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="2166" y1="188" x2="2376" y2="188" stroke="#166534"/>
+<text x="2173" y="203" font-size="11" fill="#1E293B">+ retry()</text>
+<text x="2173" y="218" font-size="11" fill="#1E293B">+ fetchList()</text>
+<text x="2173" y="233" font-size="11" fill="#1E293B">+ refreshListSilently()</text>
+<text x="2173" y="248" font-size="11" fill="#1E293B">+ refreshDetailSilently()</text>
+<text x="2173" y="263" font-size="11" fill="#1E293B">+ fetchDetail()</text>
+<rect x="2400" y="110" width="210" height="161" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2505.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="2505.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">NotificacionesCubit</text>
+<line x1="2400" y1="150" x2="2610" y2="150" stroke="#166534"/>
+<text x="2407" y="165" font-size="11" fill="#1E293B">- NotificacionesRepository</text>
+<text x="2407" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="2400" y1="188" x2="2610" y2="188" stroke="#166534"/>
+<text x="2407" y="203" font-size="11" fill="#1E293B">+ reset()</text>
+<text x="2407" y="218" font-size="11" fill="#1E293B">+ fetch()</text>
+<text x="2407" y="233" font-size="11" fill="#1E293B">+ loadMore()</text>
+<text x="2407" y="248" font-size="11" fill="#1E293B">+ markRead()</text>
+<text x="2407" y="263" font-size="11" fill="#1E293B">+ markAllRead()</text>
+<rect x="2634" y="110" width="210" height="116" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2739.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="2739.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CategoriasCubit</text>
+<line x1="2634" y1="150" x2="2844" y2="150" stroke="#166534"/>
+<text x="2641" y="165" font-size="11" fill="#1E293B">- CategoriasRepository</text>
+<text x="2641" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="2634" y1="188" x2="2844" y2="188" stroke="#166534"/>
+<text x="2641" y="203" font-size="11" fill="#1E293B">+ load()</text>
+<text x="2641" y="218" font-size="11" fill="#1E293B">+ create()</text>
+<rect x="2868" y="110" width="210" height="86" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="2973.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="2973.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ExchangeRatesCubit</text>
+<line x1="2868" y1="150" x2="3078" y2="150" stroke="#166534"/>
+<text x="2875" y="165" font-size="11" fill="#1E293B">- ExchangeRatesRepository</text>
+<line x1="2868" y1="173" x2="3078" y2="173" stroke="#166534"/>
+<text x="2875" y="188" font-size="11" fill="#1E293B">+ load()</text>
+<rect x="3102" y="110" width="210" height="101" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="3207.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="3207.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">LanguageCubit</text>
+<line x1="3102" y1="150" x2="3312" y2="150" stroke="#166534"/>
+<text x="3109" y="165" font-size="11" fill="#1E293B">- PreferencesRepository</text>
+<text x="3109" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="3102" y1="188" x2="3312" y2="188" stroke="#166534"/>
+<text x="3109" y="203" font-size="11" fill="#1E293B">+ change()</text>
+<rect x="3336" y="110" width="210" height="116" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="3441.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="3441.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">OnboardingCubit</text>
+<line x1="3336" y1="150" x2="3546" y2="150" stroke="#166534"/>
+<text x="3343" y="165" font-size="11" fill="#1E293B">- PreferencesRepository</text>
+<text x="3343" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="3336" y1="188" x2="3546" y2="188" stroke="#166534"/>
+<text x="3343" y="203" font-size="11" fill="#1E293B">+ check()</text>
+<text x="3343" y="218" font-size="11" fill="#1E293B">+ complete()</text>
+<rect x="3570" y="110" width="210" height="101" fill="#DCFCE7" stroke="#166534" stroke-width="1.5"/>
+<text x="3675.0" y="124" font-size="10" text-anchor="middle" fill="#166534">«cubit»</text>
+<text x="3675.0" y="141" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ThemeCubit</text>
+<line x1="3570" y1="150" x2="3780" y2="150" stroke="#166534"/>
+<text x="3577" y="165" font-size="11" fill="#1E293B">- PreferencesRepository</text>
+<text x="3577" y="180" font-size="11" fill="#1E293B">«mixin» analytics</text>
+<line x1="3570" y1="188" x2="3780" y2="188" stroke="#166534"/>
+<text x="3577" y="203" font-size="11" fill="#1E293B">+ change()</text>
+<rect x="60" y="941" width="210" height="131" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="165.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="165.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthRepository</text>
+<line x1="60" y1="981" x2="270" y2="981" stroke="#92400E"/>
+<text x="67" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="60" y1="1004" x2="270" y2="1004" stroke="#92400E"/>
+<text x="67" y="1019" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="1034" font-size="11" fill="#1E293B">+ register()</text>
+<text x="67" y="1049" font-size="11" fill="#1E293B">+ requestGoogleIdToken()</text>
+<text x="67" y="1064" font-size="11" fill="#1E293B">+ loginWithGoogle()</text>
+<rect x="294" y="941" width="210" height="146" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="399.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="399.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">UserRepository</text>
+<line x1="294" y1="981" x2="504" y2="981" stroke="#92400E"/>
+<text x="301" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="294" y1="1004" x2="504" y2="1004" stroke="#92400E"/>
+<text x="301" y="1019" font-size="11" fill="#1E293B">+ updatePreferredCurrency()</text>
+<text x="301" y="1034" font-size="11" fill="#1E293B">+ updateSueldo()</text>
+<text x="301" y="1049" font-size="11" fill="#1E293B">+ fetchHasPassword()</text>
+<text x="301" y="1064" font-size="11" fill="#1E293B">+ updatePassword()</text>
+<text x="301" y="1079" font-size="11" fill="#1E293B">+ updatePushLanguage()</text>
+<rect x="528" y="941" width="210" height="86" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="633.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="633.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DashboardRepository</text>
+<line x1="528" y1="981" x2="738" y2="981" stroke="#92400E"/>
+<text x="535" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="528" y1="1004" x2="738" y2="1004" stroke="#92400E"/>
+<text x="535" y="1019" font-size="11" fill="#1E293B">+ getDashboard()</text>
+<rect x="762" y="941" width="210" height="221" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="867.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="867.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadesRepository</text>
+<line x1="762" y1="981" x2="972" y2="981" stroke="#92400E"/>
+<text x="769" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="762" y1="1004" x2="972" y2="1004" stroke="#92400E"/>
+<text x="769" y="1019" font-size="11" fill="#1E293B">+ list()</text>
+<text x="769" y="1034" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="769" y="1049" font-size="11" fill="#1E293B">+ create()</text>
+<text x="769" y="1064" font-size="11" fill="#1E293B">+ update()</text>
+<text x="769" y="1079" font-size="11" fill="#1E293B">+ updateMercadoPagoAlias()</text>
+<text x="769" y="1094" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="769" y="1109" font-size="11" fill="#1E293B">+ restore()</text>
+<text x="769" y="1124" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="769" y="1139" font-size="11" fill="#1E293B">+ vincularUsuario()</text>
+<text x="769" y="1154" font-size="11" fill="#1E293B">+ desvincularUsuario()</text>
+<rect x="996" y="941" width="210" height="266" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="1101.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="1101.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GastosRepository</text>
+<line x1="996" y1="981" x2="1206" y2="981" stroke="#92400E"/>
+<text x="1003" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="996" y1="1004" x2="1206" y2="1004" stroke="#92400E"/>
+<text x="1003" y="1019" font-size="11" fill="#1E293B">+ create()</text>
+<text x="1003" y="1034" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="1003" y="1049" font-size="11" fill="#1E293B">+ update()</text>
+<text x="1003" y="1064" font-size="11" fill="#1E293B">+ transfer()</text>
+<text x="1003" y="1079" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="1003" y="1094" font-size="11" fill="#1E293B">+ restaurar()</text>
+<text x="1003" y="1109" font-size="11" fill="#1E293B">+ compartir()</text>
+<text x="1003" y="1124" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="1003" y="1139" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="1003" y="1154" font-size="11" fill="#1E293B">+ postergar()</text>
+<text x="1003" y="1169" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="1003" y="1184" font-size="11" fill="#1E293B">+ actualizarCategorias()</text>
+<text x="1003" y="1199" font-size="11" fill="#1E293B">+ settleLote()</text>
+<rect x="1230" y="941" width="210" height="296" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="1335.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="1335.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CompartidosRepository</text>
+<line x1="1230" y1="981" x2="1440" y2="981" stroke="#92400E"/>
+<text x="1237" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="1230" y1="1004" x2="1440" y2="1004" stroke="#92400E"/>
+<text x="1237" y="1019" font-size="11" fill="#1E293B">+ getCompartidos()</text>
+<text x="1237" y="1034" font-size="11" fill="#1E293B">+ aprobar()</text>
+<text x="1237" y="1049" font-size="11" fill="#1E293B">+ rechazar()</text>
+<text x="1237" y="1064" font-size="11" fill="#1E293B">+ reintentar()</text>
+<text x="1237" y="1079" font-size="11" fill="#1E293B">+ descartar()</text>
+<text x="1237" y="1094" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="1237" y="1109" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="1237" y="1124" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="1237" y="1139" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="1237" y="1154" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="1237" y="1169" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="1237" y="1184" font-size="11" fill="#1E293B">+ solicitarEdicion()</text>
+<text x="1237" y="1199" font-size="11" fill="#1E293B">+ aprobarEdicion()</text>
+<text x="1237" y="1214" font-size="11" fill="#1E293B">+ rechazarEdicion()</text>
+<text x="1237" y="1229" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<rect x="1464" y="941" width="210" height="191" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="1569.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="1569.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementRepository</text>
+<line x1="1464" y1="981" x2="1674" y2="981" stroke="#92400E"/>
+<text x="1471" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="1464" y1="1004" x2="1674" y2="1004" stroke="#92400E"/>
+<text x="1471" y="1019" font-size="11" fill="#1E293B">+ getSession()</text>
+<text x="1471" y="1034" font-size="11" fill="#1E293B">+ startSession()</text>
+<text x="1471" y="1049" font-size="11" fill="#1E293B">+ toggleItem()</text>
+<text x="1471" y="1064" font-size="11" fill="#1E293B">+ setItems()</text>
+<text x="1471" y="1079" font-size="11" fill="#1E293B">+ finishSession()</text>
+<text x="1471" y="1094" font-size="11" fill="#1E293B">+ discardSession()</text>
+<text x="1471" y="1109" font-size="11" fill="#1E293B">+ listSnapshots()</text>
+<text x="1471" y="1124" font-size="11" fill="#1E293B">+ getSnapshot()</text>
+<rect x="1698" y="941" width="210" height="116" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="1803.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="1803.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">NotificacionesRepository</text>
+<line x1="1698" y1="981" x2="1908" y2="981" stroke="#92400E"/>
+<text x="1705" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="1698" y1="1004" x2="1908" y2="1004" stroke="#92400E"/>
+<text x="1705" y="1019" font-size="11" fill="#1E293B">+ listar()</text>
+<text x="1705" y="1034" font-size="11" fill="#1E293B">+ marcarLeida()</text>
+<text x="1705" y="1049" font-size="11" fill="#1E293B">+ marcarTodasLeidas()</text>
+<rect x="1932" y="941" width="210" height="101" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="2037.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="2037.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CategoriasRepository</text>
+<line x1="1932" y1="981" x2="2142" y2="981" stroke="#92400E"/>
+<text x="1939" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="1932" y1="1004" x2="2142" y2="1004" stroke="#92400E"/>
+<text x="1939" y="1019" font-size="11" fill="#1E293B">+ list()</text>
+<text x="1939" y="1034" font-size="11" fill="#1E293B">+ create()</text>
+<rect x="2166" y="941" width="210" height="86" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="2271.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="2271.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ExchangeRatesRepository</text>
+<line x1="2166" y1="981" x2="2376" y2="981" stroke="#92400E"/>
+<text x="2173" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="2166" y1="1004" x2="2376" y2="1004" stroke="#92400E"/>
+<text x="2173" y="1019" font-size="11" fill="#1E293B">+ getRates()</text>
+<rect x="2400" y="941" width="210" height="161" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="2505.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="2505.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">PreferencesRepository</text>
+<line x1="2400" y1="981" x2="2610" y2="981" stroke="#92400E"/>
+<text x="2407" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="2400" y1="1004" x2="2610" y2="1004" stroke="#92400E"/>
+<text x="2407" y="1019" font-size="11" fill="#1E293B">+ readThemePreference()</text>
+<text x="2407" y="1034" font-size="11" fill="#1E293B">+ saveThemePreference()</text>
+<text x="2407" y="1049" font-size="11" fill="#1E293B">+ readLanguagePreference()</text>
+<text x="2407" y="1064" font-size="11" fill="#1E293B">+ saveLanguagePreference()</text>
+<text x="2407" y="1079" font-size="11" fill="#1E293B">+ hasSeenOnboarding()</text>
+<text x="2407" y="1094" font-size="11" fill="#1E293B">+ markOnboardingSeen()</text>
+<rect x="2634" y="941" width="210" height="116" fill="#FFFFFF" stroke="#92400E" stroke-width="1.5"/>
+<text x="2739.0" y="955" font-size="10" text-anchor="middle" fill="#92400E">«interface»</text>
+<text x="2739.0" y="972" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AnalyticsRepository</text>
+<line x1="2634" y1="981" x2="2844" y2="981" stroke="#92400E"/>
+<text x="2641" y="996" font-size="11" fill="#1E293B">—</text>
+<line x1="2634" y1="1004" x2="2844" y2="1004" stroke="#92400E"/>
+<text x="2641" y="1019" font-size="11" fill="#1E293B">+ logError()</text>
+<text x="2641" y="1034" font-size="11" fill="#1E293B">+ logEvent()</text>
+<text x="2641" y="1049" font-size="11" fill="#1E293B">+ setUserId()</text>
+<rect x="60" y="1535" width="210" height="146" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="165.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="165.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthRepositoryImpl</text>
+<line x1="60" y1="1575" x2="270" y2="1575" stroke="#92400E"/>
+<text x="67" y="1590" font-size="11" fill="#1E293B">- AuthHttpProvider</text>
+<text x="67" y="1605" font-size="11" fill="#1E293B">- GoogleSignInProvider</text>
+<line x1="60" y1="1613" x2="270" y2="1613" stroke="#92400E"/>
+<text x="67" y="1628" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="1643" font-size="11" fill="#1E293B">+ register()</text>
+<text x="67" y="1658" font-size="11" fill="#1E293B">+ requestGoogleIdToken()</text>
+<text x="67" y="1673" font-size="11" fill="#1E293B">+ loginWithGoogle()</text>
+<rect x="294" y="1535" width="210" height="146" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="399.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="399.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">UserRepositoryImpl</text>
+<line x1="294" y1="1575" x2="504" y2="1575" stroke="#92400E"/>
+<text x="301" y="1590" font-size="11" fill="#1E293B">- UserHttpProvider</text>
+<line x1="294" y1="1598" x2="504" y2="1598" stroke="#92400E"/>
+<text x="301" y="1613" font-size="11" fill="#1E293B">+ updatePreferredCurrency()</text>
+<text x="301" y="1628" font-size="11" fill="#1E293B">+ updateSueldo()</text>
+<text x="301" y="1643" font-size="11" fill="#1E293B">+ fetchHasPassword()</text>
+<text x="301" y="1658" font-size="11" fill="#1E293B">+ updatePassword()</text>
+<text x="301" y="1673" font-size="11" fill="#1E293B">+ updatePushLanguage()</text>
+<rect x="528" y="1535" width="210" height="86" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="633.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="633.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DashboardRepositoryImpl</text>
+<line x1="528" y1="1575" x2="738" y2="1575" stroke="#92400E"/>
+<text x="535" y="1590" font-size="11" fill="#1E293B">- DashboardHttpProvider</text>
+<line x1="528" y1="1598" x2="738" y2="1598" stroke="#92400E"/>
+<text x="535" y="1613" font-size="11" fill="#1E293B">+ getDashboard()</text>
+<rect x="762" y="1535" width="210" height="221" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="867.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="867.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadesRepositoryImpl</text>
+<line x1="762" y1="1575" x2="972" y2="1575" stroke="#92400E"/>
+<text x="769" y="1590" font-size="11" fill="#1E293B">- EntidadesHttpProvider</text>
+<line x1="762" y1="1598" x2="972" y2="1598" stroke="#92400E"/>
+<text x="769" y="1613" font-size="11" fill="#1E293B">+ list()</text>
+<text x="769" y="1628" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="769" y="1643" font-size="11" fill="#1E293B">+ restore()</text>
+<text x="769" y="1658" font-size="11" fill="#1E293B">+ create()</text>
+<text x="769" y="1673" font-size="11" fill="#1E293B">+ update()</text>
+<text x="769" y="1688" font-size="11" fill="#1E293B">+ updateMercadoPagoAlias()</text>
+<text x="769" y="1703" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="769" y="1718" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="769" y="1733" font-size="11" fill="#1E293B">+ vincularUsuario()</text>
+<text x="769" y="1748" font-size="11" fill="#1E293B">+ desvincularUsuario()</text>
+<rect x="996" y="1535" width="210" height="266" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="1101.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="1101.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GastosRepositoryImpl</text>
+<line x1="996" y1="1575" x2="1206" y2="1575" stroke="#92400E"/>
+<text x="1003" y="1590" font-size="11" fill="#1E293B">- GastosHttpProvider</text>
+<line x1="996" y1="1598" x2="1206" y2="1598" stroke="#92400E"/>
+<text x="1003" y="1613" font-size="11" fill="#1E293B">+ create()</text>
+<text x="1003" y="1628" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="1003" y="1643" font-size="11" fill="#1E293B">+ update()</text>
+<text x="1003" y="1658" font-size="11" fill="#1E293B">+ transfer()</text>
+<text x="1003" y="1673" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="1003" y="1688" font-size="11" fill="#1E293B">+ restaurar()</text>
+<text x="1003" y="1703" font-size="11" fill="#1E293B">+ compartir()</text>
+<text x="1003" y="1718" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="1003" y="1733" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="1003" y="1748" font-size="11" fill="#1E293B">+ postergar()</text>
+<text x="1003" y="1763" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="1003" y="1778" font-size="11" fill="#1E293B">+ actualizarCategorias()</text>
+<text x="1003" y="1793" font-size="11" fill="#1E293B">+ settleLote()</text>
+<rect x="1230" y="1535" width="210" height="296" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="1335.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="1335.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CompartidosRepositoryImpl</text>
+<line x1="1230" y1="1575" x2="1440" y2="1575" stroke="#92400E"/>
+<text x="1237" y="1590" font-size="11" fill="#1E293B">- CompartidosHttpProvider</text>
+<line x1="1230" y1="1598" x2="1440" y2="1598" stroke="#92400E"/>
+<text x="1237" y="1613" font-size="11" fill="#1E293B">+ getCompartidos()</text>
+<text x="1237" y="1628" font-size="11" fill="#1E293B">+ aprobar()</text>
+<text x="1237" y="1643" font-size="11" fill="#1E293B">+ rechazar()</text>
+<text x="1237" y="1658" font-size="11" fill="#1E293B">+ reintentar()</text>
+<text x="1237" y="1673" font-size="11" fill="#1E293B">+ descartar()</text>
+<text x="1237" y="1688" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="1237" y="1703" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="1237" y="1718" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="1237" y="1733" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="1237" y="1748" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="1237" y="1763" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="1237" y="1778" font-size="11" fill="#1E293B">+ solicitarEdicion()</text>
+<text x="1237" y="1793" font-size="11" fill="#1E293B">+ aprobarEdicion()</text>
+<text x="1237" y="1808" font-size="11" fill="#1E293B">+ rechazarEdicion()</text>
+<text x="1237" y="1823" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<rect x="1464" y="1535" width="210" height="191" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="1569.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="1569.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementRepositoryImpl</text>
+<line x1="1464" y1="1575" x2="1674" y2="1575" stroke="#92400E"/>
+<text x="1471" y="1590" font-size="11" fill="#1E293B">- SettlementHttpProvider</text>
+<line x1="1464" y1="1598" x2="1674" y2="1598" stroke="#92400E"/>
+<text x="1471" y="1613" font-size="11" fill="#1E293B">+ getSession()</text>
+<text x="1471" y="1628" font-size="11" fill="#1E293B">+ startSession()</text>
+<text x="1471" y="1643" font-size="11" fill="#1E293B">+ toggleItem()</text>
+<text x="1471" y="1658" font-size="11" fill="#1E293B">+ setItems()</text>
+<text x="1471" y="1673" font-size="11" fill="#1E293B">+ finishSession()</text>
+<text x="1471" y="1688" font-size="11" fill="#1E293B">+ discardSession()</text>
+<text x="1471" y="1703" font-size="11" fill="#1E293B">+ listSnapshots()</text>
+<text x="1471" y="1718" font-size="11" fill="#1E293B">+ getSnapshot()</text>
+<rect x="1698" y="1535" width="210" height="116" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="1803.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="1803.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">NotificacionesRepositoryImpl</text>
+<line x1="1698" y1="1575" x2="1908" y2="1575" stroke="#92400E"/>
+<text x="1705" y="1590" font-size="11" fill="#1E293B">- NotificacionesHttpProvider</text>
+<line x1="1698" y1="1598" x2="1908" y2="1598" stroke="#92400E"/>
+<text x="1705" y="1613" font-size="11" fill="#1E293B">+ listar()</text>
+<text x="1705" y="1628" font-size="11" fill="#1E293B">+ marcarLeida()</text>
+<text x="1705" y="1643" font-size="11" fill="#1E293B">+ marcarTodasLeidas()</text>
+<rect x="1932" y="1535" width="210" height="101" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="2037.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="2037.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CategoriasRepositoryImpl</text>
+<line x1="1932" y1="1575" x2="2142" y2="1575" stroke="#92400E"/>
+<text x="1939" y="1590" font-size="11" fill="#1E293B">- CategoriasHttpProvider</text>
+<line x1="1932" y1="1598" x2="2142" y2="1598" stroke="#92400E"/>
+<text x="1939" y="1613" font-size="11" fill="#1E293B">+ list()</text>
+<text x="1939" y="1628" font-size="11" fill="#1E293B">+ create()</text>
+<rect x="2166" y="1535" width="210" height="86" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="2271.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="2271.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ExchangeRatesRepositoryImpl</text>
+<line x1="2166" y1="1575" x2="2376" y2="1575" stroke="#92400E"/>
+<text x="2173" y="1590" font-size="11" fill="#1E293B">- ExchangeRatesHttpProvider</text>
+<line x1="2166" y1="1598" x2="2376" y2="1598" stroke="#92400E"/>
+<text x="2173" y="1613" font-size="11" fill="#1E293B">+ getRates()</text>
+<rect x="2400" y="1535" width="210" height="161" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="2505.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="2505.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">PreferencesRepositoryImpl</text>
+<line x1="2400" y1="1575" x2="2610" y2="1575" stroke="#92400E"/>
+<text x="2407" y="1590" font-size="11" fill="#1E293B">- PreferencesStorage</text>
+<line x1="2400" y1="1598" x2="2610" y2="1598" stroke="#92400E"/>
+<text x="2407" y="1613" font-size="11" fill="#1E293B">+ readThemePreference()</text>
+<text x="2407" y="1628" font-size="11" fill="#1E293B">+ saveThemePreference()</text>
+<text x="2407" y="1643" font-size="11" fill="#1E293B">+ readLanguagePreference()</text>
+<text x="2407" y="1658" font-size="11" fill="#1E293B">+ saveLanguagePreference()</text>
+<text x="2407" y="1673" font-size="11" fill="#1E293B">+ hasSeenOnboarding()</text>
+<text x="2407" y="1688" font-size="11" fill="#1E293B">+ markOnboardingSeen()</text>
+<rect x="2634" y="1535" width="210" height="116" fill="#FEF3C7" stroke="#92400E" stroke-width="1.5"/>
+<text x="2739.0" y="1549" font-size="10" text-anchor="middle" fill="#92400E">«implementation»</text>
+<text x="2739.0" y="1566" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AnalyticsRepositoryImpl</text>
+<line x1="2634" y1="1575" x2="2844" y2="1575" stroke="#92400E"/>
+<text x="2641" y="1590" font-size="11" fill="#1E293B">- AnalyticsProvider</text>
+<line x1="2634" y1="1598" x2="2844" y2="1598" stroke="#92400E"/>
+<text x="2641" y="1613" font-size="11" fill="#1E293B">+ logError()</text>
+<text x="2641" y="1628" font-size="11" fill="#1E293B">+ logEvent()</text>
+<text x="2641" y="1643" font-size="11" fill="#1E293B">+ setUserId()</text>
+<rect x="60" y="2129" width="210" height="116" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="165.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="165.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthHttpProvider</text>
+<line x1="60" y1="2169" x2="270" y2="2169" stroke="#9D174D"/>
+<text x="67" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="60" y1="2192" x2="270" y2="2192" stroke="#9D174D"/>
+<text x="67" y="2207" font-size="11" fill="#1E293B">+ login()</text>
+<text x="67" y="2222" font-size="11" fill="#1E293B">+ register()</text>
+<text x="67" y="2237" font-size="11" fill="#1E293B">+ firebaseLogin()</text>
+<rect x="294" y="2129" width="210" height="146" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="399.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="399.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">UserHttpProvider</text>
+<line x1="294" y1="2169" x2="504" y2="2169" stroke="#9D174D"/>
+<text x="301" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="294" y1="2192" x2="504" y2="2192" stroke="#9D174D"/>
+<text x="301" y="2207" font-size="11" fill="#1E293B">+ updatePushLanguage()</text>
+<text x="301" y="2222" font-size="11" fill="#1E293B">+ fetchHasPassword()</text>
+<text x="301" y="2237" font-size="11" fill="#1E293B">+ updatePassword()</text>
+<text x="301" y="2252" font-size="11" fill="#1E293B">+ updatePreferredCurrency()</text>
+<text x="301" y="2267" font-size="11" fill="#1E293B">+ updateSueldo()</text>
+<rect x="528" y="2129" width="210" height="86" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="633.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="633.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DashboardHttpProvider</text>
+<line x1="528" y1="2169" x2="738" y2="2169" stroke="#9D174D"/>
+<text x="535" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="528" y1="2192" x2="738" y2="2192" stroke="#9D174D"/>
+<text x="535" y="2207" font-size="11" fill="#1E293B">+ getDashboard()</text>
+<rect x="762" y="2129" width="210" height="221" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="867.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="867.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">EntidadesHttpProvider</text>
+<line x1="762" y1="2169" x2="972" y2="2169" stroke="#9D174D"/>
+<text x="769" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="762" y1="2192" x2="972" y2="2192" stroke="#9D174D"/>
+<text x="769" y="2207" font-size="11" fill="#1E293B">+ list()</text>
+<text x="769" y="2222" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="769" y="2237" font-size="11" fill="#1E293B">+ create()</text>
+<text x="769" y="2252" font-size="11" fill="#1E293B">+ update()</text>
+<text x="769" y="2267" font-size="11" fill="#1E293B">+ updateMercadoPagoAlias()</text>
+<text x="769" y="2282" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="769" y="2297" font-size="11" fill="#1E293B">+ restore()</text>
+<text x="769" y="2312" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="769" y="2327" font-size="11" fill="#1E293B">+ vincularUsuario()</text>
+<text x="769" y="2342" font-size="11" fill="#1E293B">+ desvincularUsuario()</text>
+<rect x="996" y="2129" width="210" height="251" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="1101.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="1101.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GastosHttpProvider</text>
+<line x1="996" y1="2169" x2="1206" y2="2169" stroke="#9D174D"/>
+<text x="1003" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="996" y1="2192" x2="1206" y2="2192" stroke="#9D174D"/>
+<text x="1003" y="2207" font-size="11" fill="#1E293B">+ create()</text>
+<text x="1003" y="2222" font-size="11" fill="#1E293B">+ getById()</text>
+<text x="1003" y="2237" font-size="11" fill="#1E293B">+ update()</text>
+<text x="1003" y="2252" font-size="11" fill="#1E293B">+ delete()</text>
+<text x="1003" y="2267" font-size="11" fill="#1E293B">+ restaurar()</text>
+<text x="1003" y="2282" font-size="11" fill="#1E293B">+ compartir()</text>
+<text x="1003" y="2297" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="1003" y="2312" font-size="11" fill="#1E293B">+ settleQuota()</text>
+<text x="1003" y="2327" font-size="11" fill="#1E293B">+ postergar()</text>
+<text x="1003" y="2342" font-size="11" fill="#1E293B">+ setFavorite()</text>
+<text x="1003" y="2357" font-size="11" fill="#1E293B">+ actualizarCategorias()</text>
+<text x="1003" y="2372" font-size="11" fill="#1E293B">+ settleLote()</text>
+<rect x="1230" y="2129" width="210" height="311" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="1335.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="1335.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CompartidosHttpProvider</text>
+<line x1="1230" y1="2169" x2="1440" y2="2169" stroke="#9D174D"/>
+<text x="1237" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="1230" y1="2192" x2="1440" y2="2192" stroke="#9D174D"/>
+<text x="1237" y="2207" font-size="11" fill="#1E293B">+ getCompartidos()</text>
+<text x="1237" y="2222" font-size="11" fill="#1E293B">+ aprobar()</text>
+<text x="1237" y="2237" font-size="11" fill="#1E293B">+ rechazar()</text>
+<text x="1237" y="2252" font-size="11" fill="#1E293B">+ reintentar()</text>
+<text x="1237" y="2267" font-size="11" fill="#1E293B">+ descartar()</text>
+<text x="1237" y="2282" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="1237" y="2297" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="1237" y="2312" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="1237" y="2327" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="1237" y="2342" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="1237" y="2357" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="1237" y="2372" font-size="11" fill="#1E293B">+ solicitarEdicion()</text>
+<text x="1237" y="2387" font-size="11" fill="#1E293B">+ aprobarEdicion()</text>
+<text x="1237" y="2402" font-size="11" fill="#1E293B">+ rechazarEdicion()</text>
+<text x="1237" y="2417" font-size="11" fill="#1E293B">+ cancelarEdicion()</text>
+<text x="1237" y="2432" font-size="11" fill="#1E293B">- _simplePost()</text>
+<rect x="1464" y="2129" width="210" height="176" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="1569.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="1569.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SettlementHttpProvider</text>
+<line x1="1464" y1="2169" x2="1674" y2="2169" stroke="#9D174D"/>
+<text x="1471" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="1464" y1="2192" x2="1674" y2="2192" stroke="#9D174D"/>
+<text x="1471" y="2207" font-size="11" fill="#1E293B">+ getSession()</text>
+<text x="1471" y="2222" font-size="11" fill="#1E293B">+ startSession()</text>
+<text x="1471" y="2237" font-size="11" fill="#1E293B">+ setItem()</text>
+<text x="1471" y="2252" font-size="11" fill="#1E293B">+ finishSession()</text>
+<text x="1471" y="2267" font-size="11" fill="#1E293B">+ discardSession()</text>
+<text x="1471" y="2282" font-size="11" fill="#1E293B">+ listSnapshots()</text>
+<text x="1471" y="2297" font-size="11" fill="#1E293B">+ getSnapshot()</text>
+<rect x="1698" y="2129" width="210" height="131" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="1803.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="1803.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">NotificacionesHttpProvider</text>
+<line x1="1698" y1="2169" x2="1908" y2="2169" stroke="#9D174D"/>
+<text x="1705" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="1698" y1="2192" x2="1908" y2="2192" stroke="#9D174D"/>
+<text x="1705" y="2207" font-size="11" fill="#1E293B">+ listar()</text>
+<text x="1705" y="2222" font-size="11" fill="#1E293B">+ marcarLeida()</text>
+<text x="1705" y="2237" font-size="11" fill="#1E293B">+ marcarTodasLeidas()</text>
+<text x="1705" y="2252" font-size="11" fill="#1E293B">- _postUnreadCount()</text>
+<rect x="1932" y="2129" width="210" height="101" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="2037.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="2037.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">CategoriasHttpProvider</text>
+<line x1="1932" y1="2169" x2="2142" y2="2169" stroke="#9D174D"/>
+<text x="1939" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="1932" y1="2192" x2="2142" y2="2192" stroke="#9D174D"/>
+<text x="1939" y="2207" font-size="11" fill="#1E293B">+ list()</text>
+<text x="1939" y="2222" font-size="11" fill="#1E293B">+ create()</text>
+<rect x="2166" y="2129" width="210" height="86" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="2271.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="2271.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ExchangeRatesHttpProvider</text>
+<line x1="2166" y1="2169" x2="2376" y2="2169" stroke="#9D174D"/>
+<text x="2173" y="2184" font-size="11" fill="#1E293B">HTTP · Dio</text>
+<line x1="2166" y1="2192" x2="2376" y2="2192" stroke="#9D174D"/>
+<text x="2173" y="2207" font-size="11" fill="#1E293B">+ getRates()</text>
+<rect x="2400" y="2129" width="210" height="191" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="2505.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="2505.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">PreferencesStorage</text>
+<line x1="2400" y1="2169" x2="2610" y2="2169" stroke="#9D174D"/>
+<text x="2407" y="2184" font-size="11" fill="#1E293B">local</text>
+<line x1="2400" y1="2192" x2="2610" y2="2192" stroke="#9D174D"/>
+<text x="2407" y="2207" font-size="11" fill="#1E293B">+ create()</text>
+<text x="2407" y="2222" font-size="11" fill="#1E293B">+ readThemeMode()</text>
+<text x="2407" y="2237" font-size="11" fill="#1E293B">+ saveThemeMode()</text>
+<text x="2407" y="2252" font-size="11" fill="#1E293B">+ readLanguage()</text>
+<text x="2407" y="2267" font-size="11" fill="#1E293B">+ saveLanguage()</text>
+<text x="2407" y="2282" font-size="11" fill="#1E293B">+ readOnboardingSeen()</text>
+<text x="2407" y="2297" font-size="11" fill="#1E293B">+ saveOnboardingSeen()</text>
+<text x="2407" y="2312" font-size="11" fill="#1E293B">- _onboardingSeenKey()</text>
+<rect x="2634" y="2129" width="210" height="101" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="2739.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="2739.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AnalyticsProvider</text>
+<line x1="2634" y1="2169" x2="2844" y2="2169" stroke="#9D174D"/>
+<text x="2641" y="2184" font-size="11" fill="#1E293B">Firebase</text>
+<line x1="2634" y1="2192" x2="2844" y2="2192" stroke="#9D174D"/>
+<text x="2641" y="2207" font-size="11" fill="#1E293B">+ logEvent()</text>
+<text x="2641" y="2222" font-size="11" fill="#1E293B">+ setUserId()</text>
+<rect x="2868" y="2129" width="210" height="101" fill="#FCE7F3" stroke="#9D174D" stroke-width="1.5"/>
+<text x="2973.0" y="2143" font-size="10" text-anchor="middle" fill="#9D174D">«provider»</text>
+<text x="2973.0" y="2160" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">GoogleSignInProvider</text>
+<line x1="2868" y1="2169" x2="3078" y2="2169" stroke="#9D174D"/>
+<text x="2875" y="2184" font-size="11" fill="#1E293B">Firebase</text>
+<line x1="2868" y1="2192" x2="3078" y2="2192" stroke="#9D174D"/>
+<text x="2875" y="2207" font-size="11" fill="#1E293B">+ signIn()</text>
+<text x="2875" y="2222" font-size="11" fill="#1E293B">+ signOut()</text>
+<rect x="60" y="2522" width="236" height="86" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="178.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«core»</text>
+<text x="178.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DioFactory</text>
+<line x1="60" y1="2562" x2="296" y2="2562" stroke="#475569"/>
+<text x="67" y="2577" font-size="11" fill="#1E293B">mainDio, ratesDio</text>
+<line x1="60" y1="2585" x2="296" y2="2585" stroke="#475569"/>
+<text x="67" y="2600" font-size="11" fill="#1E293B">+ create()</text>
+<rect x="320" y="2522" width="236" height="101" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="438.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«interceptor»</text>
+<text x="438.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthInterceptor</text>
+<line x1="320" y1="2562" x2="556" y2="2562" stroke="#475569"/>
+<text x="327" y="2577" font-size="11" fill="#1E293B">token, 401 → expireSession()</text>
+<line x1="320" y1="2585" x2="556" y2="2585" stroke="#475569"/>
+<text x="327" y="2600" font-size="11" fill="#1E293B">+ onRequest()</text>
+<text x="327" y="2615" font-size="11" fill="#1E293B">+ onError()</text>
+<rect x="580" y="2522" width="236" height="86" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="698.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«interceptor»</text>
+<text x="698.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">ApiErrorInterceptor</text>
+<line x1="580" y1="2562" x2="816" y2="2562" stroke="#475569"/>
+<text x="587" y="2577" font-size="11" fill="#1E293B">{error, code} → AppException</text>
+<line x1="580" y1="2585" x2="816" y2="2585" stroke="#475569"/>
+<text x="587" y="2600" font-size="11" fill="#1E293B">+ onError()</text>
+<rect x="840" y="2522" width="236" height="101" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="958.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«interceptor»</text>
+<text x="958.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">RetryInterceptor</text>
+<line x1="840" y1="2562" x2="1076" y2="2562" stroke="#475569"/>
+<text x="847" y="2577" font-size="11" fill="#1E293B">reintenta ante corte de red</text>
+<line x1="840" y1="2585" x2="1076" y2="2585" stroke="#475569"/>
+<text x="847" y="2600" font-size="11" fill="#1E293B">+ onError()</text>
+<text x="847" y="2615" font-size="11" fill="#1E293B">- _isRetriable()</text>
+<rect x="1100" y="2522" width="236" height="101" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1218.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«exception»</text>
+<text x="1218.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AppException</text>
+<line x1="1100" y1="2562" x2="1336" y2="2562" stroke="#475569"/>
+<text x="1107" y="2577" font-size="11" fill="#1E293B">code, errorCode, silent</text>
+<line x1="1100" y1="2585" x2="1336" y2="2585" stroke="#475569"/>
+<text x="1107" y="2600" font-size="11" fill="#1E293B">+ copyWith()</text>
+<text x="1107" y="2615" font-size="11" fill="#1E293B">+ toString()</text>
+<rect x="1360" y="2522" width="236" height="146" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1478.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«core»</text>
+<text x="1478.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AuthenticationState</text>
+<line x1="1360" y1="2562" x2="1596" y2="2562" stroke="#475569"/>
+<text x="1367" y="2577" font-size="11" fill="#1E293B">sesión, refreshListenable</text>
+<line x1="1360" y1="2585" x2="1596" y2="2585" stroke="#475569"/>
+<text x="1367" y="2600" font-size="11" fill="#1E293B">+ bootstrap()</text>
+<text x="1367" y="2615" font-size="11" fill="#1E293B">+ setSession()</text>
+<text x="1367" y="2630" font-size="11" fill="#1E293B">+ updateUser()</text>
+<text x="1367" y="2645" font-size="11" fill="#1E293B">+ expireSession()</text>
+<text x="1367" y="2660" font-size="11" fill="#1E293B">+ signOut()</text>
+<rect x="1620" y="2522" width="236" height="146" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1738.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«core»</text>
+<text x="1738.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">SessionStorage</text>
+<line x1="1620" y1="2562" x2="1856" y2="2562" stroke="#475569"/>
+<text x="1627" y="2577" font-size="11" fill="#1E293B">flutter_secure_storage</text>
+<line x1="1620" y1="2585" x2="1856" y2="2585" stroke="#475569"/>
+<text x="1627" y="2600" font-size="11" fill="#1E293B">+ readToken()</text>
+<text x="1627" y="2615" font-size="11" fill="#1E293B">+ readUser()</text>
+<text x="1627" y="2630" font-size="11" fill="#1E293B">+ save()</text>
+<text x="1627" y="2645" font-size="11" fill="#1E293B">+ saveUser()</text>
+<text x="1627" y="2660" font-size="11" fill="#1E293B">+ clear()</text>
+<rect x="1880" y="2522" width="236" height="131" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="1998.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«app»</text>
+<text x="1998.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">PusherService</text>
+<line x1="1880" y1="2562" x2="2116" y2="2562" stroke="#475569"/>
+<text x="1887" y="2577" font-size="11" fill="#1E293B">detailedEvents, events</text>
+<line x1="1880" y1="2585" x2="2116" y2="2585" stroke="#475569"/>
+<text x="1887" y="2600" font-size="11" fill="#1E293B">+ connect()</text>
+<text x="1887" y="2615" font-size="11" fill="#1E293B">+ disconnect()</text>
+<text x="1887" y="2630" font-size="11" fill="#1E293B">+ dispose()</text>
+<text x="1887" y="2645" font-size="11" fill="#1E293B">- _resolve()</text>
+<rect x="2140" y="2522" width="236" height="63" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="2258.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«app»</text>
+<text x="2258.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AppModule / GoRouter / AppShell</text>
+<line x1="2140" y1="2562" x2="2376" y2="2562" stroke="#475569"/>
+<text x="2147" y="2577" font-size="11" fill="#1E293B">DI, rutas, cubits de larga vida</text>
+<rect x="2400" y="2522" width="236" height="176" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="2518.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«abstract»</text>
+<text x="2518.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">DioHttpProvider</text>
+<line x1="2400" y1="2562" x2="2636" y2="2562" stroke="#475569"/>
+<text x="2407" y="2577" font-size="11" fill="#1E293B">base de todos los *HttpProvider</text>
+<line x1="2400" y1="2585" x2="2636" y2="2585" stroke="#475569"/>
+<text x="2407" y="2600" font-size="11" fill="#1E293B">+ isSuccessStatusCode()</text>
+<text x="2407" y="2615" font-size="11" fill="#1E293B">+ unwrap()</text>
+<text x="2407" y="2630" font-size="11" fill="#1E293B">+ unwrapMap()</text>
+<text x="2407" y="2645" font-size="11" fill="#1E293B">+ unwrapList()</text>
+<text x="2407" y="2660" font-size="11" fill="#1E293B">+ parseDioError()</text>
+<text x="2407" y="2675" font-size="11" fill="#1E293B">+ wrapUnknownError()</text>
+<text x="2407" y="2690" font-size="11" fill="#1E293B">+ httpError()</text>
+<rect x="2660" y="2522" width="236" height="86" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<text x="2778.0" y="2536" font-size="10" text-anchor="middle" fill="#475569">«mixin»</text>
+<text x="2778.0" y="2553" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">AnalyticsErrorLoggerMixin</text>
+<line x1="2660" y1="2562" x2="2896" y2="2562" stroke="#475569"/>
+<text x="2667" y="2577" font-size="11" fill="#1E293B">registra errores de los Cubits</text>
+<line x1="2660" y1="2585" x2="2896" y2="2585" stroke="#475569"/>
+<text x="2667" y="2600" font-size="11" fill="#1E293B">+ logError()</text>
+<text x="60" y="2798" font-size="12" fill="#334155">Se listan todos los métodos, sin parámetros: + público, - privado. Flecha continua: dependencia por constructor. Flecha punteada con triángulo: realización de la interfaz. Cada color agrupa las dependencias de una misma clase.</text>
+<text x="60" y="2816" font-size="12" fill="#334155">Casi todos los Cubits registran errores con AnalyticsRepository mediante un mixin («mixin» analytics); esa relación no se dibuja para no saturar.</text>
+</svg>
