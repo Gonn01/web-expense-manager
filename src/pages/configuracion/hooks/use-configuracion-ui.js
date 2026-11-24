@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDialogStore } from '@/store/use-dialog-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { useOnboardingStore } from '@/store/use-onboarding-store';
 import { useConfiguracionData } from './use-configuracion-data';
@@ -16,6 +17,7 @@ export function useConfiguracionUI() {
         guardarSueldo,
         hasPassword,
         guardarPassword,
+        cerrarTodasLasSesiones,
     } = useConfiguracionData();
 
     const themeMode = useUIStore((s) => s.themeMode);
@@ -98,6 +100,15 @@ export function useConfiguracionUI() {
         }
     };
 
+    const onRevokeSessions = () =>
+        useDialogStore.getState().confirm({
+            title: t('configuracion.revokeSessionsConfirmTitle'),
+            message: t('configuracion.revokeSessionsConfirmMessage'),
+            tone: 'danger',
+            confirmLabel: t('configuracion.revokeSessionsAction'),
+            onConfirm: cerrarTodasLasSesiones,
+        });
+
     return {
         user,
         preview,
@@ -118,6 +129,7 @@ export function useConfiguracionUI() {
         hasPassword,
         loadingPassword,
         onSavePassword,
+        onRevokeSessions,
 
         themeMode,
 

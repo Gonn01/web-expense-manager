@@ -62,11 +62,12 @@ npm run preview     # vite preview
 npm run lint        # eslint .
 npm run lint:fix     # eslint . --fix
 npm run format       # prettier --write .
-npm test             # vitest run (unit tests)
+npm test             # vitest run (unit and component tests)
 npm run test:watch   # vitest in watch mode
+npm run test:e2e     # Playwright flows against a temporary API and Postgres (needs E2E_API_DIR)
 ```
 
-Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Test files are `<name>.test.js` next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/`, plus `lib/create-pusher-client.js`, `lib/create-firebase-auth.js`, `services/error-handler.js`, `store/use-settlement-store.js`, `store/use-screen-cache-store.js` and `store/use-dialog-store.js` — there is no `jsdom` environment or Testing Library installed for components/hooks. To test screen logic, extract it to a `utils/` function first. Do not use `vi.mock` with the `@/` alias: on Windows the mock is ignored when the working directory has a lowercase drive (`d:\`, as VS Code opens it). Replace store actions with `setState`, and fake HTTP by setting `axios.defaults.adapter` before dynamically importing the module (see `use-settlement-store.test.js`).
+Unit tests use Vitest (no separate config: it reads `vite.config.js`, so the `@/` alias works; `src/i18n/test-setup.js` fixes the language to Spanish). Logic test files are `<name>.test.js` and component tests `<name>.test.jsx` (jsdom + Testing Library, helpers in `src/test/`), next to the file under test (e.g. `src/utils/convert-currency.test.js`), import `describe`/`it`/`expect` explicitly from `vitest`, and cover pure functions in `utils/`, plus `lib/create-pusher-client.js`, `lib/create-firebase-auth.js`, `services/error-handler.js`, `store/use-settlement-store.js`, `store/use-screen-cache-store.js` and `store/use-dialog-store.js`. Full browser flows live in `e2e/`. Measured quality evidence is in `docs/evidencias/`. CI is in `.github/workflows/ci.yml`. Do not use `vi.mock` with the `@/` alias: on Windows the mock is ignored when the working directory has a lowercase drive (`d:\`, as VS Code opens it). Replace store actions with `setState`, and fake HTTP by setting `axios.defaults.adapter` before dynamically importing the module (see `use-settlement-store.test.js`).
 
 `.env` is required locally and gitignored (no `.env.example` exists) — needs `VITE_API_BASE_URL`. Optional: Firebase `VITE_FIREBASE_*` vars (without them `auth` is `null` and the Google button is disabled) and `VITE_PUSHER_KEY`/`VITE_PUSHER_CLUSTER` (without either one, `pusherClient` is `null` and the app runs without realtime).
 
@@ -98,9 +99,11 @@ Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 
 **Global feedback singletons**: `src/components/GlobalFeedback.jsx` mounts a snackbar/dialog once at the app root. Trigger them from anywhere with `useSnackbarStore.getState().show(...)` / `useDialogStore.getState().alert(...)` — no prop drilling needed. For yes/no confirmations use `await useDialogStore.getState().confirm({ title, message, tone, confirmLabel })` (resolves `true`/`false`); never use native `window.alert`/`window.confirm`. For a slow confirmed action pass it as `onConfirm: async () => …`: the dialog stays open and locked, with the spinner on its confirm button, until it finishes.
 
-**Auth persistence is manual**: `use-auth-store.js` reads/writes `user`/`token` to `localStorage` directly inside its actions (not via zustand's `persist` middleware). New persisted auth fields need updates in `getStoredAuthData()`, the relevant actions, and `logout()`'s cleanup.
+**Auth persistence is manual**: `use-auth-store.js` reads/writes `user`/`token` to `localStorage` directly inside its actions (not via zustand's `persist` middleware). New persisted auth fields need updates in `getStoredAuthData()`, the relevant actions, and `logout()`'s cleanup. Changing the password returns a new token, stored with `replaceToken`.
 
 **Screen cache**: dashboard, entities, shared items and settlement history keep their server data in `useCachedState` (`store/use-screen-cache-store.js`), so returning to a module paints immediately and revalidates in the background, without the full-screen loader. The cache is in-memory, cleared when the token changes, and rejects writes from a previous token. Loads must use `beginScreenRequest(key)` to drop superseded responses.
+
+**Realtime payloads**: the private channel `private-notificaciones-<userId>` carries only IDs. `Sidebar` builds the visible notice from the stored notification after `notificacion.nueva`.
 
 **Realtime channel ref-counting**: `src/hooks/use-pusher-channel.js` uses a module-level `Map` to ref-count Pusher channel subscriptions so multiple components on the same channel don't cause a premature unsubscribe when one unmounts. Don't "simplify" this without preserving the ref-count.
 

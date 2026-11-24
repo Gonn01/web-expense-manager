@@ -82,4 +82,4 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente o se cumple solo en parte, el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad (por ejemplo, las pruebas automatizadas) figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente o se cumple solo en parte, el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).

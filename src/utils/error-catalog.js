@@ -134,6 +134,11 @@ export const ERROR_PRESENTATION = Object.freeze({
         variant: 'snackbar',
     },
 
+    DEMASIADOS_INTENTOS: {
+        messageKey: 'errors.codes.DEMASIADOS_INTENTOS.message',
+        variant: 'snackbar',
+    },
+
     NO_AUTORIZADO: {
         messageKey: 'errors.codes.NO_AUTORIZADO.message',
         variant: 'dialog',

@@ -19,5 +19,20 @@ export default defineConfig({
     },
     test: {
         setupFiles: ['src/i18n/test-setup.js'],
+        projects: [
+            {
+                extends: true,
+                test: { name: 'unit', include: ['src/**/*.test.js'], environment: 'node' },
+            },
+            {
+                extends: true,
+                test: {
+                    name: 'ui',
+                    include: ['src/**/*.test.jsx'],
+                    environment: 'jsdom',
+                    setupFiles: ['src/test/setup-dom.js'],
+                },
+            },
+        ],
     },
 });

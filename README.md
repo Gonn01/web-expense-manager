@@ -77,9 +77,10 @@ La app queda en `http://localhost:5173`.
 | `npm run preview` | Sirve el build de `dist/` para probarlo |
 | `npm run lint` / `npm run lint:fix` | ESLint (y corrección automática) |
 | `npm run format` | Formatea el código con Prettier |
-| `npm test` / `npm run test:watch` | Pruebas unitarias con Vitest (una corrida / modo observador) |
+| `npm test` / `npm run test:watch` | Pruebas unitarias y de componentes con Vitest (una corrida / modo observador) |
+| `npm run test:e2e` | Flujos completos en navegador con Playwright. Requiere PostgreSQL y `E2E_API_DIR` con la carpeta del repo de la API |
 
-Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban, como `*.test.js` (por ejemplo, `src/utils/convert-currency.test.js`). Cubren funciones puras de `utils/`, el manejo de errores de la API y los stores de la sesión de cuentas, del caché de pantallas y de los diálogos (no hay pruebas de componentes).
+Las pruebas usan [Vitest](https://vitest.dev) y viven junto al archivo que prueban: `*.test.js` para lógica y `*.test.jsx` para componentes con Testing Library. Los flujos completos están en `e2e/` y levantan una API y una base temporales. Los resultados medidos están en [docs/evidencias](docs/evidencias/README.md).
 
 ### Despliegue
 
@@ -111,7 +112,7 @@ src/
 - **Capas por pantalla**: la página solo compone; `use-<feature>-data.js` pide datos y se conecta a los stores, y `use-<feature>-ui.js` maneja el estado de interfaz (modales, filtros, pestañas).
 - **Capa HTTP centralizada**: todas las llamadas pasan por `src/services/api.js`. Su interceptor normaliza los errores, los muestra como snackbar o diálogo y, ante un 401, cierra la sesión y redirige a `/login`.
 - **Estado global** con zustand (sesión, entidades, categorías, sesión de "hacer cuentas", preferencias de UI, feedback global).
-- **Tiempo real**: suscripción al canal privado de Pusher `private-notificaciones-<userId>`, autorizada por la API, con conteo de referencias para compartir el canal entre componentes.
+- **Tiempo real**: suscripción al canal privado de Pusher `private-notificaciones-<userId>`, autorizada por la API, cuyos eventos solo llevan identificadores, con conteo de referencias para compartir el canal entre componentes.
 - **Responsive** desde 360 px de ancho; tema claro, oscuro o del sistema.
 - **Internacionalización** en español e inglés, a elección en Configuración o según el idioma del navegador; si no está soportado, usa inglés.
 
@@ -129,7 +130,8 @@ src/
 | [pusher-js](https://github.com/pusher/pusher-js) | Notificaciones en tiempo real |
 | [recharts](https://recharts.org) | Gráficos del dashboard |
 | [i18next](https://www.i18next.com) + [react-i18next](https://react.i18next.com) | Traducciones (español e inglés) |
-| [Vitest](https://vitest.dev) | Pruebas unitarias |
+| [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) | Pruebas unitarias y de componentes |
+| [Playwright](https://playwright.dev) | Pruebas de flujos completos |
 | ESLint + Prettier | Linting y formato |
 
 ## Seguimiento

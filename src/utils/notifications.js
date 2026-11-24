@@ -131,6 +131,14 @@ export function buildNotification(event, data = {}) {
     };
 }
 
+export function takeAnnounceable(pendingIds, items) {
+    const ready = items
+        .filter((item) => pendingIds.has(String(item.id)))
+        .sort((a, b) => Number(a.id) - Number(b.id));
+    for (const item of ready) pendingIds.delete(String(item.id));
+    return ready;
+}
+
 const ACTION_EVENTS = new Set([
     'compartido.nuevo',
     'compartido.rechazado',

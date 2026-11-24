@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-11-23T22:34:03.519Z",
+  "environment": "API y PostgreSQL locales, con fsync y commits sincrónicos activos. No mide Vercel ni Supabase.",
+  "database_outage": {
+    "baseline_status": 200,
+    "health_detects_outage_ms": 15,
+    "business_route_during_outage": 500,
+    "leaks_internal_details": false,
+    "database_start_ms": 1039,
+    "api_reconnect_after_database_start_ms": 48,
+    "api_process_restarted": false,
+    "business_route_after_recovery": 200
+  },
+  "crash_during_writes": {
+    "concurrent_writes": 150,
+    "acknowledged_before_crash": 22,
+    "failed_or_interrupted": 128,
+    "acknowledged_payments_lost": 0,
+    "expenses_with_duplicate_payments": 0,
+    "persisted_payments": 22
+  },
+  "backup_restore": {
+    "backup_ms": 159,
+    "restore_ms": 154,
+    "tables_compared": 5,
+    "rows_by_table": {
+      "users": 1,
+      "financial_entities": 1,
+      "purchases": 151,
+      "purchases_movements": 173,
+      "notifications": 0
+    },
+    "identical_after_restore": true
+  }
+}

@@ -87,7 +87,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-01 — Registrarse
 
 - **Actor**: Visitante
-- **Requerimientos**: RF-AUT-01, RF-AUT-02, RF-AUT-10
+- **Requerimientos**: RF-AUT-01, RF-AUT-02, RF-AUT-10, RF-AUT-12
 - **Precondición**: el visitante no tiene sesión iniciada.
 - **Flujo principal**
     1. El visitante abre la pantalla de registro.
@@ -99,12 +99,13 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 2a. El nombre tiene menos de 2 caracteres, el email no es válido o la contraseña tiene menos de 6 caracteres: el cliente muestra el error en el formulario y no envía nada.
     - 3a. El email ya pertenece a una cuenta con contraseña: el sistema muestra el error en el formulario y no crea la cuenta.
     - 3b. El email pertenece a una cuenta que solo entra con Google: el sistema no le agrega la contraseña e indica entrar con Google y definirla en Configuración (CU-49).
+    - 3c. Se superó el límite de registros desde esa IP: el sistema indica esperar y no crea la cuenta.
 - **Postcondición**: existe una cuenta nueva. El visitante todavía no tiene sesión.
 
 ### CU-02 — Iniciar sesión con email
 
 - **Actor**: Visitante
-- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09, RF-AUT-10
+- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09, RF-AUT-10, RF-AUT-12
 - **Flujo principal**
     1. El visitante ingresa email y contraseña.
     2. El sistema valida las credenciales.
@@ -112,13 +113,14 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     4. El cliente guarda el token y los datos, y muestra el dashboard.
 - **Flujos alternativos**
     - 2a. El email no existe, la contraseña no coincide o la cuenta se creó con Google y no tiene contraseña: el sistema muestra "email o contraseña incorrectos" en el formulario, sin distinguir el motivo.
+    - 2b. Se superó el límite de intentos: el sistema indica esperar unos minutos y no inicia sesión, aunque la contraseña sea correcta.
     - 1a. El visitante llegó a esta pantalla porque su sesión anterior venció: sobre el formulario se muestra el cartel "Tu sesión venció". Desaparece al iniciar sesión.
 - **Postcondición**: el visitante pasa a ser Usuario con sesión iniciada.
 
 ### CU-03 — Iniciar sesión con Google
 
 - **Actores**: Visitante, Firebase
-- **Requerimientos**: RF-AUT-04, RF-AUT-05, RF-AUT-06, RF-AUT-10
+- **Requerimientos**: RF-AUT-04, RF-AUT-05, RF-AUT-06, RF-AUT-10, RF-AUT-12
 - **Flujo principal**
     1. El visitante elige "Continuar con Google".
     2. Firebase autentica al visitante y entrega un ID token, que el cliente envía a la API.
@@ -129,8 +131,9 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 2a. El visitante cancela o Firebase falla: no se inicia sesión.
     - 3a. *Vincular Google a cuenta existente* («extend»): no hay cuenta con esa identidad pero sí una con el mismo email. Si tiene contraseña, el sistema la pide una sola vez y, si coincide, la conserva. El sistema asocia la identidad de Google a la cuenta, completa el nombre y la foto si faltaban, y continúa en 4.
         - 3a.1. La contraseña no coincide: el sistema muestra el error y permite reintentar.
-        - 3a.2. El visitante indica que no la recuerda y confirma: el sistema vincula la cuenta, elimina esa contraseña y continúa en 4.
+        - 3a.2. El visitante indica que no la recuerda y confirma: el sistema vincula la cuenta, elimina esa contraseña, invalida las sesiones anteriores y continúa en 4.
         - 3a.3. El visitante cancela: no se vincula ni se inicia sesión.
+        - 3a.4. Se superó el límite de contraseñas incorrectas: el sistema indica esperar y no vincula.
     - 3b. No hay cuenta con esa identidad ni con ese email: el sistema crea una cuenta nueva sin contraseña, con los datos del token, y continúa en 4.
     - 3c. El token es inválido, o hay que crear o vincular una cuenta y Google no verificó el email: el sistema rechaza el ingreso.
 - **Postcondición**: sesión iniciada. Nunca quedan dos cuentas con el mismo email.
@@ -138,7 +141,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-04 — Cerrar sesión
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-AUT-08
+- **Requerimientos**: RF-AUT-08, RF-AUT-11
 - **Flujo principal**
     1. El usuario elige "Cerrar sesión".
     2. El sistema pide confirmación.
@@ -146,6 +149,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     4. El cliente elimina el token y los datos guardados y muestra el inicio de sesión.
 - **Flujos alternativos**
     - 3a. El usuario cancela: la sesión continúa.
+    - 1a. *Cerrar todas las sesiones*: en Configuración, el usuario elige cerrar la sesión en todos sus dispositivos y confirma. La API invalida todos sus tokens y el cliente muestra el inicio de sesión. Los demás dispositivos vuelven al inicio de sesión en su próxima petición.
 - **Postcondición**: no queda sesión en el dispositivo. Una sesión de cuentas abierta **no** se pierde (está guardada en el servidor).
 
 ### CU-05 — Ver perfil
@@ -159,14 +163,15 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 ### CU-49 — Definir o cambiar contraseña
 
 - **Actor**: Usuario
-- **Requerimientos**: RF-CFG-07, RF-AUT-10
+- **Requerimientos**: RF-CFG-07, RF-AUT-10, RF-AUT-12
 - **Flujo principal**
     1. El usuario abre Configuración y el sistema indica si su cuenta ya tiene contraseña.
     2. Ingresa la contraseña nueva y la repite. Si ya tiene una, ingresa también la actual.
-    3. El sistema valida los datos y guarda la contraseña cifrada.
+    3. El sistema valida los datos, guarda la contraseña cifrada, invalida las sesiones anteriores y entrega un token nuevo al dispositivo actual.
 - **Flujos alternativos**
     - 2a. Falta la contraseña actual, la nueva tiene menos de 6 caracteres o la repetición no coincide: el cliente muestra el error y no envía nada.
     - 3a. La contraseña actual no coincide: el sistema muestra el error y no cambia nada.
+    - 3b. Se superó el límite de intentos: el sistema indica esperar y no cambia nada.
 - **Postcondición**: la cuenta puede entrar con email y contraseña, y con Google si lo tiene vinculado.
 
 ### CU-06 — Cambiar moneda preferida
@@ -731,10 +736,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Precondición**: para el aviso inmediato, el cliente está abierto y suscrito al canal privado del usuario, con la suscripción autorizada por la API, o la app Android tiene una sesión iniciada y push activas. El historial de la campana no lo requiere.
 - **Flujo principal**
     1. Otro usuario realiza una acción que afecta al actor.
-    2. El sistema guarda la notificación del actor y publica el evento en su canal a través de Pusher.
+    2. El sistema guarda la notificación del actor y publica en su canal, a través de Pusher, un evento que solo lleva identificadores.
     3. Pusher entrega el evento al cliente.
     4. El cliente vuelve a obtener los datos de las pantallas afectadas y actualiza los contadores.
-    5. El cliente avisa quién hizo la acción (snackbar en la web, notificación del sistema en la app) y la notificación aparece sin leer en la campana de notificaciones.
+    5. El cliente obtiene la notificación guardada, avisa quién hizo la acción (snackbar en la web, notificación del sistema en la app) y la notificación aparece sin leer en la campana de notificaciones.
     6. El actor toca la notificación: queda leída y el cliente lo lleva a Compartidos si requiere una acción, o al gasto o la entidad relacionados. También puede marcar todas como leídas.
 - **Eventos**
 

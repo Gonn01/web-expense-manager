@@ -1,0 +1,226 @@
+{
+  "generated_at": "2026-11-23T22:38:41.790Z",
+  "environment": {
+    "scope": "API y PostgreSQL locales en la misma máquina, con durabilidad activa. No mide Vercel ni Supabase.",
+    "node": "v22.12.0",
+    "cpu": "12th Gen Intel(R) Core(TM) i9-12900K",
+    "logical_cpus": 24,
+    "memory_gb": 32
+  },
+  "dataset": {
+    "entities": 20,
+    "expenses": 100
+  },
+  "objective": {
+    "connections": 25,
+    "p97_5_ms_below": 500,
+    "non_2xx": 0,
+    "errors": 0
+  },
+  "results": [
+    {
+      "scenario": "GET /health",
+      "connections": 10,
+      "duration_seconds": 15,
+      "requests_total": 85140,
+      "requests_per_second": 5676,
+      "latency_ms": {
+        "p50": 1,
+        "p90": 2,
+        "p97_5": 3,
+        "p99": 3,
+        "max": 68
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /health",
+      "connections": 25,
+      "duration_seconds": 15,
+      "requests_total": 98755,
+      "requests_per_second": 6584,
+      "latency_ms": {
+        "p50": 3,
+        "p90": 4,
+        "p97_5": 5,
+        "p99": 6,
+        "max": 17
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /health",
+      "connections": 50,
+      "duration_seconds": 15,
+      "requests_total": 89136,
+      "requests_per_second": 5943,
+      "latency_ms": {
+        "p50": 8,
+        "p90": 10,
+        "p97_5": 12,
+        "p99": 13,
+        "max": 22
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /dashboard",
+      "connections": 10,
+      "duration_seconds": 15,
+      "requests_total": 8770,
+      "requests_per_second": 585,
+      "latency_ms": {
+        "p50": 16,
+        "p90": 22,
+        "p97_5": 25,
+        "p99": 28,
+        "max": 37
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /dashboard",
+      "connections": 25,
+      "duration_seconds": 15,
+      "requests_total": 11205,
+      "requests_per_second": 747,
+      "latency_ms": {
+        "p50": 32,
+        "p90": 41,
+        "p97_5": 47,
+        "p99": 51,
+        "max": 70
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /dashboard",
+      "connections": 50,
+      "duration_seconds": 15,
+      "requests_total": 13625,
+      "requests_per_second": 908,
+      "latency_ms": {
+        "p50": 54,
+        "p90": 59,
+        "p97_5": 64,
+        "p99": 67,
+        "max": 83
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /gastos/:id",
+      "connections": 10,
+      "duration_seconds": 15,
+      "requests_total": 11480,
+      "requests_per_second": 765,
+      "latency_ms": {
+        "p50": 12,
+        "p90": 15,
+        "p97_5": 18,
+        "p99": 20,
+        "max": 51
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /gastos/:id",
+      "connections": 25,
+      "duration_seconds": 15,
+      "requests_total": 11766,
+      "requests_per_second": 784,
+      "latency_ms": {
+        "p50": 31,
+        "p90": 35,
+        "p97_5": 40,
+        "p99": 43,
+        "max": 69
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "GET /gastos/:id",
+      "connections": 50,
+      "duration_seconds": 15,
+      "requests_total": 11619,
+      "requests_per_second": 775,
+      "latency_ms": {
+        "p50": 62,
+        "p90": 70,
+        "p97_5": 88,
+        "p99": 100,
+        "max": 121
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "PUT /gastos/:id/favorito",
+      "connections": 10,
+      "duration_seconds": 15,
+      "requests_total": 16182,
+      "requests_per_second": 1079,
+      "latency_ms": {
+        "p50": 9,
+        "p90": 11,
+        "p97_5": 12,
+        "p99": 13,
+        "max": 56
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "PUT /gastos/:id/favorito",
+      "connections": 25,
+      "duration_seconds": 15,
+      "requests_total": 16838,
+      "requests_per_second": 1123,
+      "latency_ms": {
+        "p50": 21,
+        "p90": 26,
+        "p97_5": 31,
+        "p99": 35,
+        "max": 51
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "PUT /gastos/:id/favorito",
+      "connections": 50,
+      "duration_seconds": 15,
+      "requests_total": 16262,
+      "requests_per_second": 1084,
+      "latency_ms": {
+        "p50": 44,
+        "p90": 52,
+        "p97_5": 61,
+        "p99": 76,
+        "max": 99
+      },
+      "non_2xx": 0,
+      "errors": 0,
+      "timeouts": 0
+    }
+  ]
+}

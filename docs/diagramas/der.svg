@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2470" height="1060" viewBox="0 0 2470 1060" font-family="Helvetica, Arial, sans-serif">
-<rect width="2470" height="1060" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="2470" height="1210" viewBox="0 0 2470 1210" font-family="Helvetica, Arial, sans-serif">
+<rect width="2470" height="1210" fill="white"/>
 <text x="1235.0" y="36" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F4E79">Diagrama Entidad-Relación — Expense Manager</text>
 <polyline points="370,193.0 530,193.0 530,171.0 570,171.0" fill="none" stroke="#475569" stroke-width="1.4"/>
 <path d="M370 187.0 L382 193.0 L370 199.0" fill="none" stroke="#475569" stroke-width="1.4"/>
@@ -203,7 +203,7 @@
 <text x="78" y="649" font-size="10" font-weight="bold" fill="#64748B"></text>
 <text x="116" y="649" font-size="12" fill="#1F2937">created_at</text>
 <text x="362" y="649" font-size="11" text-anchor="end" fill="#64748B">timestamptz ?</text>
-<rect x="570" y="130" width="300" height="272" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<rect x="570" y="130" width="300" height="294" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
 <path d="M570 160 V136 a6 6 0 0 1 6 -6 H864 a6 6 0 0 1 6 6 V160 Z" fill="#1F4E79"/>
 <text x="720.0" y="150" font-size="14" font-weight="bold" text-anchor="middle" fill="white">users</text>
 <text x="578" y="175" font-size="10" font-weight="bold" fill="#B45309">PK</text>
@@ -244,6 +244,9 @@
 <text x="578" y="395" font-size="10" font-weight="bold" fill="#64748B"></text>
 <text x="616" y="395" font-size="12" fill="#1F2937">created_at</text>
 <text x="862" y="395" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<rect x="571" y="402" width="298" height="21" fill="#F4F6F9"/>
+<text x="616" y="417" font-size="12" fill="#1F2937">token_version</text>
+<text x="862" y="417" font-size="11" text-anchor="end" fill="#64748B">integer</text>
 <rect x="570" y="480" width="300" height="250" rx="6" fill="white" stroke="#0F766E" stroke-width="1.6"/>
 <path d="M570 510 V486 a6 6 0 0 1 6 -6 H864 a6 6 0 0 1 6 6 V510 Z" fill="#0F766E"/>
 <text x="720.0" y="500" font-size="14" font-weight="bold" text-anchor="middle" fill="white">purchase_edit_requests</text>
@@ -546,4 +549,16 @@
 <rect x="2014" y="982" width="14" height="14" rx="3" fill="#7C3AED"/><text x="2034" y="994" font-size="12" fill="#1F2937">Hacer cuentas</text>
 <rect x="2155" y="982" width="14" height="14" rx="3" fill="#B45309"/><text x="2175" y="994" font-size="12" fill="#1F2937">Avisos</text>
 <text x="90" y="1018" font-size="12" fill="#64748B">Enums: currency (36 monedas), expense_type (EGRESO, INGRESO), movement_type (26 valores). Estados: purchase_edit_requests.status = PENDING, APPROVED, REJECTED, CANCELLED. Índices únicos parciales: una sesión OPEN por usuario y una solicitud PENDING por par de gastos.</text>
+<rect x="70" y="1060" width="300" height="118" rx="6" fill="white" stroke="#1F4E79" stroke-width="1.6"/>
+<path d="M70 1090 V1066 a6 6 0 0 1 6 -6 H364 a6 6 0 0 1 6 6 V1090 Z" fill="#1F4E79"/>
+<text x="220" y="1080" font-size="14" font-weight="bold" text-anchor="middle" fill="white">auth_rate_limits</text>
+<text x="78" y="1105" font-size="10" font-weight="bold" fill="#B45309">PK</text>
+<text x="116" y="1105" font-size="12" font-weight="bold" fill="#1F2937">key</text>
+<text x="362" y="1105" font-size="11" text-anchor="end" fill="#64748B">text (hash)</text>
+<rect x="71" y="1112" width="298" height="22" fill="#F4F6F9"/>
+<text x="116" y="1127" font-size="12" fill="#1F2937">attempts</text>
+<text x="362" y="1127" font-size="11" text-anchor="end" fill="#64748B">integer</text>
+<text x="116" y="1149" font-size="12" fill="#1F2937">window_started_at</text>
+<text x="362" y="1149" font-size="11" text-anchor="end" fill="#64748B">timestamptz</text>
+<text x="70" y="1198" font-size="12" fill="#64748B">auth_rate_limits no tiene relaciones: guarda contadores de intentos con claves anonimizadas.</text>
 </svg>

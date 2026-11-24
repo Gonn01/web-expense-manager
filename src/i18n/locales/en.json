@@ -97,6 +97,9 @@
             "CONTRASENA_INCORRECTA": {
                 "message": "The password is incorrect."
             },
+            "DEMASIADOS_INTENTOS": {
+                "message": "Too many attempts. Wait a few minutes and try again."
+            },
             "NO_AUTORIZADO": {
                 "message": "You don't have permission to do this.",
                 "title": "Action not allowed"
@@ -423,6 +426,11 @@
         "goToStep": "Go to step {{step}} of {{total}}"
     },
     "configuracion": {
+        "revokeSessionsTitle": "Sessions",
+        "revokeSessionsHint": "Sign out on all your devices, including this one.",
+        "revokeSessionsAction": "Sign out everywhere",
+        "revokeSessionsConfirmTitle": "Sign out everywhere?",
+        "revokeSessionsConfirmMessage": "You will need to sign in again on all your devices.",
         "passwordTitle": "Password",
         "passwordDefineHint": "Your account signs in with Google. Set a password to also sign in with your email.",
         "passwordChangeHint": "You can sign in with your email and password, and also with Google.",

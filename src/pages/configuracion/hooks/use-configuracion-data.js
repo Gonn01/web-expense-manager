@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import useAuth from '@/store/use-auth-store';
 import {
     fetchPasswordStatus,
+    revokeAllSessions,
     updatePassword,
     updatePreferredCurrency,
     updateSueldo,
@@ -12,7 +13,7 @@ import { t } from '@/i18n';
 const CURRENCY_VALUES = Object.values(Currency);
 
 export function useConfiguracionData() {
-    const { user, token, updateUser } = useAuth();
+    const { user, token, updateUser, replaceToken, logout } = useAuth();
 
     const [preview, setPreview] = useState('');
     const [nombreVisible, setNombreVisible] = useState(t('configuracion.user'));
@@ -42,9 +43,15 @@ export function useConfiguracionData() {
         async (passwords) => {
             const status = await updatePassword(passwords, token);
             setHasPassword(status.has_password);
+            replaceToken(status.token);
         },
-        [token],
+        [token, replaceToken],
     );
+
+    const cerrarTodasLasSesiones = useCallback(async () => {
+        await revokeAllSessions(token);
+        logout();
+    }, [token, logout]);
 
     const monedaActual = CURRENCY_VALUES.includes(user?.preferred_currency)
         ? user.preferred_currency
@@ -86,5 +93,6 @@ export function useConfiguracionData() {
         guardarSueldo,
         hasPassword,
         guardarPassword,
+        cerrarTodasLasSesiones,
     };
 }

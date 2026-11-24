@@ -60,6 +60,11 @@ const useAuth = create((set) => ({
         localStorage.removeItem('token');
     },
 
+    replaceToken: (token) => {
+        localStorage.setItem('token', token);
+        set({ token });
+    },
+
     updateUser: (partial) =>
         set((state) => {
             const newUser = { ...(state.user || {}), ...partial };

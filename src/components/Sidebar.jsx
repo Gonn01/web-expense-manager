@@ -1,17 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Icon from './Icon';
 import useAuth from '@/store/use-auth-store';
 import { useCompartidosStore } from '@/store/use-compartidos-store';
 import { useEntitiesStore } from '@/store/use-entities-store';
 import { useNotificacionesStore } from '@/store/use-notificaciones-store';
 import { useUIStore } from '@/store/use-ui-store';
-import { buildNotification } from '@/utils/notifications';
+import { buildNotification, takeAnnounceable } from '@/utils/notifications';
 import { usePusherChannel } from '@/hooks/use-pusher-channel';
 import { userRealtimeChannel } from '@/utils/realtime-channel';
 import { useMediaQuery, DESKTOP_QUERY } from '@/hooks/use-media-query';
 import { useSnackbarStore } from '@/store/use-snackbar-store';
-import Snackbar from './Snackbar';
 import UserAvatar from './UserAvatar';
 import ConfirmDeleteModal from './modals/ConfirmDeleteModal';
 import { t } from '@/i18n';
@@ -39,7 +38,7 @@ export default function Sidebar() {
     const mobileOpen = useUIStore((s) => s.mobileSidebarOpen);
     const setMobileOpen = useUIStore((s) => s.setMobileSidebarOpen);
     const closeMobile = useCallback(() => setMobileOpen(false), [setMobileOpen]);
-    const [notification, setNotification] = useState(null);
+    const pendingNoticeIds = useRef(new Set());
     const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
 
     useEffect(() => {
@@ -62,220 +61,59 @@ export default function Sidebar() {
         return () => document.removeEventListener('keydown', onKey);
     }, [mobileOpen, closeMobile]);
 
-    const handleNuevo = useCallback(() => {
+    const increasePendingCount = useCallback(() => {
         setPendingCount((c) => c + 1);
-        setNotification(t('common.youReceivedANewSharedExpense'));
     }, [setPendingCount]);
 
-    const handleAprobado = useCallback(({ receiverName, gastoName } = {}) => {
-        const quien = receiverName || t('common.aUser');
-        const que = gastoName ? ` "${gastoName}"` : '';
-        useSnackbarStore
-            .getState()
-            .show(t('realtime.expenseAccepted', { who: quien, expense: que }), 'success');
-    }, []);
+    const increasePendingPayments = useCallback(() => {
+        setPendingPaymentsCount((c) => c + 1);
+    }, [setPendingPaymentsCount]);
 
-    const handleRechazado = useCallback(
-        ({ receiverName, gastoName } = {}) => {
-            const quien = receiverName || t('common.aUser');
-            const que = gastoName ? ` "${gastoName}"` : '';
-            loadPendingCount(token);
-            useSnackbarStore
-                .getState()
-                .show(t('realtime.expenseRejected', { who: quien, expense: que }), 'error');
+    const reloadPendingCount = useCallback(() => {
+        loadPendingCount(token);
+    }, [loadPendingCount, token]);
+
+    const reloadEntities = useCallback(() => {
+        useEntitiesStore.getState().loadEntities(token);
+    }, [token]);
+
+    const handleNotificacionNueva = useCallback(
+        async ({ id } = {}) => {
+            if (id != null) pendingNoticeIds.current.add(String(id));
+            await loadNotificaciones(token);
+            const { items } = useNotificacionesStore.getState();
+            for (const item of takeAnnounceable(pendingNoticeIds.current, items)) {
+                const notice = buildNotification(item.event, item.data);
+                if (notice) {
+                    useSnackbarStore.getState().show(notice.message, notice.tone, notice.icon);
+                }
+            }
         },
-        [loadPendingCount, token],
-    );
-
-    const handleDescartado = useCallback(
-        ({ actorId, actorName } = {}) => {
-            loadPendingCount(token);
-            if (String(actorId) === String(user?.id)) return;
-            const quien = actorName || t('common.theOtherPerson');
-            useSnackbarStore.getState().show(t('realtime.expenseDiscarded', { who: quien }));
-        },
-        [loadPendingCount, token, user?.id],
-    );
-
-    const handleDesvinculado = useCallback(
-        ({ actorName, gastoName, confirmedPayments } = {}) => {
-            loadPendingCount(token);
-            const quien = actorName || t('common.theOtherPerson');
-            const que = gastoName ? `"${gastoName}"` : t('realtime.anExpense');
-            const confirmados = confirmedPayments > 0 ? t('realtime.expenseUnsharedConfirmed') : '';
-            useSnackbarStore
-                .getState()
-                .show(
-                    `${t('realtime.expenseUnshared', { who: quien, expense: que })}${confirmados}`,
-                );
-        },
-        [loadPendingCount, token],
-    );
-
-    const handlePagoPendiente = useCallback(
-        ({ actorName } = {}) => {
-            setPendingPaymentsCount((c) => c + 1);
-            const mensaje = actorName
-                ? t('realtime.paymentPending', { who: actorName })
-                : t('common.youHaveAPaymentToConfirmIn');
-            useSnackbarStore.getState().show(mensaje, 'success', 'pending_actions');
-        },
-        [setPendingPaymentsCount],
-    );
-
-    const handlePagoConfirmado = useCallback(({ actorName } = {}) => {
-        const quien = actorName || t('common.theOtherPerson');
-        useSnackbarStore.getState().show(t('realtime.paymentConfirmed', { who: quien }), 'success');
-    }, []);
-
-    const handlePagoRechazado = useCallback(({ actorName } = {}) => {
-        const quien = actorName || t('common.theOtherPerson');
-        useSnackbarStore.getState().show(t('realtime.paymentRejected', { who: quien }), 'error');
-    }, []);
-
-    const handlePagoRetirado = useCallback(
-        ({ actorName } = {}) => {
-            const quien = actorName || t('common.theOtherPerson');
-            loadPendingCount(token);
-            useSnackbarStore.getState().show(t('realtime.paymentWithdrawn', { who: quien }));
-        },
-        [loadPendingCount, token],
-    );
-
-    const handleReversionSolicitada = useCallback(
-        ({ actorName } = {}) => {
-            const quien = actorName || t('common.theOtherPerson');
-            setPendingPaymentsCount((c) => c + 1);
-            useSnackbarStore
-                .getState()
-                .show(t('realtime.reversalRequested', { who: quien }), 'success', 'undo');
-        },
-        [setPendingPaymentsCount],
-    );
-
-    const handleReversionCancelada = useCallback(
-        ({ actorName } = {}) => {
-            const quien = actorName || t('common.theOtherPerson');
-            loadPendingCount(token);
-            useSnackbarStore.getState().show(t('realtime.reversalCancelled', { who: quien }));
-        },
-        [loadPendingCount, token],
-    );
-
-    const handleReversionAceptada = useCallback(({ actorName } = {}) => {
-        const quien = actorName || t('common.theOtherPerson');
-        useSnackbarStore.getState().show(t('realtime.reversalAccepted', { who: quien }), 'success');
-    }, []);
-
-    const handleReversionRechazada = useCallback(({ actorName } = {}) => {
-        const quien = actorName || t('common.theOtherPerson');
-        useSnackbarStore.getState().show(t('realtime.reversalRejected', { who: quien }), 'error');
-    }, []);
-
-    const handleEdicionSolicitada = useCallback(
-        ({ actorName, gastoName } = {}) => {
-            const quien = actorName || t('common.theOtherPerson');
-            const que = ` ${gastoName ? `"${gastoName}"` : t('realtime.anExpense')}`;
-            setPendingPaymentsCount((c) => c + 1);
-            useSnackbarStore
-                .getState()
-                .show(t('realtime.editRequested', { who: quien, expense: que }), 'success', 'edit');
-        },
-        [setPendingPaymentsCount],
-    );
-
-    const handleEdicionCancelada = useCallback(
-        ({ actorName } = {}) => {
-            const quien = actorName || t('common.theOtherPerson');
-            loadPendingCount(token);
-            useSnackbarStore.getState().show(t('realtime.editCancelled', { who: quien }));
-        },
-        [loadPendingCount, token],
-    );
-
-    const handleEdicionAprobada = useCallback(
-        ({ actorId, actorName, gastoName } = {}) => {
-            if (String(actorId) === String(user?.id)) return;
-            const quien = actorName || t('common.theOtherPerson');
-            const que = gastoName ? t('realtime.ofExpense', { expense: gastoName }) : '';
-            useSnackbarStore
-                .getState()
-                .show(t('realtime.editApproved', { who: quien, expense: que }), 'success');
-        },
-        [user?.id],
-    );
-
-    const handleEdicionRechazada = useCallback(({ actorName, gastoName } = {}) => {
-        const quien = actorName || t('common.theOtherPerson');
-        const que = gastoName ? t('realtime.ofExpense', { expense: gastoName }) : '';
-        useSnackbarStore
-            .getState()
-            .show(t('realtime.editRejected', { who: quien, expense: que }), 'error');
-    }, []);
-
-    const handleNotificacionNueva = useCallback(() => {
-        loadNotificaciones(token);
-    }, [loadNotificaciones, token]);
-
-    const showNotice = useCallback((event, data) => {
-        const notice = buildNotification(event, data);
-        if (notice) useSnackbarStore.getState().show(notice.message, notice.tone, notice.icon);
-    }, []);
-
-    const handleVinculo = useCallback(
-        (event, data) => {
-            useEntitiesStore.getState().loadEntities(token);
-            showNotice(event, data);
-        },
-        [showNotice, token],
+        [loadNotificaciones, token],
     );
 
     const pusherEvents = useMemo(
         () => ({
             'notificacion.nueva': handleNotificacionNueva,
-            'entidad.vinculada': (data) => handleVinculo('entidad.vinculada', data),
-            'entidad.desvinculada': (data) => handleVinculo('entidad.desvinculada', data),
-            'gasto.postergado': (data) => showNotice('gasto.postergado', data),
-            'gasto.postergacion_quitada': (data) => showNotice('gasto.postergacion_quitada', data),
-            'compartido.nuevo': handleNuevo,
-            'compartido.aprobado': handleAprobado,
-            'compartido.rechazado': handleRechazado,
-            'compartido.descartado': handleDescartado,
-            'compartido.desvinculado': handleDesvinculado,
-            'pago.pendiente': handlePagoPendiente,
-            'pago.confirmado': handlePagoConfirmado,
-            'pago.rechazado': handlePagoRechazado,
-            'pago.retirado': handlePagoRetirado,
-            'pago.reversion_solicitada': handleReversionSolicitada,
-            'pago.reversion_cancelada': handleReversionCancelada,
-            'pago.reversion_aceptada': handleReversionAceptada,
-            'pago.reversion_rechazada': handleReversionRechazada,
-            'edicion.solicitada': handleEdicionSolicitada,
-            'edicion.cancelada': handleEdicionCancelada,
-            'edicion.aprobada': handleEdicionAprobada,
-            'edicion.rechazada': handleEdicionRechazada,
+            'entidad.vinculada': reloadEntities,
+            'entidad.desvinculada': reloadEntities,
+            'compartido.nuevo': increasePendingCount,
+            'compartido.rechazado': reloadPendingCount,
+            'compartido.descartado': reloadPendingCount,
+            'compartido.desvinculado': reloadPendingCount,
+            'pago.pendiente': increasePendingPayments,
+            'pago.retirado': reloadPendingCount,
+            'pago.reversion_solicitada': increasePendingPayments,
+            'pago.reversion_cancelada': reloadPendingCount,
+            'edicion.solicitada': increasePendingPayments,
+            'edicion.cancelada': reloadPendingCount,
         }),
         [
             handleNotificacionNueva,
-            handleVinculo,
-            showNotice,
-            handleEdicionSolicitada,
-            handleEdicionCancelada,
-            handleEdicionAprobada,
-            handleEdicionRechazada,
-            handleNuevo,
-            handleAprobado,
-            handleRechazado,
-            handleDescartado,
-            handleDesvinculado,
-            handlePagoPendiente,
-            handlePagoConfirmado,
-            handlePagoRechazado,
-            handlePagoRetirado,
-            handleReversionSolicitada,
-            handleReversionCancelada,
-            handleReversionAceptada,
-            handleReversionRechazada,
+            reloadEntities,
+            increasePendingCount,
+            increasePendingPayments,
+            reloadPendingCount,
         ],
     );
 
@@ -311,9 +149,6 @@ export default function Sidebar() {
 
     return (
         <>
-            {notification && (
-                <Snackbar message={notification} onClose={() => setNotification(null)} />
-            )}
             {mobileOpen && (
                 <div
                     className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"

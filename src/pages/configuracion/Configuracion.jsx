@@ -4,6 +4,7 @@ import { IdiomaCard } from './components/IdiomaCard';
 import { PasswordCard } from './components/PasswordCard';
 import { PerfilCard } from './components/PerfilCard';
 import { PreferenciasCard } from './components/PreferenciasCard';
+import { SesionesCard } from './components/SesionesCard';
 import { SueldoCard } from './components/SueldoCard';
 import { TutorialCard } from './components/TutorialCard';
 import { useConfiguracionUI } from './hooks/use-configuracion-ui';
@@ -30,6 +31,7 @@ export default function Configuracion() {
         hasPassword,
         loadingPassword,
         onSavePassword,
+        onRevokeSessions,
 
         themeMode,
 
@@ -75,6 +77,8 @@ export default function Configuracion() {
                     loading={loadingPassword}
                     onSave={onSavePassword}
                 />
+
+                <SesionesCard onRevokeSessions={onRevokeSessions} />
 
                 <AparienciaCard themeMode={themeMode} setThemeMode={setThemeMode} />
 

@@ -4,6 +4,7 @@ import {
     linkedEntityToUnlink,
     mergeFirstPage,
     notificationTarget,
+    takeAnnounceable,
 } from './notifications';
 
 const EVENTS = [
@@ -130,5 +131,31 @@ describe('mergeFirstPage', () => {
         });
         expect(result.items).toHaveLength(2);
         expect(result.nextBefore).toBeNull();
+    });
+});
+
+describe('takeAnnounceable', () => {
+    it('devuelve las notificaciones esperadas de la más vieja a la más nueva', () => {
+        const pending = new Set(['3', '5']);
+        const items = [{ id: 5 }, { id: 4 }, { id: 3 }];
+
+        expect(takeAnnounceable(pending, items).map((item) => item.id)).toEqual([3, 5]);
+    });
+
+    it('no anuncia dos veces la misma notificación', () => {
+        const pending = new Set(['3']);
+        const items = [{ id: 3 }];
+
+        takeAnnounceable(pending, items);
+
+        expect(takeAnnounceable(pending, items)).toEqual([]);
+    });
+
+    it('conserva la que todavía no llegó', () => {
+        const pending = new Set(['3', '9']);
+
+        takeAnnounceable(pending, [{ id: 3 }]);
+
+        expect([...pending]).toEqual(['9']);
     });
 });

@@ -97,6 +97,9 @@
             "CONTRASENA_INCORRECTA": {
                 "message": "La contraseña es incorrecta."
             },
+            "DEMASIADOS_INTENTOS": {
+                "message": "Demasiados intentos. Esperá unos minutos y volvé a probar."
+            },
             "NO_AUTORIZADO": {
                 "message": "No tenés permiso para hacer esto.",
                 "title": "Acción no permitida"
@@ -423,6 +426,11 @@
         "goToStep": "Ir al paso {{step}} de {{total}}"
     },
     "configuracion": {
+        "revokeSessionsTitle": "Sesiones",
+        "revokeSessionsHint": "Cerrá la sesión en todos tus dispositivos, incluido este.",
+        "revokeSessionsAction": "Cerrar todas las sesiones",
+        "revokeSessionsConfirmTitle": "¿Cerrar todas las sesiones?",
+        "revokeSessionsConfirmMessage": "Vas a tener que volver a iniciar sesión en todos tus dispositivos.",
         "passwordTitle": "Contraseña",
         "passwordDefineHint": "Tu cuenta entra con Google. Definí una contraseña para entrar también con tu email.",
         "passwordChangeHint": "Podés entrar con tu email y contraseña, y también con Google.",

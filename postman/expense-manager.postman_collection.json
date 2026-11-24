@@ -128,7 +128,7 @@
                 }
               }
             },
-            "description": "Devuelve user y un token JWT válido por 7 días."
+            "description": "Devuelve user y un token JWT válido por 7 días, hasta que se revoque. Responde 429 DEMASIADOS_INTENTOS al superar el límite de intentos."
           },
           "response": []
         },
@@ -273,6 +273,19 @@
         },
         {
           "name": "Definir o cambiar contraseña",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "const data = body && body.data;",
+                  "if (pm.response.code < 300 && data && data.token) pm.collectionVariables.set('token', String(data.token));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -300,7 +313,27 @@
                 }
               }
             },
-            "description": "new_password: mínimo 6 caracteres. current_password es obligatorio solo si la cuenta ya tiene contraseña."
+            "description": "new_password: mínimo 6 caracteres. current_password es obligatorio solo si la cuenta ya tiene contraseña. Responde { has_password, token }: el token nuevo reemplaza al anterior, que queda revocado. Responde 429 DEMASIADOS_INTENTOS tras 5 intentos fallidos en 15 minutos."
+          },
+          "response": []
+        },
+        {
+          "name": "Cerrar todas las sesiones",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/sessions/revoke",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "sessions",
+                "revoke"
+              ]
+            },
+            "description": "Invalida todos los tokens del usuario, incluido el usado en esta petición. Después hay que volver a iniciar sesión."
           },
           "response": []
         },

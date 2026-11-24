@@ -94,6 +94,15 @@ export const updatePassword = async ({ currentPassword, newPassword }, token) =>
     return data.data;
 };
 
+export const revokeAllSessions = async (token) => {
+    const { data } = await api.post(
+        '/user/sessions/revoke',
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+    );
+    return data.data;
+};
+
 export const authorizeRealtimeChannel = async (socketId, channelName, token) => {
     const { data } = await api.post(
         '/user/realtime-auth',

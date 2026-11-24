@@ -12,10 +12,10 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
 | RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
-| RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. | Todos |
+| RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. Incluye la versión de sesión del usuario, que la API compara con la base en cada petición (RNF-SEG-17). | Todos |
 | RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` y `/api/health` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
 | RNF-SEG-04 | El usuario que opera se toma siempre del token, nunca de un dato enviado por el cliente. Toda lectura o modificación de entidades, gastos, categorías, sesiones y snapshots se restringe al dueño. | API |
-| RNF-SEG-05 | El inicio de sesión no revela si el email existe: email inexistente y contraseña incorrecta producen la misma respuesta. | API |
+| RNF-SEG-05 | El inicio de sesión no revela si el email existe: email inexistente y contraseña incorrecta producen la misma respuesta y ejecutan la misma comparación bcrypt. | API |
 | RNF-SEG-06 | Los secretos (`JWT_SECRET`, `DATABASE_URL`, credenciales de Pusher y Firebase) se leen de variables de entorno y no se versionan. | Todos |
 | RNF-SEG-07 | La app móvil guarda el token en almacenamiento seguro del dispositivo. La web lo guarda en `localStorage`. | App, Web |
 | RNF-SEG-08 | Todas las consultas a la base usan parámetros posicionales (`$1, $2…`); no se concatenan valores en el SQL. | API |
@@ -25,14 +25,16 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-12 | Las notificaciones push se dirigen a usuarios autenticados de Pusher Beams: la API solo emite el token de Beams para el usuario de la sesión. Su contenido no incluye montos ni nombres de gastos. | API, App |
 | RNF-SEG-13 | El inicio de sesión con Google solo confía en un ID token de Firebase verificado por la API contra el proyecto de `FIREBASE_PROJECT_ID`. La identidad y el email nunca se toman de datos enviados por el cliente. | API, Web, App |
 | RNF-SEG-14 | Vincular Google a una cuenta con contraseña exige esa contraseña o eliminarla, para que nadie conserve acceso a una cuenta creada de antemano con un email ajeno. | API, Web, App |
-| RNF-SEG-15 | Las notificaciones en tiempo real viajan por un canal privado de Pusher por usuario (`private-notificaciones-<userId>`). Para suscribirse, el cliente pide la firma a `POST /user/realtime-auth` con su token, y la API solo firma el canal del usuario de la sesión. | API, Web, App |
+| RNF-SEG-15 | Las notificaciones en tiempo real viajan por un canal privado de Pusher por usuario (`private-notificaciones-<userId>`). Para suscribirse, el cliente pide la firma a `POST /user/realtime-auth` con su token, y la API solo firma el canal del usuario de la sesión. Los eventos publicados llevan solo identificadores: los nombres se obtienen de `GET /notificaciones`, que exige sesión. | API, Web, App |
+| RNF-SEG-16 | La API limita los intentos con contadores atómicos en PostgreSQL, que guardan claves con hash: 5 por email e IP y 30 por IP cada 15 minutos en el inicio de sesión, 10 registros por IP por hora, 30 ingresos con Google por IP cada 15 minutos y 5 contraseñas incorrectas por cuenta cada 15 minutos al cambiarla o vincular Google. Al superarlos responde 429 `DEMASIADOS_INTENTOS`. | API, Web, App |
+| RNF-SEG-17 | Cambiar la contraseña, eliminarla al vincular Google o elegir "Cerrar todas las sesiones" invalida los tokens anteriores del usuario. Al cambiar la contraseña, el dispositivo que la cambió recibe un token nuevo y sigue conectado. | API, Web, App |
 
 **Limitaciones conocidas**
 
 - El registro con email y contraseña no verifica que el correo pertenezca a quien se registra. RNF-SEG-14 protege al dueño real cuando entra con Google.
-- Cambiar la contraseña no cierra las sesiones ya abiertas: sus tokens siguen válidos hasta vencer.
-- Los eventos de tiempo real llevan identificadores y nombres, no montos. Solo los recibe el dueño del canal, pero esos nombres pasan por Pusher.
-- La autorización del canal se valida al suscribirse: una conexión ya suscrita sigue recibiendo eventos hasta desconectarse, aunque su token venza.
+- La autorización del canal se valida al suscribirse: una conexión ya suscrita sigue recibiendo eventos, que solo llevan identificadores, hasta desconectarse, aunque su token venza o se revoque.
+- Las notificaciones push de Android nombran a quien actuó, por lo que ese nombre pasa por Pusher Beams y Firebase Cloud Messaging.
+- El límite de inicio de sesión se aplica por email e IP para que un tercero no pueda bloquear una cuenta ajena. Un ataque distribuido entre muchas IP contra una misma cuenta no queda limitado.
 
 ## CON — Consistencia entre clientes
 
@@ -71,6 +73,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-05 | Las operaciones sobre varios gastos (marcar o desmarcar en lote, pagar desde el dashboard una entidad entera, finalizar la sesión de cuentas, eliminar una entidad, compartir un gasto con pagos previos) usan una cantidad fija de consultas a la base, no una o más por gasto. Las notificaciones que generan se envían en paralelo después de guardar, sin demorar la respuesta. | API |
 | RNF-REN-06 | La web descarga el código de cada pantalla de la aplicación recién cuando se navega a ella: las pantallas de inicio de sesión y registro no cargan el código del dashboard, los gráficos ni el resto de las pantallas privadas. | Web |
 | RNF-REN-07 | Al volver a un módulo principal (dashboard, entidades, compartidos, historial de cuentas) ya visitado en la sesión, sus datos se muestran de inmediato, sin el indicador de carga de pantalla completa, y se actualizan en segundo plano. Los datos guardados se conservan solo en memoria y se descartan al cambiar la sesión. | Web, App |
+| RNF-REN-08 | Con 25 conexiones simultáneas, las operaciones medidas de la API responden con un percentil 97,5 menor a 500 ms y sin errores. Evidencia local en [evidencias](evidencias/README.md); no mide Vercel ni Supabase. | API |
 
 *Limitación conocida*: las acciones de compartidos actualizan la tarjeta afectada al instante, pero después vuelven a pedir todo el listado en segundo plano, sin el loader. Cuando la otra persona aprueba o rechaza un gasto, el dashboard también se vuelve a pedir completo en segundo plano (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
 
@@ -87,6 +90,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-DIS-07 | La app móvil reintenta automáticamente las peticiones que fallan por corte de conexión. | App |
 | RNF-DIS-08 | Finalizar una sesión de cuentas es una sola transacción: pagos, snapshot, cierre de la sesión y liberación de postergados se guardan juntos o no se guarda nada. Si falla, la sesión sigue abierta para reintentar. Dos cierres simultáneos de la misma sesión no pagan dos veces: el segundo espera al primero y encuentra la sesión ya cerrada. Los gastos compartidos marcados y sus copias también quedan bloqueados durante el cierre (y al confirmar, rechazar, retirar o revertir un pago compartido), así dos usuarios que cierran a la vez no generan pagos pendientes cruzados. Aprobar o rechazar un gasto compartido, y solicitar, aceptar, rechazar o cancelar una reversión, bloquean las dos copias, validan el estado después del bloqueo y escriben solo si sigue vigente: entre solicitudes simultáneas gana una y las demás reciben un error, sin dejar historial ni avisos. | API |
 | RNF-DIS-09 | Sin Pusher Beams configurado o disponible, la operación de origen y el tiempo real siguen funcionando. Si el dispositivo no pudo registrarse, la app Flutter usa la notificación local mientras su proceso siga activo. | API, App |
+| RNF-DIS-10 | Ante una caída de la base, la API sigue en marcha, informa 503 en `/health`, no expone detalles internos y se recupera sin reiniciarse. Un pago confirmado al usuario sobrevive a una caída abrupta y no se duplica. Un backup de la base se puede restaurar con los datos idénticos. Evidencia local en [evidencias](evidencias/README.md). | API |
 
 ## INT — Integridad y auditoría
 
@@ -111,11 +115,17 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-MAN-01 | La API respeta la separación en capas `route → factory → controller → service → repository`. La lógica de negocio vive solo en los services. | API |
 | RNF-MAN-02 | La web centraliza todas las llamadas HTTP y el manejo de errores en un único módulo, y separa por pantalla los hooks de datos de los de interfaz. | Web |
 | RNF-MAN-03 | La app móvil respeta la dependencia unidireccional `app → services → repositories → providers → core` y la regla de una clase por archivo. | App |
-| RNF-MAN-04 | La API cuenta con pruebas unitarias, ejecutables sin base de datos, de sus controllers, del middleware de autenticación y de las reglas de pertenencia y de pago del service de gastos. Además tiene pruebas de integración por HTTP contra un Postgres local temporal, que cubren pagos, sesión de cuentas, compartidos y bajas en cascada. | API |
+| RNF-MAN-04 | La API cuenta con pruebas unitarias, ejecutables sin base de datos, de sus controllers, del middleware de autenticación y de las reglas de pertenencia y de pago del service de gastos. Además tiene pruebas de integración por HTTP contra un Postgres local temporal, que cubren pagos, sesión de cuentas, compartidos, concurrencia, límites de intentos, revocación de sesiones y bajas en cascada. | API |
 | RNF-MAN-05 | El código pasa el linter configurado en cada proyecto (ESLint en web y API, `flutter analyze` en la app). | Todos |
 | RNF-MAN-06 | Todo cambio funcional se implementa en ambos clientes y se refleja en esta documentación y en las guías de `.claude/` dentro del mismo cambio. | Todos |
+| RNF-MAN-07 | La web tiene pruebas de componentes y flujos completos en navegador contra una API y una base temporales. La app tiene pruebas de widgets y un flujo completo en Android. | Web, App |
+| RNF-MAN-08 | Cada repo define un pipeline de GitHub Actions que ejecuta lint y pruebas en cada push a `master` y en cada pull request. | Todos |
 
-*Limitación conocida*: la app móvil solo tiene pruebas de lógica pura (`packages/em_services/test/` y `test/`), no de widgets ni pantallas. La web solo tiene pruebas unitarias (Vitest) de funciones puras, del manejo de errores de la API, del inicio de los clientes de tiempo real y de Firebase, y de los stores de la sesión de cuentas, del caché de pantallas y de los diálogos, no de componentes ni hooks. En la API no tienen pruebas unitarias los services de categorías, dashboard y usuario.
+**Limitaciones conocidas**
+
+- Las pruebas de componentes y widgets cubren los flujos de autenticación, compartidos y sesión de cuentas, no todas las pantallas.
+- El flujo completo de la app en Android se ejecuta a mano, porque requiere un emulador; no forma parte del pipeline.
+- En la API no tienen pruebas unitarias los services de categorías y dashboard.
 
 ## POR — Portabilidad y entorno
 

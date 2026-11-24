@@ -84,7 +84,7 @@ Consecuencias:
 
 `src/hooks/use-pusher-channel.js` lleva un conteo de referencias de las suscripciones en un `Map` a nivel de módulo, para que varios componentes en el mismo canal no provoquen una desuscripción prematura cuando uno se desmonta. No "simplificarlo" sin conservar ese conteo.
 
-`lib/pusher.js` expone `pusherClient`, creado con `createPusherClient` (`lib/create-pusher-client.js`, con pruebas). Si faltan `VITE_PUSHER_KEY` o `VITE_PUSHER_CLUSTER`, vale `null`, se avisa en la consola y `usePusherChannel` no se suscribe: la web funciona sin tiempo real. Todo uso directo de `pusherClient` debe contemplar ese `null`. El canal es privado: `pusherClient` pide la firma con `authorizeRealtimeChannel` (`services/api.js`, silenciosa) usando el token actual, y el nombre del canal sale siempre de `userRealtimeChannel` (`utils/realtime-channel.js`).
+`lib/pusher.js` expone `pusherClient`, creado con `createPusherClient` (`lib/create-pusher-client.js`, con pruebas). Si faltan `VITE_PUSHER_KEY` o `VITE_PUSHER_CLUSTER`, vale `null`, se avisa en la consola y `usePusherChannel` no se suscribe: la web funciona sin tiempo real. Todo uso directo de `pusherClient` debe contemplar ese `null`. El canal es privado: `pusherClient` pide la firma con `authorizeRealtimeChannel` (`services/api.js`, silenciosa) usando el token actual, y el nombre del canal sale siempre de `userRealtimeChannel` (`utils/realtime-channel.js`). Los eventos solo llevan identificadores: `Sidebar` escucha `notificacion.nueva`, recarga las notificaciones y arma el aviso con `takeAnnounceable` y `buildNotification`.
 
 En Compartidos (`hooks/use-compartidos.js`), cada acción aplica su resultado al estado con `applyCompartidoAction` (`utils/compartidos-actions.js`), actualiza los contadores con `compartidosCounters` y recarga en segundo plano (`load({ silent: true })` sin esperar), así la pantalla no vuelve a cargarse entera. Las acciones en curso viven en la lista `loadingActions`, con claves `gasto-<id>`, `movement-<id>` y `edicion-<id>`, para que varias tarjetas muestren su spinner a la vez sin pisarse.
 
@@ -142,7 +142,7 @@ Las reglas completas están en `docs/requerimientos-funcionales.md` (módulos PA
 
 ## 9. Trampas
 
-- Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código. Componentes y hooks no tienen pruebas (no hay entorno DOM ni Testing Library instalados). Para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función.
+- Las pruebas son de Vitest (`npm test`), en archivos `*.test.js` junto al código. Los componentes se prueban con Testing Library en `*.test.jsx` (entorno jsdom, helpers en `src/test/`) y los flujos completos con Playwright en `e2e/` (`npm run test:e2e`, requiere `E2E_API_DIR`). Los hooks no tienen pruebas directas. Para probar lógica de una pantalla, sacarla a un `utils/` y probar esa función.
 - No usar `vi.mock` con el alias `@/`: en Windows el mock se ignora si el directorio de trabajo tiene la unidad en minúscula (`d:\`, como lo abre VS Code), y la prueba pasa o falla según desde dónde se corra. Para reemplazar acciones de un store se usa `setState`; para simular HTTP, `axios.defaults.adapter` antes de importar el módulo con `await import` (ver `store/use-settlement-store.test.js`).
 - Los textos que redacta la API (errores sin clave en `utils/error-catalog.js`, detalle de algunos movimientos) llegan en español aunque la interfaz esté en inglés.
 - Los campos de monto usan punto de miles y coma decimal también en inglés (`utils/amount-input.js`).
