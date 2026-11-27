@@ -71,7 +71,7 @@ body {
     }
 }
 
-.btn-save:disabled {
+.btn-save:disabled:not([aria-busy='true'], :has(.animate-spin)) {
     background-color: transparent;
     color: #94a3b8;
     outline: 1px dashed #cbd5e1;
@@ -81,9 +81,14 @@ body {
     cursor: not-allowed;
 }
 
-:root.dark .btn-save:disabled {
+:root.dark .btn-save:disabled:not([aria-busy='true'], :has(.animate-spin)) {
     color: #6b8576;
     outline-color: #3d5245;
+}
+
+.btn-save:disabled:is([aria-busy='true'], :has(.animate-spin)) {
+    opacity: 1;
+    cursor: progress;
 }
 
 [role='combobox']:focus,

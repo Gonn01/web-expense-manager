@@ -3,9 +3,13 @@ export default function SubmitButton({ loading, children }) {
         <button
             type="submit"
             disabled={loading}
-            className="btn-save w-full rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-black"
+            aria-busy={loading}
+            className="btn-save flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-black"
         >
-            {loading ? 'Cargando...' : children}
+            {loading && (
+                <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current/30 border-t-current" />
+            )}
+            {children}
         </button>
     );
 }
