@@ -5,6 +5,7 @@ import Loader from '@/components/Loader';
 import { useThemeSync } from '@/hooks/use-theme-sync';
 import Login from './pages/auth/Login/Login';
 import Register from './pages/auth/Register/Register';
+import ForgotPassword from './pages/auth/ForgotPassword/ForgotPassword';
 import ProtectedRoute from './guards/ProtectedRoute';
 
 const AppLayout = lazy(() => import('./layouts/AppLayout'));
@@ -31,6 +32,7 @@ export default function App() {
 
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
 
                     <Route
                         path="/app/*"

@@ -133,6 +133,14 @@ export const ERROR_PRESENTATION = Object.freeze({
         messageKey: 'errors.codes.CONTRASENA_INCORRECTA.message',
         variant: 'snackbar',
     },
+    EMAIL_NO_VERIFICADO: {
+        messageKey: 'errors.codes.EMAIL_NO_VERIFICADO.message',
+        variant: 'snackbar',
+    },
+    AUTH_EMAIL_NO_CONFIGURADO: {
+        messageKey: 'errors.codes.AUTH_EMAIL_NO_CONFIGURADO.message',
+        variant: 'snackbar',
+    },
 
     DEMASIADOS_INTENTOS: {
         messageKey: 'errors.codes.DEMASIADOS_INTENTOS.message',

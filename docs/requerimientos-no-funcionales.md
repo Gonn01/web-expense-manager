@@ -11,7 +11,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | ID | Requerimiento | Aplica a |
 | --- | --- | --- |
-| RNF-SEG-01 | Las contraseñas se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
+| RNF-SEG-01 | Con Firebase configurado en la API, las contraseñas las guarda Firebase Authentication y la base no guarda ninguna. Sin Firebase, y en las cuentas anteriores hasta su primer inicio de sesión (RF-AUT-15), se almacenan únicamente como hash bcrypt (factor de costo 12). Nunca en texto plano. El hash nunca se incluye en las respuestas de la API. | API |
 | RNF-SEG-02 | La sesión se representa con un JWT firmado, con vigencia de 7 días, que viaja en el encabezado `Authorization: Bearer <token>`. Incluye la versión de sesión del usuario, que la API compara con la base en cada petición (RNF-SEG-17). | Todos |
 | RNF-SEG-03 | Toda ruta de la API fuera de `/api/auth/*` y `/api/health` exige un token válido. Sin token, o con un token inválido o vencido, responde 401. El 403 se reserva para un usuario autenticado que no tiene permiso sobre el recurso (`NO_AUTORIZADO`). | API |
 | RNF-SEG-04 | El usuario que opera se toma siempre del token, nunca de un dato enviado por el cliente. Toda lectura o modificación de entidades, gastos, categorías, sesiones y snapshots se restringe al dueño. | API |
@@ -26,12 +26,15 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-SEG-13 | El inicio de sesión con Google solo confía en un ID token de Firebase verificado por la API contra el proyecto de `FIREBASE_PROJECT_ID`. La identidad y el email nunca se toman de datos enviados por el cliente. | API, Web, App |
 | RNF-SEG-14 | Vincular Google a una cuenta con contraseña exige esa contraseña o eliminarla, para que nadie conserve acceso a una cuenta creada de antemano con un email ajeno. | API, Web, App |
 | RNF-SEG-15 | Las notificaciones en tiempo real viajan por un canal privado de Pusher por usuario (`private-notificaciones-<userId>`). Para suscribirse, el cliente pide la firma a `POST /user/realtime-auth` con su token, y la API solo firma el canal del usuario de la sesión. Los eventos publicados llevan solo identificadores: los nombres se obtienen de `GET /notificaciones`, que exige sesión. | API, Web, App |
-| RNF-SEG-16 | La API limita los intentos con contadores atómicos en PostgreSQL, que guardan claves con hash: 5 por email e IP y 30 por IP cada 15 minutos en el inicio de sesión, 10 registros por IP por hora, 30 ingresos con Google por IP cada 15 minutos y 5 contraseñas incorrectas por cuenta cada 15 minutos al cambiarla o vincular Google. Al superarlos responde 429 `DEMASIADOS_INTENTOS`. | API, Web, App |
+| RNF-SEG-16 | La API limita los intentos con contadores atómicos en PostgreSQL, que guardan claves con hash: 5 por email e IP y 30 por IP cada 15 minutos en el inicio de sesión, 10 registros por IP por hora, 30 ingresos con Google por IP cada 15 minutos, 5 contraseñas incorrectas por cuenta cada 15 minutos al cambiarla o vincular Google, y 3 por email cada 15 minutos y 20 por IP por hora tanto en el reenvío de la verificación como en el pedido de recuperación de la contraseña. Al superarlos, o si Firebase bloquea temporalmente los intentos, responde 429 `DEMASIADOS_INTENTOS`. | API, Web, App |
 | RNF-SEG-17 | Cambiar la contraseña, eliminarla al vincular Google o elegir "Cerrar todas las sesiones" invalida los tokens anteriores del usuario. Al cambiar la contraseña, el dispositivo que la cambió recibe un token nuevo y sigue conectado. | API, Web, App |
+| RNF-SEG-18 | Con Firebase configurado, una cuenta con email y contraseña solo puede iniciar sesión con el email verificado (`EMAIL_NO_VERIFICADO`). La API habla con Firebase con una cuenta de servicio y la clave web del proyecto, que se leen de variables de entorno. El pedido de recuperación responde lo mismo exista o no la cuenta, y los mails los manda Firebase, sin servidor de correo propio. | API, Web, App |
 
 **Limitaciones conocidas**
 
-- El registro con email y contraseña no verifica que el correo pertenezca a quien se registra. RNF-SEG-14 protege al dueño real cuando entra con Google.
+- Sin Firebase configurado en la API (entorno local y pruebas), el registro con email y contraseña no verifica que el correo pertenezca a quien se registra. RNF-SEG-14 protege al dueño real cuando entra con Google.
+- Pedir la recuperación de una cuenta que todavía tenía la contraseña en la base la prepara en Firebase y esa contraseña deja de servir, aunque el pedido lo haga otra persona. El dueño recupera el acceso con el enlace que le llega por mail.
+- Un cambio de contraseña hecho desde la página de Firebase no invalida los tokens de sesión ya emitidos por la API: siguen valiendo hasta vencer o hasta "Cerrar todas las sesiones".
 - La autorización del canal se valida al suscribirse: una conexión ya suscrita sigue recibiendo eventos, que solo llevan identificadores, hasta desconectarse, aunque su token venza o se revoque.
 - Las notificaciones push de Android nombran a quien actuó, por lo que ese nombre pasa por Pusher Beams y Firebase Cloud Messaging.
 - El límite de inicio de sesión se aplica por email e IP para que un tercero no pueda bloquear una cuenta ajena. Un ataque distribuido entre muchas IP contra una misma cuenta no queda limitado.
@@ -141,7 +144,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 | Servicio | Uso | Si no está disponible |
 | --- | --- | --- |
-| Firebase Authentication | Inicio de sesión con Google | No se puede entrar con Google; email y contraseña sigue funcionando (RNF-DIS-06) |
+| Firebase Authentication | Inicio de sesión con Google y, si está configurado en la API, registro, inicio de sesión con email, verificación del email y recuperación de la contraseña | Sin configurar en los clientes: no se puede entrar con Google y email y contraseña sigue funcionando (RNF-DIS-06). Sin configurar en la API: las contraseñas se guardan en la base y no hay verificación ni recuperación. Si no responde, la API devuelve un error al registrarse o entrar con email |
 | Pusher Channels | Notificaciones en tiempo real | RNF-DIS-04 |
 | Pusher Beams + Firebase Cloud Messaging | Notificaciones push en Android | RNF-DIS-09 |
 | API de Estadísticas Cambiarias del BCRA | Cotización de las 35 monedas extranjeras soportadas | RNF-DIS-05 |

@@ -8,7 +8,7 @@ Single Page Application en React 19 + Vite que consume una API REST, la cual per
 
 Funcionalidades principales:
 
-- **Autenticación** con email y contraseña o con Google (Firebase).
+- **Autenticación** con email y contraseña o con Google (Firebase), con verificación del email y recuperación de la contraseña por mail.
 - **Dashboard**: gastos agrupados por entidad, filtros, totales y balance por moneda, equivalencia en la moneda preferida, gráficos y peso de los gastos sobre el sueldo.
 - **Gastos** (egresos o ingresos) de pago único, en cuotas o fijos, en ARS y las 35 monedas extranjeras con cotización del BCRA, con categorías, historial y reversión de pagos.
 - **Entidades financieras** (personas, tarjetas, bancos, comercios), con favoritos y vinculación con otro usuario.

@@ -71,14 +71,14 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "raw": "{\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"language\": \"es\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
             },
-            "description": "Obligatorios: name, email, password."
+            "description": "Obligatorios: name, email, password. Opcional: language (es o en, por defecto es), idioma del mail de verificación. Responde data.verification_sent: con Firebase configurado en la API crea la cuenta en Firebase y manda el mail de verificación (true); sin Firebase guarda la contraseña en la base (false)."
           },
           "response": []
         },
@@ -128,7 +128,79 @@
                 }
               }
             },
-            "description": "Devuelve user y un token JWT válido por 7 días, hasta que se revoque. Responde 429 DEMASIADOS_INTENTOS al superar el límite de intentos."
+            "description": "Devuelve user y un token JWT válido por 7 días, hasta que se revoque. Con Firebase configurado en la API valida la contraseña contra Firebase y responde 403 EMAIL_NO_VERIFICADO si el email no está verificado; una cuenta con la contraseña todavía en la base se pasa a Firebase. Responde 429 DEMASIADOS_INTENTOS al superar el límite de intentos."
+          },
+          "response": []
+        },
+        {
+          "name": "Reenviar verificación de email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/resend-verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "resend-verification"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"language\": \"es\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Obligatorios: email, password (los del intento de inicio de sesión). Opcional: language (es o en). Responde data.verification_sent y data.already_verified. 401 CREDENCIALES_INVALIDAS si la contraseña no coincide, 429 DEMASIADOS_INTENTOS y 503 AUTH_EMAIL_NO_CONFIGURADO sin Firebase en la API."
+          },
+          "response": []
+        },
+        {
+          "name": "Recuperar contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"language\": \"es\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Obligatorio: email. Opcional: language (es o en). Firebase manda el mail para crear una contraseña nueva. Responde data.sent: true exista o no la cuenta. 429 DEMASIADOS_INTENTOS y 503 AUTH_EMAIL_NO_CONFIGURADO sin Firebase en la API."
           },
           "response": []
         },
@@ -267,7 +339,7 @@
                 "password-status"
               ]
             },
-            "description": "Responde { has_password }."
+            "description": "Responde { has_password }: true si la cuenta tiene contraseña en Firebase o, sin migrar, en la base."
           },
           "response": []
         },
@@ -313,7 +385,7 @@
                 }
               }
             },
-            "description": "new_password: mínimo 6 caracteres. current_password es obligatorio solo si la cuenta ya tiene contraseña. Responde { has_password, token }: el token nuevo reemplaza al anterior, que queda revocado. Responde 429 DEMASIADOS_INTENTOS tras 5 intentos fallidos en 15 minutos."
+            "description": "new_password: mínimo 6 caracteres. current_password es obligatorio solo si la cuenta ya tiene contraseña. Con Firebase configurado en la API, la actual se valida contra Firebase (o la base si todavía estaba ahí) y la nueva se guarda en Firebase. Responde { has_password, token }: el token nuevo reemplaza al anterior, que queda revocado. Responde 429 DEMASIADOS_INTENTOS tras 5 intentos fallidos en 15 minutos."
           },
           "response": []
         },

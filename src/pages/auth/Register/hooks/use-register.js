@@ -25,8 +25,13 @@ export function useRegister() {
         try {
             setLoading(true);
             setError('');
-            await register({ name, email, password });
-            nav('/login');
+            const result = await register({ name, email, password });
+            nav('/login', {
+                state: {
+                    registeredEmail: email.trim(),
+                    verificationSent: Boolean(result?.verification_sent),
+                },
+            });
             return true;
         } catch (err) {
             setError(err.message || t('auth.errorRegisteringUser'));

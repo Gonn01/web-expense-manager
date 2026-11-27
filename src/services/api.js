@@ -3,6 +3,7 @@ import { normalizeApiError, notifyError } from '@/services/error-handler';
 import { useDialogStore } from '@/store/use-dialog-store';
 import useAuth from '@/store/use-auth-store';
 import { markSessionExpired } from '@/utils/session-expired';
+import { getActiveLanguage } from '@/i18n';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -11,7 +12,13 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-const SILENT_PATHS = ['/auth/login', '/auth/register', '/auth/firebase-login'];
+const SILENT_PATHS = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/firebase-login',
+    '/auth/resend-verification',
+    '/auth/forgot-password',
+];
 
 let sessionExpiredHandled = false;
 
@@ -46,7 +53,27 @@ api.interceptors.response.use(
 );
 
 export const register = async (userInfo) => {
-    const { data } = await api.post('/auth/register', userInfo);
+    const { data } = await api.post('/auth/register', {
+        ...userInfo,
+        language: getActiveLanguage(),
+    });
+    return data.data;
+};
+
+export const resendVerification = async ({ email, password }) => {
+    const { data } = await api.post('/auth/resend-verification', {
+        email,
+        password,
+        language: getActiveLanguage(),
+    });
+    return data.data;
+};
+
+export const requestPasswordReset = async (email) => {
+    const { data } = await api.post('/auth/forgot-password', {
+        email,
+        language: getActiveLanguage(),
+    });
     return data.data;
 };
 

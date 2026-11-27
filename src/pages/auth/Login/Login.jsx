@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom';
 import BrandHeader from '../components/BrandHeader';
 import LoginForm from './components/LoginForm';
 import SessionExpiredNotice from './components/SessionExpiredNotice';
+import RegistrationNotice from './components/RegistrationNotice';
+import VerificationNotice from './components/VerificationNotice';
 import GoogleButton from '../components/GoogleButton';
 import GoogleLinkDialog from '../components/GoogleLinkDialog';
 import { useLogin } from './hooks/use-login';
@@ -8,7 +11,18 @@ import { useGoogleAuth } from '../hooks/use-google-auth';
 import { t } from '@/i18n';
 
 export default function Login() {
-    const { loading, error, setError, sessionExpired, handleLogin } = useLogin();
+    const {
+        loading,
+        error,
+        clearError,
+        sessionExpired,
+        registration,
+        unverified,
+        resending,
+        verificationMessage,
+        handleLogin,
+        handleResendVerification,
+    } = useLogin();
     const { loginGoogle, loading: loadingGoogle, googleAvailable, linkDialog } = useGoogleAuth();
 
     return (
@@ -20,14 +34,38 @@ export default function Login() {
                 />
 
                 {sessionExpired && <SessionExpiredNotice />}
+                {registration?.registeredEmail && !unverified && (
+                    <RegistrationNotice
+                        email={registration.registeredEmail}
+                        verificationSent={registration.verificationSent}
+                    />
+                )}
 
                 <div className="rounded-xl border border-slate-200 dark:border-gray-700/50 bg-white dark:bg-black/20 p-4 sm:p-8">
+                    {unverified && (
+                        <VerificationNotice
+                            email={unverified.email}
+                            resending={resending}
+                            message={verificationMessage}
+                            onResend={handleResendVerification}
+                        />
+                    )}
+
                     <LoginForm
                         loading={loading}
                         error={error}
-                        onErrorClear={() => setError('')}
+                        onErrorClear={clearError}
                         onSubmit={handleLogin}
                     />
+
+                    <div className="mt-4 text-right">
+                        <Link
+                            to="/forgot-password"
+                            className="text-sm font-medium text-emerald-700 hover:text-emerald-600 dark:text-primary dark:hover:text-primary/80"
+                        >
+                            {t('auth.forgotPasswordLink')}
+                        </Link>
+                    </div>
 
                     <div className="relative my-6">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">

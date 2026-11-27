@@ -16,7 +16,7 @@ Documentación funcional del sistema completo. Aunque vive en el repo de la web,
 | [mision-vision-valores.md](mision-vision-valores.md) | Misión, visión y valores centrales de la organización, y cómo se reflejan en el sistema |
 | [requerimientos-funcionales.md](requerimientos-funcionales.md) | Qué hace el sistema, por módulo (`RF-<módulo>-NN`) |
 | [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md) | Atributos de calidad y restricciones (`RNF-<categoría>-NN`) |
-| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-49` |
+| [casos-de-uso.md](casos-de-uso.md) | Actores, diagramas y especificación de los casos de uso `CU-01` a `CU-51` |
 | [evidencias/](evidencias/README.md) | Resultados medidos de carga, recuperación ante fallos y pruebas automatizadas |
 | [diagramas/](diagramas/) | Diagramas de casos de uso (`.svg` es la fuente, `.png` es la exportación) |
 | [diagramas/der.svg](diagramas/der.svg) | Diagrama entidad-relación de la base de datos: tablas, columnas, claves foráneas y relaciones lógicas sin FK ([PNG](diagramas/der.png)) |

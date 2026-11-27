@@ -145,6 +145,12 @@
             },
             "PUSH_NO_CONFIGURADO": {
                 "message": "Las notificaciones push no están configuradas."
+            },
+            "EMAIL_NO_VERIFICADO": {
+                "message": "Todavía no verificaste tu email. Abrí el enlace que te mandamos o pedí uno nuevo."
+            },
+            "AUTH_EMAIL_NO_CONFIGURADO": {
+                "message": "La verificación de email y la recuperación de contraseña no están disponibles en este momento."
             }
         },
         "status": {
@@ -696,7 +702,20 @@
         "yourSessionExpired": "Tu sesión venció",
         "signInAgainToContinue": "Volvé a iniciar sesión para continuar.",
         "donTHaveAnAccount": "¿No tienes una cuenta?",
-        "alreadyHaveAnAccount": "¿Ya tienes una cuenta?"
+        "alreadyHaveAnAccount": "¿Ya tienes una cuenta?",
+        "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+        "forgotPasswordTitle": "Recuperar contraseña",
+        "forgotPasswordSubtitle": "Ingresá tu email y te mandamos un enlace para crear una contraseña nueva.",
+        "forgotPasswordSubmit": "Enviar enlace",
+        "forgotPasswordSent": "Si hay una cuenta con {{email}}, te va a llegar un mail para crear una contraseña nueva. Revisá también el correo no deseado.",
+        "backToSignIn": "Volver a iniciar sesión",
+        "verifyEmailTitle": "Verificá tu email",
+        "verifyEmailMessage": "Para entrar, abrí el enlace que te mandamos a {{email}}.",
+        "resendVerification": "Reenviar mail",
+        "verificationResent": "Te mandamos otro mail a {{email}}.",
+        "alreadyVerified": "Tu email ya está verificado. Iniciá sesión de nuevo.",
+        "accountCreatedCheckEmail": "Cuenta creada. Te mandamos un mail a {{email}}: abrí el enlace para verificarla y después iniciá sesión.",
+        "accountCreated": "Cuenta creada. Ya podés iniciar sesión."
     },
     "detalleEntidad": {
         "copySummary": "Copiar resumen",

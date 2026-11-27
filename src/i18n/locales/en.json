@@ -145,6 +145,12 @@
             },
             "PUSH_NO_CONFIGURADO": {
                 "message": "Push notifications are not configured."
+            },
+            "EMAIL_NO_VERIFICADO": {
+                "message": "You haven't verified your email yet. Open the link we sent you or ask for a new one."
+            },
+            "AUTH_EMAIL_NO_CONFIGURADO": {
+                "message": "Email verification and password recovery aren't available right now."
             }
         },
         "status": {
@@ -696,7 +702,20 @@
         "yourSessionExpired": "Your session expired",
         "signInAgainToContinue": "Sign in again to continue.",
         "donTHaveAnAccount": "Don't have an account?",
-        "alreadyHaveAnAccount": "Already have an account?"
+        "alreadyHaveAnAccount": "Already have an account?",
+        "forgotPasswordLink": "Forgot your password?",
+        "forgotPasswordTitle": "Reset password",
+        "forgotPasswordSubtitle": "Enter your email and we'll send you a link to create a new password.",
+        "forgotPasswordSubmit": "Send link",
+        "forgotPasswordSent": "If there is an account for {{email}}, you'll get an email to create a new password. Check your spam folder too.",
+        "backToSignIn": "Back to sign in",
+        "verifyEmailTitle": "Verify your email",
+        "verifyEmailMessage": "To sign in, open the link we sent to {{email}}.",
+        "resendVerification": "Resend email",
+        "verificationResent": "We sent another email to {{email}}.",
+        "alreadyVerified": "Your email is already verified. Sign in again.",
+        "accountCreatedCheckEmail": "Account created. We sent an email to {{email}}: open the link to verify it, then sign in.",
+        "accountCreated": "Account created. You can sign in now."
     },
     "detalleEntidad": {
         "copySummary": "Copy summary",

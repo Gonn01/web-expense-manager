@@ -21,7 +21,7 @@ src/
   utils/           formateo, enums, catálogo de errores, armado de textos
 ```
 
-Rutas (`App.jsx`): `/login`, `/register` y, bajo `/app` con `ProtectedRoute`: `dashboard`, `entidades`, `entidades/:id`, `gastos/:id`, `compartidos` (`notificaciones` redirige ahí), `settlement`, `settlement/:id`, `configuracion`. `Login` y `Register` se importan directo; `AppLayout` y todas las pantallas de `/app` se cargan con `lazy()` (un chunk por pantalla), con `Loader` como fallback de `Suspense` en `App.jsx` y alrededor del `Outlet` de `AppLayout`, así la barra lateral no desaparece mientras carga una pantalla.
+Rutas (`App.jsx`): `/login`, `/register`, `/forgot-password` y, bajo `/app` con `ProtectedRoute`: `dashboard`, `entidades`, `entidades/:id`, `gastos/:id`, `compartidos` (`notificaciones` redirige ahí), `settlement`, `settlement/:id`, `configuracion`. `Login`, `Register` y `ForgotPassword` se importan directo; `AppLayout` y todas las pantallas de `/app` se cargan con `lazy()` (un chunk por pantalla), con `Loader` como fallback de `Suspense` en `App.jsx` y alrededor del `Outlet` de `AppLayout`, así la barra lateral no desaparece mientras carga una pantalla.
 
 ## 2. Capas
 
@@ -54,7 +54,7 @@ El interceptor de respuesta, para **toda** request fallida:
 3. Ante 401: cierra la sesión y redirige a `/login` (una sola vez, por el flag `sessionExpiredHandled`). Como la redirección recarga la página, el aviso no puede ser un diálogo: `markSessionExpired()` (`utils/session-expired.js`) deja una marca en `sessionStorage` y la pantalla de login muestra el cartel "Tu sesión venció".
 4. Re-lanza el error normalizado, para que el `catch` local pueda revertir estado.
 
-Excepción: los `SILENT_PATHS` (`/auth/login`, `/auth/register`, `/auth/firebase-login`). Los dos primeros muestran el error en su formulario. `use-google-auth.js` maneja el tercero: envía solo el ID token de Firebase, abre `GoogleLinkDialog` ante `VINCULACION_REQUIERE_CONTRASENA` y pasa el resto de los errores a `notifyError`.
+Excepción: los `SILENT_PATHS` (`/auth/login`, `/auth/register`, `/auth/firebase-login`, `/auth/resend-verification`, `/auth/forgot-password`). Login, registro y recuperación muestran el error en su formulario. Ante `EMAIL_NO_VERIFICADO`, `use-login.js` guarda el email y la contraseña del intento y `Login` muestra `VerificationNotice`, que llama a `resendVerification` con esos datos. El registro navega a `/login` con `{ registeredEmail, verificationSent }` en el `state` de la ruta, y `Login` lo muestra con `RegistrationNotice`. `register`, `resendVerification` y `requestPasswordReset` mandan `language` (`getActiveLanguage()` de `@/i18n`) para que Firebase escriba el mail en el idioma de la interfaz. `/forgot-password` (`pages/auth/ForgotPassword/`) siempre muestra el mismo mensaje al enviar, exista o no la cuenta. `/auth/firebase-login` lo maneja `use-google-auth.js`: envía solo el ID token de Firebase, abre `GoogleLinkDialog` ante `VINCULACION_REQUIERE_CONTRASENA` y pasa el resto de los errores a `notifyError`.
 
 Consecuencias:
 

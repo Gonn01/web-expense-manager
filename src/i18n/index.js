@@ -65,5 +65,6 @@ export function setLanguagePreference(preference) {
 
 export const t = (...args) => i18n.t(...args);
 export const getIntlLocale = () => toIntlLocale(i18n.language);
+export const getActiveLanguage = () => i18n.language;
 
 export default i18n;

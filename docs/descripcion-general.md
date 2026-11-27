@@ -30,7 +30,7 @@ El sistema está formado por tres proyectos sobre un mismo modelo de datos:
 | Web | React (SPA) | Cliente para navegador. |
 | App móvil | Flutter | Cliente para Android e iOS. |
 
-Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (inicio con Google), Pusher Channels (tiempo real), Pusher Beams con Firebase Cloud Messaging (push en Android) y la API de Estadísticas Cambiarias del BCRA (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
+Ambos clientes ofrecen la misma funcionalidad y solo difieren en lo visual (RNF-CON-01). Servicios externos: Firebase Authentication (contraseñas, verificación del email, recuperación de la contraseña e inicio con Google), Pusher Channels (tiempo real), Pusher Beams con Firebase Cloud Messaging (push en Android) y la API de Estadísticas Cambiarias del BCRA (cotizaciones); qué pasa si alguno falta está en [RNF — POR](requerimientos-no-funcionales.md#por--portabilidad-y-entorno).
 
 ### Usuarios
 
@@ -59,7 +59,7 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 
 | Módulo | Qué cubre |
 | --- | --- |
-| AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google, sobre una sola cuenta por email; sesión persistente; cierre de sesión y expiración. |
+| AUT — Autenticación | Registro e inicio de sesión con email y contraseña o con Google, sobre una sola cuenta por email; verificación del email por mail antes del primer ingreso y recuperación de la contraseña; sesión persistente; cierre de sesión y expiración. |
 | CFG — Configuración | Perfil, moneda preferida, sueldo, tema de la interfaz (claro, oscuro o el del sistema) e idioma (español, inglés o el del sistema). |
 | DSH — Dashboard | Gastos activos por entidad, totales y balance por moneda, filtros, equivalencias, gráficos y resumen para WhatsApp. |
 | ENT — Entidades | Alta, renombrado, baja lógica, favoritas, detalle con historial, vinculación con otro usuario, gastos eliminados y su restauración, entidades eliminadas y su restauración. |

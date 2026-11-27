@@ -75,8 +75,10 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 | CU-47 | Elegir idioma | Usuario | 01 |
 | CU-48 | Compartir gasto existente | Usuario, Contraparte | 05 |
 | CU-49 | Definir o cambiar contraseña | Usuario | 01 |
+| CU-50 | Verificar email | Visitante, Firebase | 01 |
+| CU-51 | Recuperar contraseña | Visitante, Firebase | 01 |
 
-**Precondición común**: salvo CU-01, CU-02 y CU-03, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
+**Precondición común**: salvo CU-01, CU-02, CU-03, CU-50 y CU-51, todos los casos de uso requieren que el actor tenga una sesión iniciada. No se repite en cada especificación.
 
 ---
 
@@ -86,34 +88,38 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 
 ### CU-01 — Registrarse
 
-- **Actor**: Visitante
+- **Actores**: Visitante, Firebase
 - **Requerimientos**: RF-AUT-01, RF-AUT-02, RF-AUT-10, RF-AUT-12
 - **Precondición**: el visitante no tiene sesión iniciada.
 - **Flujo principal**
     1. El visitante abre la pantalla de registro.
     2. Ingresa nombre, email y contraseña y confirma.
     3. El sistema verifica que el email no esté registrado.
-    4. El sistema crea la cuenta guardando la contraseña cifrada.
-    5. El sistema lleva al visitante al inicio de sesión.
+    4. El sistema crea la cuenta en Firebase, que guarda la contraseña, y Firebase manda un mail para verificar el email.
+    5. El sistema lleva al visitante al inicio de sesión y le indica que abra el enlace del mail antes de entrar (CU-50).
 - **Flujos alternativos**
     - 2a. El nombre tiene menos de 2 caracteres, el email no es válido o la contraseña tiene menos de 6 caracteres: el cliente muestra el error en el formulario y no envía nada.
     - 3a. El email ya pertenece a una cuenta con contraseña: el sistema muestra el error en el formulario y no crea la cuenta.
     - 3b. El email pertenece a una cuenta que solo entra con Google: el sistema no le agrega la contraseña e indica entrar con Google y definirla en Configuración (CU-49).
     - 3c. Se superó el límite de registros desde esa IP: el sistema indica esperar y no crea la cuenta.
-- **Postcondición**: existe una cuenta nueva. El visitante todavía no tiene sesión.
+    - 4a. Firebase no está configurado en la API (entorno local o de pruebas): el sistema guarda la contraseña cifrada en la base, no manda mail y el visitante puede entrar directamente.
+- **Postcondición**: existe una cuenta nueva con el email sin verificar. El visitante todavía no tiene sesión.
 
 ### CU-02 — Iniciar sesión con email
 
-- **Actor**: Visitante
-- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09, RF-AUT-10, RF-AUT-12
+- **Actores**: Visitante, Firebase
+- **Requerimientos**: RF-AUT-03, RF-AUT-06, RF-AUT-09, RF-AUT-10, RF-AUT-12, RF-AUT-15
 - **Flujo principal**
     1. El visitante ingresa email y contraseña.
-    2. El sistema valida las credenciales.
+    2. El sistema valida las credenciales contra Firebase y comprueba que el email esté verificado.
     3. El sistema emite un token de sesión y devuelve los datos del usuario.
     4. El cliente guarda el token y los datos, y muestra el dashboard.
 - **Flujos alternativos**
     - 2a. El email no existe, la contraseña no coincide o la cuenta se creó con Google y no tiene contraseña: el sistema muestra "email o contraseña incorrectos" en el formulario, sin distinguir el motivo.
     - 2b. Se superó el límite de intentos: el sistema indica esperar unos minutos y no inicia sesión, aunque la contraseña sea correcta.
+    - 2c. El email no está verificado: el sistema no inicia sesión, indica abrir el enlace del mail y ofrece reenviarlo (CU-50).
+    - 2d. La cuenta es anterior al uso de Firebase y su contraseña sigue en la base: si coincide, el sistema la pasa a Firebase con el email verificado, la borra de la base y continúa en 3.
+    - 1b. El visitante no recuerda la contraseña: elige "¿Olvidaste tu contraseña?" (CU-51).
     - 1a. El visitante llegó a esta pantalla porque su sesión anterior venció: sobre el formulario se muestra el cartel "Tu sesión venció". Desaparece al iniciar sesión.
 - **Postcondición**: el visitante pasa a ser Usuario con sesión iniciada.
 
@@ -167,12 +173,47 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
 - **Flujo principal**
     1. El usuario abre Configuración y el sistema indica si su cuenta ya tiene contraseña.
     2. Ingresa la contraseña nueva y la repite. Si ya tiene una, ingresa también la actual.
-    3. El sistema valida los datos, guarda la contraseña cifrada, invalida las sesiones anteriores y entrega un token nuevo al dispositivo actual.
+    3. El sistema valida los datos, guarda la contraseña en Firebase (cifrada en la base si Firebase no está configurado), invalida las sesiones anteriores y entrega un token nuevo al dispositivo actual.
 - **Flujos alternativos**
     - 2a. Falta la contraseña actual, la nueva tiene menos de 6 caracteres o la repetición no coincide: el cliente muestra el error y no envía nada.
     - 3a. La contraseña actual no coincide: el sistema muestra el error y no cambia nada.
     - 3b. Se superó el límite de intentos: el sistema indica esperar y no cambia nada.
 - **Postcondición**: la cuenta puede entrar con email y contraseña, y con Google si lo tiene vinculado.
+
+### CU-50 — Verificar email
+
+- **Actores**: Visitante, Firebase
+- **Requerimientos**: RF-AUT-01, RF-AUT-03, RF-AUT-12, RF-AUT-13
+- **Precondición**: el visitante se registró con email y contraseña y todavía no verificó el email.
+- **Flujo principal**
+    1. El visitante abre el enlace del mail que Firebase le mandó al registrarse.
+    2. Firebase marca el email como verificado.
+    3. El visitante inicia sesión (CU-02).
+- **Flujos alternativos**
+    - 1a. El visitante intenta iniciar sesión sin haber verificado: el sistema lo rechaza y muestra el aviso "Verificá tu email" con el botón "Reenviar mail".
+        - 1a.1. El visitante elige reenviar: el sistema vuelve a validar el email y la contraseña del intento y Firebase manda otro mail.
+        - 1a.2. El email ya estaba verificado: el sistema lo informa y no manda nada.
+        - 1a.3. Se superó el límite de reenvíos: el sistema indica esperar.
+    - 1b. Firebase no está configurado en la API: no hay verificación y el reenvío responde que no está disponible.
+- **Postcondición**: el email queda verificado y la cuenta puede iniciar sesión con email y contraseña.
+
+### CU-51 — Recuperar contraseña
+
+- **Actores**: Visitante, Firebase
+- **Requerimientos**: RF-AUT-07, RF-AUT-12, RF-AUT-14
+- **Flujo principal**
+    1. En el inicio de sesión, el visitante elige "¿Olvidaste tu contraseña?".
+    2. Ingresa su email y confirma.
+    3. El sistema pide a Firebase el mail de recuperación y muestra que, si hay una cuenta con ese email, va a llegar un mail.
+    4. El visitante abre el enlace del mail y define una contraseña nueva en la página de Firebase.
+    5. El visitante inicia sesión con la contraseña nueva (CU-02).
+- **Flujos alternativos**
+    - 2a. El email no tiene el formato válido: el cliente muestra el error y no envía nada.
+    - 3a. No hay cuenta con ese email: el sistema responde lo mismo, sin revelarlo, y no llega ningún mail.
+    - 3b. La cuenta todavía tenía la contraseña en la base o solo entraba con Google: el sistema la prepara en Firebase antes de mandar el mail; la contraseña anterior de la base deja de servir.
+    - 3c. Se superó el límite de pedidos: el sistema indica esperar.
+    - 3d. Firebase no está configurado en la API: el sistema indica que la recuperación no está disponible.
+- **Postcondición**: la cuenta tiene una contraseña nueva, guardada en Firebase.
 
 ### CU-06 — Cambiar moneda preferida
 
