@@ -12,7 +12,7 @@ The README.md is the human-facing entry point (setup, env vars, scripts, archite
 
 ## Documentation and guides
 
-- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md` and the use-case, entity-relationship and UML class diagrams (domain and design) in `docs/diagramas/`. It lives in this repo but covers all three projects.
+- `docs/` — functional documentation for the **whole system** (web + Flutter app + API): `descripcion-general.md` (system overview, general/specific objectives and scope — the entry point), `mision-vision-valores.md` (mission, vision and core values, each value tied to the RF/RNF that implement it), `requerimientos-funcionales.md`, `requerimientos-no-funcionales.md`, `casos-de-uso.md`, `limitaciones-y-trabajo-futuro.md` (known limitations and future work) and the use-case, entity-relationship and UML class diagrams (domain and design) in `docs/diagramas/`. It lives in this repo but covers all three projects.
 - `.claude/guides/` — development guides of this repo: `arquitectura-web.md` (this project's architecture) and `documentacion.md` (what to update after a change, for all three projects).
 - Each project keeps its own architecture guide in its own repo: `.claude/guides/arquitectura-flutter.md` in the Flutter repo and `.claude/guides/arquitectura-api.md` in the API repo. Read the guide for the project you are about to change before writing code.
 
@@ -117,4 +117,4 @@ Never bypass this interceptor with ad hoc error handling outside `SILENT_PATHS`.
 
 **Path alias `@/*` → `src/*`** must stay in sync across three configs: `vite.config.js` (`resolve.alias`), `jsconfig.json` (`compilerOptions.paths`), `eslint.config.js` (`import/resolver.alias`).
 
-`checklist_mis_cuentas.md` and `checklits_expense_manager.md` (repo root) are informal running checklists of implemented/pending features — useful for context on what's done vs. planned, not formal specs.
+Known limitations and planned-but-unimplemented features are consolidated in `docs/limitaciones-y-trabajo-futuro.md` (risk, current mitigation and how each would be solved).

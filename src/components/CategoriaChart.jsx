@@ -1,18 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import Icon from '@/components/Icon';
 import { Link } from 'react-router-dom';
 import useAuth from '@/store/use-auth-store';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import { convertCurrency } from '@/utils/convert-currency';
 import { formatMoney } from '@/utils/FormatMoney';
 import { Currency, ExpenseType } from '@/utils/enums';
-import {
-    currentMonthIndex,
-    fixedExpenseStartMonth,
-    labelFromMonthIndex,
-    pendingQuotaMonths,
-} from '@/utils/chart-months';
+import { categoryEntriesForSession, sessionAt, sessionLabel } from '@/utils/chart-sessions';
 import { t } from '@/i18n';
 import { Trans } from 'react-i18next';
 
@@ -35,38 +29,13 @@ const PALETTE = [
     '#f97316',
 ];
 
-function monthlyAmount(gasto, month, currentMonth) {
-    if (gasto.fixed_expense) {
-        return month >= fixedExpenseStartMonth(gasto, currentMonth) ? Number(gasto.amount || 0) : 0;
-    }
-    const range = pendingQuotaMonths(gasto, currentMonth);
-    if (!range || month < range.start || month > range.end) return 0;
-    return Number(gasto.amount_per_quota || 0);
-}
-
-function lastMonthWithQuotas(gastos, currentMonth) {
-    let last = currentMonth;
-    for (const g of gastos) {
-        const end = g.fixed_expense
-            ? fixedExpenseStartMonth(g, currentMonth)
-            : pendingQuotaMonths(g, currentMonth)?.end;
-        if (end !== undefined && end > last) last = end;
-    }
-    return last;
-}
-
-function buildChartData(gastos, month, currentMonth, preferredCurrency, rates) {
+function buildChartData(entries, preferredCurrency, rates) {
     const totals = new Map();
 
-    for (const g of gastos) {
-        const converted = convertCurrency(
-            monthlyAmount(g, month, currentMonth),
-            g.currency_type,
-            preferredCurrency,
-            rates,
-        );
+    for (const entry of entries) {
+        const converted = convertCurrency(entry.amount, entry.currency, preferredCurrency, rates);
         if (!converted) continue;
-        const categories = Array.isArray(g.categories) ? g.categories : [];
+        const categories = entry.categories;
 
         if (categories.length === 0) {
             const current = totals.get('otros') ?? { id: 'otros', name: 'Otros', value: 0 };
@@ -116,7 +85,7 @@ const CustomTooltip = ({ active, payload, total, currency }) => {
     );
 };
 
-export default function CategoriaChart({ gastos }) {
+export default function CategoriaChart({ gastos, history = [], selectedIndex }) {
     const { user } = useAuth();
     const { rates } = useExchangeRates();
     const pref = user?.preferred_currency;
@@ -127,49 +96,59 @@ export default function CategoriaChart({ gastos }) {
     const sueldo =
         convertCurrency(Number(user?.sueldo || 0), sueldoCurrency, preferredCurrency, rates) ?? 0;
 
-    const currentMonth = currentMonthIndex();
-    const egresos = useMemo(() => gastos.filter((g) => g.type === ExpenseType.EGRESO), [gastos]);
-    const lastMonth = useMemo(
-        () => lastMonthWithQuotas(egresos, currentMonth),
-        [egresos, currentMonth],
+    const [type, setType] = useState(ExpenseType.EGRESO);
+    const isExpense = type === ExpenseType.EGRESO;
+    const salary = isExpense ? sueldo : 0;
+    const data = buildChartData(
+        categoryEntriesForSession(gastos, history, selectedIndex, type),
+        preferredCurrency,
+        rates,
     );
-    const [month, setMonth] = useState(currentMonth);
-    const selectedMonth = Math.min(Math.max(month, currentMonth), lastMonth);
 
-    const data = buildChartData(egresos, selectedMonth, currentMonth, preferredCurrency, rates);
+    if (gastos.length === 0 && history.length === 0) return null;
 
-    if (egresos.length === 0) return null;
+    const column = { index: selectedIndex, session: sessionAt(history, selectedIndex) };
 
     const total = data.reduce((sum, d) => sum + d.value, 0);
 
     return (
-        <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
+        <div className="h-full rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    {t('charts.categoriesTitle')}{' '}
+                    {isExpense ? t('charts.categoriesTitle') : t('charts.incomeCategoriesTitle')}{' '}
                     <span className="font-normal text-slate-500">({preferredCurrency})</span>
                 </p>
-                <div className="flex items-center gap-1">
-                    <MonthButton
-                        icon="chevron_left"
-                        label={t('common.previousMonth')}
-                        disabled={selectedMonth <= currentMonth}
-                        onClick={() => setMonth(selectedMonth - 1)}
-                    />
-                    <span className="min-w-36 text-center text-sm capitalize text-slate-700 dark:text-slate-200">
-                        {labelFromMonthIndex(selectedMonth)}
-                    </span>
-                    <MonthButton
-                        icon="chevron_right"
-                        label={t('common.nextMonth')}
-                        disabled={selectedMonth >= lastMonth}
-                        onClick={() => setMonth(selectedMonth + 1)}
-                    />
-                </div>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                    {sessionLabel(column)}
+                </span>
+            </div>
+            <div
+                role="group"
+                aria-label={t('charts.categoryType')}
+                className="mb-4 inline-flex rounded-lg border border-black/10 dark:border-white/10 p-0.5 text-xs font-semibold"
+            >
+                {[
+                    [ExpenseType.EGRESO, t('common.expenses')],
+                    [ExpenseType.INGRESO, t('common.income2')],
+                ].map(([value, label]) => (
+                    <button
+                        key={value}
+                        type="button"
+                        aria-pressed={type === value}
+                        onClick={() => setType(value)}
+                        className={`cursor-pointer rounded-md px-3 py-1 ${
+                            type === value
+                                ? 'bg-primary text-black'
+                                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10'
+                        }`}
+                    >
+                        {label}
+                    </button>
+                ))}
             </div>
             {data.length === 0 ? (
                 <p className="py-10 text-center text-sm text-slate-500 dark:text-slate-400">
-                    {t('common.thereAreNoExpensesToPayThis')}
+                    {isExpense ? t('charts.noExpensesInSession') : t('charts.noIncomeInSession')}
                 </p>
             ) : (
                 <div className="flex flex-col gap-4">
@@ -197,35 +176,35 @@ export default function CategoriaChart({ gastos }) {
                     <div className="flex flex-col gap-1.5 rounded-lg bg-slate-50 dark:bg-white/5 px-3 py-2 text-sm">
                         <div className="flex flex-wrap items-baseline justify-between gap-2">
                             <span className="text-slate-700 dark:text-slate-200">
-                                {t('charts.monthTotal')}{' '}
+                                {t('charts.sessionTotal')}{' '}
                                 <span className="font-semibold">
                                     {formatMoney(total, preferredCurrency)}
                                 </span>
                             </span>
-                            {sueldo > 0 && (
+                            {salary > 0 && (
                                 <span
                                     className={`font-semibold ${
-                                        total > sueldo
+                                        total > salary
                                             ? 'text-red-600 dark:text-red-400'
                                             : 'text-slate-700 dark:text-slate-200'
                                     }`}
                                 >
                                     {t('charts.percentOfSalary', {
-                                        percent: formatPercent((total / sueldo) * 100),
+                                        percent: formatPercent((total / salary) * 100),
                                     })}
                                 </span>
                             )}
                         </div>
-                        {sueldo > 0 ? (
+                        {salary > 0 ? (
                             <div className="h-2 w-full rounded-full bg-zinc-200 dark:bg-white/10 overflow-hidden">
                                 <div
                                     className={`h-full rounded-full ${
-                                        total > sueldo ? 'bg-red-500' : 'bg-primary'
+                                        total > salary ? 'bg-red-500' : 'bg-primary'
                                     }`}
-                                    style={{ width: `${Math.min((total / sueldo) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((total / salary) * 100, 100)}%` }}
                                 />
                             </div>
-                        ) : (
+                        ) : isExpense ? (
                             <p className="text-xs text-slate-500 dark:text-slate-400">
                                 <Trans
                                     i18nKey="charts.loadSalary"
@@ -239,12 +218,12 @@ export default function CategoriaChart({ gastos }) {
                                     }}
                                 />
                             </p>
-                        )}
+                        ) : null}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5">
                         {data.map((d) => {
                             const pct = total > 0 ? (d.value / total) * 100 : 0;
-                            const pctSueldo = sueldo > 0 ? (d.value / sueldo) * 100 : null;
+                            const pctSueldo = salary > 0 ? (d.value / salary) * 100 : null;
                             return (
                                 <div key={d.id} className="flex items-start gap-2 text-xs">
                                     <span
@@ -276,19 +255,5 @@ export default function CategoriaChart({ gastos }) {
                 </div>
             )}
         </div>
-    );
-}
-
-function MonthButton({ icon, label, disabled, onClick }) {
-    return (
-        <button
-            type="button"
-            aria-label={label}
-            disabled={disabled}
-            onClick={onClick}
-            className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-        >
-            <Icon name={icon} className="text-xl" />
-        </button>
     );
 }

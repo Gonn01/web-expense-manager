@@ -136,7 +136,7 @@ src/
 
 ## Seguimiento
 
-- [checklist_mis_cuentas.md](checklist_mis_cuentas.md) y [checklits_expense_manager.md](checklits_expense_manager.md): checklists informales de funcionalidades hechas y pendientes.
+- [docs/limitaciones-y-trabajo-futuro.md](docs/limitaciones-y-trabajo-futuro.md): limitaciones conocidas y funcionalidad planeada que todavía no existe.
 
 ## Autores
 

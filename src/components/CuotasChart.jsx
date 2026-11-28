@@ -7,63 +7,54 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
+    ReferenceLine,
 } from 'recharts';
 import {
-    currentMonthIndex,
-    keyFromMonthIndex,
-    labelFromKey,
-    pendingQuotaMonths,
-} from '@/utils/chart-months';
+    futureQuotaTotals,
+    pastQuotaTotal,
+    sessionColumns,
+    sessionLabel,
+} from '@/utils/chart-sessions';
 import { t } from '@/i18n';
 
-function accumulateCounts(gastos, type, counts) {
-    const currentMonth = currentMonthIndex();
+function lastIndex(totals) {
+    const keys = [...totals.keys()];
+    return keys.length ? Math.max(...keys) : null;
+}
 
-    for (const g of gastos) {
-        if (g.type !== type) continue;
+function buildChartData(gastos, history) {
+    const egreso = futureQuotaTotals(gastos, 'EGRESO');
+    const ingreso = futureQuotaTotals(gastos, 'INGRESO');
+    const lastEgreso = lastIndex(egreso);
+    const lastIngreso = lastIndex(ingreso);
 
-        const range = pendingQuotaMonths(g, currentMonth);
-        if (!range) continue;
-
-        for (let month = range.start; month <= range.end; month++) {
-            const key = keyFromMonthIndex(month);
-            counts[key] = (counts[key] || 0) + 1;
+    const data = sessionColumns(gastos, history).map((column) => {
+        const label = sessionLabel(column, { short: true });
+        const fullLabel = sessionLabel(column);
+        const base = { key: column.key, index: column.index, label, fullLabel };
+        if (column.session) {
+            return {
+                ...base,
+                egreso: pastQuotaTotal(column.session, 'EGRESO'),
+                ingreso: pastQuotaTotal(column.session, 'INGRESO'),
+            };
         }
-    }
-}
-
-function firstAndLastKeys(counts) {
-    const keys = Object.keys(counts).sort();
-    if (keys.length === 0) return { first: null, last: null };
-    return { first: keys[0], last: keys.at(-1) };
-}
-
-function buildChartData(gastos) {
-    const egreso = {};
-    const ingreso = {};
-
-    accumulateCounts(gastos, 'EGRESO', egreso);
-    accumulateCounts(gastos, 'INGRESO', ingreso);
-
-    const egresoRange = firstAndLastKeys(egreso);
-    const ingresoRange = firstAndLastKeys(ingreso);
-
-    const allKeys = new Set([...Object.keys(egreso), ...Object.keys(ingreso)]);
-
-    if (allKeys.size === 0) return [];
-
-    return [...allKeys].sort().map((key) => {
-        const hasEgreso = egresoRange.last && key >= egresoRange.first && key <= egresoRange.last;
-        const hasIngreso =
-            ingresoRange.last && key >= ingresoRange.first && key <= ingresoRange.last;
         return {
-            label: labelFromKey(key),
-            egreso: hasEgreso ? (egreso[key] ?? 0) : null,
-            ingreso: hasIngreso ? (ingreso[key] ?? 0) : null,
-            egresoIsLast: key === egresoRange.last,
-            ingresoIsLast: key === ingresoRange.last,
+            ...base,
+            egreso:
+                lastEgreso !== null && column.index <= lastEgreso
+                    ? (egreso.get(column.index) ?? 0)
+                    : null,
+            ingreso:
+                lastIngreso !== null && column.index <= lastIngreso
+                    ? (ingreso.get(column.index) ?? 0)
+                    : null,
+            egresoIsLast: column.index === lastEgreso,
+            ingresoIsLast: column.index === lastIngreso,
         };
     });
+
+    return data.some((point) => point.egreso || point.ingreso) ? data : [];
 }
 
 function renderLastDot(color, flagKey) {
@@ -91,11 +82,13 @@ function renderLastDot(color, flagKey) {
     };
 }
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="rounded-lg border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
-            <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
+            <p className="font-semibold text-slate-900 dark:text-white mb-1">
+                {payload[0].payload.fullLabel}
+            </p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
                     {p.dataKey === 'egreso' ? t('common.expenses') : t('common.income2')}:{' '}
@@ -106,59 +99,84 @@ const CustomTooltip = ({ active, payload, label }) => {
     );
 };
 
-export default function CuotasChart({ gastos }) {
-    const data = buildChartData(gastos);
+export default function CuotasChart({ gastos, history = [], selectedIndex, onSelectSession }) {
+    const data = buildChartData(gastos, history);
 
     if (data.length === 0) return null;
 
+    const visible = data.filter((point) => point.index >= selectedIndex);
+    const labelByKey = new Map(data.map((point) => [point.key, point.label]));
+    const selectedKey = data.find((point) => point.index === selectedIndex)?.key;
+    const selectFromChart = (state) => {
+        const point = data.find((p) => p.key === state?.activeLabel);
+        if (point) onSelectSession?.(point.index);
+    };
+
     return (
-        <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                {t('common.installmentsPerMonth')}
+        <div className="flex h-full flex-col rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
+            <p className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                {t('charts.installmentsPerSession')}
             </p>
-            <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={data} margin={{ top: 16, right: 8, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis
-                        dataKey="label"
-                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        allowDecimals={false}
-                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend
-                        formatter={(value) => (
-                            <span className="text-xs text-slate-400">
-                                {value === 'egreso' ? t('common.expenses') : t('common.income2')}
-                            </span>
+            <div className="h-[200px] lg:h-auto lg:min-h-[140px] lg:flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                        data={visible}
+                        onClick={selectFromChart}
+                        className="cursor-pointer"
+                        margin={{ top: 16, right: 8, left: -20, bottom: 0 }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                        {selectedKey && (
+                            <ReferenceLine
+                                x={selectedKey}
+                                stroke="var(--chart-tick)"
+                                strokeDasharray="4 4"
+                            />
                         )}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="egreso"
-                        stroke="#ef4444"
-                        strokeWidth={2}
-                        dot={renderLastDot('#ef4444', 'egresoIsLast')}
-                        activeDot={{ r: 5 }}
-                        connectNulls={false}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="ingreso"
-                        stroke="#52b788"
-                        strokeWidth={2}
-                        dot={renderLastDot('#52b788', 'ingresoIsLast')}
-                        activeDot={{ r: 5 }}
-                        connectNulls={false}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+                        <XAxis
+                            dataKey="key"
+                            tickFormatter={(key) => labelByKey.get(key) ?? ''}
+                            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
+                            axisLine={false}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            allowDecimals={false}
+                            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
+                            axisLine={false}
+                            tickLine={false}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend
+                            formatter={(value) => (
+                                <span className="text-xs text-slate-400">
+                                    {value === 'egreso'
+                                        ? t('common.expenses')
+                                        : t('common.income2')}
+                                </span>
+                            )}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="egreso"
+                            stroke="#ef4444"
+                            strokeWidth={2}
+                            dot={renderLastDot('#ef4444', 'egresoIsLast')}
+                            activeDot={{ r: 5 }}
+                            connectNulls={false}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="ingreso"
+                            stroke="#52b788"
+                            strokeWidth={2}
+                            dot={renderLastDot('#52b788', 'ingresoIsLast')}
+                            activeDot={{ r: 5 }}
+                            connectNulls={false}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 }

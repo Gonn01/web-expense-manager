@@ -370,6 +370,14 @@ export const fetchSettlementSnapshots = async (token) => {
     return data.data;
 };
 
+export const fetchChartHistory = async ({ limit, before, entityId } = {}, token) => {
+    const { data } = await api.get('/settlement/chart-history', {
+        params: { limit, before: before ?? undefined, entity_id: entityId ?? undefined },
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.data;
+};
+
 export const fetchSettlementSnapshotById = async (id, token) => {
     const { data } = await api.get(`/settlement/snapshots/${id}`, {
         headers: { Authorization: `Bearer ${token}` },

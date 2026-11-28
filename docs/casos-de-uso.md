@@ -290,7 +290,7 @@ Especificación de los casos de uso del sistema. Los requerimientos que cada uno
     - 5b. El usuario filtra por texto, por tipo o por gasto fijo: el sistema muestra solo los gastos que coinciden. Una entidad con gastos esperando respuesta sigue visible con cualquier filtro de moneda, tipo o frecuencia; con el filtro por texto, solo si coincide su nombre.
     - 5e. Una entidad solo tiene gastos esperando respuesta: el sistema la muestra con una tarjeta que lo indica, sin balance ni acciones de pago.
     - 5f. La otra persona aprueba o rechaza un gasto compartido mientras el dashboard está abierto: el sistema actualiza el contador y los gastos sin recargar (CU-38).
-    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos del mes actual, con el porcentaje del sueldo que representan si el usuario lo cargó; el usuario puede pasar a los meses siguientes con cuotas pendientes.
+    - 5c. El usuario abre los gráficos: el sistema muestra cuotas, montos y la distribución por categoría de los egresos de la próxima sesión de pago, con el porcentaje del sueldo que representan si el usuario lo cargó. Con un único selector, el usuario puede avanzar a las sesiones siguientes con cuotas pendientes o retroceder a las sesiones pasadas del historial de cuentas, que se cargan a medida que las pide y muestran solo los pagos y cobros confirmados; los tres gráficos se mueven con el selector, y tocar un punto de los gráficos de evolución elige esa sesión.
     - 5d. El usuario oculta o muestra la columna de balances: el cliente recuerda la preferencia (solo en la web).
     - 4a. No se pudo obtener la cotización: el dashboard se muestra sin equivalencias.
 

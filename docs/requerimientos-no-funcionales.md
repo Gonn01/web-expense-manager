@@ -78,7 +78,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 | RNF-REN-07 | Al volver a un módulo principal (dashboard, entidades, compartidos, historial de cuentas) ya visitado en la sesión, sus datos se muestran de inmediato, sin el indicador de carga de pantalla completa, y se actualizan en segundo plano. Los datos guardados se conservan solo en memoria y se descartan al cambiar la sesión. | Web, App |
 | RNF-REN-08 | Con 25 conexiones simultáneas, las operaciones medidas de la API responden con un percentil 97,5 menor a 500 ms y sin errores. Evidencia local en [evidencias](evidencias/README.md); no mide Vercel ni Supabase. | API |
 
-*Limitación conocida*: las acciones de compartidos actualizan la tarjeta afectada al instante, pero después vuelven a pedir todo el listado en segundo plano, sin el loader. Cuando la otra persona aprueba o rechaza un gasto, el dashboard también se vuelve a pedir completo en segundo plano (ver `checklist_mis_cuentas.md`, "Optimizaciones de recarga").
+*Limitación conocida*: las acciones de compartidos actualizan la tarjeta afectada al instante, pero después vuelven a pedir todo el listado en segundo plano, sin el loader. Cuando la otra persona aprueba o rechaza un gasto, el dashboard también se vuelve a pedir completo en segundo plano. Plan en [limitaciones-y-trabajo-futuro.md](limitaciones-y-trabajo-futuro.md#rendimiento).
 
 ## DIS — Disponibilidad y tolerancia a fallos
 
@@ -108,7 +108,7 @@ Categorías: [SEG](#seg--seguridad) · [CON](#con--consistencia-entre-clientes) 
 
 **Limitaciones conocidas**
 
-- Las fechas se muestran con un corrimiento de 3 horas respecto de la hora local (pendiente en `checklist_mis_cuentas.md`).
+- Las fechas se muestran con un corrimiento de 3 horas respecto de la hora local.
 - Una base que todavía no ejecutó `migrations/manual/2026-11-21_monedas_bcra.sql` puede rechazar con un 500 las monedas que le falten. La migración agrega todas las monedas soportadas y se puede ejecutar más de una vez.
 
 ## MAN — Mantenibilidad

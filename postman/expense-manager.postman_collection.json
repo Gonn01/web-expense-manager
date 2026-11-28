@@ -1474,6 +1474,43 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Historial para gráficos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/settlement/chart-history?limit=6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settlement",
+                "chart-history"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6"
+                },
+                {
+                  "key": "before",
+                  "value": "",
+                  "disabled": true,
+                  "description": "id de la sesión más vieja de la página anterior (next_before)"
+                },
+                {
+                  "key": "entity_id",
+                  "value": "{{entityId}}",
+                  "disabled": true,
+                  "description": "Solo los gastos de esa entidad"
+                }
+              ]
+            },
+            "description": "Sesiones de cuentas terminadas, de la más nueva a la más vieja, para los gráficos por sesión de pago. limit: de 1 a 24 (por defecto 6). Responde { sessions: [{ id, month, finished_at, items: [{ purchase_id, entity_id, type, currency, amount_per_quota, fixed_expense, categories }] }], next_before }. Cada sesión trae solo los pagos y cobros confirmados. Las categorías son las guardadas en el snapshot o, en sesiones viejas que no las guardaban, las actuales del gasto. 400 si limit, before o entity_id no son enteros positivos."
+          },
+          "response": []
         }
       ]
     },

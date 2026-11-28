@@ -78,8 +78,8 @@ Brindar a cada persona una visión única, actualizada y confiable de lo que deb
 - **Importar movimientos.** Los gastos se cargan a mano; no se leen resúmenes de tarjeta ni extractos bancarios.
 - **Contabilidad o finanzas de empresas.** Es una herramienta personal: no hay organizaciones, roles, permisos compartidos ni facturación.
 - **Uso sin conexión.** Los clientes necesitan la API para operar.
-- **Funcionalidad conversada pero no implementada** (imágenes adjuntas, integración con la API de Mercado Pago para ejecutar o conciliar transferencias, entre otras): se listan en [Pendiente / fuera de alcance](requerimientos-funcionales.md#pendiente--fuera-de-alcance). Hasta que se implementen no forman parte del alcance.
+- **Funcionalidad conversada pero no implementada** (imágenes adjuntas, integración con la API de Mercado Pago para ejecutar o conciliar transferencias, entre otras): se listan en [Pendiente / fuera de alcance](requerimientos-funcionales.md#pendiente--fuera-de-alcance) y, con más detalle, en [limitaciones-y-trabajo-futuro.md](limitaciones-y-trabajo-futuro.md#trabajo-futuro). Hasta que se implementen no forman parte del alcance.
 
 ### Diferencias y limitaciones actuales
 
-El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente o se cumple solo en parte, el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md).
+El alcance de arriba describe lo que ofrecen los clientes. Si una función existe en un solo cliente o se cumple solo en parte, el `RF` correspondiente lo aclara. Los incumplimientos conocidos de calidad figuran como *Limitación conocida* en [requerimientos-no-funcionales.md](requerimientos-no-funcionales.md). [limitaciones-y-trabajo-futuro.md](limitaciones-y-trabajo-futuro.md) las reúne con su riesgo, cómo se mitigan hoy y cómo se resolverían.

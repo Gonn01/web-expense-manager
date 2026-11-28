@@ -405,7 +405,11 @@ export default function EntidadDetalle() {
             )}
 
             {showCharts && (
-                <ChartsModal gastos={entity.gastos_activos} onClose={() => setShowCharts(false)} />
+                <ChartsModal
+                    gastos={entity.gastos_activos}
+                    entityId={entity.id}
+                    onClose={() => setShowCharts(false)}
+                />
             )}
         </>
     );

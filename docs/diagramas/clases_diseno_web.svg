@@ -509,13 +509,13 @@
 <line x1="2200" y1="1355" x2="2390" y2="1355" stroke="#166534"/>
 <text x="2207" y="1370" font-size="11" fill="#1E293B">+ hide()</text>
 <text x="2207" y="1385" font-size="11" fill="#1E293B">+ show()</text>
-<rect x="60" y="1670" width="240" height="986" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
+<rect x="60" y="1670" width="240" height="1001" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
 <text x="180.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
 <text x="180.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">services/api.js</text>
 <line x1="60" y1="1710" x2="300" y2="1710" stroke="#475569"/>
 <text x="67" y="1725" font-size="11" fill="#1E293B">instancia única de axios</text>
 <text x="67" y="1740" font-size="11" fill="#1E293B">interceptor de respuesta</text>
-<text x="67" y="1755" font-size="11" fill="#1E293B">58 funciones por endpoint</text>
+<text x="67" y="1755" font-size="11" fill="#1E293B">59 funciones por endpoint</text>
 <line x1="60" y1="1763" x2="300" y2="1763" stroke="#475569"/>
 <text x="67" y="1778" font-size="11" fill="#1E293B">+ register()</text>
 <text x="67" y="1793" font-size="11" fill="#1E293B">+ login()</text>
@@ -555,27 +555,28 @@
 <text x="67" y="2303" font-size="11" fill="#1E293B">+ finishSettlementSession()</text>
 <text x="67" y="2318" font-size="11" fill="#1E293B">+ discardSettlementSession()</text>
 <text x="67" y="2333" font-size="11" fill="#1E293B">+ fetchSettlementSnapshots()</text>
-<text x="67" y="2348" font-size="11" fill="#1E293B">+ fetchSettlementSnapshotById()</text>
-<text x="67" y="2363" font-size="11" fill="#1E293B">+ fetchCompartidos()</text>
-<text x="67" y="2378" font-size="11" fill="#1E293B">+ fetchNotificaciones()</text>
-<text x="67" y="2393" font-size="11" fill="#1E293B">+ marcarNotificacionLeida()</text>
-<text x="67" y="2408" font-size="11" fill="#1E293B">+ marcarNotificacionesLeidas()</text>
-<text x="67" y="2423" font-size="11" fill="#1E293B">+ aprobarCompartido()</text>
-<text x="67" y="2438" font-size="11" fill="#1E293B">+ rechazarCompartido()</text>
-<text x="67" y="2453" font-size="11" fill="#1E293B">+ reintentarCompartido()</text>
-<text x="67" y="2468" font-size="11" fill="#1E293B">+ descartarCompartido()</text>
-<text x="67" y="2483" font-size="11" fill="#1E293B">+ confirmarPago()</text>
-<text x="67" y="2498" font-size="11" fill="#1E293B">+ rechazarPago()</text>
-<text x="67" y="2513" font-size="11" fill="#1E293B">+ retirarPago()</text>
-<text x="67" y="2528" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
-<text x="67" y="2543" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
-<text x="67" y="2558" font-size="11" fill="#1E293B">+ solicitarEdicionCompartida()</text>
-<text x="67" y="2573" font-size="11" fill="#1E293B">+ aprobarEdicionCompartida()</text>
-<text x="67" y="2588" font-size="11" fill="#1E293B">+ rechazarEdicionCompartida()</text>
-<text x="67" y="2603" font-size="11" fill="#1E293B">+ cancelarEdicionCompartida()</text>
-<text x="67" y="2618" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
-<text x="67" y="2633" font-size="11" fill="#1E293B">+ revertirPago()</text>
-<text x="67" y="2648" font-size="11" fill="#1E293B">- postEdicion()</text>
+<text x="67" y="2348" font-size="11" fill="#1E293B">+ fetchChartHistory()</text>
+<text x="67" y="2363" font-size="11" fill="#1E293B">+ fetchSettlementSnapshotById()</text>
+<text x="67" y="2378" font-size="11" fill="#1E293B">+ fetchCompartidos()</text>
+<text x="67" y="2393" font-size="11" fill="#1E293B">+ fetchNotificaciones()</text>
+<text x="67" y="2408" font-size="11" fill="#1E293B">+ marcarNotificacionLeida()</text>
+<text x="67" y="2423" font-size="11" fill="#1E293B">+ marcarNotificacionesLeidas()</text>
+<text x="67" y="2438" font-size="11" fill="#1E293B">+ aprobarCompartido()</text>
+<text x="67" y="2453" font-size="11" fill="#1E293B">+ rechazarCompartido()</text>
+<text x="67" y="2468" font-size="11" fill="#1E293B">+ reintentarCompartido()</text>
+<text x="67" y="2483" font-size="11" fill="#1E293B">+ descartarCompartido()</text>
+<text x="67" y="2498" font-size="11" fill="#1E293B">+ confirmarPago()</text>
+<text x="67" y="2513" font-size="11" fill="#1E293B">+ rechazarPago()</text>
+<text x="67" y="2528" font-size="11" fill="#1E293B">+ retirarPago()</text>
+<text x="67" y="2543" font-size="11" fill="#1E293B">+ aceptarReversion()</text>
+<text x="67" y="2558" font-size="11" fill="#1E293B">+ rechazarReversion()</text>
+<text x="67" y="2573" font-size="11" fill="#1E293B">+ solicitarEdicionCompartida()</text>
+<text x="67" y="2588" font-size="11" fill="#1E293B">+ aprobarEdicionCompartida()</text>
+<text x="67" y="2603" font-size="11" fill="#1E293B">+ rechazarEdicionCompartida()</text>
+<text x="67" y="2618" font-size="11" fill="#1E293B">+ cancelarEdicionCompartida()</text>
+<text x="67" y="2633" font-size="11" fill="#1E293B">+ cancelarReversion()</text>
+<text x="67" y="2648" font-size="11" fill="#1E293B">+ revertirPago()</text>
+<text x="67" y="2663" font-size="11" fill="#1E293B">- postEdicion()</text>
 <rect x="324" y="1670" width="220" height="101" fill="#F1F5F9" stroke="#475569" stroke-width="1.5"/>
 <text x="434.0" y="1684" font-size="10" text-anchor="middle" fill="#475569">«module»</text>
 <text x="434.0" y="1701" font-size="13" font-weight="bold" text-anchor="middle" fill="#0F172A">services/error-handler.js</text>
@@ -653,4 +654,5 @@
 <text x="1815" y="2108" font-size="11" fill="#1E293B">+ applyTheme()  + watchSystemTheme()  + validatePasswordChange()</text>
 <text x="60" y="2726" font-size="12" fill="#334155">Se listan todas las funciones de hooks, stores y módulos (en cada página, las de su hook de interfaz): + exportada o devuelta, - interna. Flecha punteada: dependencia por import, extraída del código. Cada color agrupa las dependencias de un mismo elemento.</text>
 <text x="60" y="2744" font-size="12" fill="#334155">«usa: {api, auth, dialog, snackbar, pusher}» resume las dependencias hacia services/api.js, los stores globales y Pusher, que no se dibujan para no saturar. «stores:» lista los que la página usa directamente.</text>
+<text x="60" y="2762" font-size="12" fill="#334155">ChartsModal arma los gráficos por sesión de pago con hooks/use-chart-history (historial de cuentas paginado, fetchChartHistory) y utils/chart-sessions; no se dibujan como cajas.</text>
 </svg>

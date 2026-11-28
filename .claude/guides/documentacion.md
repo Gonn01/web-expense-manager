@@ -27,7 +27,8 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | agrega, modifica o elimina un endpoint (método, ruta, query params, body, autenticación o datos de respuesta que leen sus scripts) | la colección de Postman, que debe seguir cubriendo todas las rutas de la API |
 | agrega o cambia un endpoint, un código de error o un evento de Pusher | `arquitectura-api.md` (repo de la API) si cambia la lista de grupos de rutas o eventos; los `RF` que citan el código; la tabla de eventos de CU-38 |
 | cambia seguridad, rendimiento, tolerancia a fallos, dependencias externas o entornos | `docs/requerimientos-no-funcionales.md` |
-| corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había); si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |
+| agrega una limitación conocida | registrarla en el `RF` o el `RNF` correspondiente y sumarla a `docs/limitaciones-y-trabajo-futuro.md` con su riesgo, su mitigación y cómo se resolvería |
+| corrige una limitación conocida | quitarla de `docs/requerimientos-no-funcionales.md` (y la nota de "cumplimiento parcial" del `RF`, si la había) y de `docs/limitaciones-y-trabajo-futuro.md`; si `docs/mision-vision-valores.md` la cita como *compromiso pendiente*, quitarla también de ahí |
 | cambia o renumera un `RF`/`RNF` citado en la tabla de valores, o cambia el comportamiento que esa tabla describe | `docs/mision-vision-valores.md` |
 | cambia la estructura de carpetas, una capa, una convención o un comando | la guía de arquitectura de ese proyecto + su `CLAUDE.md` |
 | cambia un comando, una variable de entorno, un requisito de instalación o una librería principal | el `README.md` de ese repo |
@@ -35,7 +36,7 @@ La documentación funcional y esta guía describen el sistema completo y viven e
 | agrega un término de dominio | el glosario de `docs/README.md` |
 | cambia un concepto del negocio, un atributo, una relación o un enum del dominio | `docs/diagramas/clases_dominio.svg` (y `der.svg` si cambia el esquema) |
 | agrega, quita o renombra una clase, un service, un repository, un Cubit, un store o un hook, o cambia sus dependencias | el diagrama de diseño del proyecto: `docs/diagramas/clases_diseno_<api\|web\|flutter>.svg` |
-| implementa algo de "Pendiente / fuera de alcance", o decide sacar algo del alcance | moverlo de esa lista a un `RF` real (o al revés), revisar la sección "Alcance" de `docs/descripcion-general.md`, y marcarlo en el checklist correspondiente de la raíz de la web |
+| implementa algo de "Pendiente / fuera de alcance", o decide sacar algo del alcance | moverlo de esa lista a un `RF` real (o al revés), revisar la sección "Alcance" de `docs/descripcion-general.md` y la tabla de trabajo futuro de `docs/limitaciones-y-trabajo-futuro.md` |
 
 No requieren actualizar nada: cambios puramente visuales (layout, espaciado, colores, elección de componentes), refactors internos que no alteran capas ni convenciones, y correcciones de bugs que hacen que el código cumpla lo que la documentación ya decía.
 

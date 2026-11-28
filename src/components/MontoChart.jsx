@@ -7,13 +7,14 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
+    ReferenceLine,
 } from 'recharts';
 import {
-    currentMonthIndex,
-    keyFromMonthIndex,
-    labelFromKey,
-    pendingQuotaMonths,
-} from '@/utils/chart-months';
+    futureQuotaTotals,
+    pastQuotaTotal,
+    sessionColumns,
+    sessionLabel,
+} from '@/utils/chart-sessions';
 import { useExchangeRates } from '@/hooks/use-exchange-rates';
 import useAuth from '@/store/use-auth-store';
 import { convertCurrency } from '@/utils/convert-currency';
@@ -23,61 +24,44 @@ import { t } from '@/i18n';
 
 const CURRENCY_VALUES = Object.values(Currency);
 
-function accumulateAmounts(gastos, type, amounts, preferredCurrency, rates) {
-    const currentMonth = currentMonthIndex();
+function lastIndex(totals) {
+    const keys = [...totals.keys()];
+    return keys.length ? Math.max(...keys) : null;
+}
 
-    for (const g of gastos) {
-        if (g.type !== type) continue;
+function buildChartData(gastos, history, preferredCurrency, rates) {
+    const valueOf = (amount, currency) =>
+        convertCurrency(amount, currency, preferredCurrency, rates);
+    const egreso = futureQuotaTotals(gastos, 'EGRESO', valueOf);
+    const ingreso = futureQuotaTotals(gastos, 'INGRESO', valueOf);
+    const lastEgreso = lastIndex(egreso);
+    const lastIngreso = lastIndex(ingreso);
 
-        const range = pendingQuotaMonths(g, currentMonth);
-        if (!range) continue;
-
-        const amountPerQuota = Number(g.amount_per_quota || 0);
-        const converted = convertCurrency(
-            amountPerQuota,
-            g.currency_type,
-            preferredCurrency,
-            rates,
-        );
-        if (converted === null) continue;
-
-        for (let month = range.start; month <= range.end; month++) {
-            const key = keyFromMonthIndex(month);
-            amounts[key] = (amounts[key] || 0) + converted;
+    const data = sessionColumns(gastos, history).map((column) => {
+        const label = sessionLabel(column, { short: true });
+        const fullLabel = sessionLabel(column);
+        const base = { key: column.key, index: column.index, label, fullLabel };
+        if (column.session) {
+            return {
+                ...base,
+                egreso: pastQuotaTotal(column.session, 'EGRESO', valueOf),
+                ingreso: pastQuotaTotal(column.session, 'INGRESO', valueOf),
+            };
         }
-    }
-}
-
-function firstAndLastKeys(counts) {
-    const keys = Object.keys(counts).sort();
-    if (keys.length === 0) return { first: null, last: null };
-    return { first: keys[0], last: keys.at(-1) };
-}
-
-function buildChartData(gastos, preferredCurrency, rates) {
-    const egreso = {};
-    const ingreso = {};
-
-    accumulateAmounts(gastos, 'EGRESO', egreso, preferredCurrency, rates);
-    accumulateAmounts(gastos, 'INGRESO', ingreso, preferredCurrency, rates);
-
-    const egresoRange = firstAndLastKeys(egreso);
-    const ingresoRange = firstAndLastKeys(ingreso);
-
-    const allKeys = new Set([...Object.keys(egreso), ...Object.keys(ingreso)]);
-
-    if (allKeys.size === 0) return [];
-
-    return [...allKeys].sort().map((key) => {
-        const hasEgreso = egresoRange.last && key >= egresoRange.first && key <= egresoRange.last;
-        const hasIngreso =
-            ingresoRange.last && key >= ingresoRange.first && key <= ingresoRange.last;
         return {
-            label: labelFromKey(key),
-            egreso: hasEgreso ? (egreso[key] ?? 0) : null,
-            ingreso: hasIngreso ? (ingreso[key] ?? 0) : null,
+            ...base,
+            egreso:
+                lastEgreso !== null && column.index <= lastEgreso
+                    ? (egreso.get(column.index) ?? 0)
+                    : null,
+            ingreso:
+                lastIngreso !== null && column.index <= lastIngreso
+                    ? (ingreso.get(column.index) ?? 0)
+                    : null,
         };
     });
+
+    return data.some((point) => point.egreso || point.ingreso) ? data : [];
 }
 
 function formatAxis(value) {
@@ -87,11 +71,13 @@ function formatAxis(value) {
     return value.toFixed(0);
 }
 
-const CustomTooltip = ({ active, payload, label, currency }) => {
+const CustomTooltip = ({ active, payload, currency }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="rounded-lg border border-black/10 dark:border-white/10 bg-slate-50 dark:bg-[#1c2620] px-3 py-2 text-sm shadow-lg space-y-1">
-            <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
+            <p className="font-semibold text-slate-900 dark:text-white mb-1">
+                {payload[0].payload.fullLabel}
+            </p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{ color: p.color }}>
                     {p.dataKey === 'egreso' ? t('common.expenses') : t('common.income2')}:{' '}
@@ -102,69 +88,92 @@ const CustomTooltip = ({ active, payload, label, currency }) => {
     );
 };
 
-export default function MontoChart({ gastos }) {
+export default function MontoChart({ gastos, history = [], selectedIndex, onSelectSession }) {
     const { rates } = useExchangeRates();
     const { user } = useAuth();
 
     const pref = user?.preferred_currency;
     const preferredCurrency = CURRENCY_VALUES.includes(pref) ? pref : Currency.ARS;
 
-    const data = buildChartData(gastos, preferredCurrency, rates);
+    const data = buildChartData(gastos, history, preferredCurrency, rates);
 
     if (data.length === 0) return null;
 
+    const visible = data.filter((point) => point.index >= selectedIndex);
+    const labelByKey = new Map(data.map((point) => [point.key, point.label]));
+    const selectedKey = data.find((point) => point.index === selectedIndex)?.key;
+    const selectFromChart = (state) => {
+        const point = data.find((p) => p.key === state?.activeLabel);
+        if (point) onSelectSession?.(point.index);
+    };
+
     return (
-        <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-                {t('common.amountPerMonth')}{' '}
+        <div className="flex h-full flex-col rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4">
+            <p className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                {t('charts.amountPerSession')}{' '}
                 <span className="font-normal text-slate-500">({preferredCurrency})</span>
             </p>
-            <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={data} margin={{ top: 4, right: 8, left: 8, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis
-                        dataKey="label"
-                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                    />
-                    <YAxis
-                        allowDecimals={false}
-                        tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={formatAxis}
-                    />
-                    <Tooltip content={<CustomTooltip currency={preferredCurrency} />} />
-                    <Legend
-                        formatter={(value) => (
-                            <span className="text-xs text-slate-400">
-                                {value === 'egreso'
-                                    ? t('common.expenses')
-                                    : t('common.income2')}{' '}
-                            </span>
+            <div className="h-[200px] lg:h-auto lg:min-h-[140px] lg:flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                        data={visible}
+                        onClick={selectFromChart}
+                        className="cursor-pointer"
+                        margin={{ top: 4, right: 8, left: 8, bottom: 0 }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                        {selectedKey && (
+                            <ReferenceLine
+                                x={selectedKey}
+                                stroke="var(--chart-tick)"
+                                strokeDasharray="4 4"
+                            />
                         )}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="egreso"
-                        stroke="#ef4444"
-                        strokeWidth={2}
-                        dot={{ fill: '#ef4444', r: 3 }}
-                        activeDot={{ r: 5 }}
-                        connectNulls={false}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="ingreso"
-                        stroke="#52b788"
-                        strokeWidth={2}
-                        dot={{ fill: '#52b788', r: 3 }}
-                        activeDot={{ r: 5 }}
-                        connectNulls={false}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+                        <XAxis
+                            dataKey="key"
+                            tickFormatter={(key) => labelByKey.get(key) ?? ''}
+                            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
+                            axisLine={false}
+                            tickLine={false}
+                        />
+                        <YAxis
+                            allowDecimals={false}
+                            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
+                            axisLine={false}
+                            tickLine={false}
+                            tickFormatter={formatAxis}
+                        />
+                        <Tooltip content={<CustomTooltip currency={preferredCurrency} />} />
+                        <Legend
+                            formatter={(value) => (
+                                <span className="text-xs text-slate-400">
+                                    {value === 'egreso'
+                                        ? t('common.expenses')
+                                        : t('common.income2')}{' '}
+                                </span>
+                            )}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="egreso"
+                            stroke="#ef4444"
+                            strokeWidth={2}
+                            dot={{ fill: '#ef4444', r: 3 }}
+                            activeDot={{ r: 5 }}
+                            connectNulls={false}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="ingreso"
+                            stroke="#52b788"
+                            strokeWidth={2}
+                            dot={{ fill: '#52b788', r: 3 }}
+                            activeDot={{ r: 5 }}
+                            connectNulls={false}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 }
